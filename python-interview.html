@@ -18,8 +18,9 @@
 
 <div class="hero">
   <h1>Python Interview Cheatsheet</h1>
-  <p class="subtitle">Data structures, algorithms, complexity &amp; common patterns</p>
+  <p class="subtitle">Data structures, algorithms, Python tricks, competitive I/O &amp; interview patterns</p>
   <span class="tag tag-concept">Interview Prep</span>
+  <span class="tag tag-lang" style="margin-left:.5rem">Python Tricks</span>
 </div>
 
 <div class="toc">
@@ -38,14 +39,36 @@
     <a href="#dp">Dynamic Programming</a>
     <a href="#sliding">Sliding Window &amp; Two Pointers</a>
     <a href="#backtrack">Backtracking</a>
-    <a href="#builtins">Built-in Functions &amp; Tricks</a>
+    <a href="#builtins">Built-in Functions</a>
     <a href="#oop">OOP Essentials</a>
     <a href="#gotchas">Python Gotchas</a>
+    <a href="#io-tricks">I/O &amp; Matrix Input</a>
+    <a href="#one-liners">One-Liners</a>
+    <a href="#pt-collections">Collections Module</a>
+    <a href="#pt-itertools">Itertools &amp; Functools</a>
+    <a href="#string-tricks">String Tricks</a>
+    <a href="#bitwise">Bitwise Tricks</a>
+    <a href="#sort-tricks">Sorting Tricks</a>
+    <a href="#star-unpacking">Star Unpacking &amp; Walrus</a>
+    <a href="#ds-patterns">DS Patterns</a>
+    <a href="#interview-patterns">Interview Patterns</a>
+    <a href="#py-gotchas">Common Pitfalls</a>
+    <a href="#quick-ref">Quick Reference</a>
   </div>
 </div>
 
+<div class="filter-bar">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="interview">Interview &amp; DS</button>
+  <button class="filter-btn" data-filter="algorithms">Algorithms</button>
+  <button class="filter-btn" data-filter="tricks">Python Tricks</button>
+  <button class="filter-btn" data-filter="competitive">Competitive I/O</button>
+  <button class="filter-btn" data-filter="oop">OOP &amp; Design</button>
+</div>
+
 <!-- ===== COMPLEXITY ===== -->
-<div class="section" id="complexity">
+<div class="section" id="complexity" data-cat="interview">
   <div class="section-header"><span class="icon">⏱️</span><h2>Time &amp; Space Complexity</h2></div>
   <table>
     <tr><th>Operation</th><th>List</th><th>Dict</th><th>Set</th></tr>
@@ -66,7 +89,7 @@
 </div>
 
 <!-- ===== STRINGS ===== -->
-<div class="section" id="strings">
+<div class="section" id="strings" data-cat="interview">
   <div class="section-header"><span class="icon">🔤</span><h2>Strings</h2></div>
   <div class="code-wrapper"><pre><code>s = <span class="str">"hello world"</span>
 
@@ -118,7 +141,7 @@ name = <span class="str">"Bob"</span>
 </div>
 
 <!-- ===== LISTS ===== -->
-<div class="section" id="lists">
+<div class="section" id="lists" data-cat="interview">
   <div class="section-header"><span class="icon">📋</span><h2>Lists &amp; Arrays</h2></div>
   <div class="code-wrapper"><pre><code><span class="cmt"># Creation</span>
 arr = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
@@ -164,7 +187,7 @@ a, *rest, z = [<span class="num">1</span>, <span class="num">2</span>, <span cla
 </div>
 
 <!-- ===== DICTS & SETS ===== -->
-<div class="section" id="hashmaps">
+<div class="section" id="hashmaps" data-cat="interview">
   <div class="section-header"><span class="icon">#️⃣</span><h2>Dicts &amp; Sets (HashMaps)</h2></div>
   <div class="code-wrapper"><pre><code><span class="cmt"># ===== DICT =====</span>
 d = {<span class="str">"a"</span>: <span class="num">1</span>, <span class="str">"b"</span>: <span class="num">2</span>}
@@ -215,7 +238,7 @@ a ^ b              <span class="cmt"># symmetric diff: {1, 4}</span></code></pre
 </div>
 
 <!-- ===== STACKS & QUEUES ===== -->
-<div class="section" id="stacks">
+<div class="section" id="stacks" data-cat="interview">
   <div class="section-header"><span class="icon">📚</span><h2>Stacks &amp; Queues</h2></div>
   <div class="code-wrapper"><pre><code><span class="cmt"># ===== STACK (LIFO) — use list =====</span>
 stack = []
@@ -266,7 +289,7 @@ heapq.<span class="fn">nsmallest</span>(<span class="num">3</span>, arr)   <span
 </div>
 
 <!-- ===== LINKED LISTS ===== -->
-<div class="section" id="linkedlists">
+<div class="section" id="linkedlists" data-cat="interview">
   <div class="section-header"><span class="icon">🔗</span><h2>Linked Lists</h2></div>
   <div class="code-wrapper"><pre><code><span class="kw">class</span> <span class="tp">ListNode</span>:
     <span class="kw">def</span> <span class="fn">__init__</span>(self, val=<span class="num">0</span>, next=<span class="kw">None</span>):
@@ -318,7 +341,7 @@ heapq.<span class="fn">nsmallest</span>(<span class="num">3</span>, arr)   <span
 </div>
 
 <!-- ===== TREES ===== -->
-<div class="section" id="trees">
+<div class="section" id="trees" data-cat="interview">
   <div class="section-header"><span class="icon">🌳</span><h2>Trees &amp; BST</h2></div>
   <div class="code-wrapper"><pre><code><span class="kw">class</span> <span class="tp">TreeNode</span>:
     <span class="kw">def</span> <span class="fn">__init__</span>(self, val=<span class="num">0</span>, left=<span class="kw">None</span>, right=<span class="kw">None</span>):
@@ -376,7 +399,7 @@ heapq.<span class="fn">nsmallest</span>(<span class="num">3</span>, arr)   <span
 </div>
 
 <!-- ===== GRAPHS ===== -->
-<div class="section" id="graphs">
+<div class="section" id="graphs" data-cat="interview">
   <div class="section-header"><span class="icon">🕸️</span><h2>Graphs</h2></div>
   <div class="code-wrapper"><pre><code><span class="cmt"># Adjacency list representation</span>
 graph = defaultdict(<span class="fn">list</span>)
@@ -452,7 +475,7 @@ graph = defaultdict(<span class="fn">list</span>)
 </div>
 
 <!-- ===== SORTING ===== -->
-<div class="section" id="sorting">
+<div class="section" id="sorting" data-cat="algorithms">
   <div class="section-header"><span class="icon">🔃</span><h2>Sorting</h2></div>
   <div class="code-wrapper"><pre><code><span class="cmt"># Built-in (Timsort — O(n log n))</span>
 arr.<span class="fn">sort</span>()                        <span class="cmt"># in-place</span>
@@ -493,7 +516,7 @@ people.<span class="fn">sort</span>(key=<span class="kw">lambda</span> p: (p.age
 </div>
 
 <!-- ===== BINARY SEARCH ===== -->
-<div class="section" id="searching">
+<div class="section" id="searching" data-cat="algorithms">
   <div class="section-header"><span class="icon">🔍</span><h2>Binary Search</h2></div>
   <div class="code-wrapper"><pre><code><span class="cmt"># Standard binary search</span>
 <span class="kw">def</span> <span class="fn">binary_search</span>(arr, target):
@@ -537,7 +560,7 @@ bisect.<span class="fn">insort</span>(arr, val)           <span class="cmt"># in
 </div>
 
 <!-- ===== DP ===== -->
-<div class="section" id="dp">
+<div class="section" id="dp" data-cat="algorithms">
   <div class="section-header"><span class="icon">🧮</span><h2>Dynamic Programming</h2></div>
   <div class="code-wrapper"><pre><code><span class="cmt"># ===== Framework =====</span>
 <span class="cmt"># 1. Define state: dp[i] = ...</span>
@@ -603,7 +626,7 @@ bisect.<span class="fn">insort</span>(arr, val)           <span class="cmt"># in
 </div>
 
 <!-- ===== SLIDING WINDOW ===== -->
-<div class="section" id="sliding">
+<div class="section" id="sliding" data-cat="algorithms">
   <div class="section-header"><span class="icon">🪟</span><h2>Sliding Window &amp; Two Pointers</h2></div>
   <div class="code-wrapper"><pre><code><span class="cmt"># ===== Two Pointers =====</span>
 <span class="cmt"># Two Sum (sorted array)</span>
@@ -668,7 +691,7 @@ bisect.<span class="fn">insort</span>(arr, val)           <span class="cmt"># in
 </div>
 
 <!-- ===== BACKTRACKING ===== -->
-<div class="section" id="backtrack">
+<div class="section" id="backtrack" data-cat="algorithms">
   <div class="section-header"><span class="icon">🔙</span><h2>Backtracking</h2></div>
   <div class="code-wrapper"><pre><code><span class="cmt"># Template</span>
 <span class="kw">def</span> <span class="fn">backtrack</span>(path, choices):
@@ -725,7 +748,7 @@ bisect.<span class="fn">insort</span>(arr, val)           <span class="cmt"># in
 </div>
 
 <!-- ===== BUILT-INS ===== -->
-<div class="section" id="builtins">
+<div class="section" id="builtins" data-cat="tricks">
   <div class="section-header"><span class="icon">🧰</span><h2>Built-in Functions &amp; Tricks</h2></div>
   <div class="code-wrapper"><pre><code><span class="cmt"># Infinity</span>
 <span class="fn">float</span>(<span class="str">"inf"</span>), <span class="fn">float</span>(<span class="str">"-inf"</span>)
@@ -770,7 +793,7 @@ n ^ n          <span class="cmt"># 0 (XOR with self)</span></code></pre></div>
 </div>
 
 <!-- ===== OOP ===== -->
-<div class="section" id="oop">
+<div class="section" id="oop" data-cat="oop">
   <div class="section-header"><span class="icon">🏗️</span><h2>OOP Essentials</h2></div>
   <div class="code-wrapper"><pre><code><span class="kw">class</span> <span class="tp">Animal</span>:
     species_count = <span class="num">0</span>           <span class="cmt"># class variable</span>
@@ -838,7 +861,7 @@ n ^ n          <span class="cmt"># 0 (XOR with self)</span></code></pre></div>
 </div>
 
 <!-- ===== GOTCHAS ===== -->
-<div class="section" id="gotchas">
+<div class="section" id="gotchas" data-cat="tricks">
   <div class="section-header"><span class="icon">⚠️</span><h2>Python Gotchas</h2></div>
   <div class="code-wrapper"><pre><code><span class="cmt"># ❌ Mutable default argument</span>
 <span class="kw">def</span> <span class="fn">bad</span>(lst=[]):       <span class="cmt"># shared across calls!</span>
@@ -887,6 +910,391 @@ fns = [<span class="kw">lambda</span> i=i: i <span class="kw">for</span> i <span
   </div>
 </div>
 
+
+<!-- ===== PYTHON TRICKS (merged from python-tricks.html) ===== -->
+
+<div class="section" id="io-tricks" data-cat="competitive">
+  <div class="section-header"><span class="icon">⌨️</span><h2>I/O &amp; Matrix Input</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cm"># Single integer</span>
+n = <span class="fn">int</span>(<span class="fn">input</span>())
+
+<span class="cm"># Multiple integers on one line</span>
+a, b, c = <span class="fn">map</span>(<span class="fn">int</span>, <span class="fn">input</span>().split())
+
+<span class="cm"># List of integers</span>
+arr = <span class="fn">list</span>(<span class="fn">map</span>(<span class="fn">int</span>, <span class="fn">input</span>().split()))
+
+<span class="cm"># N×M integer matrix</span>
+n, m = <span class="fn">map</span>(<span class="fn">int</span>, <span class="fn">input</span>().split())
+matrix = [<span class="fn">list</span>(<span class="fn">map</span>(<span class="fn">int</span>, <span class="fn">input</span>().split())) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n)]
+
+<span class="cm"># Character grid (no spaces)</span>
+grid = [<span class="fn">list</span>(<span class="fn">input</span>()) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n)]
+
+<span class="cm"># Transpose a matrix</span>
+transposed = [<span class="fn">list</span>(row) <span class="kw">for</span> row <span class="kw">in</span> <span class="fn">zip</span>(*matrix)]
+
+<span class="cm"># Rotate 90° clockwise</span>
+rotated = [<span class="fn">list</span>(row) <span class="kw">for</span> row <span class="kw">in</span> <span class="fn">zip</span>(*matrix[::<span class="num">-1</span>])]
+
+<span class="cm"># Flatten a matrix</span>
+flat = [x <span class="kw">for</span> row <span class="kw">in</span> matrix <span class="kw">for</span> x <span class="kw">in</span> row]
+
+<span class="cm"># Safe matrix init (NOT [[0]*m]*n!)</span>
+mat = [[<span class="num">0</span>] * m <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n)]
+
+<span class="cm"># Fast I/O (competitive programming)</span>
+<span class="kw">import</span> sys
+input = sys.stdin.readline   <span class="cm"># much faster than input()</span>
+
+<span class="cm"># Read all input at once</span>
+data = sys.stdin.read().split()
+idx = <span class="num">0</span>
+n = <span class="fn">int</span>(data[idx]); idx += <span class="num">1</span>
+
+<span class="cm"># Fast output (batch print)</span>
+out = []
+<span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n):
+    out.<span class="fn">append</span>(<span class="fn">str</span>(result))
+<span class="fn">print</span>(<span class="str">"\n"</span>.join(out))</code></pre></div>
+</div>
+
+<div class="section" id="one-liners" data-cat="tricks">
+  <div class="section-header"><span class="icon">⚡</span><h2>One-Liners &amp; Comprehensions</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cm"># List comprehension with condition</span>
+evens = [x <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">20</span>) <span class="kw">if</span> x % <span class="num">2</span> == <span class="num">0</span>]
+
+<span class="cm"># Nested comprehension (flatten)</span>
+flat = [x <span class="kw">for</span> sub <span class="kw">in</span> nested <span class="kw">for</span> x <span class="kw">in</span> sub]
+
+<span class="cm"># Dict / Set comprehension</span>
+sq = {x: x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>)}
+unique_lens = {<span class="fn">len</span>(w) <span class="kw">for</span> w <span class="kw">in</span> words}
+
+<span class="cm"># Ternary</span>
+result = <span class="str">"even"</span> <span class="kw">if</span> n % <span class="num">2</span> == <span class="num">0</span> <span class="kw">else</span> <span class="str">"odd"</span>
+
+<span class="cm"># Swap without temp</span>
+a, b = b, a
+
+<span class="cm"># Chain comparisons</span>
+<span class="kw">if</span> <span class="num">1</span> &lt;= x &lt;= <span class="num">10</span>:  <span class="cm"># Pythonic!</span>
+
+<span class="cm"># Any / All with generator</span>
+has_neg = <span class="fn">any</span>(x &lt; <span class="num">0</span> <span class="kw">for</span> x <span class="kw">in</span> nums)
+all_pos = <span class="fn">all</span>(x &gt; <span class="num">0</span> <span class="kw">for</span> x <span class="kw">in</span> nums)
+
+<span class="cm"># Enumerate with start</span>
+<span class="kw">for</span> i, val <span class="kw">in</span> <span class="fn">enumerate</span>(arr, start=<span class="num">1</span>):
+
+<span class="cm"># Zip longest</span>
+<span class="kw">from</span> itertools <span class="kw">import</span> zip_longest
+<span class="fn">list</span>(<span class="fn">zip_longest</span>(a, b, fillvalue=<span class="num">0</span>))
+
+<span class="cm"># Multiple assignment</span>
+x = y = z = <span class="num">0</span></code></pre></div>
+</div>
+
+<div class="section" id="pt-collections" data-cat="tricks">
+  <div class="section-header"><span class="icon">📦</span><h2>Collections Module</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> collections <span class="kw">import</span> Counter, defaultdict, deque, namedtuple
+
+<span class="cm"># Counter — frequency counting</span>
+c = Counter(<span class="str">"abracadabra"</span>)
+c.most_common(<span class="num">2</span>)       <span class="cm"># [('a', 5), ('b', 2)]</span>
+c + Counter(<span class="str">"abc"</span>)    <span class="cm"># add counts</span>
+c - Counter(<span class="str">"abc"</span>)    <span class="cm"># subtract counts</span>
+
+<span class="cm"># defaultdict — no KeyError</span>
+d = defaultdict(<span class="fn">list</span>)
+d[<span class="str">"key"</span>].<span class="fn">append</span>(<span class="num">1</span>)   <span class="cm"># auto-creates list</span>
+d = defaultdict(<span class="fn">int</span>)
+d[<span class="str">"key"</span>] += <span class="num">1</span>         <span class="cm"># auto-starts at 0</span>
+
+<span class="cm"># deque — O(1) append/pop both ends</span>
+dq = deque([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])
+dq.<span class="fn">appendleft</span>(<span class="num">0</span>)      <span class="cm"># [0, 1, 2, 3]</span>
+dq.<span class="fn">popleft</span>()          <span class="cm"># 0 — O(1) unlike list.pop(0)</span>
+dq.<span class="fn">rotate</span>(<span class="num">1</span>)          <span class="cm"># right rotate</span>
+dq = deque(maxlen=<span class="num">3</span>)  <span class="cm"># fixed-size sliding window</span>
+
+<span class="cm"># namedtuple — lightweight immutable record</span>
+Point = namedtuple(<span class="str">"Point"</span>, [<span class="str">"x"</span>, <span class="str">"y"</span>])
+p = Point(<span class="num">3</span>, <span class="num">4</span>); p.x, p.y  <span class="cm"># 3, 4</span></code></pre></div>
+</div>
+
+<div class="section" id="pt-itertools" data-cat="tricks">
+  <div class="section-header"><span class="icon">🔁</span><h2>Itertools &amp; Functools</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> itertools <span class="kw">import</span> permutations, combinations, product, chain, groupby, accumulate
+
+<span class="cm"># Permutations &amp; Combinations</span>
+<span class="fn">list</span>(permutations([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]))         <span class="cm"># 6 tuples</span>
+<span class="fn">list</span>(combinations([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], <span class="num">2</span>))      <span class="cm"># [(1,2),(1,3),(2,3)]</span>
+
+<span class="cm"># Cartesian product</span>
+<span class="fn">list</span>(product(<span class="str">"AB"</span>, <span class="str">"12"</span>))            <span class="cm"># [('A','1'),('A','2')...]</span>
+<span class="fn">list</span>(product(<span class="fn">range</span>(<span class="num">3</span>), repeat=<span class="num">2</span>))    <span class="cm"># all pairs (0,0)→(2,2)</span>
+
+<span class="cm"># Chain + groupby</span>
+<span class="fn">list</span>(chain([<span class="num">1</span>,<span class="num">2</span>], [<span class="num">3</span>,<span class="num">4</span>]))           <span class="cm"># [1,2,3,4]</span>
+<span class="cm"># groupby needs sorted input!</span>
+<span class="kw">for</span> grade, grp <span class="kw">in</span> groupby(<span class="fn">sorted</span>(students, key=<span class="kw">lambda</span> s: s.grade), key=<span class="kw">lambda</span> s: s.grade):
+    <span class="fn">print</span>(grade, <span class="fn">list</span>(grp))
+
+<span class="cm"># Accumulate — running totals</span>
+<span class="fn">list</span>(accumulate([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>]))   <span class="cm"># [1, 3, 6, 10]</span>
+
+<span class="cm"># ── Functools ──────────────</span>
+<span class="kw">from</span> functools <span class="kw">import</span> lru_cache, reduce, partial, cache
+
+<span class="cm"># LRU Cache / @cache — great for DP memoization</span>
+@lru_cache(maxsize=<span class="kw">None</span>)
+<span class="kw">def</span> <span class="fn">fib</span>(n): <span class="kw">return</span> n <span class="kw">if</span> n &lt; <span class="num">2</span> <span class="kw">else</span> <span class="fn">fib</span>(n-<span class="num">1</span>) + <span class="fn">fib</span>(n-<span class="num">2</span>)
+
+<span class="cm"># reduce</span>
+product_val = reduce(<span class="kw">lambda</span> a, b: a * b, [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>])  <span class="cm"># 24</span>
+
+<span class="cm"># partial — freeze args</span>
+add_ten = partial(<span class="kw">lambda</span> a, b: a + b, <span class="num">10</span>)
+add_ten(<span class="num">5</span>)  <span class="cm"># 15</span></code></pre></div>
+</div>
+
+<div class="section" id="string-tricks" data-cat="tricks">
+  <div class="section-header"><span class="icon">🔤</span><h2>String Tricks</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cm"># Reverse &amp; palindrome check</span>
+s[::<span class="num">-1</span>]
+s == s[::<span class="num">-1</span>]
+
+<span class="cm"># Split &amp; join</span>
+words = s.<span class="fn">split</span>()
+<span class="str">" "</span>.<span class="fn">join</span>(words)
+<span class="str">","</span>.<span class="fn">join</span>(<span class="fn">map</span>(<span class="fn">str</span>, nums))   <span class="cm"># "1,2,3"</span>
+
+<span class="cm"># f-string formatting</span>
+f<span class="str">"{val:.2f}"</span>               <span class="cm"># "3.14"</span>
+f<span class="str">"{val:08b}"</span>               <span class="cm"># "00001010" (binary)</span>
+f<span class="str">"{val:,}"</span>                 <span class="cm"># "1,000,000"</span>
+f<span class="str">"{name!r}"</span>                <span class="cm"># repr: "'hello'"</span>
+f<span class="str">"{val:&gt;10}"</span>               <span class="cm"># right-align, width 10</span>
+f<span class="str">"{val:^10}"</span>               <span class="cm"># center-align</span>
+
+<span class="cm"># Character ↔ int</span>
+<span class="fn">ord</span>(<span class="str">'a'</span>)                   <span class="cm"># 97</span>
+<span class="fn">chr</span>(<span class="num">97</span>)                    <span class="cm"># 'a'</span>
+<span class="fn">chr</span>(<span class="fn">ord</span>(<span class="str">'a'</span>) + <span class="num">3</span>)          <span class="cm"># 'd'</span>
+
+<span class="cm"># Useful checks</span>
+s.<span class="fn">isalpha</span>()  s.<span class="fn">isdigit</span>()  s.<span class="fn">isalnum</span>()  s.<span class="fn">isspace</span>()
+
+<span class="cm"># Translate table (fast char replacement)</span>
+table = <span class="fn">str</span>.maketrans(<span class="str">"aeiou"</span>, <span class="str">"12345"</span>)
+<span class="str">"hello"</span>.<span class="fn">translate</span>(table)   <span class="cm"># "h2ll4"</span></code></pre></div>
+</div>
+
+<div class="section" id="bitwise" data-cat="competitive">
+  <div class="section-header"><span class="icon">🔢</span><h2>Bitwise Tricks</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cm"># Operators</span>
+a &amp; b   <span class="cm"># AND      a | b  # OR</span>
+a ^ b   <span class="cm"># XOR     ~a     # NOT</span>
+a &lt;&lt; n  <span class="cm"># ×2^n    a >> n # ÷2^n</span>
+
+<span class="cm"># Check power of 2</span>
+n &gt; <span class="num">0</span> <span class="kw">and</span> (n &amp; (n - <span class="num">1</span>)) == <span class="num">0</span>
+
+<span class="cm"># Bit manipulation</span>
+<span class="fn">bool</span>(n &amp; (<span class="num">1</span> &lt;&lt; i))      <span class="cm"># check bit i</span>
+n | (<span class="num">1</span> &lt;&lt; i)            <span class="cm"># set bit i</span>
+n &amp; ~(<span class="num">1</span> &lt;&lt; i)           <span class="cm"># clear bit i</span>
+n ^ (<span class="num">1</span> &lt;&lt; i)            <span class="cm"># toggle bit i</span>
+<span class="fn">bin</span>(n).<span class="fn">count</span>(<span class="str">"1"</span>)       <span class="cm"># count set bits</span>
+
+<span class="cm"># XOR cancellation trick</span>
+a ^ a == <span class="num">0</span>             <span class="cm"># self-cancel → find unique!</span>
+a ^ b ^ b == a         <span class="cm"># undo XOR</span>
+
+<span class="cm"># Find missing number (1..n)</span>
+missing = <span class="num">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, n+<span class="num">1</span>): missing ^= i
+<span class="kw">for</span> x <span class="kw">in</span> arr:          missing ^= x</code></pre></div>
+</div>
+
+<div class="section" id="sort-tricks" data-cat="tricks">
+  <div class="section-header"><span class="icon">🔀</span><h2>Sorting &amp; Heap Tricks</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cm"># Sort by key</span>
+arr.<span class="fn">sort</span>(key=<span class="kw">lambda</span> x: x[<span class="num">1</span>])
+arr.<span class="fn">sort</span>(key=<span class="kw">lambda</span> x: (-x[<span class="num">1</span>], x[<span class="num">0</span>]))  <span class="cm"># desc then asc</span>
+
+<span class="cm"># Custom comparator</span>
+<span class="kw">from</span> functools <span class="kw">import</span> cmp_to_key
+arr.<span class="fn">sort</span>(key=cmp_to_key(<span class="kw">lambda</span> a, b: -<span class="num">1</span> <span class="kw">if</span> a+b &gt; b+a <span class="kw">else</span> <span class="num">1</span>))
+
+<span class="cm"># Min-heap</span>
+<span class="kw">import</span> heapq
+heapq.<span class="fn">heapify</span>(arr)
+heapq.<span class="fn">heappush</span>(arr, val)
+smallest = heapq.<span class="fn">heappop</span>(arr)
+
+<span class="cm"># Max-heap (negate values)</span>
+heapq.<span class="fn">heappush</span>(heap, -val)
+largest = -heapq.<span class="fn">heappop</span>(heap)
+
+<span class="cm"># K largest / smallest</span>
+heapq.<span class="fn">nlargest</span>(<span class="num">3</span>, arr)
+heapq.<span class="fn">nsmallest</span>(<span class="num">3</span>, arr, key=<span class="kw">lambda</span> x: x[<span class="num">1</span>])
+
+<span class="cm"># Bisect — O(log n) insert into sorted list</span>
+<span class="kw">import</span> bisect
+bisect.<span class="fn">bisect_left</span>(arr, target)   <span class="cm"># leftmost position</span>
+bisect.<span class="fn">bisect_right</span>(arr, target)  <span class="cm"># rightmost position</span>
+bisect.<span class="fn">insort</span>(arr, val)            <span class="cm"># insert in order</span></code></pre></div>
+</div>
+
+<div class="section" id="star-unpacking" data-cat="tricks">
+  <div class="section-header"><span class="icon">🌟</span><h2>Star Unpacking &amp; Walrus</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cm"># Star unpacking</span>
+first, *rest = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]
+first, *mid, last = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]
+
+<span class="cm"># Merge dicts</span>
+merged = {**dict1, **dict2}    <span class="cm"># dict2 wins on conflicts</span>
+merged = dict1 | dict2         <span class="cm"># Python 3.9+</span>
+
+<span class="cm"># Spread into function args</span>
+<span class="fn">func</span>(*args, **kwargs)
+
+<span class="cm"># Walrus operator := (Python 3.8+)</span>
+<span class="kw">if</span> (n := <span class="fn">len</span>(arr)) &gt; <span class="num">10</span>:
+    <span class="fn">print</span>(f<span class="str">"Large: {n}"</span>)       <span class="cm"># n reused without recompute</span>
+
+<span class="kw">while</span> (line := <span class="fn">input</span>()) != <span class="str">"quit"</span>:
+    <span class="fn">process</span>(line)
+
+[y <span class="kw">for</span> x <span class="kw">in</span> data <span class="kw">if</span> (y := <span class="fn">transform</span>(x)) &gt; <span class="num">0</span>]</code></pre></div>
+</div>
+
+<div class="section" id="ds-patterns" data-cat="interview">
+  <div class="section-header"><span class="icon">🗂️</span><h2>Data Structure Patterns</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cm"># Stack (use list)</span>
+stack = []; stack.<span class="fn">append</span>(x); stack.<span class="fn">pop</span>(); stack[-<span class="num">1</span>]  <span class="cm"># peek</span>
+
+<span class="cm"># Queue (use deque for O(1) left pop)</span>
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+q = deque()
+q.<span class="fn">append</span>(x)     <span class="cm"># enqueue right</span>
+q.<span class="fn">popleft</span>()     <span class="cm"># dequeue left — O(1)</span>
+
+<span class="cm"># Set operations</span>
+a | b  <span class="cm"># union    a &amp; b  # intersect</span>
+a - b  <span class="cm"># diff     a ^ b  # symmetric diff</span>
+a &lt;= b <span class="cm"># subset check</span>
+
+<span class="cm"># Dict patterns</span>
+d.<span class="fn">get</span>(key, default)
+d.<span class="fn">setdefault</span>(key, []).<span class="fn">append</span>(v)
+d.<span class="fn">pop</span>(key, <span class="kw">None</span>)
+{v: k <span class="kw">for</span> k, v <span class="kw">in</span> d.items()}  <span class="cm"># invert dict</span>
+
+<span class="cm"># SortedList (pip install sortedcontainers)</span>
+<span class="kw">from</span> sortedcontainers <span class="kw">import</span> SortedList
+sl = SortedList([<span class="num">3</span>, <span class="num">1</span>, <span class="num">2</span>])
+sl.<span class="fn">add</span>(<span class="num">4</span>)              <span class="cm"># O(log n)</span>
+sl.<span class="fn">bisect_left</span>(<span class="num">3</span>)     <span class="cm"># find index</span></code></pre></div>
+</div>
+
+<div class="section" id="interview-patterns" data-cat="interview">
+  <div class="section-header"><span class="icon">🎯</span><h2>Common Interview Patterns</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cm"># Pattern → When to use</span>
+Two Pointers     <span class="cm">sorted array / pair sum / remove dups</span>
+Sliding Window   <span class="cm">subarray/substring of size k or variable</span>
+HashMap          <span class="cm">frequency count / two-sum / anagram check</span>
+Binary Search    <span class="cm">sorted data / min-max answer search</span>
+BFS              <span class="cm">shortest path / level-order / closest</span>
+DFS              <span class="cm">all paths / cycle detect / connected</span>
+DP               <span class="cm">overlapping subproblems / optimal substructure</span>
+Backtracking     <span class="cm">all permutations / combinations / decision tree</span>
+Monotonic Stack  <span class="cm">next greater/smaller element</span>
+Union-Find       <span class="cm">connected components / cycle detection</span>
+Trie             <span class="cm">prefix search / autocomplete / word exists</span>
+Heap / PQ        <span class="cm">k-th largest / merge k lists / streaming median</span>
+
+<span class="cm"># Two pointers template</span>
+l, r = <span class="num">0</span>, n - <span class="num">1</span>
+<span class="kw">while</span> l &lt; r:
+    <span class="kw">if</span> arr[l] + arr[r] == target: <span class="kw">return</span> [l, r]
+    <span class="kw">elif</span> arr[l] + arr[r] &lt; target: l += <span class="num">1</span>
+    <span class="kw">else</span>: r -= <span class="num">1</span>
+
+<span class="cm"># Sliding window template</span>
+l = total = <span class="num">0</span>; best = <span class="fn">float</span>(<span class="str">"inf"</span>)
+<span class="kw">for</span> r <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(arr)):
+    total += arr[r]
+    <span class="kw">while</span> total &gt;= target:
+        best = <span class="fn">min</span>(best, r - l + <span class="num">1</span>); total -= arr[l]; l += <span class="num">1</span>
+
+<span class="cm"># Binary search on answer</span>
+lo, hi = <span class="num">0</span>, <span class="num">10</span>**<span class="num">9</span>
+<span class="kw">while</span> lo &lt; hi:
+    mid = (lo + hi) // <span class="num">2</span>
+    <span class="kw">if</span> <span class="fn">condition</span>(mid): hi = mid
+    <span class="kw">else</span>: lo = mid + <span class="num">1</span></code></pre></div>
+</div>
+
+<div class="section" id="py-gotchas" data-cat="tricks">
+  <div class="section-header"><span class="icon">⚠️</span><h2>Common Pitfalls</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cm"># ❌ Mutable default argument (shared across calls)</span>
+<span class="kw">def</span> <span class="fn">bad</span>(lst=[]): lst.<span class="fn">append</span>(<span class="num">1</span>)  <span class="cm"># always same list!</span>
+<span class="cm"># ✅ Fix:  def good(lst=None): lst = lst or []</span>
+
+<span class="cm"># ❌ [[0]*m]*n creates N references to SAME inner list</span>
+grid = [[<span class="num">0</span>] * <span class="num">3</span>] * <span class="num">3</span>  <span class="cm"># grid[0][0]=1 changes ALL rows!</span>
+<span class="cm"># ✅ Fix:  [[0]*m for _ in range(n)]</span>
+
+<span class="cm"># ❌ Removing items while iterating</span>
+<span class="kw">for</span> item <span class="kw">in</span> lst:
+    <span class="kw">if</span> cond: lst.<span class="fn">remove</span>(item)  <span class="cm"># skips elements!</span>
+<span class="cm"># ✅ Fix:  lst = [x for x in lst if not cond]</span>
+
+<span class="cm"># ❌ Use == not is for value comparison</span>
+a = <span class="num">257</span>; b = <span class="num">257</span>
+a <span class="kw">is</span> b  <span class="cm"># May be False — integers &gt;256 not cached</span>
+
+<span class="cm"># ❌ Float precision</span>
+<span class="num">0.1</span> + <span class="num">0.2</span> == <span class="num">0.3</span>  <span class="cm"># False!</span>
+<span class="cm"># ✅  abs(0.1 + 0.2 - 0.3) &lt; 1e-9</span>
+
+<span class="cm"># ❌ Late binding closures</span>
+fns = [<span class="kw">lambda</span>: i <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>)]  <span class="cm"># all return 2!</span>
+<span class="cm"># ✅  lambda i=i: i  (capture with default arg)</span>
+
+<span class="cm"># Recursion limit fix (competitive programming)</span>
+<span class="kw">import</span> sys; sys.<span class="fn">setrecursionlimit</span>(<span class="num">10</span>**<span class="num">6</span>)</code></pre></div>
+</div>
+
+<div class="section" id="quick-ref" data-cat="tricks">
+  <div class="section-header"><span class="icon">📋</span><h2>Quick Reference</h2></div>
+  <div class="code-wrapper"><pre><code>max(arr)                         <span class="cm"># max value</span>
+min(arr)                         <span class="cm"># min value</span>
+sum(arr)                         <span class="cm"># sum</span>
+sorted(arr, reverse=True)        <span class="cm"># desc sort</span>
+list(set(arr))                   <span class="cm"># unique (unordered)</span>
+list(dict.fromkeys(arr))         <span class="cm"># unique (ordered)</span>
+[x for row in mat for x in row] <span class="cm"># flatten 2D</span>
+Counter(arr)                     <span class="cm"># frequency map</span>
+float('inf')                     <span class="cm"># infinity</span>
+float('-inf')                    <span class="cm"># negative infinity</span>
+sys.maxsize                      <span class="cm"># max int</span>
+if not arr:                      <span class="cm"># check empty</span>
+list(map(int, strs))             <span class="cm"># map to int</span>
+[int(d) for d in str(n)]        <span class="cm"># digits of number</span>
+math.gcd(a, b)                   <span class="cm"># GCD</span>
+math.lcm(a, b)                   <span class="cm"># LCM (Python 3.9+)</span>
+-(-a // b)                       <span class="cm"># ceiling division</span>
+math.isqrt(n)                    <span class="cm"># integer square root</span>
+divmod(a, b)                     <span class="cm"># (quotient, remainder)</span>
+abs(x)                           <span class="cm"># absolute value</span>
+round(x, 2)                      <span class="cm"># round to 2 decimals</span></code></pre></div>
+</div>
+
 </div><!-- /container -->
 
 <button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
@@ -909,6 +1317,26 @@ document.querySelectorAll('.code-wrapper').forEach(w => {
 });
 const backBtn = document.querySelector('.back-top');
 window.addEventListener('scroll', () => backBtn.classList.toggle('visible', window.scrollY > 400));
+// ── Filter bar functionality ──
+(function() {
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      const sections = document.querySelectorAll('.section[data-cat]');
+      let visible = 0;
+      sections.forEach(sec => {
+        const show = filter === 'all' || sec.dataset.cat === filter;
+        sec.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      // Also tell sheet-grid.js to re-layout
+      if (typeof window.refreshGrid === 'function') window.refreshGrid();
+    });
+  });
+})();
+
 </script>
 <script src="spotlight.js"></script>
 <script src="sheet-grid.js"></script>
