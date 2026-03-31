@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java + Spring Boot Development Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ Java + Spring Boot</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+
+<div class="container">
+
+<div class="hero">
+  <h1>Java + Spring Boot Cheatsheet</h1>
+  <p class="subtitle">Complete development reference</p>
+  <span class="badge">Development</span>
+</div>
+
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#project">Project Setup</a>
+    <a href="#annotations">Core Annotations</a>
+    <a href="#rest">REST Controllers</a>
+    <a href="#jpa">JPA &amp; Repositories</a>
+    <a href="#services">Services &amp; DI</a>
+    <a href="#validation">Validation</a>
+    <a href="#exceptions">Exception Handling</a>
+    <a href="#security">Spring Security</a>
+    <a href="#config">Configuration</a>
+    <a href="#async">Async &amp; Scheduling</a>
+    <a href="#testing">Testing</a>
+    <a href="#records">Java Records &amp; Modern Java</a>
+    <a href="#docker">Docker &amp; Deployment</a>
+    <a href="#patterns">Common Patterns</a>
+  </div>
+</div>
+
+<!-- ===== PROJECT SETUP ===== -->
+<div class="section" id="project">
+  <div class="section-header"><span class="icon">🏗️</span><h2>Project Setup</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Spring Initializr: https://start.spring.io</span>
+<span class="cmt">// Common dependencies:</span>
+<span class="cmt">//   - Spring Web</span>
+<span class="cmt">//   - Spring Data JPA</span>
+<span class="cmt">//   - Spring Security</span>
+<span class="cmt">//   - Spring Validation</span>
+<span class="cmt">//   - PostgreSQL / H2 Driver</span>
+<span class="cmt">//   - Lombok</span>
+
+<span class="cmt">// Project structure</span>
+src/main/java/com/example/demo/
+├── DemoApplication.java          <span class="cmt">// @SpringBootApplication</span>
+├── controller/
+│   └── UserController.java
+├── service/
+│   └── UserService.java
+├── repository/
+│   └── UserRepository.java
+├── model/
+│   └── User.java
+├── dto/
+│   ├── CreateUserRequest.java
+│   └── UserResponse.java
+├── exception/
+│   └── GlobalExceptionHandler.java
+└── config/
+    └── SecurityConfig.java
+
+src/main/resources/
+├── application.yml
+└── application-dev.yml</code></pre></div>
+
+  <h3>pom.xml Essentials</h3>
+  <div class="code-wrapper"><pre><code><span class="cmt">&lt;!-- Spring Boot Parent --&gt;</span>
+&lt;<span class="kw">parent</span>&gt;
+    &lt;<span class="kw">groupId</span>&gt;org.springframework.boot&lt;/<span class="kw">groupId</span>&gt;
+    &lt;<span class="kw">artifactId</span>&gt;spring-boot-starter-parent&lt;/<span class="kw">artifactId</span>&gt;
+    &lt;<span class="kw">version</span>&gt;<span class="num">3.3.0</span>&lt;/<span class="kw">version</span>&gt;
+&lt;/<span class="kw">parent</span>&gt;
+
+&lt;<span class="kw">dependencies</span>&gt;
+    &lt;<span class="kw">dependency</span>&gt;
+        &lt;<span class="kw">groupId</span>&gt;org.springframework.boot&lt;/<span class="kw">groupId</span>&gt;
+        &lt;<span class="kw">artifactId</span>&gt;spring-boot-starter-web&lt;/<span class="kw">artifactId</span>&gt;
+    &lt;/<span class="kw">dependency</span>&gt;
+    &lt;<span class="kw">dependency</span>&gt;
+        &lt;<span class="kw">groupId</span>&gt;org.springframework.boot&lt;/<span class="kw">groupId</span>&gt;
+        &lt;<span class="kw">artifactId</span>&gt;spring-boot-starter-data-jpa&lt;/<span class="kw">artifactId</span>&gt;
+    &lt;/<span class="kw">dependency</span>&gt;
+    &lt;<span class="kw">dependency</span>&gt;
+        &lt;<span class="kw">groupId</span>&gt;org.projectlombok&lt;/<span class="kw">groupId</span>&gt;
+        &lt;<span class="kw">artifactId</span>&gt;lombok&lt;/<span class="kw">artifactId</span>&gt;
+        &lt;<span class="kw">optional</span>&gt;true&lt;/<span class="kw">optional</span>&gt;
+    &lt;/<span class="kw">dependency</span>&gt;
+&lt;/<span class="kw">dependencies</span>&gt;</code></pre></div>
+</div>
+
+<!-- ===== CORE ANNOTATIONS ===== -->
+<div class="section" id="annotations">
+  <div class="section-header"><span class="icon">🏷️</span><h2>Core Annotations</h2></div>
+  <table>
+    <tr><th>Annotation</th><th>Purpose</th></tr>
+    <tr><td><code>@SpringBootApplication</code></td><td>Main class — combines @Configuration + @EnableAutoConfiguration + @ComponentScan</td></tr>
+    <tr><td><code>@RestController</code></td><td>REST controller — @Controller + @ResponseBody</td></tr>
+    <tr><td><code>@Service</code></td><td>Business logic layer bean</td></tr>
+    <tr><td><code>@Repository</code></td><td>Data access layer bean (adds exception translation)</td></tr>
+    <tr><td><code>@Component</code></td><td>Generic Spring-managed bean</td></tr>
+    <tr><td><code>@Configuration</code></td><td>Java-based configuration class</td></tr>
+    <tr><td><code>@Bean</code></td><td>Method-level — registers return value as a bean</td></tr>
+    <tr><td><code>@Autowired</code></td><td>Dependency injection (prefer constructor injection)</td></tr>
+    <tr><td><code>@Value("${key}")</code></td><td>Inject property value</td></tr>
+    <tr><td><code>@Qualifier("name")</code></td><td>Disambiguate beans of the same type</td></tr>
+    <tr><td><code>@Primary</code></td><td>Default bean when multiple candidates exist</td></tr>
+    <tr><td><code>@Profile("dev")</code></td><td>Activate bean only in specific profile</td></tr>
+    <tr><td><code>@ConditionalOnProperty</code></td><td>Bean creation based on configuration property</td></tr>
+    <tr><td><code>@Transactional</code></td><td>Transaction management on method/class</td></tr>
+  </table>
+</div>
+
+<!-- ===== REST CONTROLLERS ===== -->
+<div class="section" id="rest">
+  <div class="section-header"><span class="icon">🌐</span><h2>REST Controllers</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">@RestController</span>
+<span class="kw">@RequestMapping</span>(<span class="str">"/api/v1/users"</span>)
+<span class="kw">@RequiredArgsConstructor</span>  <span class="cmt">// Lombok — constructor injection</span>
+<span class="kw">public class</span> <span class="tp">UserController</span> {
+
+    <span class="kw">private final</span> <span class="tp">UserService</span> userService;
+
+    <span class="cmt">// GET /api/v1/users</span>
+    <span class="kw">@GetMapping</span>
+    <span class="kw">public</span> <span class="tp">List</span>&lt;<span class="tp">UserResponse</span>&gt; <span class="fn">getAll</span>() {
+        <span class="kw">return</span> userService.<span class="fn">findAll</span>();
+    }
+
+    <span class="cmt">// GET /api/v1/users/{id}</span>
+    <span class="kw">@GetMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">UserResponse</span>&gt; <span class="fn">getById</span>(<span class="kw">@PathVariable</span> <span class="tp">Long</span> id) {
+        <span class="kw">return</span> <span class="tp">ResponseEntity</span>.<span class="fn">ok</span>(userService.<span class="fn">findById</span>(id));
+    }
+
+    <span class="cmt">// GET /api/v1/users?status=ACTIVE&amp;page=0&amp;size=10</span>
+    <span class="kw">@GetMapping</span>
+    <span class="kw">public</span> <span class="tp">Page</span>&lt;<span class="tp">UserResponse</span>&gt; <span class="fn">search</span>(
+        <span class="kw">@RequestParam</span>(defaultValue = <span class="str">"ACTIVE"</span>) <span class="tp">String</span> status,
+        <span class="kw">@RequestParam</span>(defaultValue = <span class="str">"0"</span>) <span class="kw">int</span> page,
+        <span class="kw">@RequestParam</span>(defaultValue = <span class="str">"10"</span>) <span class="kw">int</span> size
+    ) {
+        <span class="kw">return</span> userService.<span class="fn">search</span>(status, PageRequest.<span class="fn">of</span>(page, size));
+    }
+
+    <span class="cmt">// POST /api/v1/users</span>
+    <span class="kw">@PostMapping</span>
+    <span class="kw">@ResponseStatus</span>(HttpStatus.CREATED)
+    <span class="kw">public</span> <span class="tp">UserResponse</span> <span class="fn">create</span>(<span class="kw">@Valid @RequestBody</span> <span class="tp">CreateUserRequest</span> req) {
+        <span class="kw">return</span> userService.<span class="fn">create</span>(req);
+    }
+
+    <span class="cmt">// PUT /api/v1/users/{id}</span>
+    <span class="kw">@PutMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">public</span> <span class="tp">UserResponse</span> <span class="fn">update</span>(<span class="kw">@PathVariable</span> <span class="tp">Long</span> id,
+                               <span class="kw">@Valid @RequestBody</span> <span class="tp">UpdateUserRequest</span> req) {
+        <span class="kw">return</span> userService.<span class="fn">update</span>(id, req);
+    }
+
+    <span class="cmt">// DELETE /api/v1/users/{id}</span>
+    <span class="kw">@DeleteMapping</span>(<span class="str">"/{id}"</span>)
+    <span class="kw">@ResponseStatus</span>(HttpStatus.NO_CONTENT)
+    <span class="kw">public void</span> <span class="fn">delete</span>(<span class="kw">@PathVariable</span> <span class="tp">Long</span> id) {
+        userService.<span class="fn">delete</span>(id);
+    }
+}</code></pre></div>
+</div>
+
+<!-- ===== JPA ===== -->
+<div class="section" id="jpa">
+  <div class="section-header"><span class="icon">🗄️</span><h2>JPA &amp; Repositories</h2></div>
+
+  <h3>Entity</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">@Entity</span>
+<span class="kw">@Table</span>(name = <span class="str">"users"</span>)
+<span class="kw">@Data</span>                  <span class="cmt">// Lombok: getters, setters, toString, equals, hashCode</span>
+<span class="kw">@Builder</span>
+<span class="kw">@NoArgsConstructor</span>
+<span class="kw">@AllArgsConstructor</span>
+<span class="kw">public class</span> <span class="tp">User</span> {
+
+    <span class="kw">@Id</span>
+    <span class="kw">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)
+    <span class="kw">private</span> <span class="tp">Long</span> id;
+
+    <span class="kw">@Column</span>(nullable = <span class="kw">false</span>, length = <span class="num">100</span>)
+    <span class="kw">private</span> <span class="tp">String</span> name;
+
+    <span class="kw">@Column</span>(unique = <span class="kw">true</span>, nullable = <span class="kw">false</span>)
+    <span class="kw">private</span> <span class="tp">String</span> email;
+
+    <span class="kw">@Enumerated</span>(EnumType.STRING)
+    <span class="kw">private</span> <span class="tp">Status</span> status = Status.ACTIVE;
+
+    <span class="kw">@OneToMany</span>(mappedBy = <span class="str">"user"</span>, cascade = CascadeType.ALL, orphanRemoval = <span class="kw">true</span>)
+    <span class="kw">private</span> <span class="tp">List</span>&lt;<span class="tp">Post</span>&gt; posts = <span class="kw">new</span> <span class="tp">ArrayList</span>&lt;&gt;();
+
+    <span class="kw">@ManyToOne</span>(fetch = FetchType.LAZY)
+    <span class="kw">@JoinColumn</span>(name = <span class="str">"department_id"</span>)
+    <span class="kw">private</span> <span class="tp">Department</span> department;
+
+    <span class="kw">@CreatedDate</span>
+    <span class="kw">private</span> <span class="tp">LocalDateTime</span> createdAt;
+
+    <span class="kw">@LastModifiedDate</span>
+    <span class="kw">private</span> <span class="tp">LocalDateTime</span> updatedAt;
+}</code></pre></div>
+
+  <h3>Repository</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">@Repository</span>
+<span class="kw">public interface</span> <span class="tp">UserRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;<span class="tp">User</span>, <span class="tp">Long</span>&gt; {
+
+    <span class="cmt">// Derived query methods</span>
+    <span class="tp">Optional</span>&lt;<span class="tp">User</span>&gt; <span class="fn">findByEmail</span>(<span class="tp">String</span> email);
+    <span class="tp">List</span>&lt;<span class="tp">User</span>&gt; <span class="fn">findByStatus</span>(<span class="tp">Status</span> status);
+    <span class="tp">List</span>&lt;<span class="tp">User</span>&gt; <span class="fn">findByNameContainingIgnoreCase</span>(<span class="tp">String</span> name);
+    <span class="kw">boolean</span> <span class="fn">existsByEmail</span>(<span class="tp">String</span> email);
+    <span class="kw">long</span> <span class="fn">countByStatus</span>(<span class="tp">Status</span> status);
+
+    <span class="cmt">// @Query (JPQL)</span>
+    <span class="kw">@Query</span>(<span class="str">"SELECT u FROM User u WHERE u.status = :status ORDER BY u.createdAt DESC"</span>)
+    <span class="tp">Page</span>&lt;<span class="tp">User</span>&gt; <span class="fn">findActiveUsers</span>(<span class="kw">@Param</span>(<span class="str">"status"</span>) <span class="tp">Status</span> status, <span class="tp">Pageable</span> pageable);
+
+    <span class="cmt">// Native query</span>
+    <span class="kw">@Query</span>(value = <span class="str">"SELECT * FROM users WHERE email LIKE %:domain"</span>, nativeQuery = <span class="kw">true</span>)
+    <span class="tp">List</span>&lt;<span class="tp">User</span>&gt; <span class="fn">findByEmailDomain</span>(<span class="kw">@Param</span>(<span class="str">"domain"</span>) <span class="tp">String</span> domain);
+
+    <span class="cmt">// Modifying query</span>
+    <span class="kw">@Modifying</span>
+    <span class="kw">@Query</span>(<span class="str">"UPDATE User u SET u.status = :status WHERE u.id = :id"</span>)
+    <span class="kw">int</span> <span class="fn">updateStatus</span>(<span class="kw">@Param</span>(<span class="str">"id"</span>) <span class="tp">Long</span> id, <span class="kw">@Param</span>(<span class="str">"status"</span>) <span class="tp">Status</span> status);
+}
+
+<span class="cmt">// JpaRepository provides:</span>
+<span class="cmt">// save(), saveAll(), findById(), findAll(), findAll(Pageable),</span>
+<span class="cmt">// deleteById(), delete(), count(), existsById()</span></code></pre></div>
+</div>
+
+<!-- ===== SERVICES ===== -->
+<div class="section" id="services">
+  <div class="section-header"><span class="icon">⚙️</span><h2>Services &amp; DI</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">@Service</span>
+<span class="kw">@RequiredArgsConstructor</span>
+<span class="kw">@Transactional</span>(readOnly = <span class="kw">true</span>)
+<span class="kw">public class</span> <span class="tp">UserService</span> {
+
+    <span class="kw">private final</span> <span class="tp">UserRepository</span> userRepo;
+    <span class="kw">private final</span> <span class="tp">UserMapper</span> mapper;
+
+    <span class="kw">public</span> <span class="tp">List</span>&lt;<span class="tp">UserResponse</span>&gt; <span class="fn">findAll</span>() {
+        <span class="kw">return</span> userRepo.<span class="fn">findAll</span>()
+            .<span class="fn">stream</span>()
+            .<span class="fn">map</span>(mapper::toResponse)
+            .<span class="fn">toList</span>();
+    }
+
+    <span class="kw">public</span> <span class="tp">UserResponse</span> <span class="fn">findById</span>(<span class="tp">Long</span> id) {
+        <span class="kw">return</span> userRepo.<span class="fn">findById</span>(id)
+            .<span class="fn">map</span>(mapper::toResponse)
+            .<span class="fn">orElseThrow</span>(() -> <span class="kw">new</span> <span class="tp">ResourceNotFoundException</span>(<span class="str">"User"</span>, id));
+    }
+
+    <span class="kw">@Transactional</span>
+    <span class="kw">public</span> <span class="tp">UserResponse</span> <span class="fn">create</span>(<span class="tp">CreateUserRequest</span> req) {
+        <span class="kw">if</span> (userRepo.<span class="fn">existsByEmail</span>(req.<span class="fn">email</span>())) {
+            <span class="kw">throw new</span> <span class="tp">DuplicateException</span>(<span class="str">"Email already exists"</span>);
+        }
+        <span class="tp">User</span> user = mapper.<span class="fn">toEntity</span>(req);
+        <span class="kw">return</span> mapper.<span class="fn">toResponse</span>(userRepo.<span class="fn">save</span>(user));
+    }
+
+    <span class="kw">@Transactional</span>
+    <span class="kw">public void</span> <span class="fn">delete</span>(<span class="tp">Long</span> id) {
+        <span class="kw">if</span> (!userRepo.<span class="fn">existsById</span>(id)) {
+            <span class="kw">throw new</span> <span class="tp">ResourceNotFoundException</span>(<span class="str">"User"</span>, id);
+        }
+        userRepo.<span class="fn">deleteById</span>(id);
+    }
+}
+
+<span class="cmt">// Constructor Injection (preferred — no @Autowired needed with single constructor)</span>
+<span class="kw">@Service</span>
+<span class="kw">public class</span> <span class="tp">OrderService</span> {
+    <span class="kw">private final</span> <span class="tp">OrderRepo</span> orderRepo;
+    <span class="kw">private final</span> <span class="tp">PaymentService</span> paymentService;
+
+    <span class="kw">public</span> <span class="fn">OrderService</span>(<span class="tp">OrderRepo</span> orderRepo, <span class="tp">PaymentService</span> paymentService) {
+        <span class="kw">this</span>.orderRepo = orderRepo;
+        <span class="kw">this</span>.paymentService = paymentService;
+    }
+}</code></pre></div>
+</div>
+
+<!-- ===== VALIDATION ===== -->
+<div class="section" id="validation">
+  <div class="section-header"><span class="icon">✅</span><h2>Validation</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// DTO with validation</span>
+<span class="kw">public record</span> <span class="tp">CreateUserRequest</span>(
+    <span class="kw">@NotBlank</span>(message = <span class="str">"Name is required"</span>)
+    <span class="kw">@Size</span>(min = <span class="num">2</span>, max = <span class="num">100</span>)
+    <span class="tp">String</span> name,
+
+    <span class="kw">@NotBlank</span>
+    <span class="kw">@Email</span>(message = <span class="str">"Invalid email"</span>)
+    <span class="tp">String</span> email,
+
+    <span class="kw">@NotNull</span>
+    <span class="kw">@Min</span>(<span class="num">18</span>) <span class="kw">@Max</span>(<span class="num">150</span>)
+    <span class="tp">Integer</span> age,
+
+    <span class="kw">@Pattern</span>(regexp = <span class="str">"^\\+?[1-9]\\d{1,14}$"</span>)
+    <span class="tp">String</span> phone
+) {}
+
+<span class="cmt">// Common validation annotations:</span>
+<span class="cmt">// @NotNull, @NotBlank, @NotEmpty</span>
+<span class="cmt">// @Size(min, max), @Min, @Max</span>
+<span class="cmt">// @Email, @Pattern(regexp)</span>
+<span class="cmt">// @Past, @Future, @PastOrPresent</span>
+<span class="cmt">// @Positive, @PositiveOrZero, @Negative</span>
+
+<span class="cmt">// Use @Valid in controller to trigger validation</span>
+<span class="kw">@PostMapping</span>
+<span class="kw">public</span> <span class="tp">UserResponse</span> <span class="fn">create</span>(<span class="kw">@Valid @RequestBody</span> <span class="tp">CreateUserRequest</span> req) {}</code></pre></div>
+</div>
+
+<!-- ===== EXCEPTION HANDLING ===== -->
+<div class="section" id="exceptions">
+  <div class="section-header"><span class="icon">🚨</span><h2>Exception Handling</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Custom Exception</span>
+<span class="kw">@ResponseStatus</span>(HttpStatus.NOT_FOUND)
+<span class="kw">public class</span> <span class="tp">ResourceNotFoundException</span> <span class="kw">extends</span> <span class="tp">RuntimeException</span> {
+    <span class="kw">public</span> <span class="fn">ResourceNotFoundException</span>(<span class="tp">String</span> resource, <span class="tp">Object</span> id) {
+        <span class="kw">super</span>(resource + <span class="str">" not found with id: "</span> + id);
+    }
+}
+
+<span class="cmt">// Global Exception Handler</span>
+<span class="kw">@RestControllerAdvice</span>
+<span class="kw">@Slf4j</span>
+<span class="kw">public class</span> <span class="tp">GlobalExceptionHandler</span> {
+
+    <span class="cmt">// Handle specific exception</span>
+    <span class="kw">@ExceptionHandler</span>(<span class="tp">ResourceNotFoundException</span>.<span class="kw">class</span>)
+    <span class="kw">@ResponseStatus</span>(HttpStatus.NOT_FOUND)
+    <span class="kw">public</span> <span class="tp">ErrorResponse</span> <span class="fn">handleNotFound</span>(<span class="tp">ResourceNotFoundException</span> ex) {
+        <span class="kw">return new</span> <span class="tp">ErrorResponse</span>(<span class="str">"NOT_FOUND"</span>, ex.<span class="fn">getMessage</span>());
+    }
+
+    <span class="cmt">// Handle validation errors</span>
+    <span class="kw">@ExceptionHandler</span>(<span class="tp">MethodArgumentNotValidException</span>.<span class="kw">class</span>)
+    <span class="kw">@ResponseStatus</span>(HttpStatus.BAD_REQUEST)
+    <span class="kw">public</span> <span class="tp">Map</span>&lt;<span class="tp">String</span>, <span class="tp">String</span>&gt; <span class="fn">handleValidation</span>(<span class="tp">MethodArgumentNotValidException</span> ex) {
+        <span class="kw">return</span> ex.<span class="fn">getBindingResult</span>().<span class="fn">getFieldErrors</span>().<span class="fn">stream</span>()
+            .<span class="fn">collect</span>(Collectors.<span class="fn">toMap</span>(
+                FieldError::getField,
+                fe -> fe.<span class="fn">getDefaultMessage</span>() != <span class="kw">null</span> ? fe.<span class="fn">getDefaultMessage</span>() : <span class="str">"Invalid"</span>
+            ));
+    }
+
+    <span class="cmt">// Catch-all</span>
+    <span class="kw">@ExceptionHandler</span>(<span class="tp">Exception</span>.<span class="kw">class</span>)
+    <span class="kw">@ResponseStatus</span>(HttpStatus.INTERNAL_SERVER_ERROR)
+    <span class="kw">public</span> <span class="tp">ErrorResponse</span> <span class="fn">handleAll</span>(<span class="tp">Exception</span> ex) {
+        log.<span class="fn">error</span>(<span class="str">"Unexpected error"</span>, ex);
+        <span class="kw">return new</span> <span class="tp">ErrorResponse</span>(<span class="str">"INTERNAL_ERROR"</span>, <span class="str">"Something went wrong"</span>);
+    }
+}
+
+<span class="kw">public record</span> <span class="tp">ErrorResponse</span>(<span class="tp">String</span> code, <span class="tp">String</span> message) {}</code></pre></div>
+</div>
+
+<!-- ===== SECURITY ===== -->
+<div class="section" id="security">
+  <div class="section-header"><span class="icon">🔒</span><h2>Spring Security</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">@Configuration</span>
+<span class="kw">@EnableWebSecurity</span>
+<span class="kw">@RequiredArgsConstructor</span>
+<span class="kw">public class</span> <span class="tp">SecurityConfig</span> {
+
+    <span class="kw">private final</span> <span class="tp">JwtAuthFilter</span> jwtAuthFilter;
+
+    <span class="kw">@Bean</span>
+    <span class="kw">public</span> <span class="tp">SecurityFilterChain</span> <span class="fn">filterChain</span>(<span class="tp">HttpSecurity</span> http) <span class="kw">throws</span> <span class="tp">Exception</span> {
+        <span class="kw">return</span> http
+            .<span class="fn">csrf</span>(csrf -> csrf.<span class="fn">disable</span>())
+            .<span class="fn">sessionManagement</span>(sm -> sm
+                .<span class="fn">sessionCreationPolicy</span>(SessionCreationPolicy.STATELESS))
+            .<span class="fn">authorizeHttpRequests</span>(auth -> auth
+                .<span class="fn">requestMatchers</span>(<span class="str">"/api/auth/**"</span>).<span class="fn">permitAll</span>()
+                .<span class="fn">requestMatchers</span>(<span class="str">"/api/admin/**"</span>).<span class="fn">hasRole</span>(<span class="str">"ADMIN"</span>)
+                .<span class="fn">anyRequest</span>().<span class="fn">authenticated</span>()
+            )
+            .<span class="fn">addFilterBefore</span>(jwtAuthFilter, UsernamePasswordAuthenticationFilter.<span class="kw">class</span>)
+            .<span class="fn">build</span>();
+    }
+
+    <span class="kw">@Bean</span>
+    <span class="kw">public</span> <span class="tp">PasswordEncoder</span> <span class="fn">passwordEncoder</span>() {
+        <span class="kw">return new</span> <span class="tp">BCryptPasswordEncoder</span>();
+    }
+
+    <span class="kw">@Bean</span>
+    <span class="kw">public</span> <span class="tp">AuthenticationManager</span> <span class="fn">authManager</span>(<span class="tp">AuthenticationConfiguration</span> config)
+            <span class="kw">throws</span> <span class="tp">Exception</span> {
+        <span class="kw">return</span> config.<span class="fn">getAuthenticationManager</span>();
+    }
+}
+
+<span class="cmt">// Method-level security</span>
+<span class="kw">@PreAuthorize</span>(<span class="str">"hasRole('ADMIN')"</span>)
+<span class="kw">public void</span> <span class="fn">deleteUser</span>(<span class="tp">Long</span> id) { }
+
+<span class="kw">@PreAuthorize</span>(<span class="str">"#userId == authentication.principal.id"</span>)
+<span class="kw">public</span> <span class="tp">User</span> <span class="fn">getProfile</span>(<span class="tp">Long</span> userId) { }</code></pre></div>
+</div>
+
+<!-- ===== CONFIGURATION ===== -->
+<div class="section" id="config">
+  <div class="section-header"><span class="icon">📝</span><h2>Configuration</h2></div>
+
+  <h3>application.yml</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">spring</span>:
+  <span class="kw">datasource</span>:
+    <span class="kw">url</span>: <span class="str">jdbc:postgresql://localhost:5432/mydb</span>
+    <span class="kw">username</span>: <span class="str">${DB_USER:postgres}</span>
+    <span class="kw">password</span>: <span class="str">${DB_PASS:secret}</span>
+    <span class="kw">driver-class-name</span>: <span class="str">org.postgresql.Driver</span>
+  <span class="kw">jpa</span>:
+    <span class="kw">hibernate</span>:
+      <span class="kw">ddl-auto</span>: <span class="str">validate</span>    <span class="cmt"># none | validate | update | create-drop</span>
+    <span class="kw">show-sql</span>: <span class="kw">true</span>
+    <span class="kw">properties</span>:
+      <span class="kw">hibernate</span>:
+        <span class="kw">format_sql</span>: <span class="kw">true</span>
+  <span class="kw">profiles</span>:
+    <span class="kw">active</span>: <span class="str">${SPRING_PROFILE:dev}</span>
+
+<span class="kw">server</span>:
+  <span class="kw">port</span>: <span class="num">8080</span>
+
+<span class="kw">logging</span>:
+  <span class="kw">level</span>:
+    <span class="kw">root</span>: <span class="str">INFO</span>
+    <span class="kw">com.example</span>: <span class="str">DEBUG</span>
+    <span class="kw">org.hibernate.SQL</span>: <span class="str">DEBUG</span>
+
+<span class="cmt"># Custom properties</span>
+<span class="kw">app</span>:
+  <span class="kw">jwt</span>:
+    <span class="kw">secret</span>: <span class="str">${JWT_SECRET}</span>
+    <span class="kw">expiration</span>: <span class="num">86400000</span></code></pre></div>
+
+  <h3>Type-safe Config</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">@ConfigurationProperties</span>(prefix = <span class="str">"app.jwt"</span>)
+<span class="kw">public record</span> <span class="tp">JwtProperties</span>(
+    <span class="tp">String</span> secret,
+    <span class="kw">long</span> expiration
+) {}
+
+<span class="cmt">// Enable in main class:</span>
+<span class="kw">@EnableConfigurationProperties</span>(<span class="tp">JwtProperties</span>.<span class="kw">class</span>)
+<span class="kw">@SpringBootApplication</span>
+<span class="kw">public class</span> <span class="tp">Application</span> { }</code></pre></div>
+</div>
+
+<!-- ===== ASYNC ===== -->
+<div class="section" id="async">
+  <div class="section-header"><span class="icon">⏳</span><h2>Async &amp; Scheduling</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Enable async</span>
+<span class="kw">@Configuration</span>
+<span class="kw">@EnableAsync</span>
+<span class="kw">public class</span> <span class="tp">AsyncConfig</span> { }
+
+<span class="cmt">// Async method</span>
+<span class="kw">@Async</span>
+<span class="kw">public</span> <span class="tp">CompletableFuture</span>&lt;<span class="tp">User</span>&gt; <span class="fn">fetchUser</span>(<span class="tp">Long</span> id) {
+    <span class="tp">User</span> user = userRepo.<span class="fn">findById</span>(id).<span class="fn">orElseThrow</span>();
+    <span class="kw">return</span> CompletableFuture.<span class="fn">completedFuture</span>(user);
+}
+
+<span class="cmt">// Parallel execution</span>
+<span class="tp">CompletableFuture</span>&lt;<span class="tp">User</span>&gt; userFuture = <span class="fn">fetchUser</span>(<span class="num">1L</span>);
+<span class="tp">CompletableFuture</span>&lt;<span class="tp">List</span>&lt;<span class="tp">Order</span>&gt;&gt; ordersFuture = <span class="fn">fetchOrders</span>(<span class="num">1L</span>);
+CompletableFuture.<span class="fn">allOf</span>(userFuture, ordersFuture).<span class="fn">join</span>();
+
+<span class="cmt">// Scheduling</span>
+<span class="kw">@Configuration</span>
+<span class="kw">@EnableScheduling</span>
+<span class="kw">public class</span> <span class="tp">SchedulerConfig</span> { }
+
+<span class="kw">@Scheduled</span>(fixedRate = <span class="num">60000</span>)  <span class="cmt">// every 60 seconds</span>
+<span class="kw">public void</span> <span class="fn">cleanup</span>() { }
+
+<span class="kw">@Scheduled</span>(cron = <span class="str">"0 0 2 * * ?"</span>)  <span class="cmt">// daily at 2 AM</span>
+<span class="kw">public void</span> <span class="fn">nightlyJob</span>() { }</code></pre></div>
+</div>
+
+<!-- ===== TESTING ===== -->
+<div class="section" id="testing">
+  <div class="section-header"><span class="icon">🧪</span><h2>Testing</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Unit Test (Service layer)</span>
+<span class="kw">@ExtendWith</span>(MockitoExtension.<span class="kw">class</span>)
+<span class="kw">class</span> <span class="tp">UserServiceTest</span> {
+
+    <span class="kw">@Mock</span>
+    <span class="kw">private</span> <span class="tp">UserRepository</span> userRepo;
+    <span class="kw">@Mock</span>
+    <span class="kw">private</span> <span class="tp">UserMapper</span> mapper;
+    <span class="kw">@InjectMocks</span>
+    <span class="kw">private</span> <span class="tp">UserService</span> userService;
+
+    <span class="kw">@Test</span>
+    <span class="kw">void</span> <span class="fn">findById_returnsUser</span>() {
+        <span class="tp">User</span> user = <span class="tp">User</span>.<span class="fn">builder</span>().<span class="fn">id</span>(<span class="num">1L</span>).<span class="fn">name</span>(<span class="str">"Bob"</span>).<span class="fn">build</span>();
+        <span class="fn">when</span>(userRepo.<span class="fn">findById</span>(<span class="num">1L</span>)).<span class="fn">thenReturn</span>(Optional.<span class="fn">of</span>(user));
+        <span class="fn">when</span>(mapper.<span class="fn">toResponse</span>(user)).<span class="fn">thenReturn</span>(<span class="kw">new</span> <span class="tp">UserResponse</span>(<span class="num">1L</span>, <span class="str">"Bob"</span>));
+
+        <span class="tp">UserResponse</span> result = userService.<span class="fn">findById</span>(<span class="num">1L</span>);
+
+        <span class="fn">assertThat</span>(result.<span class="fn">name</span>()).<span class="fn">isEqualTo</span>(<span class="str">"Bob"</span>);
+        <span class="fn">verify</span>(userRepo).<span class="fn">findById</span>(<span class="num">1L</span>);
+    }
+
+    <span class="kw">@Test</span>
+    <span class="kw">void</span> <span class="fn">findById_throwsWhenNotFound</span>() {
+        <span class="fn">when</span>(userRepo.<span class="fn">findById</span>(<span class="num">99L</span>)).<span class="fn">thenReturn</span>(Optional.<span class="fn">empty</span>());
+
+        <span class="fn">assertThrows</span>(<span class="tp">ResourceNotFoundException</span>.<span class="kw">class</span>,
+            () -> userService.<span class="fn">findById</span>(<span class="num">99L</span>));
+    }
+}
+
+<span class="cmt">// Integration Test (Controller layer)</span>
+<span class="kw">@SpringBootTest</span>
+<span class="kw">@AutoConfigureMockMvc</span>
+<span class="kw">class</span> <span class="tp">UserControllerIT</span> {
+
+    <span class="kw">@Autowired</span>
+    <span class="kw">private</span> <span class="tp">MockMvc</span> mockMvc;
+
+    <span class="kw">@Test</span>
+    <span class="kw">void</span> <span class="fn">createUser_returns201</span>() <span class="kw">throws</span> <span class="tp">Exception</span> {
+        mockMvc.<span class="fn">perform</span>(<span class="fn">post</span>(<span class="str">"/api/v1/users"</span>)
+            .<span class="fn">contentType</span>(MediaType.APPLICATION_JSON)
+            .<span class="fn">content</span>(<span class="str">"""
+                {"name": "Bob", "email": "bob@mail.com", "age": 25}
+                """</span>))
+            .<span class="fn">andExpect</span>(<span class="fn">status</span>().<span class="fn">isCreated</span>())
+            .<span class="fn">andExpect</span>(<span class="fn">jsonPath</span>(<span class="str">"$.name"</span>).<span class="fn">value</span>(<span class="str">"Bob"</span>));
+    }
+}
+
+<span class="cmt">// Test with @DataJpaTest (repository layer, in-memory DB)</span>
+<span class="kw">@DataJpaTest</span>
+<span class="kw">class</span> <span class="tp">UserRepositoryTest</span> {
+    <span class="kw">@Autowired</span> <span class="tp">UserRepository</span> repo;
+
+    <span class="kw">@Test</span>
+    <span class="kw">void</span> <span class="fn">findByEmail_works</span>() {
+        repo.<span class="fn">save</span>(<span class="tp">User</span>.<span class="fn">builder</span>().<span class="fn">name</span>(<span class="str">"Bob"</span>).<span class="fn">email</span>(<span class="str">"bob@mail.com"</span>).<span class="fn">build</span>());
+        <span class="tp">Optional</span>&lt;<span class="tp">User</span>&gt; found = repo.<span class="fn">findByEmail</span>(<span class="str">"bob@mail.com"</span>);
+        <span class="fn">assertThat</span>(found).<span class="fn">isPresent</span>();
+    }
+}</code></pre></div>
+</div>
+
+<!-- ===== MODERN JAVA ===== -->
+<div class="section" id="records">
+  <div class="section-header"><span class="icon">✨</span><h2>Java Records &amp; Modern Java</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Records (Java 16+) — immutable data classes</span>
+<span class="kw">public record</span> <span class="tp">UserResponse</span>(<span class="tp">Long</span> id, <span class="tp">String</span> name, <span class="tp">String</span> email) {}
+
+<span class="cmt">// Sealed classes (Java 17+)</span>
+<span class="kw">public sealed interface</span> <span class="tp">Shape</span>
+    <span class="kw">permits</span> <span class="tp">Circle</span>, <span class="tp">Rectangle</span>, <span class="tp">Triangle</span> {}
+
+<span class="kw">public record</span> <span class="tp">Circle</span>(<span class="kw">double</span> radius) <span class="kw">implements</span> <span class="tp">Shape</span> {}
+<span class="kw">public record</span> <span class="tp">Rectangle</span>(<span class="kw">double</span> w, <span class="kw">double</span> h) <span class="kw">implements</span> <span class="tp">Shape</span> {}
+
+<span class="cmt">// Pattern matching switch (Java 21+)</span>
+<span class="kw">double</span> <span class="fn">area</span>(<span class="tp">Shape</span> shape) {
+    <span class="kw">return switch</span> (shape) {
+        <span class="kw">case</span> <span class="tp">Circle</span> c    -> Math.PI * c.<span class="fn">radius</span>() * c.<span class="fn">radius</span>();
+        <span class="kw">case</span> <span class="tp">Rectangle</span> r -> r.<span class="fn">w</span>() * r.<span class="fn">h</span>();
+        <span class="kw">case</span> <span class="tp">Triangle</span> t  -> <span class="num">0.5</span> * t.<span class="fn">base</span>() * t.<span class="fn">height</span>();
+    };
+}
+
+<span class="cmt">// Text blocks (Java 15+)</span>
+<span class="tp">String</span> json = <span class="str">"""
+    {
+        "name": "Bob",
+        "age": 25
+    }
+    """</span>;
+
+<span class="cmt">// var (Java 10+)</span>
+<span class="kw">var</span> users = <span class="kw">new</span> <span class="tp">ArrayList</span>&lt;<span class="tp">User</span>&gt;();
+<span class="kw">var</span> map = Map.<span class="fn">of</span>(<span class="str">"key"</span>, <span class="str">"value"</span>);
+
+<span class="cmt">// Stream API</span>
+List&lt;<span class="tp">String</span>&gt; names = users.<span class="fn">stream</span>()
+    .<span class="fn">filter</span>(u -> u.<span class="fn">getAge</span>() > <span class="num">18</span>)
+    .<span class="fn">sorted</span>(Comparator.<span class="fn">comparing</span>(User::getName))
+    .<span class="fn">map</span>(User::getName)
+    .<span class="fn">distinct</span>()
+    .<span class="fn">toList</span>();
+
+<span class="cmt">// Optional chaining</span>
+<span class="tp">String</span> email = <span class="fn">findUser</span>(id)
+    .<span class="fn">map</span>(User::getEmail)
+    .<span class="fn">filter</span>(e -> e.<span class="fn">contains</span>(<span class="str">"@"</span>))
+    .<span class="fn">orElse</span>(<span class="str">"N/A"</span>);</code></pre></div>
+</div>
+
+<!-- ===== DOCKER ===== -->
+<div class="section" id="docker">
+  <div class="section-header"><span class="icon">🐳</span><h2>Docker &amp; Deployment</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Multi-stage Dockerfile</span>
+FROM eclipse-temurin:<span class="num">21</span>-jdk-alpine AS build
+WORKDIR /app
+COPY . .
+RUN ./mvnw package -DskipTests
+
+FROM eclipse-temurin:<span class="num">21</span>-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+EXPOSE <span class="num">8080</span>
+ENTRYPOINT [<span class="str">"java"</span>, <span class="str">"-jar"</span>, <span class="str">"app.jar"</span>]</code></pre></div>
+
+  <div class="code-wrapper"><pre><code><span class="cmt"># docker-compose.yml</span>
+<span class="kw">services</span>:
+  <span class="kw">app</span>:
+    <span class="kw">build</span>: <span class="str">.</span>
+    <span class="kw">ports</span>:
+      - <span class="str">"8080:8080"</span>
+    <span class="kw">environment</span>:
+      - <span class="str">SPRING_PROFILE=prod</span>
+      - <span class="str">DB_USER=postgres</span>
+      - <span class="str">DB_PASS=secret</span>
+    <span class="kw">depends_on</span>:
+      - <span class="str">db</span>
+
+  <span class="kw">db</span>:
+    <span class="kw">image</span>: <span class="str">postgres:16-alpine</span>
+    <span class="kw">environment</span>:
+      <span class="kw">POSTGRES_DB</span>: <span class="str">mydb</span>
+      <span class="kw">POSTGRES_USER</span>: <span class="str">postgres</span>
+      <span class="kw">POSTGRES_PASSWORD</span>: <span class="str">secret</span>
+    <span class="kw">volumes</span>:
+      - <span class="str">pgdata:/var/lib/postgresql/data</span>
+
+<span class="kw">volumes</span>:
+  <span class="kw">pgdata</span>:</code></pre></div>
+</div>
+
+<!-- ===== COMMON PATTERNS ===== -->
+<div class="section" id="patterns">
+  <div class="section-header"><span class="icon">🎯</span><h2>Common Patterns</h2></div>
+
+  <h3>DTO Mapper</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">@Component</span>
+<span class="kw">public class</span> <span class="tp">UserMapper</span> {
+
+    <span class="kw">public</span> <span class="tp">UserResponse</span> <span class="fn">toResponse</span>(<span class="tp">User</span> user) {
+        <span class="kw">return new</span> <span class="tp">UserResponse</span>(user.<span class="fn">getId</span>(), user.<span class="fn">getName</span>(), user.<span class="fn">getEmail</span>());
+    }
+
+    <span class="kw">public</span> <span class="tp">User</span> <span class="fn">toEntity</span>(<span class="tp">CreateUserRequest</span> req) {
+        <span class="kw">return</span> <span class="tp">User</span>.<span class="fn">builder</span>()
+            .<span class="fn">name</span>(req.<span class="fn">name</span>())
+            .<span class="fn">email</span>(req.<span class="fn">email</span>())
+            .<span class="fn">build</span>();
+    }
+}
+
+<span class="cmt">// Or use MapStruct for auto-mapping:</span>
+<span class="kw">@Mapper</span>(componentModel = <span class="str">"spring"</span>)
+<span class="kw">public interface</span> <span class="tp">UserMapper</span> {
+    <span class="tp">UserResponse</span> <span class="fn">toResponse</span>(<span class="tp">User</span> user);
+    <span class="tp">User</span> <span class="fn">toEntity</span>(<span class="tp">CreateUserRequest</span> req);
+}</code></pre></div>
+
+  <h3>Specification Pattern (Dynamic Queries)</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">public class</span> <span class="tp">UserSpecs</span> {
+    <span class="kw">public static</span> <span class="tp">Specification</span>&lt;<span class="tp">User</span>&gt; <span class="fn">hasStatus</span>(<span class="tp">Status</span> status) {
+        <span class="kw">return</span> (root, query, cb) -> cb.<span class="fn">equal</span>(root.<span class="fn">get</span>(<span class="str">"status"</span>), status);
+    }
+
+    <span class="kw">public static</span> <span class="tp">Specification</span>&lt;<span class="tp">User</span>&gt; <span class="fn">nameLike</span>(<span class="tp">String</span> name) {
+        <span class="kw">return</span> (root, query, cb) ->
+            cb.<span class="fn">like</span>(cb.<span class="fn">lower</span>(root.<span class="fn">get</span>(<span class="str">"name"</span>)), <span class="str">"%"</span> + name.<span class="fn">toLowerCase</span>() + <span class="str">"%"</span>);
+    }
+}
+
+<span class="cmt">// Usage:</span>
+userRepo.<span class="fn">findAll</span>(<span class="fn">hasStatus</span>(ACTIVE).<span class="fn">and</span>(<span class="fn">nameLike</span>(<span class="str">"bob"</span>)), pageable);</code></pre></div>
+
+  <div class="note tip">
+    <strong>💡 Best Practices</strong>
+    <ul>
+      <li>Use constructor injection (not field injection)</li>
+      <li>Keep controllers thin — logic goes in services</li>
+      <li>Use DTOs — never expose entities directly</li>
+      <li>Use <code>@Transactional(readOnly = true)</code> for read operations</li>
+      <li>Prefer records for DTOs and value objects</li>
+      <li>Use profiles for environment-specific config</li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>Java + Spring Boot Development Cheatsheet · 2026</footer>
+
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'Copy';
+  btn.onclick = () => {
+    const code = w.querySelector('code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  };
+  w.appendChild(btn);
+});
+const backBtn = document.querySelector('.back-top');
+window.addEventListener('scroll', () => backBtn.classList.toggle('visible', window.scrollY > 400));
+</script>
+</body>
+</html>

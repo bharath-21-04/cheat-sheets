@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TypeScript Development Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ TypeScript</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+
+<div class="container">
+
+<!-- Hero -->
+<div class="hero">
+  <h1>TypeScript Cheatsheet</h1>
+  <p class="subtitle">Complete development reference</p>
+  <span class="badge">Development</span>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#types">Basic Types</a>
+    <a href="#narrowing">Type Assertions &amp; Narrowing</a>
+    <a href="#interfaces">Interfaces &amp; Type Aliases</a>
+    <a href="#generics">Generics</a>
+    <a href="#utility">Utility Types</a>
+    <a href="#enums">Enums</a>
+    <a href="#functions">Functions</a>
+    <a href="#classes">Classes</a>
+    <a href="#modules">Modules</a>
+    <a href="#decorators">Decorators</a>
+    <a href="#advanced">Advanced Types</a>
+    <a href="#async">Async / Promises</a>
+    <a href="#errors">Error Handling</a>
+    <a href="#config">tsconfig.json</a>
+    <a href="#patterns">Common Patterns</a>
+  </div>
+</div>
+
+<!-- ===== BASIC TYPES ===== -->
+<div class="section" id="types">
+  <div class="section-header"><span class="icon">📦</span><h2>Basic Types</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Primitives</span>
+<span class="kw">let</span> isDone: <span class="tp">boolean</span> = <span class="kw">false</span>;
+<span class="kw">let</span> age: <span class="tp">number</span> = 25;
+<span class="kw">let</span> name: <span class="tp">string</span> = <span class="str">"hello"</span>;
+<span class="kw">let</span> big: <span class="tp">bigint</span> = <span class="num">100n</span>;
+<span class="kw">let</span> sym: <span class="tp">symbol</span> = Symbol(<span class="str">"id"</span>);
+
+<span class="cmt">// Arrays</span>
+<span class="kw">let</span> nums: <span class="tp">number[]</span> = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+<span class="kw">let</span> names: <span class="tp">Array&lt;string&gt;</span> = [<span class="str">"a"</span>, <span class="str">"b"</span>];
+
+<span class="cmt">// Tuple</span>
+<span class="kw">let</span> pair: [<span class="tp">string</span>, <span class="tp">number</span>] = [<span class="str">"age"</span>, <span class="num">25</span>];
+<span class="kw">let</span> named: [name: <span class="tp">string</span>, age: <span class="tp">number</span>] = [<span class="str">"Bob"</span>, <span class="num">25</span>];
+
+<span class="cmt">// Special Types</span>
+<span class="kw">let</span> anything: <span class="tp">any</span> = <span class="num">42</span>;            <span class="cmt">// Avoid — disables type checking</span>
+<span class="kw">let</span> notSure: <span class="tp">unknown</span> = <span class="num">42</span>;        <span class="cmt">// Safe any — must narrow before use</span>
+<span class="kw">function</span> <span class="fn">fail</span>(): <span class="tp">never</span> { <span class="kw">throw new</span> Error(); }
+<span class="kw">function</span> <span class="fn">log</span>(): <span class="tp">void</span> { console.<span class="fn">log</span>(<span class="str">"hi"</span>); }
+
+<span class="cmt">// Null &amp; Undefined</span>
+<span class="kw">let</span> u: <span class="tp">undefined</span> = <span class="kw">undefined</span>;
+<span class="kw">let</span> n: <span class="tp">null</span> = <span class="kw">null</span>;
+
+<span class="cmt">// Object &amp; Record</span>
+<span class="kw">let</span> obj: <span class="tp">object</span> = {};
+<span class="kw">let</span> rec: <span class="tp">Record&lt;string, number&gt;</span> = { a: <span class="num">1</span> };
+
+<span class="cmt">// Literal Types</span>
+<span class="kw">let</span> dir: <span class="str">"north"</span> | <span class="str">"south"</span> | <span class="str">"east"</span> | <span class="str">"west"</span>;
+<span class="kw">let</span> status: <span class="num">200</span> | <span class="num">404</span> | <span class="num">500</span>;</code></pre></div>
+</div>
+
+<!-- ===== TYPE ASSERTIONS & NARROWING ===== -->
+<div class="section" id="narrowing">
+  <div class="section-header"><span class="icon">🔍</span><h2>Type Assertions &amp; Narrowing</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Type Assertions</span>
+<span class="kw">const</span> input = document.<span class="fn">getElementById</span>(<span class="str">"input"</span>) <span class="kw">as</span> <span class="tp">HTMLInputElement</span>;
+
+<span class="cmt">// Non-null Assertion</span>
+<span class="kw">const</span> el = document.<span class="fn">getElementById</span>(<span class="str">"app"</span>)!;
+
+<span class="cmt">// Custom Type Guard</span>
+<span class="kw">function</span> <span class="fn">isString</span>(val: <span class="tp">unknown</span>): val <span class="kw">is</span> <span class="tp">string</span> {
+  <span class="kw">return typeof</span> val === <span class="str">"string"</span>;
+}
+
+<span class="cmt">// typeof narrowing</span>
+<span class="kw">function</span> <span class="fn">process</span>(val: <span class="tp">string</span> | <span class="tp">number</span>) {
+  <span class="kw">if</span> (<span class="kw">typeof</span> val === <span class="str">"string"</span>) {
+    val.<span class="fn">toUpperCase</span>();    <span class="cmt">// string</span>
+  } <span class="kw">else</span> {
+    val.<span class="fn">toFixed</span>(<span class="num">2</span>);       <span class="cmt">// number</span>
+  }
+}
+
+<span class="cmt">// instanceof narrowing</span>
+<span class="kw">if</span> (err <span class="kw">instanceof</span> <span class="tp">Error</span>) console.<span class="fn">log</span>(err.message);
+
+<span class="cmt">// in narrowing</span>
+<span class="kw">interface</span> <span class="tp">Fish</span> { <span class="fn">swim</span>(): <span class="tp">void</span>; }
+<span class="kw">interface</span> <span class="tp">Bird</span> { <span class="fn">fly</span>(): <span class="tp">void</span>; }
+<span class="kw">function</span> <span class="fn">move</span>(a: <span class="tp">Fish</span> | <span class="tp">Bird</span>) {
+  <span class="kw">if</span> (<span class="str">"swim"</span> <span class="kw">in</span> a) a.<span class="fn">swim</span>();
+  <span class="kw">else</span> a.<span class="fn">fly</span>();
+}
+
+<span class="cmt">// Discriminated Unions</span>
+<span class="kw">type</span> <span class="tp">Shape</span> =
+  | { kind: <span class="str">"circle"</span>; radius: <span class="tp">number</span> }
+  | { kind: <span class="str">"square"</span>; side: <span class="tp">number</span> };
+
+<span class="kw">function</span> <span class="fn">area</span>(s: <span class="tp">Shape</span>): <span class="tp">number</span> {
+  <span class="kw">switch</span> (s.kind) {
+    <span class="kw">case</span> <span class="str">"circle"</span>: <span class="kw">return</span> Math.PI * s.radius ** <span class="num">2</span>;
+    <span class="kw">case</span> <span class="str">"square"</span>: <span class="kw">return</span> s.side ** <span class="num">2</span>;
+  }
+}
+
+<span class="cmt">// satisfies (TS 5+)</span>
+<span class="kw">const</span> palette = {
+  red: [<span class="num">255</span>, <span class="num">0</span>, <span class="num">0</span>],
+  green: <span class="str">"#00ff00"</span>,
+} <span class="kw">satisfies</span> <span class="tp">Record&lt;string, string | number[]&gt;</span>;</code></pre></div>
+</div>
+
+<!-- ===== INTERFACES & TYPE ALIASES ===== -->
+<div class="section" id="interfaces">
+  <div class="section-header"><span class="icon">📐</span><h2>Interfaces &amp; Type Aliases</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Interface</span>
+<span class="kw">interface</span> <span class="tp">User</span> {
+  <span class="kw">readonly</span> id: <span class="tp">number</span>;
+  name: <span class="tp">string</span>;
+  email?: <span class="tp">string</span>;                      <span class="cmt">// optional</span>
+  <span class="fn">greet</span>(): <span class="tp">string</span>;
+  [key: <span class="tp">string</span>]: <span class="tp">unknown</span>;              <span class="cmt">// index signature</span>
+}
+
+<span class="cmt">// Extending</span>
+<span class="kw">interface</span> <span class="tp">Admin</span> <span class="kw">extends</span> <span class="tp">User</span> {
+  role: <span class="str">"admin"</span> | <span class="str">"superadmin"</span>;
+}
+
+<span class="cmt">// Type Alias</span>
+<span class="kw">type</span> <span class="tp">Point</span> = { x: <span class="tp">number</span>; y: <span class="tp">number</span> };
+<span class="kw">type</span> <span class="tp">ID</span> = <span class="tp">string</span> | <span class="tp">number</span>;
+<span class="kw">type</span> <span class="tp">Callback</span> = (data: <span class="tp">string</span>) =&gt; <span class="tp">void</span>;
+
+<span class="cmt">// Intersection</span>
+<span class="kw">type</span> <span class="tp">Employee</span> = <span class="tp">User</span> &amp; { department: <span class="tp">string</span> };
+
+<span class="cmt">// Declaration Merging (interface only)</span>
+<span class="kw">interface</span> <span class="tp">Config</span> { debug: <span class="tp">boolean</span>; }
+<span class="kw">interface</span> <span class="tp">Config</span> { verbose: <span class="tp">boolean</span>; }
+<span class="cmt">// Config now has both debug and verbose</span></code></pre></div>
+
+  <div class="note tip">
+    <strong>💡 Interface vs Type</strong>
+    Use <code>interface</code> for extendable object shapes (supports declaration merging). Use <code>type</code> for unions, intersections, mapped types, and everything else.
+  </div>
+</div>
+
+<!-- ===== GENERICS ===== -->
+<div class="section" id="generics">
+  <div class="section-header"><span class="icon">🧬</span><h2>Generics</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Generic Function</span>
+<span class="kw">function</span> <span class="fn">identity</span>&lt;<span class="tp">T</span>&gt;(arg: <span class="tp">T</span>): <span class="tp">T</span> { <span class="kw">return</span> arg; }
+<span class="kw">const</span> r = <span class="fn">identity</span>&lt;<span class="tp">string</span>&gt;(<span class="str">"hello"</span>);
+<span class="kw">const</span> inferred = <span class="fn">identity</span>(<span class="num">42</span>);  <span class="cmt">// T inferred as number</span>
+
+<span class="cmt">// Constraints</span>
+<span class="kw">function</span> <span class="fn">getLen</span>&lt;<span class="tp">T</span> <span class="kw">extends</span> { length: <span class="tp">number</span> }&gt;(arg: <span class="tp">T</span>): <span class="tp">number</span> {
+  <span class="kw">return</span> arg.length;
+}
+
+<span class="cmt">// Generic Interface</span>
+<span class="kw">interface</span> <span class="tp">Repo&lt;T&gt;</span> {
+  <span class="fn">find</span>(id: <span class="tp">string</span>): <span class="tp">Promise&lt;T&gt;</span>;
+  <span class="fn">save</span>(entity: <span class="tp">T</span>): <span class="tp">Promise&lt;void&gt;</span>;
+  <span class="fn">delete</span>(id: <span class="tp">string</span>): <span class="tp">Promise&lt;boolean&gt;</span>;
+}
+
+<span class="cmt">// Generic Class</span>
+<span class="kw">class</span> <span class="tp">Stack</span>&lt;<span class="tp">T</span>&gt; {
+  <span class="kw">private</span> items: <span class="tp">T[]</span> = [];
+  <span class="fn">push</span>(item: <span class="tp">T</span>): <span class="tp">void</span> { <span class="kw">this</span>.items.<span class="fn">push</span>(item); }
+  <span class="fn">pop</span>(): <span class="tp">T</span> | <span class="tp">undefined</span> { <span class="kw">return this</span>.items.<span class="fn">pop</span>(); }
+}
+
+<span class="cmt">// Multiple Type Parameters</span>
+<span class="kw">function</span> <span class="fn">merge</span>&lt;<span class="tp">T</span>, <span class="tp">U</span>&gt;(a: <span class="tp">T</span>, b: <span class="tp">U</span>): <span class="tp">T</span> &amp; <span class="tp">U</span> {
+  <span class="kw">return</span> { ...a, ...b } <span class="kw">as</span> <span class="tp">T</span> &amp; <span class="tp">U</span>;
+}
+
+<span class="cmt">// Default Type Parameters</span>
+<span class="kw">interface</span> <span class="tp">ApiRes&lt;T = any, E = Error&gt;</span> {
+  data?: <span class="tp">T</span>;
+  error?: <span class="tp">E</span>;
+  status: <span class="tp">number</span>;
+}
+
+<span class="cmt">// keyof constraint</span>
+<span class="kw">function</span> <span class="fn">getProp</span>&lt;<span class="tp">T</span>, <span class="tp">K</span> <span class="kw">extends keyof</span> <span class="tp">T</span>&gt;(obj: <span class="tp">T</span>, key: <span class="tp">K</span>): <span class="tp">T[K]</span> {
+  <span class="kw">return</span> obj[key];
+}</code></pre></div>
+</div>
+
+<!-- ===== UTILITY TYPES ===== -->
+<div class="section" id="utility">
+  <div class="section-header"><span class="icon">🛠️</span><h2>Utility Types</h2></div>
+  <table>
+    <tr><th>Type</th><th>Description</th><th>Example</th></tr>
+    <tr><td><code>Partial&lt;T&gt;</code></td><td>All properties optional</td><td><code>Partial&lt;User&gt;</code></td></tr>
+    <tr><td><code>Required&lt;T&gt;</code></td><td>All properties required</td><td><code>Required&lt;User&gt;</code></td></tr>
+    <tr><td><code>Readonly&lt;T&gt;</code></td><td>All properties readonly</td><td><code>Readonly&lt;User&gt;</code></td></tr>
+    <tr><td><code>Pick&lt;T, K&gt;</code></td><td>Select subset of keys</td><td><code>Pick&lt;User, "id" | "name"&gt;</code></td></tr>
+    <tr><td><code>Omit&lt;T, K&gt;</code></td><td>Exclude subset of keys</td><td><code>Omit&lt;User, "email"&gt;</code></td></tr>
+    <tr><td><code>Record&lt;K, V&gt;</code></td><td>Key-value map type</td><td><code>Record&lt;string, boolean&gt;</code></td></tr>
+    <tr><td><code>Exclude&lt;U, E&gt;</code></td><td>Remove from union</td><td><code>Exclude&lt;"a"|"b", "a"&gt;</code> → <code>"b"</code></td></tr>
+    <tr><td><code>Extract&lt;U, E&gt;</code></td><td>Keep from union</td><td><code>Extract&lt;"a"|"b", "a"&gt;</code> → <code>"a"</code></td></tr>
+    <tr><td><code>NonNullable&lt;T&gt;</code></td><td>Remove null/undefined</td><td><code>NonNullable&lt;string | null&gt;</code></td></tr>
+    <tr><td><code>ReturnType&lt;F&gt;</code></td><td>Function return type</td><td><code>ReturnType&lt;typeof fn&gt;</code></td></tr>
+    <tr><td><code>Parameters&lt;F&gt;</code></td><td>Function param types</td><td><code>Parameters&lt;typeof fn&gt;</code></td></tr>
+    <tr><td><code>Awaited&lt;T&gt;</code></td><td>Unwrap Promise type</td><td><code>Awaited&lt;Promise&lt;string&gt;&gt;</code></td></tr>
+    <tr><td><code>InstanceType&lt;C&gt;</code></td><td>Class instance type</td><td><code>InstanceType&lt;typeof Error&gt;</code></td></tr>
+  </table>
+</div>
+
+<!-- ===== ENUMS ===== -->
+<div class="section" id="enums">
+  <div class="section-header"><span class="icon">🏷️</span><h2>Enums</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// String Enum (preferred)</span>
+<span class="kw">enum</span> <span class="tp">Status</span> {
+  Active = <span class="str">"ACTIVE"</span>,
+  Inactive = <span class="str">"INACTIVE"</span>,
+  Pending = <span class="str">"PENDING"</span>,
+}
+
+<span class="cmt">// Const Enum (inlined at compile time)</span>
+<span class="kw">const enum</span> <span class="tp">Color</span> {
+  Red = <span class="str">"RED"</span>,
+  Green = <span class="str">"GREEN"</span>,
+}
+
+<span class="cmt">// ✅ Modern: use 'as const' objects instead of enums</span>
+<span class="kw">const</span> DIRECTIONS = {
+  Up: <span class="str">"UP"</span>,
+  Down: <span class="str">"DOWN"</span>,
+  Left: <span class="str">"LEFT"</span>,
+  Right: <span class="str">"RIGHT"</span>,
+} <span class="kw">as const</span>;
+
+<span class="kw">type</span> <span class="tp">Direction</span> = <span class="kw">typeof</span> DIRECTIONS[<span class="kw">keyof typeof</span> DIRECTIONS];
+<span class="cmt">// "UP" | "DOWN" | "LEFT" | "RIGHT"</span></code></pre></div>
+</div>
+
+<!-- ===== FUNCTIONS ===== -->
+<div class="section" id="functions">
+  <div class="section-header"><span class="icon">⚙️</span><h2>Functions</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Function Types</span>
+<span class="kw">type</span> <span class="tp">MathOp</span> = (a: <span class="tp">number</span>, b: <span class="tp">number</span>) =&gt; <span class="tp">number</span>;
+<span class="kw">const</span> <span class="fn">add</span>: <span class="tp">MathOp</span> = (a, b) =&gt; a + b;
+
+<span class="cmt">// Optional &amp; Default Parameters</span>
+<span class="kw">function</span> <span class="fn">greet</span>(name: <span class="tp">string</span>, greeting = <span class="str">"Hello"</span>): <span class="tp">string</span> {
+  <span class="kw">return</span> <span class="str">`${greeting}, ${name}`</span>;
+}
+
+<span class="cmt">// Rest Parameters</span>
+<span class="kw">function</span> <span class="fn">sum</span>(...nums: <span class="tp">number[]</span>): <span class="tp">number</span> {
+  <span class="kw">return</span> nums.<span class="fn">reduce</span>((a, b) =&gt; a + b, <span class="num">0</span>);
+}
+
+<span class="cmt">// Overloads</span>
+<span class="kw">function</span> <span class="fn">format</span>(value: <span class="tp">string</span>): <span class="tp">string</span>;
+<span class="kw">function</span> <span class="fn">format</span>(value: <span class="tp">number</span>): <span class="tp">string</span>;
+<span class="kw">function</span> <span class="fn">format</span>(value: <span class="tp">string</span> | <span class="tp">number</span>): <span class="tp">string</span> {
+  <span class="kw">return typeof</span> value === <span class="str">"string"</span> ? value.<span class="fn">trim</span>() : value.<span class="fn">toFixed</span>(<span class="num">2</span>);
+}
+
+<span class="cmt">// Generic Arrow (TSX-compatible)</span>
+<span class="kw">const</span> <span class="fn">id</span> = &lt;<span class="tp">T</span>,&gt;(arg: <span class="tp">T</span>): <span class="tp">T</span> =&gt; arg;</code></pre></div>
+</div>
+
+<!-- ===== CLASSES ===== -->
+<div class="section" id="classes">
+  <div class="section-header"><span class="icon">🏗️</span><h2>Classes</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">class</span> <span class="tp">Animal</span> {
+  <span class="kw">public</span> name: <span class="tp">string</span>;
+  <span class="kw">protected</span> species: <span class="tp">string</span>;
+  <span class="kw">private</span> _age: <span class="tp">number</span>;
+  <span class="kw">readonly</span> id: <span class="tp">string</span>;
+  <span class="kw">static</span> count = <span class="num">0</span>;
+
+  <span class="kw">constructor</span>(name: <span class="tp">string</span>, species: <span class="tp">string</span>, age: <span class="tp">number</span>) {
+    <span class="kw">this</span>.name = name;
+    <span class="kw">this</span>.species = species;
+    <span class="kw">this</span>._age = age;
+    <span class="kw">this</span>.id = crypto.<span class="fn">randomUUID</span>();
+    <span class="tp">Animal</span>.count++;
+  }
+
+  <span class="cmt">// Getter / Setter</span>
+  <span class="kw">get</span> <span class="fn">age</span>(): <span class="tp">number</span> { <span class="kw">return this</span>._age; }
+  <span class="kw">set</span> <span class="fn">age</span>(v: <span class="tp">number</span>) { <span class="kw">if</span> (v &lt; <span class="num">0</span>) <span class="kw">throw new</span> Error(); <span class="kw">this</span>._age = v; }
+
+  <span class="fn">speak</span>(): <span class="tp">string</span> { <span class="kw">return</span> <span class="str">`${this.name} makes a sound`</span>; }
+}
+
+<span class="cmt">// Inheritance</span>
+<span class="kw">class</span> <span class="tp">Dog</span> <span class="kw">extends</span> <span class="tp">Animal</span> {
+  <span class="kw">constructor</span>(name: <span class="tp">string</span>, age: <span class="tp">number</span>, <span class="kw">public</span> breed: <span class="tp">string</span>) {
+    <span class="kw">super</span>(name, <span class="str">"Canine"</span>, age);
+  }
+  <span class="kw">override</span> <span class="fn">speak</span>() { <span class="kw">return</span> <span class="str">`${this.name} barks`</span>; }
+}
+
+<span class="cmt">// Abstract Class</span>
+<span class="kw">abstract class</span> <span class="tp">Shape</span> {
+  <span class="kw">abstract</span> <span class="fn">area</span>(): <span class="tp">number</span>;
+  <span class="fn">describe</span>() { <span class="kw">return</span> <span class="str">`Area: ${this.area()}`</span>; }
+}
+
+<span class="cmt">// Implements Interface</span>
+<span class="kw">interface</span> <span class="tp">Serializable</span> { <span class="fn">serialize</span>(): <span class="tp">string</span>; }
+<span class="kw">class</span> <span class="tp">Config</span> <span class="kw">implements</span> <span class="tp">Serializable</span> {
+  <span class="kw">constructor</span>(<span class="kw">private</span> data: <span class="tp">Record&lt;string, unknown&gt;</span>) {}
+  <span class="fn">serialize</span>() { <span class="kw">return</span> JSON.<span class="fn">stringify</span>(<span class="kw">this</span>.data); }
+}</code></pre></div>
+</div>
+
+<!-- ===== MODULES ===== -->
+<div class="section" id="modules">
+  <div class="section-header"><span class="icon">📁</span><h2>Modules</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Named Exports</span>
+<span class="kw">export const</span> PI = <span class="num">3.14159</span>;
+<span class="kw">export function</span> <span class="fn">add</span>(a: <span class="tp">number</span>, b: <span class="tp">number</span>) { <span class="kw">return</span> a + b; }
+<span class="kw">export interface</span> <span class="tp">Config</span> { debug: <span class="tp">boolean</span>; }
+
+<span class="cmt">// Default Export</span>
+<span class="kw">export default class</span> <span class="tp">Logger</span> { <span class="cmt">/* ... */</span> }
+
+<span class="cmt">// Re-exports</span>
+<span class="kw">export</span> { <span class="kw">default as</span> Logger } <span class="kw">from</span> <span class="str">"./logger"</span>;
+<span class="kw">export</span> * <span class="kw">from</span> <span class="str">"./utils"</span>;
+<span class="kw">export type</span> { <span class="tp">Config</span> } <span class="kw">from</span> <span class="str">"./config"</span>;  <span class="cmt">// type-only</span>
+
+<span class="cmt">// Imports</span>
+<span class="kw">import</span> Logger <span class="kw">from</span> <span class="str">"./logger"</span>;
+<span class="kw">import</span> { add, <span class="kw">type</span> <span class="tp">Config</span> } <span class="kw">from</span> <span class="str">"./utils"</span>;
+<span class="kw">import</span> * <span class="kw">as</span> Utils <span class="kw">from</span> <span class="str">"./utils"</span>;
+
+<span class="cmt">// Dynamic Import</span>
+<span class="kw">const</span> mod = <span class="kw">await</span> <span class="fn">import</span>(<span class="str">"./heavy-module"</span>);
+
+<span class="cmt">// Ambient / Global Declarations</span>
+<span class="kw">declare module</span> <span class="str">"untyped-lib"</span> {
+  <span class="kw">export function</span> <span class="fn">doSomething</span>(): <span class="tp">void</span>;
+}
+<span class="kw">declare global</span> {
+  <span class="kw">interface</span> <span class="tp">Window</span> { myApp: { version: <span class="tp">string</span> }; }
+}</code></pre></div>
+</div>
+
+<!-- ===== DECORATORS ===== -->
+<div class="section" id="decorators">
+  <div class="section-header"><span class="icon">🎀</span><h2>Decorators</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Class Decorator</span>
+<span class="kw">function</span> <span class="fn">sealed</span>(ctor: <span class="tp">Function</span>) {
+  Object.<span class="fn">seal</span>(ctor);
+  Object.<span class="fn">seal</span>(ctor.prototype);
+}
+
+@<span class="fn">sealed</span>
+<span class="kw">class</span> <span class="tp">Greeter</span> { greeting = <span class="str">"hello"</span>; }
+
+<span class="cmt">// Method Decorator</span>
+<span class="kw">function</span> <span class="fn">log</span>(target: <span class="tp">any</span>, key: <span class="tp">string</span>, desc: <span class="tp">PropertyDescriptor</span>) {
+  <span class="kw">const</span> orig = desc.value;
+  desc.value = <span class="kw">function</span>(...args: <span class="tp">any[]</span>) {
+    console.<span class="fn">log</span>(<span class="str">`Call ${key}`</span>, args);
+    <span class="kw">return</span> orig.<span class="fn">apply</span>(<span class="kw">this</span>, args);
+  };
+}
+
+<span class="kw">class</span> <span class="tp">Calc</span> {
+  @<span class="fn">log</span>
+  <span class="fn">add</span>(a: <span class="tp">number</span>, b: <span class="tp">number</span>) { <span class="kw">return</span> a + b; }
+}</code></pre></div>
+</div>
+
+<!-- ===== ADVANCED TYPES ===== -->
+<div class="section" id="advanced">
+  <div class="section-header"><span class="icon">🧠</span><h2>Advanced Types</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Mapped Types</span>
+<span class="kw">type</span> <span class="tp">Optional</span>&lt;<span class="tp">T</span>&gt; = { [<span class="tp">K</span> <span class="kw">in keyof</span> <span class="tp">T</span>]?: <span class="tp">T[K]</span> };
+<span class="kw">type</span> <span class="tp">Nullable</span>&lt;<span class="tp">T</span>&gt; = { [<span class="tp">K</span> <span class="kw">in keyof</span> <span class="tp">T</span>]: <span class="tp">T[K]</span> | <span class="tp">null</span> };
+
+<span class="cmt">// Template Literal Types</span>
+<span class="kw">type</span> <span class="tp">EventName</span> = <span class="str">`on${Capitalize&lt;"click" | "focus" | "blur"&gt;}`</span>;
+<span class="cmt">// "onClick" | "onFocus" | "onBlur"</span>
+
+<span class="cmt">// Conditional Types</span>
+<span class="kw">type</span> <span class="tp">Flatten</span>&lt;<span class="tp">T</span>&gt; = <span class="tp">T</span> <span class="kw">extends</span> <span class="tp">Array</span>&lt;<span class="kw">infer</span> <span class="tp">U</span>&gt; ? <span class="tp">U</span> : <span class="tp">T</span>;
+
+<span class="cmt">// Distributive Conditional</span>
+<span class="kw">type</span> <span class="tp">ToArray</span>&lt;<span class="tp">T</span>&gt; = <span class="tp">T</span> <span class="kw">extends</span> <span class="tp">any</span> ? <span class="tp">T[]</span> : <span class="tp">never</span>;
+<span class="cmt">// ToArray&lt;string | number&gt; → string[] | number[]</span>
+
+<span class="cmt">// infer keyword</span>
+<span class="kw">type</span> <span class="tp">UnwrapPromise</span>&lt;<span class="tp">T</span>&gt; = <span class="tp">T</span> <span class="kw">extends</span> <span class="tp">Promise</span>&lt;<span class="kw">infer</span> <span class="tp">U</span>&gt; ? <span class="tp">U</span> : <span class="tp">T</span>;
+
+<span class="cmt">// Recursive Types</span>
+<span class="kw">type</span> <span class="tp">DeepPartial</span>&lt;<span class="tp">T</span>&gt; = {
+  [<span class="tp">K</span> <span class="kw">in keyof</span> <span class="tp">T</span>]?: <span class="tp">T[K]</span> <span class="kw">extends</span> <span class="tp">object</span> ? <span class="tp">DeepPartial&lt;T[K]&gt;</span> : <span class="tp">T[K]</span>;
+};
+
+<span class="cmt">// Branded / Nominal Types</span>
+<span class="kw">type</span> <span class="tp">USD</span> = <span class="tp">number</span> &amp; { __brand: <span class="str">"USD"</span> };
+<span class="kw">type</span> <span class="tp">EUR</span> = <span class="tp">number</span> &amp; { __brand: <span class="str">"EUR"</span> };
+<span class="kw">function</span> <span class="fn">usd</span>(n: <span class="tp">number</span>): <span class="tp">USD</span> { <span class="kw">return</span> n <span class="kw">as</span> <span class="tp">USD</span>; }
+
+<span class="cmt">// const type parameters (TS 5.0+)</span>
+<span class="kw">function</span> <span class="fn">asConst</span>&lt;<span class="kw">const</span> <span class="tp">T</span>&gt;(value: <span class="tp">T</span>): <span class="tp">T</span> { <span class="kw">return</span> value; }</code></pre></div>
+</div>
+
+<!-- ===== ASYNC ===== -->
+<div class="section" id="async">
+  <div class="section-header"><span class="icon">⏳</span><h2>Async / Promises</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Basic async/await</span>
+<span class="kw">async function</span> <span class="fn">fetchUser</span>(id: <span class="tp">string</span>): <span class="tp">Promise&lt;User&gt;</span> {
+  <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/api/users/${id}`</span>);
+  <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> Error(<span class="str">`HTTP ${res.status}`</span>);
+  <span class="kw">return</span> res.<span class="fn">json</span>();
+}
+
+<span class="cmt">// Promise.all — parallel execution</span>
+<span class="kw">const</span> [users, posts] = <span class="kw">await</span> Promise.<span class="fn">all</span>([<span class="fn">fetchUsers</span>(), <span class="fn">fetchPosts</span>()]);
+
+<span class="cmt">// Promise.allSettled — no short-circuit</span>
+<span class="kw">const</span> results = <span class="kw">await</span> Promise.<span class="fn">allSettled</span>([<span class="fn">a</span>(), <span class="fn">b</span>()]);
+results.<span class="fn">forEach</span>(r =&gt; {
+  <span class="kw">if</span> (r.status === <span class="str">"fulfilled"</span>) console.<span class="fn">log</span>(r.value);
+  <span class="kw">else</span> console.<span class="fn">error</span>(r.reason);
+});
+
+<span class="cmt">// Promise.race — first to settle</span>
+<span class="kw">const</span> fastest = <span class="kw">await</span> Promise.<span class="fn">race</span>([<span class="fn">a</span>(), <span class="fn">b</span>()]);
+
+<span class="cmt">// Async Generator</span>
+<span class="kw">async function*</span> <span class="fn">paginate</span>&lt;<span class="tp">T</span>&gt;(url: <span class="tp">string</span>): <span class="tp">AsyncGenerator&lt;T[]&gt;</span> {
+  <span class="kw">let</span> page = <span class="num">1</span>;
+  <span class="kw">while</span> (<span class="kw">true</span>) {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`${url}?page=${page++}`</span>);
+    <span class="kw">const</span> data: <span class="tp">T[]</span> = <span class="kw">await</span> res.<span class="fn">json</span>();
+    <span class="kw">if</span> (!data.length) <span class="kw">break</span>;
+    <span class="kw">yield</span> data;
+  }
+}
+
+<span class="kw">for await</span> (<span class="kw">const</span> batch <span class="kw">of</span> <span class="fn">paginate</span>&lt;<span class="tp">User</span>&gt;(<span class="str">"/api/users"</span>)) {
+  console.<span class="fn">log</span>(batch);
+}</code></pre></div>
+</div>
+
+<!-- ===== ERROR HANDLING ===== -->
+<div class="section" id="errors">
+  <div class="section-header"><span class="icon">🚨</span><h2>Error Handling</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Custom Error</span>
+<span class="kw">class</span> <span class="tp">AppError</span> <span class="kw">extends</span> <span class="tp">Error</span> {
+  <span class="kw">constructor</span>(
+    message: <span class="tp">string</span>,
+    <span class="kw">public</span> code: <span class="tp">string</span>,
+    <span class="kw">public</span> statusCode = <span class="num">500</span>
+  ) {
+    <span class="kw">super</span>(message);
+    <span class="kw">this</span>.name = <span class="str">"AppError"</span>;
+  }
+}
+
+<span class="cmt">// Result Type Pattern (no exceptions)</span>
+<span class="kw">type</span> <span class="tp">Result&lt;T, E = Error&gt;</span> =
+  | { ok: <span class="kw">true</span>; value: <span class="tp">T</span> }
+  | { ok: <span class="kw">false</span>; error: <span class="tp">E</span> };
+
+<span class="kw">function</span> <span class="fn">divide</span>(a: <span class="tp">number</span>, b: <span class="tp">number</span>): <span class="tp">Result&lt;number, string&gt;</span> {
+  <span class="kw">if</span> (b === <span class="num">0</span>) <span class="kw">return</span> { ok: <span class="kw">false</span>, error: <span class="str">"Division by zero"</span> };
+  <span class="kw">return</span> { ok: <span class="kw">true</span>, value: a / b };
+}
+
+<span class="cmt">// Type-safe catch</span>
+<span class="kw">try</span> {
+  <span class="fn">riskyOp</span>();
+} <span class="kw">catch</span> (err) {
+  <span class="kw">if</span> (err <span class="kw">instanceof</span> <span class="tp">AppError</span>) console.<span class="fn">error</span>(err.code);
+  <span class="kw">else if</span> (err <span class="kw">instanceof</span> <span class="tp">Error</span>) console.<span class="fn">error</span>(err.message);
+  <span class="kw">else</span> console.<span class="fn">error</span>(<span class="str">"Unknown"</span>, err);
+}</code></pre></div>
+</div>
+
+<!-- ===== TSCONFIG ===== -->
+<div class="section" id="config">
+  <div class="section-header"><span class="icon">⚙️</span><h2>tsconfig.json</h2></div>
+  <div class="code-wrapper"><pre><code>{
+  <span class="str">"compilerOptions"</span>: {
+    <span class="cmt">// Target &amp; Module</span>
+    <span class="str">"target"</span>: <span class="str">"ES2022"</span>,
+    <span class="str">"module"</span>: <span class="str">"NodeNext"</span>,
+    <span class="str">"moduleResolution"</span>: <span class="str">"NodeNext"</span>,
+    <span class="str">"lib"</span>: [<span class="str">"ES2022"</span>, <span class="str">"DOM"</span>, <span class="str">"DOM.Iterable"</span>],
+
+    <span class="cmt">// Strict (always enable)</span>
+    <span class="str">"strict"</span>: <span class="kw">true</span>,
+    <span class="str">"noUncheckedIndexedAccess"</span>: <span class="kw">true</span>,
+    <span class="str">"exactOptionalPropertyTypes"</span>: <span class="kw">true</span>,
+
+    <span class="cmt">// Output</span>
+    <span class="str">"outDir"</span>: <span class="str">"./dist"</span>,
+    <span class="str">"rootDir"</span>: <span class="str">"./src"</span>,
+    <span class="str">"declaration"</span>: <span class="kw">true</span>,
+    <span class="str">"sourceMap"</span>: <span class="kw">true</span>,
+
+    <span class="cmt">// Interop</span>
+    <span class="str">"esModuleInterop"</span>: <span class="kw">true</span>,
+    <span class="str">"forceConsistentCasingInFileNames"</span>: <span class="kw">true</span>,
+
+    <span class="cmt">// Paths</span>
+    <span class="str">"baseUrl"</span>: <span class="str">"."</span>,
+    <span class="str">"paths"</span>: { <span class="str">"@/*"</span>: [<span class="str">"src/*"</span>] },
+
+    <span class="str">"skipLibCheck"</span>: <span class="kw">true</span>
+  },
+  <span class="str">"include"</span>: [<span class="str">"src/**/*"</span>],
+  <span class="str">"exclude"</span>: [<span class="str">"node_modules"</span>, <span class="str">"dist"</span>]
+}</code></pre></div>
+</div>
+
+<!-- ===== COMMON PATTERNS ===== -->
+<div class="section" id="patterns">
+  <div class="section-header"><span class="icon">🎯</span><h2>Common Patterns</h2></div>
+
+  <h3>Builder Pattern</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">class</span> <span class="tp">QueryBuilder</span>&lt;<span class="tp">T</span>&gt; {
+  <span class="kw">private</span> filters: <span class="tp">Partial&lt;T&gt;</span> = {};
+  <span class="kw">private</span> _limit?: <span class="tp">number</span>;
+
+  <span class="fn">where</span>&lt;<span class="tp">K</span> <span class="kw">extends keyof</span> <span class="tp">T</span>&gt;(key: <span class="tp">K</span>, val: <span class="tp">T[K]</span>): <span class="kw">this</span> {
+    <span class="kw">this</span>.filters[key] = val;
+    <span class="kw">return this</span>;
+  }
+
+  <span class="fn">limit</span>(n: <span class="tp">number</span>): <span class="kw">this</span> { <span class="kw">this</span>._limit = n; <span class="kw">return this</span>; }
+
+  <span class="fn">build</span>() { <span class="kw">return</span> { filters: <span class="kw">this</span>.filters, limit: <span class="kw">this</span>._limit }; }
+}
+
+<span class="kw">const</span> q = <span class="kw">new</span> <span class="tp">QueryBuilder</span>&lt;<span class="tp">User</span>&gt;().<span class="fn">where</span>(<span class="str">"name"</span>, <span class="str">"Bob"</span>).<span class="fn">limit</span>(<span class="num">10</span>).<span class="fn">build</span>();</code></pre></div>
+
+  <h3>Type-safe Event Emitter</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">type</span> <span class="tp">Events</span> = {
+  login: { userId: <span class="tp">string</span> };
+  logout: { reason: <span class="tp">string</span> };
+};
+
+<span class="kw">class</span> <span class="tp">TypedEmitter</span>&lt;<span class="tp">T</span> <span class="kw">extends</span> <span class="tp">Record&lt;string, any&gt;</span>&gt; {
+  <span class="kw">private</span> listeners = <span class="kw">new</span> Map&lt;<span class="kw">keyof</span> <span class="tp">T</span>, Set&lt;Function&gt;&gt;();
+
+  <span class="fn">on</span>&lt;<span class="tp">K</span> <span class="kw">extends keyof</span> <span class="tp">T</span>&gt;(event: <span class="tp">K</span>, fn: (data: <span class="tp">T[K]</span>) =&gt; <span class="tp">void</span>) {
+    <span class="kw">if</span> (!<span class="kw">this</span>.listeners.<span class="fn">has</span>(event)) <span class="kw">this</span>.listeners.<span class="fn">set</span>(event, <span class="kw">new</span> Set());
+    <span class="kw">this</span>.listeners.<span class="fn">get</span>(event)!.<span class="fn">add</span>(fn);
+  }
+
+  <span class="fn">emit</span>&lt;<span class="tp">K</span> <span class="kw">extends keyof</span> <span class="tp">T</span>&gt;(event: <span class="tp">K</span>, data: <span class="tp">T[K]</span>) {
+    <span class="kw">this</span>.listeners.<span class="fn">get</span>(event)?.<span class="fn">forEach</span>(fn =&gt; <span class="fn">fn</span>(data));
+  }
+}
+
+<span class="kw">const</span> em = <span class="kw">new</span> <span class="tp">TypedEmitter</span>&lt;<span class="tp">Events</span>&gt;();
+em.<span class="fn">on</span>(<span class="str">"login"</span>, d =&gt; console.<span class="fn">log</span>(d.userId)); <span class="cmt">// fully typed!</span></code></pre></div>
+
+  <h3>Exhaustive Switch Check</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">function</span> <span class="fn">assertNever</span>(x: <span class="tp">never</span>): <span class="tp">never</span> {
+  <span class="kw">throw new</span> Error(<span class="str">`Unexpected: ${x}`</span>);
+}
+
+<span class="kw">type</span> <span class="tp">Action</span> = { type: <span class="str">"inc"</span> } | { type: <span class="str">"dec"</span> } | { type: <span class="str">"reset"</span> };
+
+<span class="kw">function</span> <span class="fn">reducer</span>(state: <span class="tp">number</span>, action: <span class="tp">Action</span>): <span class="tp">number</span> {
+  <span class="kw">switch</span> (action.type) {
+    <span class="kw">case</span> <span class="str">"inc"</span>:   <span class="kw">return</span> state + <span class="num">1</span>;
+    <span class="kw">case</span> <span class="str">"dec"</span>:   <span class="kw">return</span> state - <span class="num">1</span>;
+    <span class="kw">case</span> <span class="str">"reset"</span>: <span class="kw">return</span> <span class="num">0</span>;
+    <span class="kw">default</span>:      <span class="kw">return</span> <span class="fn">assertNever</span>(action); <span class="cmt">// compile error if missed</span>
+  }
+}</code></pre></div>
+
+  <div class="note tip">
+    <strong>💡 Quick Tips</strong>
+    <ul>
+      <li>Prefer <code>unknown</code> over <code>any</code></li>
+      <li>Use <code>as const</code> for literal inference</li>
+      <li>Enable <code>strict: true</code> always</li>
+      <li>Use discriminated unions over type assertions</li>
+      <li>Prefer <code>satisfies</code> for type validation without widening</li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>TypeScript Development Cheatsheet · 2026</footer>
+
+<script>
+// Copy buttons
+document.querySelectorAll('.code-wrapper').forEach(w => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'Copy';
+  btn.onclick = () => {
+    const code = w.querySelector('code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  };
+  w.appendChild(btn);
+});
+// Back to top
+const backBtn = document.querySelector('.back-top');
+window.addEventListener('scroll', () => backBtn.classList.toggle('visible', window.scrollY > 400));
+</script>
+</body>
+</html>

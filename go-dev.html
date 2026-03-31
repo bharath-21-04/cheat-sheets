@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Go Development Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ Go</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+
+<div class="container">
+
+<div class="hero">
+  <h1>Go Cheatsheet</h1>
+  <p class="subtitle">Complete development reference</p>
+  <span class="badge">Development</span>
+</div>
+
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#basics">Basics &amp; Variables</a>
+    <a href="#types">Types &amp; Structs</a>
+    <a href="#functions">Functions</a>
+    <a href="#interfaces">Interfaces</a>
+    <a href="#collections">Arrays, Slices &amp; Maps</a>
+    <a href="#control">Control Flow</a>
+    <a href="#goroutines">Goroutines &amp; Channels</a>
+    <a href="#concurrency">Concurrency Patterns</a>
+    <a href="#errors">Error Handling</a>
+    <a href="#io">I/O &amp; Files</a>
+    <a href="#http">HTTP &amp; APIs</a>
+    <a href="#testing">Testing</a>
+    <a href="#generics">Generics (1.18+)</a>
+    <a href="#modules">Modules &amp; Packages</a>
+    <a href="#patterns">Common Patterns</a>
+  </div>
+</div>
+
+<!-- ===== BASICS ===== -->
+<div class="section" id="basics">
+  <div class="section-header"><span class="icon">📦</span><h2>Basics &amp; Variables</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Hello World</span>
+<span class="kw">package</span> main
+
+<span class="kw">import</span> <span class="str">"fmt"</span>
+
+<span class="kw">func</span> <span class="fn">main</span>() {
+    fmt.<span class="fn">Println</span>(<span class="str">"Hello, World!"</span>)
+}
+
+<span class="cmt">// Variable declarations</span>
+<span class="kw">var</span> name <span class="tp">string</span> = <span class="str">"Bharath"</span>       <span class="cmt">// explicit type</span>
+<span class="kw">var</span> age = <span class="num">25</span>                       <span class="cmt">// type inferred</span>
+city := <span class="str">"NYC"</span>                      <span class="cmt">// short declaration (inside func only)</span>
+
+<span class="cmt">// Multiple declarations</span>
+<span class="kw">var</span> (
+    x <span class="tp">int</span>    = <span class="num">10</span>
+    y <span class="tp">float64</span> = <span class="num">3.14</span>
+    z <span class="tp">bool</span>    = <span class="kw">true</span>
+)
+
+<span class="cmt">// Constants</span>
+<span class="kw">const</span> Pi = <span class="num">3.14159</span>
+<span class="kw">const</span> (
+    StatusOK    = <span class="num">200</span>
+    StatusNotFound = <span class="num">404</span>
+)
+
+<span class="cmt">// iota — auto-incrementing constants</span>
+<span class="kw">const</span> (
+    Sunday <span class="tp">int</span> = <span class="kw">iota</span>   <span class="cmt">// 0</span>
+    Monday                <span class="cmt">// 1</span>
+    Tuesday               <span class="cmt">// 2</span>
+)
+
+<span class="cmt">// Zero values</span>
+<span class="cmt">// int → 0, float → 0.0, bool → false, string → "", pointer → nil</span>
+
+<span class="cmt">// Type conversions (no implicit casting)</span>
+i := <span class="num">42</span>
+f := <span class="tp">float64</span>(i)
+s := <span class="tp">string</span>(<span class="fn">rune</span>(i))</code></pre></div>
+</div>
+
+<!-- ===== TYPES & STRUCTS ===== -->
+<div class="section" id="types">
+  <div class="section-header"><span class="icon">🧱</span><h2>Types &amp; Structs</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Basic types</span>
+<span class="cmt">// bool, string</span>
+<span class="cmt">// int, int8, int16, int32, int64</span>
+<span class="cmt">// uint, uint8(byte), uint16, uint32, uint64</span>
+<span class="cmt">// float32, float64</span>
+<span class="cmt">// complex64, complex128</span>
+<span class="cmt">// rune (alias for int32, represents a Unicode code point)</span>
+
+<span class="cmt">// Struct</span>
+<span class="kw">type</span> <span class="tp">User</span> <span class="kw">struct</span> {
+    ID        <span class="tp">int</span>       <span class="str">`json:"id"`</span>
+    Name      <span class="tp">string</span>    <span class="str">`json:"name"`</span>
+    Email     <span class="tp">string</span>    <span class="str">`json:"email,omitempty"`</span>
+    CreatedAt time.<span class="tp">Time</span> <span class="str">`json:"created_at"`</span>
+}
+
+<span class="cmt">// Create instances</span>
+u1 := <span class="tp">User</span>{Name: <span class="str">"Bob"</span>, Email: <span class="str">"bob@mail.com"</span>}
+u2 := <span class="tp">User</span>{<span class="str">"1"</span>, <span class="str">"Bob"</span>, <span class="str">"bob@mail.com"</span>, time.<span class="fn">Now</span>()}  <span class="cmt">// positional</span>
+u3 := <span class="kw">new</span>(<span class="tp">User</span>)    <span class="cmt">// returns *User (pointer), zero-valued</span>
+
+<span class="cmt">// Methods (value receiver)</span>
+<span class="kw">func</span> (u <span class="tp">User</span>) <span class="fn">FullName</span>() <span class="tp">string</span> {
+    <span class="kw">return</span> u.Name
+}
+
+<span class="cmt">// Methods (pointer receiver — can mutate)</span>
+<span class="kw">func</span> (u *<span class="tp">User</span>) <span class="fn">SetEmail</span>(email <span class="tp">string</span>) {
+    u.Email = email
+}
+
+<span class="cmt">// Embedding (composition over inheritance)</span>
+<span class="kw">type</span> <span class="tp">Admin</span> <span class="kw">struct</span> {
+    <span class="tp">User</span>                  <span class="cmt">// embedded — Admin "inherits" User's fields/methods</span>
+    Role <span class="tp">string</span>
+}
+admin := <span class="tp">Admin</span>{User: <span class="tp">User</span>{Name: <span class="str">"Alice"</span>}, Role: <span class="str">"super"</span>}
+fmt.<span class="fn">Println</span>(admin.Name) <span class="cmt">// promoted field access</span>
+
+<span class="cmt">// Type aliases &amp; custom types</span>
+<span class="kw">type</span> <span class="tp">UserID</span> <span class="tp">int64</span>
+<span class="kw">type</span> <span class="tp">Celsius</span> <span class="tp">float64</span>
+<span class="kw">type</span> <span class="tp">StringSlice</span> []<span class="tp">string</span></code></pre></div>
+</div>
+
+<!-- ===== FUNCTIONS ===== -->
+<div class="section" id="functions">
+  <div class="section-header"><span class="icon">⚙️</span><h2>Functions</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Basic function</span>
+<span class="kw">func</span> <span class="fn">add</span>(a, b <span class="tp">int</span>) <span class="tp">int</span> {
+    <span class="kw">return</span> a + b
+}
+
+<span class="cmt">// Multiple return values</span>
+<span class="kw">func</span> <span class="fn">divide</span>(a, b <span class="tp">float64</span>) (<span class="tp">float64</span>, <span class="tp">error</span>) {
+    <span class="kw">if</span> b == <span class="num">0</span> {
+        <span class="kw">return</span> <span class="num">0</span>, fmt.<span class="fn">Errorf</span>(<span class="str">"division by zero"</span>)
+    }
+    <span class="kw">return</span> a / b, <span class="kw">nil</span>
+}
+
+<span class="cmt">// Named return values</span>
+<span class="kw">func</span> <span class="fn">swap</span>(a, b <span class="tp">int</span>) (x, y <span class="tp">int</span>) {
+    x, y = b, a
+    <span class="kw">return</span> <span class="cmt">// naked return</span>
+}
+
+<span class="cmt">// Variadic functions</span>
+<span class="kw">func</span> <span class="fn">sum</span>(nums ...<span class="tp">int</span>) <span class="tp">int</span> {
+    total := <span class="num">0</span>
+    <span class="kw">for</span> _, n := <span class="kw">range</span> nums {
+        total += n
+    }
+    <span class="kw">return</span> total
+}
+
+<span class="cmt">// Function as value / first-class</span>
+<span class="kw">var</span> op <span class="kw">func</span>(<span class="tp">int</span>, <span class="tp">int</span>) <span class="tp">int</span> = add
+
+<span class="cmt">// Anonymous / closure</span>
+double := <span class="kw">func</span>(n <span class="tp">int</span>) <span class="tp">int</span> { <span class="kw">return</span> n * <span class="num">2</span> }
+
+<span class="cmt">// Higher-order function</span>
+<span class="kw">func</span> <span class="fn">apply</span>(nums []<span class="tp">int</span>, fn <span class="kw">func</span>(<span class="tp">int</span>) <span class="tp">int</span>) []<span class="tp">int</span> {
+    result := <span class="fn">make</span>([]<span class="tp">int</span>, <span class="fn">len</span>(nums))
+    <span class="kw">for</span> i, n := <span class="kw">range</span> nums {
+        result[i] = <span class="fn">fn</span>(n)
+    }
+    <span class="kw">return</span> result
+}
+
+<span class="cmt">// Defer — runs when function returns (LIFO)</span>
+<span class="kw">func</span> <span class="fn">readFile</span>(path <span class="tp">string</span>) {
+    f, _ := os.<span class="fn">Open</span>(path)
+    <span class="kw">defer</span> f.<span class="fn">Close</span>()  <span class="cmt">// guaranteed cleanup</span>
+    <span class="cmt">// ... read file</span>
+}
+
+<span class="cmt">// Init function — runs before main()</span>
+<span class="kw">func</span> <span class="fn">init</span>() {
+    <span class="cmt">// package initialization</span>
+}</code></pre></div>
+</div>
+
+<!-- ===== INTERFACES ===== -->
+<div class="section" id="interfaces">
+  <div class="section-header"><span class="icon">📐</span><h2>Interfaces</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Interface definition</span>
+<span class="kw">type</span> <span class="tp">Reader</span> <span class="kw">interface</span> {
+    <span class="fn">Read</span>(p []<span class="tp">byte</span>) (n <span class="tp">int</span>, err <span class="tp">error</span>)
+}
+
+<span class="kw">type</span> <span class="tp">Writer</span> <span class="kw">interface</span> {
+    <span class="fn">Write</span>(p []<span class="tp">byte</span>) (n <span class="tp">int</span>, err <span class="tp">error</span>)
+}
+
+<span class="cmt">// Interface composition</span>
+<span class="kw">type</span> <span class="tp">ReadWriter</span> <span class="kw">interface</span> {
+    <span class="tp">Reader</span>
+    <span class="tp">Writer</span>
+}
+
+<span class="cmt">// Implicit implementation — no "implements" keyword</span>
+<span class="kw">type</span> <span class="tp">MyFile</span> <span class="kw">struct</span>{ data []<span class="tp">byte</span> }
+
+<span class="kw">func</span> (f *<span class="tp">MyFile</span>) <span class="fn">Read</span>(p []<span class="tp">byte</span>) (<span class="tp">int</span>, <span class="tp">error</span>) {
+    copy(p, f.data)
+    <span class="kw">return</span> <span class="fn">len</span>(f.data), <span class="kw">nil</span>
+}
+<span class="cmt">// *MyFile now satisfies Reader interface</span>
+
+<span class="cmt">// Empty interface — accepts any type</span>
+<span class="kw">var</span> anything <span class="kw">interface</span>{} = <span class="str">"hello"</span>
+<span class="kw">var</span> anything2 <span class="tp">any</span> = <span class="num">42</span>   <span class="cmt">// 'any' is alias for interface{} (Go 1.18+)</span>
+
+<span class="cmt">// Type assertion</span>
+val, ok := anything.(<span class="tp">string</span>)
+<span class="kw">if</span> ok {
+    fmt.<span class="fn">Println</span>(val)
+}
+
+<span class="cmt">// Type switch</span>
+<span class="kw">func</span> <span class="fn">describe</span>(i <span class="kw">interface</span>{}) <span class="tp">string</span> {
+    <span class="kw">switch</span> v := i.(<span class="kw">type</span>) {
+    <span class="kw">case</span> <span class="tp">int</span>:
+        <span class="kw">return</span> fmt.<span class="fn">Sprintf</span>(<span class="str">"int: %d"</span>, v)
+    <span class="kw">case</span> <span class="tp">string</span>:
+        <span class="kw">return</span> fmt.<span class="fn">Sprintf</span>(<span class="str">"string: %s"</span>, v)
+    <span class="kw">default</span>:
+        <span class="kw">return</span> <span class="str">"unknown"</span>
+    }
+}
+
+<span class="cmt">// Stringer interface (like toString)</span>
+<span class="kw">func</span> (u <span class="tp">User</span>) <span class="fn">String</span>() <span class="tp">string</span> {
+    <span class="kw">return</span> fmt.<span class="fn">Sprintf</span>(<span class="str">"%s (%s)"</span>, u.Name, u.Email)
+}</code></pre></div>
+
+  <div class="note tip">
+    <strong>💡 Key Principle</strong>
+    Go uses structural (duck) typing: if a type has the right methods, it implements the interface automatically. Accept interfaces, return structs.
+  </div>
+</div>
+
+<!-- ===== COLLECTIONS ===== -->
+<div class="section" id="collections">
+  <div class="section-header"><span class="icon">📚</span><h2>Arrays, Slices &amp; Maps</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Array (fixed size)</span>
+<span class="kw">var</span> arr [<span class="num">5</span>]<span class="tp">int</span> = [<span class="num">5</span>]<span class="tp">int</span>{<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>}
+
+<span class="cmt">// Slice (dynamic, backed by array)</span>
+s := []<span class="tp">int</span>{<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>}
+s = <span class="fn">append</span>(s, <span class="num">4</span>, <span class="num">5</span>)       <span class="cmt">// append elements</span>
+s = <span class="fn">append</span>(s, other...)    <span class="cmt">// append another slice</span>
+
+<span class="cmt">// Make with length &amp; capacity</span>
+s2 := <span class="fn">make</span>([]<span class="tp">int</span>, <span class="num">0</span>, <span class="num">100</span>) <span class="cmt">// len=0, cap=100</span>
+
+<span class="cmt">// Slicing</span>
+sub := s[<span class="num">1</span>:<span class="num">3</span>]             <span class="cmt">// [2, 3] — shares underlying array!</span>
+cpy := <span class="fn">make</span>([]<span class="tp">int</span>, <span class="fn">len</span>(s))
+<span class="fn">copy</span>(cpy, s)               <span class="cmt">// true copy</span>
+
+<span class="cmt">// Delete element at index i (Go 1.21+: slices.Delete)</span>
+s = <span class="fn">append</span>(s[:i], s[i+<span class="num">1</span>:]...)
+
+<span class="cmt">// Maps</span>
+m := <span class="kw">map</span>[<span class="tp">string</span>]<span class="tp">int</span>{
+    <span class="str">"one"</span>: <span class="num">1</span>,
+    <span class="str">"two"</span>: <span class="num">2</span>,
+}
+m[<span class="str">"three"</span>] = <span class="num">3</span>             <span class="cmt">// set</span>
+val, ok := m[<span class="str">"one"</span>]        <span class="cmt">// get with existence check</span>
+<span class="fn">delete</span>(m, <span class="str">"two"</span>)           <span class="cmt">// delete key</span>
+
+<span class="cmt">// Iterate</span>
+<span class="kw">for</span> key, val := <span class="kw">range</span> m {
+    fmt.<span class="fn">Println</span>(key, val)
+}
+
+<span class="cmt">// Iterate slice</span>
+<span class="kw">for</span> i, v := <span class="kw">range</span> s {
+    fmt.<span class="fn">Println</span>(i, v)
+}
+
+<span class="cmt">// Useful packages (Go 1.21+)</span>
+<span class="kw">import</span> <span class="str">"slices"</span>
+slices.<span class="fn">Sort</span>(s)
+slices.<span class="fn">Contains</span>(s, <span class="num">3</span>)
+idx := slices.<span class="fn">Index</span>(s, <span class="num">3</span>)
+
+<span class="kw">import</span> <span class="str">"maps"</span>
+keys := maps.<span class="fn">Keys</span>(m)
+maps.<span class="fn">Clone</span>(m)</code></pre></div>
+</div>
+
+<!-- ===== CONTROL FLOW ===== -->
+<div class="section" id="control">
+  <div class="section-header"><span class="icon">🔄</span><h2>Control Flow</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// If (no parentheses, braces required)</span>
+<span class="kw">if</span> x > <span class="num">0</span> {
+    fmt.<span class="fn">Println</span>(<span class="str">"positive"</span>)
+} <span class="kw">else if</span> x == <span class="num">0</span> {
+    fmt.<span class="fn">Println</span>(<span class="str">"zero"</span>)
+} <span class="kw">else</span> {
+    fmt.<span class="fn">Println</span>(<span class="str">"negative"</span>)
+}
+
+<span class="cmt">// If with init statement</span>
+<span class="kw">if</span> err := <span class="fn">doSomething</span>(); err != <span class="kw">nil</span> {
+    <span class="fn">log</span>.<span class="fn">Fatal</span>(err)
+}
+
+<span class="cmt">// For loop (Go's only loop)</span>
+<span class="kw">for</span> i := <span class="num">0</span>; i < <span class="num">10</span>; i++ { }
+
+<span class="cmt">// While-style</span>
+<span class="kw">for</span> condition { }
+
+<span class="cmt">// Infinite loop</span>
+<span class="kw">for</span> { <span class="kw">break</span> }
+
+<span class="cmt">// Range loop</span>
+<span class="kw">for</span> i, v := <span class="kw">range</span> slice { }
+<span class="kw">for</span> k, v := <span class="kw">range</span> myMap { }
+<span class="kw">for</span> i, ch := <span class="kw">range</span> <span class="str">"hello"</span> { } <span class="cmt">// iterates runes</span>
+
+<span class="cmt">// Switch (no break needed — implicit)</span>
+<span class="kw">switch</span> day {
+<span class="kw">case</span> <span class="str">"Mon"</span>, <span class="str">"Tue"</span>, <span class="str">"Wed"</span>, <span class="str">"Thu"</span>, <span class="str">"Fri"</span>:
+    fmt.<span class="fn">Println</span>(<span class="str">"weekday"</span>)
+<span class="kw">case</span> <span class="str">"Sat"</span>, <span class="str">"Sun"</span>:
+    fmt.<span class="fn">Println</span>(<span class="str">"weekend"</span>)
+<span class="kw">default</span>:
+    fmt.<span class="fn">Println</span>(<span class="str">"invalid"</span>)
+}
+
+<span class="cmt">// Switch without condition (cleaner if/else chain)</span>
+<span class="kw">switch</span> {
+<span class="kw">case</span> t.Hour() < <span class="num">12</span>:
+    fmt.<span class="fn">Println</span>(<span class="str">"morning"</span>)
+<span class="kw">case</span> t.Hour() < <span class="num">17</span>:
+    fmt.<span class="fn">Println</span>(<span class="str">"afternoon"</span>)
+<span class="kw">default</span>:
+    fmt.<span class="fn">Println</span>(<span class="str">"evening"</span>)
+}
+
+<span class="cmt">// Select (switch for channels)</span>
+<span class="kw">select</span> {
+<span class="kw">case</span> msg := <-ch1:
+    fmt.<span class="fn">Println</span>(msg)
+<span class="kw">case</span> ch2 <- data:
+    fmt.<span class="fn">Println</span>(<span class="str">"sent"</span>)
+<span class="kw">case</span> <-time.<span class="fn">After</span>(<span class="num">5</span> * time.Second):
+    fmt.<span class="fn">Println</span>(<span class="str">"timeout"</span>)
+}</code></pre></div>
+</div>
+
+<!-- ===== GOROUTINES & CHANNELS ===== -->
+<div class="section" id="goroutines">
+  <div class="section-header"><span class="icon">🚀</span><h2>Goroutines &amp; Channels</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Start a goroutine</span>
+<span class="kw">go</span> <span class="fn">doWork</span>()
+
+<span class="cmt">// Anonymous goroutine</span>
+<span class="kw">go func</span>(msg <span class="tp">string</span>) {
+    fmt.<span class="fn">Println</span>(msg)
+}(<span class="str">"hello"</span>)
+
+<span class="cmt">// WaitGroup — wait for goroutines to finish</span>
+<span class="kw">var</span> wg sync.<span class="tp">WaitGroup</span>
+<span class="kw">for</span> i := <span class="num">0</span>; i < <span class="num">5</span>; i++ {
+    wg.<span class="fn">Add</span>(<span class="num">1</span>)
+    <span class="kw">go func</span>(id <span class="tp">int</span>) {
+        <span class="kw">defer</span> wg.<span class="fn">Done</span>()
+        fmt.<span class="fn">Println</span>(<span class="str">"worker"</span>, id)
+    }(i)
+}
+wg.<span class="fn">Wait</span>()
+
+<span class="cmt">// Unbuffered channel (synchronous)</span>
+ch := <span class="fn">make</span>(<span class="kw">chan</span> <span class="tp">int</span>)
+<span class="kw">go func</span>() { ch <- <span class="num">42</span> }()
+val := <-ch
+
+<span class="cmt">// Buffered channel</span>
+ch := <span class="fn">make</span>(<span class="kw">chan</span> <span class="tp">string</span>, <span class="num">10</span>)  <span class="cmt">// buffer size 10</span>
+ch <- <span class="str">"msg"</span>                    <span class="cmt">// won't block until buffer full</span>
+
+<span class="cmt">// Directional channels</span>
+<span class="kw">func</span> <span class="fn">producer</span>(out <span class="kw">chan</span><- <span class="tp">int</span>) { out <- <span class="num">1</span> }   <span class="cmt">// send-only</span>
+<span class="kw">func</span> <span class="fn">consumer</span>(in <-<span class="kw">chan</span> <span class="tp">int</span>)  { <-in }         <span class="cmt">// receive-only</span>
+
+<span class="cmt">// Range over channel</span>
+<span class="kw">go func</span>() {
+    <span class="kw">for</span> i := <span class="num">0</span>; i < <span class="num">5</span>; i++ { ch <- i }
+    <span class="fn">close</span>(ch)  <span class="cmt">// must close for range to exit</span>
+}()
+<span class="kw">for</span> val := <span class="kw">range</span> ch {
+    fmt.<span class="fn">Println</span>(val)
+}</code></pre></div>
+</div>
+
+<!-- ===== CONCURRENCY PATTERNS ===== -->
+<div class="section" id="concurrency">
+  <div class="section-header"><span class="icon">🔀</span><h2>Concurrency Patterns</h2></div>
+
+  <h3>Mutex</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">type</span> <span class="tp">SafeCounter</span> <span class="kw">struct</span> {
+    mu    sync.<span class="tp">Mutex</span>
+    count <span class="tp">int</span>
+}
+
+<span class="kw">func</span> (c *<span class="tp">SafeCounter</span>) <span class="fn">Inc</span>() {
+    c.mu.<span class="fn">Lock</span>()
+    <span class="kw">defer</span> c.mu.<span class="fn">Unlock</span>()
+    c.count++
+}
+
+<span class="cmt">// RWMutex — multiple readers, single writer</span>
+<span class="kw">var</span> rw sync.<span class="tp">RWMutex</span>
+rw.<span class="fn">RLock</span>()   <span class="cmt">// read lock</span>
+rw.<span class="fn">RUnlock</span>()</code></pre></div>
+
+  <h3>Context (Cancellation &amp; Timeouts)</h3>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Timeout context</span>
+ctx, cancel := context.<span class="fn">WithTimeout</span>(context.<span class="fn">Background</span>(), <span class="num">5</span>*time.Second)
+<span class="kw">defer</span> <span class="fn">cancel</span>()
+
+<span class="cmt">// Cancel context</span>
+ctx, cancel := context.<span class="fn">WithCancel</span>(context.<span class="fn">Background</span>())
+
+<span class="cmt">// Use in goroutine</span>
+<span class="kw">go func</span>(ctx context.<span class="tp">Context</span>) {
+    <span class="kw">select</span> {
+    <span class="kw">case</span> <-ctx.<span class="fn">Done</span>():
+        fmt.<span class="fn">Println</span>(<span class="str">"cancelled:"</span>, ctx.<span class="fn">Err</span>())
+        <span class="kw">return</span>
+    <span class="kw">case</span> result := <-<span class="fn">doWork</span>(ctx):
+        fmt.<span class="fn">Println</span>(result)
+    }
+}(ctx)</code></pre></div>
+
+  <h3>Worker Pool</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">func</span> <span class="fn">workerPool</span>(jobs <-<span class="kw">chan</span> <span class="tp">int</span>, results <span class="kw">chan</span><- <span class="tp">int</span>, workers <span class="tp">int</span>) {
+    <span class="kw">var</span> wg sync.<span class="tp">WaitGroup</span>
+    <span class="kw">for</span> w := <span class="num">0</span>; w < workers; w++ {
+        wg.<span class="fn">Add</span>(<span class="num">1</span>)
+        <span class="kw">go func</span>() {
+            <span class="kw">defer</span> wg.<span class="fn">Done</span>()
+            <span class="kw">for</span> job := <span class="kw">range</span> jobs {
+                results <- job * <span class="num">2</span>
+            }
+        }()
+    }
+    wg.<span class="fn">Wait</span>()
+    <span class="fn">close</span>(results)
+}</code></pre></div>
+
+  <h3>errgroup</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> <span class="str">"golang.org/x/sync/errgroup"</span>
+
+g, ctx := errgroup.<span class="fn">WithContext</span>(context.<span class="fn">Background</span>())
+g.<span class="fn">Go</span>(<span class="kw">func</span>() <span class="tp">error</span> { <span class="kw">return</span> <span class="fn">fetchA</span>(ctx) })
+g.<span class="fn">Go</span>(<span class="kw">func</span>() <span class="tp">error</span> { <span class="kw">return</span> <span class="fn">fetchB</span>(ctx) })
+<span class="kw">if</span> err := g.<span class="fn">Wait</span>(); err != <span class="kw">nil</span> {
+    <span class="fn">log</span>.<span class="fn">Fatal</span>(err) <span class="cmt">// first error cancels all</span>
+}</code></pre></div>
+</div>
+
+<!-- ===== ERROR HANDLING ===== -->
+<div class="section" id="errors">
+  <div class="section-header"><span class="icon">🚨</span><h2>Error Handling</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Basic error check (the Go way)</span>
+result, err := <span class="fn">doSomething</span>()
+<span class="kw">if</span> err != <span class="kw">nil</span> {
+    <span class="kw">return</span> fmt.<span class="fn">Errorf</span>(<span class="str">"failed to do something: %w"</span>, err) <span class="cmt">// wrap error</span>
+}
+
+<span class="cmt">// Custom error type</span>
+<span class="kw">type</span> <span class="tp">NotFoundError</span> <span class="kw">struct</span> {
+    ID   <span class="tp">string</span>
+    Kind <span class="tp">string</span>
+}
+
+<span class="kw">func</span> (e *<span class="tp">NotFoundError</span>) <span class="fn">Error</span>() <span class="tp">string</span> {
+    <span class="kw">return</span> fmt.<span class="fn">Sprintf</span>(<span class="str">"%s %s not found"</span>, e.Kind, e.ID)
+}
+
+<span class="cmt">// Sentinel errors</span>
+<span class="kw">var</span> ErrNotFound = errors.<span class="fn">New</span>(<span class="str">"not found"</span>)
+<span class="kw">var</span> ErrUnauthorized = errors.<span class="fn">New</span>(<span class="str">"unauthorized"</span>)
+
+<span class="cmt">// errors.Is — check error chain</span>
+<span class="kw">if</span> errors.<span class="fn">Is</span>(err, ErrNotFound) {
+    <span class="cmt">// handle not found</span>
+}
+
+<span class="cmt">// errors.As — extract typed error</span>
+<span class="kw">var</span> nfErr *<span class="tp">NotFoundError</span>
+<span class="kw">if</span> errors.<span class="fn">As</span>(err, &amp;nfErr) {
+    fmt.<span class="fn">Println</span>(nfErr.Kind, nfErr.ID)
+}
+
+<span class="cmt">// Panic &amp; Recover (use sparingly — not for normal errors)</span>
+<span class="kw">func</span> <span class="fn">safeDiv</span>(a, b <span class="tp">int</span>) (<span class="tp">int</span>, <span class="tp">error</span>) {
+    <span class="kw">defer func</span>() {
+        <span class="kw">if</span> r := <span class="fn">recover</span>(); r != <span class="kw">nil</span> {
+            fmt.<span class="fn">Println</span>(<span class="str">"recovered:"</span>, r)
+        }
+    }()
+    <span class="kw">return</span> a / b, <span class="kw">nil</span>
+}</code></pre></div>
+</div>
+
+<!-- ===== I/O & FILES ===== -->
+<div class="section" id="io">
+  <div class="section-header"><span class="icon">📂</span><h2>I/O &amp; Files</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Read entire file</span>
+data, err := os.<span class="fn">ReadFile</span>(<span class="str">"file.txt"</span>)
+
+<span class="cmt">// Write file</span>
+err := os.<span class="fn">WriteFile</span>(<span class="str">"out.txt"</span>, []<span class="fn">byte</span>(<span class="str">"hello"</span>), <span class="num">0644</span>)
+
+<span class="cmt">// Buffered reading</span>
+f, _ := os.<span class="fn">Open</span>(<span class="str">"file.txt"</span>)
+<span class="kw">defer</span> f.<span class="fn">Close</span>()
+scanner := bufio.<span class="fn">NewScanner</span>(f)
+<span class="kw">for</span> scanner.<span class="fn">Scan</span>() {
+    fmt.<span class="fn">Println</span>(scanner.<span class="fn">Text</span>())
+}
+
+<span class="cmt">// JSON encode/decode</span>
+<span class="kw">import</span> <span class="str">"encoding/json"</span>
+
+<span class="cmt">// Struct → JSON</span>
+jsonBytes, _ := json.<span class="fn">Marshal</span>(user)
+jsonStr := <span class="tp">string</span>(jsonBytes)
+
+<span class="cmt">// JSON → Struct</span>
+<span class="kw">var</span> u <span class="tp">User</span>
+json.<span class="fn">Unmarshal</span>([]<span class="fn">byte</span>(jsonStr), &amp;u)
+
+<span class="cmt">// Pretty print</span>
+jsonBytes, _ := json.<span class="fn">MarshalIndent</span>(user, <span class="str">""</span>, <span class="str">"  "</span>)
+
+<span class="cmt">// Streaming JSON</span>
+encoder := json.<span class="fn">NewEncoder</span>(os.Stdout)
+encoder.<span class="fn">Encode</span>(user)
+
+decoder := json.<span class="fn">NewDecoder</span>(resp.Body)
+decoder.<span class="fn">Decode</span>(&amp;u)</code></pre></div>
+</div>
+
+<!-- ===== HTTP ===== -->
+<div class="section" id="http">
+  <div class="section-header"><span class="icon">🌐</span><h2>HTTP &amp; APIs</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> <span class="str">"net/http"</span>
+
+<span class="cmt">// Simple HTTP server</span>
+<span class="kw">func</span> <span class="fn">main</span>() {
+    http.<span class="fn">HandleFunc</span>(<span class="str">"/hello"</span>, <span class="kw">func</span>(w http.<span class="tp">ResponseWriter</span>, r *http.<span class="tp">Request</span>) {
+        fmt.<span class="fn">Fprintf</span>(w, <span class="str">"Hello, %s!"</span>, r.URL.Query().<span class="fn">Get</span>(<span class="str">"name"</span>))
+    })
+    http.<span class="fn">ListenAndServe</span>(<span class="str">":8080"</span>, <span class="kw">nil</span>)
+}
+
+<span class="cmt">// JSON API handler</span>
+<span class="kw">func</span> <span class="fn">getUser</span>(w http.<span class="tp">ResponseWriter</span>, r *http.<span class="tp">Request</span>) {
+    user := <span class="tp">User</span>{Name: <span class="str">"Bob"</span>, Email: <span class="str">"bob@mail.com"</span>}
+    w.<span class="fn">Header</span>().<span class="fn">Set</span>(<span class="str">"Content-Type"</span>, <span class="str">"application/json"</span>)
+    json.<span class="fn">NewEncoder</span>(w).<span class="fn">Encode</span>(user)
+}
+
+<span class="cmt">// HTTP client</span>
+resp, err := http.<span class="fn">Get</span>(<span class="str">"https://api.example.com/data"</span>)
+<span class="kw">if</span> err != <span class="kw">nil</span> { <span class="fn">log</span>.<span class="fn">Fatal</span>(err) }
+<span class="kw">defer</span> resp.Body.<span class="fn">Close</span>()
+
+<span class="kw">var</span> data <span class="tp">Response</span>
+json.<span class="fn">NewDecoder</span>(resp.Body).<span class="fn">Decode</span>(&amp;data)
+
+<span class="cmt">// HTTP client with timeout</span>
+client := &amp;http.<span class="tp">Client</span>{Timeout: <span class="num">10</span> * time.Second}
+resp, err := client.<span class="fn">Get</span>(<span class="str">"https://api.example.com"</span>)
+
+<span class="cmt">// Middleware pattern</span>
+<span class="kw">func</span> <span class="fn">logging</span>(next http.<span class="tp">Handler</span>) http.<span class="tp">Handler</span> {
+    <span class="kw">return</span> http.<span class="fn">HandlerFunc</span>(<span class="kw">func</span>(w http.<span class="tp">ResponseWriter</span>, r *http.<span class="tp">Request</span>) {
+        <span class="fn">log</span>.<span class="fn">Printf</span>(<span class="str">"%s %s"</span>, r.Method, r.URL.Path)
+        next.<span class="fn">ServeHTTP</span>(w, r)
+    })
+}</code></pre></div>
+</div>
+
+<!-- ===== TESTING ===== -->
+<div class="section" id="testing">
+  <div class="section-header"><span class="icon">🧪</span><h2>Testing</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// file: math_test.go</span>
+<span class="kw">package</span> math
+
+<span class="kw">import</span> <span class="str">"testing"</span>
+
+<span class="cmt">// Basic test</span>
+<span class="kw">func</span> <span class="fn">TestAdd</span>(t *testing.<span class="tp">T</span>) {
+    got := <span class="fn">Add</span>(<span class="num">2</span>, <span class="num">3</span>)
+    want := <span class="num">5</span>
+    <span class="kw">if</span> got != want {
+        t.<span class="fn">Errorf</span>(<span class="str">"Add(2, 3) = %d, want %d"</span>, got, want)
+    }
+}
+
+<span class="cmt">// Table-driven tests (idiomatic Go)</span>
+<span class="kw">func</span> <span class="fn">TestDivide</span>(t *testing.<span class="tp">T</span>) {
+    tests := []<span class="kw">struct</span> {
+        name    <span class="tp">string</span>
+        a, b    <span class="tp">float64</span>
+        want    <span class="tp">float64</span>
+        wantErr <span class="tp">bool</span>
+    }{
+        {<span class="str">"ok"</span>, <span class="num">10</span>, <span class="num">2</span>, <span class="num">5</span>, <span class="kw">false</span>},
+        {<span class="str">"div by zero"</span>, <span class="num">10</span>, <span class="num">0</span>, <span class="num">0</span>, <span class="kw">true</span>},
+    }
+    <span class="kw">for</span> _, tt := <span class="kw">range</span> tests {
+        t.<span class="fn">Run</span>(tt.name, <span class="kw">func</span>(t *testing.<span class="tp">T</span>) {
+            got, err := <span class="fn">Divide</span>(tt.a, tt.b)
+            <span class="kw">if</span> (err != <span class="kw">nil</span>) != tt.wantErr {
+                t.<span class="fn">Errorf</span>(<span class="str">"unexpected error: %v"</span>, err)
+            }
+            <span class="kw">if</span> got != tt.want {
+                t.<span class="fn">Errorf</span>(<span class="str">"got %v, want %v"</span>, got, tt.want)
+            }
+        })
+    }
+}
+
+<span class="cmt">// Benchmark</span>
+<span class="kw">func</span> <span class="fn">BenchmarkAdd</span>(b *testing.<span class="tp">B</span>) {
+    <span class="kw">for</span> i := <span class="num">0</span>; i < b.N; i++ {
+        <span class="fn">Add</span>(<span class="num">2</span>, <span class="num">3</span>)
+    }
+}
+
+<span class="cmt">// Run: go test ./...
+// Run: go test -v -run TestAdd
+// Run: go test -bench=.</span></code></pre></div>
+</div>
+
+<!-- ===== GENERICS ===== -->
+<div class="section" id="generics">
+  <div class="section-header"><span class="icon">🧬</span><h2>Generics (Go 1.18+)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Generic function</span>
+<span class="kw">func</span> <span class="fn">Map</span>[<span class="tp">T</span>, <span class="tp">U</span> <span class="tp">any</span>](s []<span class="tp">T</span>, fn <span class="kw">func</span>(<span class="tp">T</span>) <span class="tp">U</span>) []<span class="tp">U</span> {
+    result := <span class="fn">make</span>([]<span class="tp">U</span>, <span class="fn">len</span>(s))
+    <span class="kw">for</span> i, v := <span class="kw">range</span> s {
+        result[i] = <span class="fn">fn</span>(v)
+    }
+    <span class="kw">return</span> result
+}
+
+<span class="cmt">// Constrained generic</span>
+<span class="kw">type</span> <span class="tp">Number</span> <span class="kw">interface</span> {
+    ~<span class="tp">int</span> | ~<span class="tp">int64</span> | ~<span class="tp">float64</span>
+}
+
+<span class="kw">func</span> <span class="fn">Sum</span>[<span class="tp">T</span> <span class="tp">Number</span>](nums []<span class="tp">T</span>) <span class="tp">T</span> {
+    <span class="kw">var</span> total <span class="tp">T</span>
+    <span class="kw">for</span> _, n := <span class="kw">range</span> nums {
+        total += n
+    }
+    <span class="kw">return</span> total
+}
+
+<span class="cmt">// comparable constraint</span>
+<span class="kw">func</span> <span class="fn">Contains</span>[<span class="tp">T</span> <span class="tp">comparable</span>](s []<span class="tp">T</span>, target <span class="tp">T</span>) <span class="tp">bool</span> {
+    <span class="kw">for</span> _, v := <span class="kw">range</span> s {
+        <span class="kw">if</span> v == target { <span class="kw">return true</span> }
+    }
+    <span class="kw">return false</span>
+}
+
+<span class="cmt">// Generic struct</span>
+<span class="kw">type</span> <span class="tp">Stack</span>[<span class="tp">T</span> <span class="tp">any</span>] <span class="kw">struct</span> {
+    items []<span class="tp">T</span>
+}
+<span class="kw">func</span> (s *<span class="tp">Stack</span>[<span class="tp">T</span>]) <span class="fn">Push</span>(item <span class="tp">T</span>) { s.items = <span class="fn">append</span>(s.items, item) }
+<span class="kw">func</span> (s *<span class="tp">Stack</span>[<span class="tp">T</span>]) <span class="fn">Pop</span>() (<span class="tp">T</span>, <span class="tp">bool</span>) {
+    <span class="kw">if</span> <span class="fn">len</span>(s.items) == <span class="num">0</span> {
+        <span class="kw">var</span> zero <span class="tp">T</span>
+        <span class="kw">return</span> zero, <span class="kw">false</span>
+    }
+    item := s.items[<span class="fn">len</span>(s.items)-<span class="num">1</span>]
+    s.items = s.items[:<span class="fn">len</span>(s.items)-<span class="num">1</span>]
+    <span class="kw">return</span> item, <span class="kw">true</span>
+}</code></pre></div>
+</div>
+
+<!-- ===== MODULES ===== -->
+<div class="section" id="modules">
+  <div class="section-header"><span class="icon">📦</span><h2>Modules &amp; Packages</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Initialize module</span>
+go mod init github.com/user/myproject
+
+<span class="cmt"># Add dependency</span>
+go get github.com/gin-gonic/gin@latest
+
+<span class="cmt"># Tidy — remove unused, add missing</span>
+go mod tidy
+
+<span class="cmt"># Vendor dependencies</span>
+go mod vendor
+
+<span class="cmt"># Common project structure</span>
+myproject/
+├── cmd/
+│   └── server/
+│       └── main.go          <span class="cmt"># entry point</span>
+├── internal/                 <span class="cmt"># private packages</span>
+│   ├── handler/
+│   ├── service/
+│   └── repository/
+├── pkg/                      <span class="cmt"># public packages</span>
+│   └── utils/
+├── go.mod
+├── go.sum
+└── Makefile</code></pre></div>
+
+  <div class="note">
+    <strong>📝 Naming Conventions</strong>
+    <ul>
+      <li><strong>Exported</strong>: starts with uppercase — <code>User</code>, <code>GetName()</code></li>
+      <li><strong>Unexported</strong>: starts with lowercase — <code>user</code>, <code>getName()</code></li>
+      <li><strong>Packages</strong>: short, lowercase, no underscores — <code>http</code>, <code>json</code></li>
+      <li><strong>Interfaces</strong>: single-method → suffix with <code>-er</code> — <code>Reader</code>, <code>Writer</code></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== COMMON PATTERNS ===== -->
+<div class="section" id="patterns">
+  <div class="section-header"><span class="icon">🎯</span><h2>Common Patterns</h2></div>
+
+  <h3>Functional Options</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">type</span> <span class="tp">Option</span> <span class="kw">func</span>(*<span class="tp">Server</span>)
+
+<span class="kw">func</span> <span class="fn">WithPort</span>(port <span class="tp">int</span>) <span class="tp">Option</span> {
+    <span class="kw">return func</span>(s *<span class="tp">Server</span>) { s.port = port }
+}
+
+<span class="kw">func</span> <span class="fn">WithTimeout</span>(d time.<span class="tp">Duration</span>) <span class="tp">Option</span> {
+    <span class="kw">return func</span>(s *<span class="tp">Server</span>) { s.timeout = d }
+}
+
+<span class="kw">func</span> <span class="fn">NewServer</span>(opts ...<span class="tp">Option</span>) *<span class="tp">Server</span> {
+    s := &amp;<span class="tp">Server</span>{port: <span class="num">8080</span>, timeout: <span class="num">30</span> * time.Second}
+    <span class="kw">for</span> _, opt := <span class="kw">range</span> opts { <span class="fn">opt</span>(s) }
+    <span class="kw">return</span> s
+}
+
+srv := <span class="fn">NewServer</span>(<span class="fn">WithPort</span>(<span class="num">3000</span>), <span class="fn">WithTimeout</span>(<span class="num">10</span>*time.Second))</code></pre></div>
+
+  <h3>Repository Pattern</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">type</span> <span class="tp">UserRepository</span> <span class="kw">interface</span> {
+    <span class="fn">FindByID</span>(ctx context.<span class="tp">Context</span>, id <span class="tp">string</span>) (*<span class="tp">User</span>, <span class="tp">error</span>)
+    <span class="fn">Create</span>(ctx context.<span class="tp">Context</span>, user *<span class="tp">User</span>) <span class="tp">error</span>
+    <span class="fn">Update</span>(ctx context.<span class="tp">Context</span>, user *<span class="tp">User</span>) <span class="tp">error</span>
+    <span class="fn">Delete</span>(ctx context.<span class="tp">Context</span>, id <span class="tp">string</span>) <span class="tp">error</span>
+}
+
+<span class="kw">type</span> <span class="tp">pgUserRepo</span> <span class="kw">struct</span> { db *sql.<span class="tp">DB</span> }
+
+<span class="kw">func</span> (r *<span class="tp">pgUserRepo</span>) <span class="fn">FindByID</span>(ctx context.<span class="tp">Context</span>, id <span class="tp">string</span>) (*<span class="tp">User</span>, <span class="tp">error</span>) {
+    <span class="kw">var</span> u <span class="tp">User</span>
+    err := r.db.<span class="fn">QueryRowContext</span>(ctx, <span class="str">"SELECT * FROM users WHERE id=$1"</span>, id).<span class="fn">Scan</span>(&amp;u.ID, &amp;u.Name)
+    <span class="kw">return</span> &amp;u, err
+}</code></pre></div>
+
+  <div class="note tip">
+    <strong>💡 Go Proverbs</strong>
+    <ul>
+      <li>Don't communicate by sharing memory; share memory by communicating</li>
+      <li>A little copying is better than a little dependency</li>
+      <li>Make the zero value useful</li>
+      <li>Accept interfaces, return structs</li>
+      <li>Errors are values — handle them</li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>Go Development Cheatsheet · 2026</footer>
+
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'Copy';
+  btn.onclick = () => {
+    const code = w.querySelector('code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  };
+  w.appendChild(btn);
+});
+const backBtn = document.querySelector('.back-top');
+window.addEventListener('scroll', () => backBtn.classList.toggle('visible', window.scrollY > 400));
+</script>
+</body>
+</html>
