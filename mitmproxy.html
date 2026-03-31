@@ -1,58 +1,124 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mitmproxy Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Mitmproxy</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Mitmproxy Cheatsheet</h1>
-  <p class="subtitle">Interception, flows, filters, scripting, certificates &amp; HTTP debugging</p>
-  <span class="tag tag-fw">Toolkit / Network</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>mitmproxy Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ mitmproxy</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>mitmproxy Cheatsheet</h1><p class="subtitle">HTTP/HTTPS proxy for debugging, testing &amp; modifying traffic</p><span class="tag tag-concept">Security</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#commands">Commands</a>
+    <a href="#filter">Filters</a>
+    <a href="#intercept">Intercept &amp; Modify</a>
+    <a href="#script">Scripting</a>
+    <a href="#cert">Certificates</a>
+    <a href="#export">Export</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">🔧</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Install</span>
+pip install mitmproxy
+brew install mitmproxy
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Mitmproxy content.</div>
-</div>
+<span class="cmt"># Three interfaces</span>
+mitmproxy           <span class="cmt"># TUI (terminal UI)</span>
+mitmweb             <span class="cmt"># Web UI (browser)</span>
+mitmdump            <span class="cmt"># CLI (scriptable)</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Mitmproxy basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Start</span>
+mitmproxy -p 8080              <span class="cmt"># custom port</span>
+mitmproxy --mode reverse:http://localhost:3000
+mitmweb --listen-port 8080
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Mitmproxy patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Set system/browser proxy to localhost:8080</span>
+<span class="cmt"># Install mitmproxy CA cert: http://mitm.it</span></code></pre></div></div>
+<div class="section" id="commands"><div class="section-header"><span class="icon">⌨️</span><h2>Commands</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># In mitmproxy TUI</span>
+?                 <span class="cmt">help</span>
+q                 <span class="cmt">quit / back</span>
+Enter             <span class="cmt">view flow details</span>
+Tab               <span class="cmt">switch tabs (Request/Response/Detail)</span>
+z                 <span class="cmt">clear flows</span>
+d                 <span class="cmt">delete flow</span>
+r                 <span class="cmt">replay request</span>
+e                 <span class="cmt">edit flow</span>
+f                 <span class="cmt">set filter</span>
+i                 <span class="cmt">set intercept filter</span>
+w                 <span class="cmt">save flows</span>
+L                 <span class="cmt">load flows</span>
+/                 <span class="cmt">search</span></code></pre></div></div>
+<div class="section" id="filter"><div class="section-header"><span class="icon">🔍</span><h2>Filters</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Filter expressions</span>
+~d example.com         <span class="cmt"># domain</span>
+~u /api/               <span class="cmt"># URL path contains</span>
+~m POST                <span class="cmt"># method</span>
+~c 200                 <span class="cmt"># status code</span>
+~c 4xx                 <span class="cmt"># 4xx errors</span>
+~t json                <span class="cmt"># content-type contains</span>
+~b "error"             <span class="cmt"># body contains</span>
+~h "auth"              <span class="cmt"># header contains</span>
+~q                     <span class="cmt"># requests only</span>
+~s                     <span class="cmt"># responses only</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Mitmproxy Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Combine</span>
+~d api.com &amp; ~m POST
+~d api.com | ~d cdn.com
+!~d google.com         <span class="cmt"># NOT</span>
+
+<span class="cmt"># CLI filter</span>
+mitmdump -f "~d api.com &amp; ~m GET"</code></pre></div></div>
+<div class="section" id="intercept"><div class="section-header"><span class="icon">🛑</span><h2>Intercept &amp; Modify</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Set intercept filter: press i</span>
+<span class="cmt"># Example: intercept all POST requests</span>
+~m POST
+
+<span class="cmt"># Intercepted flows are orange</span>
+<span class="cmt"># Press Enter → Tab to edit request/response</span>
+<span class="cmt"># Press a to resume (accept)</span>
+<span class="cmt"># Press A to accept all</span>
+
+<span class="cmt"># Modify and replay</span>
+<span class="cmt">1. Select flow</span>
+<span class="cmt">2. Press e → edit (choose part to edit)</span>
+<span class="cmt">3. Make changes</span>
+<span class="cmt">4. Press r to replay</span>
+
+<span class="cmt"># Kill intercepted flow</span>
+<span class="cmt">press k (drops the request)</span></code></pre></div></div>
+<div class="section" id="script"><div class="section-header"><span class="icon">📜</span><h2>Scripting</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Python addon script</span>
+<span class="cmt"># save as addon.py</span>
+<span class="kw">from</span> mitmproxy <span class="kw">import</span> http
+
+<span class="kw">def</span> <span class="fn">request</span>(flow: http.HTTPFlow):
+    <span class="cmt"># Add header to all requests</span>
+    flow.request.headers[<span class="str">"X-Custom"</span>] = <span class="str">"injected"</span>
+
+<span class="kw">def</span> <span class="fn">response</span>(flow: http.HTTPFlow):
+    <span class="cmt"># Modify response</span>
+    <span class="kw">if</span> <span class="str">"api.com"</span> <span class="kw">in</span> flow.request.pretty_host:
+        flow.response.headers[<span class="str">"X-Proxied"</span>] = <span class="str">"true"</span>
+
+<span class="cmt"># Run with script</span>
+mitmdump -s addon.py
+mitmproxy -s addon.py</code></pre></div></div>
+<div class="section" id="cert"><div class="section-header"><span class="icon">🔐</span><h2>Certificates</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Install CA certificate</span>
+<span class="cmt"># Start mitmproxy, visit http://mitm.it</span>
+<span class="cmt"># Download cert for your OS</span>
+
+<span class="cmt"># macOS</span>
+<span class="cmt">1. Download .pem from http://mitm.it</span>
+<span class="cmt">2. Open Keychain Access → import cert</span>
+<span class="cmt">3. Mark as "Always Trust"</span>
+
+<span class="cmt"># Certificate files location</span>
+~/.mitmproxy/mitmproxy-ca-cert.pem    <span class="cmt"># CA cert</span>
+~/.mitmproxy/mitmproxy-ca.pem         <span class="cmt"># CA + key</span></code></pre></div></div>
+<div class="section" id="export"><div class="section-header"><span class="icon">💾</span><h2>Export</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Save flows</span>
+mitmdump -w output.flow          <span class="cmt"># save all</span>
+mitmdump -w output.flow -f "~d api.com"
+
+<span class="cmt"># Load flows</span>
+mitmproxy -r output.flow
+
+<span class="cmt"># Export as other formats (in TUI: press E)</span>
+<span class="cmt"># curl command</span>
+<span class="cmt"># HTTPie command</span>
+<span class="cmt"># raw HTTP</span>
+
+<span class="cmt"># HAR export</span>
+mitmdump -s har_dump.py          <span class="cmt"># addon script</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>mitmproxy Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

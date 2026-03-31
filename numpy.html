@@ -1,58 +1,116 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NumPy Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ NumPy</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>NumPy Cheatsheet</h1>
-  <p class="subtitle">Arrays, indexing, broadcasting, linear algebra, random &amp; mathematical functions</p>
-  <span class="tag tag-lang">Python / Library</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>NumPy Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ NumPy</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>NumPy Cheatsheet</h1><p class="subtitle">Arrays, indexing, math, linear algebra &amp; broadcasting</p><span class="tag tag-lang">Data / Python</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#create">Creating Arrays</a>
+    <a href="#indexing">Indexing &amp; Slicing</a>
+    <a href="#shape">Shape &amp; Reshape</a>
+    <a href="#math">Math Operations</a>
+    <a href="#stats">Statistics</a>
+    <a href="#linalg">Linear Algebra</a>
+    <a href="#random">Random</a>
+    <a href="#io">I/O</a>
+</div></div>
+<div class="section" id="create"><div class="section-header"><span class="icon">📦</span><h2>Creating Arrays</h2></div><div class="code-wrapper"><pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+a = np.<span class="fn">array</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])              <span class="cmt"># 1D</span>
+b = np.<span class="fn">array</span>([[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,<span class="num">4</span>]])            <span class="cmt"># 2D</span>
+np.<span class="fn">zeros</span>((<span class="num">3</span>, <span class="num">4</span>))                      <span class="cmt"># 3×4 zeros</span>
+np.<span class="fn">ones</span>((<span class="num">2</span>, <span class="num">3</span>))                       <span class="cmt"># 2×3 ones</span>
+np.<span class="fn">full</span>((<span class="num">3</span>, <span class="num">3</span>), <span class="num">7</span>)                    <span class="cmt"># filled with 7</span>
+np.<span class="fn">eye</span>(<span class="num">4</span>)                             <span class="cmt"># 4×4 identity</span>
+np.<span class="fn">arange</span>(<span class="num">0</span>, <span class="num">10</span>, <span class="num">2</span>)                  <span class="cmt"># [0,2,4,6,8]</span>
+np.<span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">5</span>)                 <span class="cmt"># 5 evenly spaced</span>
+np.<span class="fn">empty</span>((<span class="num">2</span>, <span class="num">3</span>))                      <span class="cmt"># uninitialized</span>
+np.<span class="fn">zeros_like</span>(a)                      <span class="cmt"># same shape as a</span></code></pre></div></div>
+<div class="section" id="indexing"><div class="section-header"><span class="icon">🔢</span><h2>Indexing &amp; Slicing</h2></div><div class="code-wrapper"><pre><code>a = np.<span class="fn">array</span>([<span class="num">10</span>,<span class="num">20</span>,<span class="num">30</span>,<span class="num">40</span>,<span class="num">50</span>])
+a[<span class="num">0</span>]                <span class="cmt"># 10</span>
+a[-<span class="num">1</span>]               <span class="cmt"># 50</span>
+a[<span class="num">1</span>:<span class="num">3</span>]              <span class="cmt"># [20, 30]</span>
+a[::<span class="num">2</span>]              <span class="cmt"># [10, 30, 50]</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive NumPy content.</div>
-</div>
+<span class="cmt"># 2D</span>
+b = np.<span class="fn">array</span>([[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>],[<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>],[<span class="num">7</span>,<span class="num">8</span>,<span class="num">9</span>]])
+b[<span class="num">0</span>, <span class="num">1</span>]             <span class="cmt"># 2</span>
+b[<span class="num">0</span>]                <span class="cmt"># [1, 2, 3] (first row)</span>
+b[:, <span class="num">0</span>]             <span class="cmt"># [1, 4, 7] (first column)</span>
+b[<span class="num">0</span>:<span class="num">2</span>, <span class="num">1</span>:<span class="num">3</span>]         <span class="cmt"># submatrix</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// NumPy basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Boolean indexing</span>
+a[a &gt; <span class="num">25</span>]           <span class="cmt"># [30, 40, 50]</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// NumPy patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Fancy indexing</span>
+a[[<span class="num">0</span>, <span class="num">2</span>, <span class="num">4</span>]]        <span class="cmt"># [10, 30, 50]</span></code></pre></div></div>
+<div class="section" id="shape"><div class="section-header"><span class="icon">📐</span><h2>Shape &amp; Reshape</h2></div><div class="code-wrapper"><pre><code>a.shape              <span class="cmt"># (5,)</span>
+a.ndim               <span class="cmt"># 1</span>
+a.size               <span class="cmt"># 5</span>
+a.dtype              <span class="cmt"># int64</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>NumPy Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Reshape</span>
+a.<span class="fn">reshape</span>(<span class="num">5</span>, <span class="num">1</span>)     <span class="cmt"># column vector</span>
+a.<span class="fn">reshape</span>(-<span class="num">1</span>, <span class="num">1</span>)    <span class="cmt"># auto-compute rows</span>
+a.<span class="fn">flatten</span>()          <span class="cmt"># 1D copy</span>
+a.<span class="fn">ravel</span>()            <span class="cmt"># 1D view</span>
+a.T                  <span class="cmt"># transpose</span>
+
+<span class="cmt"># Stack</span>
+np.<span class="fn">vstack</span>([a, a])    <span class="cmt"># vertical stack</span>
+np.<span class="fn">hstack</span>([a, a])    <span class="cmt"># horizontal stack</span>
+np.<span class="fn">concatenate</span>([a, a], axis=<span class="num">0</span>)
+
+<span class="cmt"># Split</span>
+np.<span class="fn">split</span>(a, <span class="num">5</span>)       <span class="cmt"># split into 5</span></code></pre></div></div>
+<div class="section" id="math"><div class="section-header"><span class="icon">➕</span><h2>Math Operations</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Element-wise</span>
+a + b    a - b    a * b    a / b
+a ** <span class="num">2</span>   np.<span class="fn">sqrt</span>(a)   np.<span class="fn">exp</span>(a)   np.<span class="fn">log</span>(a)
+np.<span class="fn">sin</span>(a)   np.<span class="fn">cos</span>(a)   np.<span class="fn">abs</span>(a)
+
+<span class="cmt"># Comparison (returns bool array)</span>
+a &gt; <span class="num">3</span>    a == <span class="num">5</span>    np.<span class="fn">all</span>(a &gt; <span class="num">0</span>)    np.<span class="fn">any</span>(a &gt; <span class="num">5</span>)
+
+<span class="cmt"># Aggregate</span>
+a.<span class="fn">sum</span>()    a.<span class="fn">min</span>()    a.<span class="fn">max</span>()    a.<span class="fn">mean</span>()
+a.<span class="fn">sum</span>(axis=<span class="num">0</span>)    a.<span class="fn">sum</span>(axis=<span class="num">1</span>)
+np.<span class="fn">cumsum</span>(a)     np.<span class="fn">diff</span>(a)
+
+<span class="cmt"># Dot product</span>
+np.<span class="fn">dot</span>(a, b)     a @ b</code></pre></div></div>
+<div class="section" id="stats"><div class="section-header"><span class="icon">📊</span><h2>Statistics</h2></div><div class="code-wrapper"><pre><code>np.<span class="fn">mean</span>(a)        np.<span class="fn">median</span>(a)
+np.<span class="fn">std</span>(a)         np.<span class="fn">var</span>(a)
+np.<span class="fn">percentile</span>(a, <span class="num">75</span>)
+np.<span class="fn">corrcoef</span>(x, y)
+np.<span class="fn">histogram</span>(a, bins=<span class="num">10</span>)
+np.<span class="fn">unique</span>(a, return_counts=<span class="kw">True</span>)
+np.<span class="fn">argmax</span>(a)      np.<span class="fn">argmin</span>(a)
+np.<span class="fn">sort</span>(a)        np.<span class="fn">argsort</span>(a)
+np.<span class="fn">where</span>(a &gt; <span class="num">5</span>, a, <span class="num">0</span>)   <span class="cmt"># conditional</span>
+np.<span class="fn">clip</span>(a, <span class="num">0</span>, <span class="num">10</span>)        <span class="cmt"># clamp values</span></code></pre></div></div>
+<div class="section" id="linalg"><div class="section-header"><span class="icon">📏</span><h2>Linear Algebra</h2></div><div class="code-wrapper"><pre><code>np.linalg.<span class="fn">inv</span>(A)       <span class="cmt"># inverse</span>
+np.linalg.<span class="fn">det</span>(A)       <span class="cmt"># determinant</span>
+np.linalg.<span class="fn">eig</span>(A)       <span class="cmt"># eigenvalues</span>
+np.linalg.<span class="fn">svd</span>(A)       <span class="cmt"># SVD</span>
+np.linalg.<span class="fn">norm</span>(a)      <span class="cmt"># vector norm</span>
+np.linalg.<span class="fn">solve</span>(A, b)  <span class="cmt"># solve Ax=b</span>
+np.linalg.<span class="fn">lstsq</span>(A, b)  <span class="cmt"># least squares</span>
+A @ B                    <span class="cmt"># matrix multiply</span></code></pre></div></div>
+<div class="section" id="random"><div class="section-header"><span class="icon">🎲</span><h2>Random</h2></div><div class="code-wrapper"><pre><code>rng = np.random.<span class="fn">default_rng</span>(<span class="num">42</span>)       <span class="cmt"># seeded</span>
+rng.<span class="fn">random</span>((<span class="num">3</span>, <span class="num">3</span>))                     <span class="cmt"># uniform [0,1)</span>
+rng.<span class="fn">integers</span>(<span class="num">0</span>, <span class="num">10</span>, size=(<span class="num">5</span>,))         <span class="cmt"># random ints</span>
+rng.<span class="fn">normal</span>(<span class="num">0</span>, <span class="num">1</span>, size=(<span class="num">100</span>,))          <span class="cmt"># normal dist</span>
+rng.<span class="fn">choice</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], size=<span class="num">5</span>)            <span class="cmt"># random choice</span>
+rng.<span class="fn">shuffle</span>(a)                          <span class="cmt"># in-place shuffle</span>
+rng.<span class="fn">permutation</span>(a)                      <span class="cmt"># shuffled copy</span></code></pre></div></div>
+<div class="section" id="io"><div class="section-header"><span class="icon">💾</span><h2>I/O</h2></div><div class="code-wrapper"><pre><code>np.<span class="fn">save</span>(<span class="str">"arr.npy"</span>, a)          <span class="cmt"># binary</span>
+a = np.<span class="fn">load</span>(<span class="str">"arr.npy"</span>)
+
+np.<span class="fn">savez</span>(<span class="str">"data.npz"</span>, x=a, y=b)  <span class="cmt"># multiple</span>
+data = np.<span class="fn">load</span>(<span class="str">"data.npz"</span>)
+data[<span class="str">"x"</span>]
+
+np.<span class="fn">savetxt</span>(<span class="str">"out.csv"</span>, a, delimiter=<span class="str">","</span>)
+a = np.<span class="fn">loadtxt</span>(<span class="str">"out.csv"</span>, delimiter=<span class="str">","</span>)
+a = np.<span class="fn">genfromtxt</span>(<span class="str">"data.csv"</span>, delimiter=<span class="str">","</span>, skip_header=<span class="num">1</span>)</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>NumPy Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

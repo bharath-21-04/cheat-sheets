@@ -1,58 +1,107 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MIME Types Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ MIME Types</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>MIME Types Cheatsheet</h1>
-  <p class="subtitle">Content types, categories, common types, file extensions &amp; registration</p>
-  <span class="tag tag-concept">Reference</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>MIME Types Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ MIME Types</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>MIME Types Cheatsheet</h1><p class="subtitle">Content types for HTTP, email &amp; file handling</p><span class="tag tag-concept">Reference</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#text">Text</a>
+    <a href="#app">Application</a>
+    <a href="#image">Image</a>
+    <a href="#audio">Audio &amp; Video</a>
+    <a href="#multi">Multipart</a>
+    <a href="#font">Font</a>
+    <a href="#common">Common Usage</a>
+</div></div>
+<div class="section" id="text"><div class="section-header"><span class="icon">📄</span><h2>Text Types</h2></div><div class="code-wrapper"><pre><code>text/plain                   <span class="cmt">.txt</span>
+text/html                    <span class="cmt">.html .htm</span>
+text/css                     <span class="cmt">.css</span>
+text/javascript              <span class="cmt">.js .mjs</span>
+text/csv                     <span class="cmt">.csv</span>
+text/xml                     <span class="cmt">.xml</span>
+text/markdown                <span class="cmt">.md</span>
+text/calendar                <span class="cmt">.ics</span>
+text/x-python                <span class="cmt">.py</span></code></pre></div></div>
+<div class="section" id="app"><div class="section-header"><span class="icon">📦</span><h2>Application Types</h2></div><div class="code-wrapper"><pre><code>application/json             <span class="cmt">.json</span>
+application/xml              <span class="cmt">.xml</span>
+application/javascript       <span class="cmt">.js</span>
+application/pdf              <span class="cmt">.pdf</span>
+application/zip              <span class="cmt">.zip</span>
+application/gzip             <span class="cmt">.gz</span>
+application/x-tar            <span class="cmt">.tar</span>
+application/octet-stream     <span class="cmt">binary (download)</span>
+application/x-www-form-urlencoded   <span class="cmt">form data</span>
+application/ld+json          <span class="cmt">JSON-LD</span>
+application/graphql          <span class="cmt">GraphQL</span>
+application/wasm             <span class="cmt">.wasm</span>
+application/x-yaml           <span class="cmt">.yaml .yml</span>
+application/toml             <span class="cmt">.toml</span>
+application/sql              <span class="cmt">.sql</span>
+application/msword           <span class="cmt">.doc</span>
+application/vnd.openxmlformats-officedocument
+  .wordprocessingml.document <span class="cmt">.docx</span>
+application/vnd.ms-excel     <span class="cmt">.xls</span></code></pre></div></div>
+<div class="section" id="image"><div class="section-header"><span class="icon">🖼️</span><h2>Image Types</h2></div><div class="code-wrapper"><pre><code>image/jpeg                   <span class="cmt">.jpg .jpeg</span>
+image/png                    <span class="cmt">.png</span>
+image/gif                    <span class="cmt">.gif</span>
+image/webp                   <span class="cmt">.webp</span>
+image/svg+xml                <span class="cmt">.svg</span>
+image/avif                   <span class="cmt">.avif</span>
+image/bmp                    <span class="cmt">.bmp</span>
+image/tiff                   <span class="cmt">.tiff</span>
+image/x-icon                 <span class="cmt">.ico</span>
+image/apng                   <span class="cmt">.apng</span></code></pre></div></div>
+<div class="section" id="audio"><div class="section-header"><span class="icon">🎵</span><h2>Audio &amp; Video Types</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Audio</span>
+audio/mpeg                   <span class="cmt">.mp3</span>
+audio/ogg                    <span class="cmt">.ogg</span>
+audio/wav                    <span class="cmt">.wav</span>
+audio/webm                   <span class="cmt">.webm</span>
+audio/aac                    <span class="cmt">.aac</span>
+audio/flac                   <span class="cmt">.flac</span>
+audio/midi                   <span class="cmt">.midi</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Video</span>
+video/mp4                    <span class="cmt">.mp4</span>
+video/webm                   <span class="cmt">.webm</span>
+video/ogg                    <span class="cmt">.ogv</span>
+video/quicktime              <span class="cmt">.mov</span>
+video/x-msvideo              <span class="cmt">.avi</span>
+video/x-matroska             <span class="cmt">.mkv</span></code></pre></div></div>
+<div class="section" id="multi"><div class="section-header"><span class="icon">📎</span><h2>Multipart Types</h2></div><div class="code-wrapper"><pre><code>multipart/form-data          <span class="cmt">file upload</span>
+multipart/mixed              <span class="cmt">email attachments</span>
+multipart/alternative        <span class="cmt">email text+HTML</span>
+multipart/related            <span class="cmt">compound docs</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive MIME Types content.</div>
-</div>
+<span class="cmt"># Upload example (HTTP)</span>
+Content-Type: multipart/form-data; boundary=---abc
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// MIME Types basics coming soon...</span></code></pre></div>
-</div>
+---abc
+Content-Disposition: form-data; name="file"; filename="photo.jpg"
+Content-Type: image/jpeg
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// MIME Types patterns coming soon...</span></code></pre></div>
-</div>
+(binary data)
+---abc--</code></pre></div></div>
+<div class="section" id="font"><div class="section-header"><span class="icon">🔤</span><h2>Font Types</h2></div><div class="code-wrapper"><pre><code>font/woff                    <span class="cmt">.woff</span>
+font/woff2                   <span class="cmt">.woff2</span>
+font/ttf                     <span class="cmt">.ttf</span>
+font/otf                     <span class="cmt">.otf</span>
+font/collection              <span class="cmt">.ttc</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>MIME Types Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Usage in CSS</span>
+@font-face {
+  font-family: 'Custom';
+  src: url('font.woff2') format('woff2'),
+       url('font.woff') format('woff');
+}</code></pre></div></div>
+<div class="section" id="common"><div class="section-header"><span class="icon">⭐</span><h2>Common Usage</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># HTTP Headers</span>
+Content-Type: application/json
+Content-Type: text/html; charset=utf-8
+Content-Type: multipart/form-data
+Accept: application/json, text/plain
+
+<span class="cmt"># Express.js</span>
+res.type(<span class="str">'json'</span>)         <span class="cmt">// application/json</span>
+res.type(<span class="str">'html'</span>)         <span class="cmt">// text/html</span>
+
+<span class="cmt"># &lt;link&gt; / &lt;script&gt; tags</span>
+&lt;link rel="stylesheet" type="text/css"&gt;
+&lt;script type="text/javascript"&gt;
+&lt;script type="module"&gt;</code></pre></div></div>

@@ -1,58 +1,185 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GraphQL Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ GraphQL</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>GraphQL Cheatsheet</h1>
-  <p class="subtitle">Queries, mutations, subscriptions, schema design, resolvers &amp; Apollo basics</p>
-  <span class="tag tag-fw">API / Query Language</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>GraphQL Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ GraphQL</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>GraphQL Cheatsheet</h1><p class="subtitle">Schema, queries, mutations, subscriptions &amp; resolvers</p><span class="tag tag-fw">API</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#schema">Schema</a>
+    <a href="#queries">Queries</a>
+    <a href="#mutations">Mutations</a>
+    <a href="#variables">Variables</a>
+    <a href="#fragments">Fragments</a>
+    <a href="#subscriptions">Subscriptions</a>
+    <a href="#directives">Directives</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">📝</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># GraphQL is a query language for APIs</span>
+<span class="cmt"># Single endpoint, client specifies data shape</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive GraphQL content.</div>
-</div>
+<span class="cmt"># REST:   GET /users/1/posts</span>
+<span class="cmt"># GraphQL:</span>
+{
+  user(id: <span class="num">1</span>) {
+    name
+    posts {
+      title
+    }
+  }
+}
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// GraphQL basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Response: exactly the shape requested</span>
+{
+  <span class="str">"data"</span>: {
+    <span class="str">"user"</span>: {
+      <span class="str">"name"</span>: <span class="str">"Alice"</span>,
+      <span class="str">"posts"</span>: [{ <span class="str">"title"</span>: <span class="str">"Hello"</span> }]
+    }
+  }
+}</code></pre></div></div>
+<div class="section" id="schema"><div class="section-header"><span class="icon">📐</span><h2>Schema Definition</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Scalar types</span>
+<span class="tp">Int</span>  <span class="tp">Float</span>  <span class="tp">String</span>  <span class="tp">Boolean</span>  <span class="tp">ID</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// GraphQL patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Object type</span>
+<span class="kw">type</span> <span class="tp">User</span> {
+  id: <span class="tp">ID!</span>              <span class="cmt"># ! = non-null</span>
+  name: <span class="tp">String!</span>
+  email: <span class="tp">String!</span>
+  age: <span class="tp">Int</span>
+  posts: [<span class="tp">Post!</span>]!       <span class="cmt"># non-null list of non-null</span>
+}
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>GraphQL Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="kw">type</span> <span class="tp">Post</span> {
+  id: <span class="tp">ID!</span>
+  title: <span class="tp">String!</span>
+  author: <span class="tp">User!</span>
+}
+
+<span class="cmt"># Input type (for mutations)</span>
+<span class="kw">input</span> <span class="tp">CreateUserInput</span> {
+  name: <span class="tp">String!</span>
+  email: <span class="tp">String!</span>
+}
+
+<span class="cmt"># Enum</span>
+<span class="kw">enum</span> <span class="tp">Role</span> { ADMIN USER GUEST }
+
+<span class="cmt"># Interface</span>
+<span class="kw">interface</span> <span class="tp">Node</span> { id: <span class="tp">ID!</span> }
+
+<span class="cmt"># Union</span>
+<span class="kw">union</span> <span class="tp">SearchResult</span> = <span class="tp">User</span> | <span class="tp">Post</span></code></pre></div></div>
+<div class="section" id="queries"><div class="section-header"><span class="icon">🔍</span><h2>Queries</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Basic query</span>
+<span class="kw">query</span> {
+  users {
+    id
+    name
+  }
+}
+
+<span class="cmt"># With arguments</span>
+<span class="kw">query</span> {
+  user(id: <span class="str">"1"</span>) {
+    name
+    email
+  }
+}
+
+<span class="cmt"># Aliases</span>
+<span class="kw">query</span> {
+  alice: user(id: <span class="str">"1"</span>) { name }
+  bob: user(id: <span class="str">"2"</span>) { name }
+}
+
+<span class="cmt"># Schema root</span>
+<span class="kw">type</span> <span class="tp">Query</span> {
+  users: [<span class="tp">User!</span>]!
+  user(id: <span class="tp">ID!</span>): <span class="tp">User</span>
+  posts(limit: <span class="tp">Int</span> = <span class="num">10</span>): [<span class="tp">Post!</span>]!
+}</code></pre></div></div>
+<div class="section" id="mutations"><div class="section-header"><span class="icon">✏️</span><h2>Mutations</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Mutate data</span>
+<span class="kw">mutation</span> {
+  createUser(input: {
+    name: <span class="str">"Alice"</span>
+    email: <span class="str">"alice@test.com"</span>
+  }) {
+    id
+    name
+  }
+}
+
+<span class="cmt"># Schema definition</span>
+<span class="kw">type</span> <span class="tp">Mutation</span> {
+  createUser(input: <span class="tp">CreateUserInput!</span>): <span class="tp">User!</span>
+  updateUser(id: <span class="tp">ID!</span>, name: <span class="tp">String</span>): <span class="tp">User!</span>
+  deleteUser(id: <span class="tp">ID!</span>): <span class="tp">Boolean!</span>
+}</code></pre></div></div>
+<div class="section" id="variables"><div class="section-header"><span class="icon">💎</span><h2>Variables</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Query with variables</span>
+<span class="kw">query</span> GetUser($id: <span class="tp">ID!</span>) {
+  user(id: $id) {
+    name
+    email
+  }
+}
+
+<span class="cmt"># Variables (JSON)</span>
+{
+  <span class="str">"id"</span>: <span class="str">"1"</span>
+}
+
+<span class="cmt"># Mutation with variables</span>
+<span class="kw">mutation</span> CreateUser($input: <span class="tp">CreateUserInput!</span>) {
+  createUser(input: $input) {
+    id name
+  }
+}
+<span class="cmt"># Variables</span>
+{ <span class="str">"input"</span>: { <span class="str">"name"</span>: <span class="str">"Alice"</span>, <span class="str">"email"</span>: <span class="str">"a@b.com"</span> } }</code></pre></div></div>
+<div class="section" id="fragments"><div class="section-header"><span class="icon">🧩</span><h2>Fragments</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Reusable field sets</span>
+<span class="kw">fragment</span> UserFields <span class="kw">on</span> <span class="tp">User</span> {
+  id
+  name
+  email
+}
+
+<span class="kw">query</span> {
+  user(id: <span class="str">"1"</span>) { ...UserFields }
+  admin: user(id: <span class="str">"2"</span>) { ...UserFields }
+}
+
+<span class="cmt"># Inline fragment (for unions/interfaces)</span>
+<span class="kw">query</span> {
+  search(q: <span class="str">"hello"</span>) {
+    ... <span class="kw">on</span> <span class="tp">User</span> { name email }
+    ... <span class="kw">on</span> <span class="tp">Post</span> { title body }
+  }
+}</code></pre></div></div>
+<div class="section" id="subscriptions"><div class="section-header"><span class="icon">📡</span><h2>Subscriptions</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Real-time updates via WebSocket</span>
+<span class="kw">subscription</span> {
+  messageAdded(channelId: <span class="str">"1"</span>) {
+    id
+    text
+    user { name }
+  }
+}
+
+<span class="cmt"># Schema</span>
+<span class="kw">type</span> <span class="tp">Subscription</span> {
+  messageAdded(channelId: <span class="tp">ID!</span>): <span class="tp">Message!</span>
+  userOnline: <span class="tp">User!</span>
+}</code></pre></div></div>
+<div class="section" id="directives"><div class="section-header"><span class="icon">🏷️</span><h2>Directives</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Built-in directives</span>
+<span class="kw">query</span> GetUser($withEmail: <span class="tp">Boolean!</span>) {
+  user(id: <span class="str">"1"</span>) {
+    name
+    email <span class="kw">@include</span>(if: $withEmail)
+    age <span class="kw">@skip</span>(if: <span class="kw">true</span>)
+  }
+}
+
+<span class="cmt"># @deprecated</span>
+<span class="kw">type</span> <span class="tp">User</span> {
+  name: <span class="tp">String!</span>
+  fullName: <span class="tp">String</span> <span class="kw">@deprecated</span>(reason: <span class="str">"Use name"</span>)
+}</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>GraphQL Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

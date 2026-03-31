@@ -1,58 +1,162 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MATLAB Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ MATLAB</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>MATLAB Cheatsheet</h1>
-  <p class="subtitle">Matrices, plotting, functions, toolboxes, Simulink basics &amp; data analysis</p>
-  <span class="tag tag-lang">Language</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>MATLAB Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ MATLAB</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>MATLAB Cheatsheet</h1><p class="subtitle">Syntax, matrices, plotting, functions &amp; common operations</p><span class="tag tag-lang">Language</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#matrices">Matrices</a>
+    <a href="#indexing">Indexing</a>
+    <a href="#ops">Operations</a>
+    <a href="#plot">Plotting</a>
+    <a href="#control">Control Flow</a>
+    <a href="#functions">Functions</a>
+    <a href="#io">I/O</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">📝</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt">% Variable assignment</span>
+x = <span class="num">10</span>;               <span class="cmt">% semicolon suppresses output</span>
+y = <span class="num">3.14</span>;
+name = <span class="str">'Alice'</span>;
+flag = <span class="kw">true</span>;
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive MATLAB content.</div>
-</div>
+<span class="cmt">% Display</span>
+<span class="fn">disp</span>(x)
+<span class="fn">fprintf</span>(<span class="str">'x = %d\n'</span>, x)
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// MATLAB basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">% Type checking</span>
+<span class="fn">class</span>(x)               <span class="cmt">% 'double'</span>
+<span class="fn">whos</span>                   <span class="cmt">% list all variables</span>
+<span class="fn">clear</span>                  <span class="cmt">% clear workspace</span>
+<span class="fn">clc</span>                    <span class="cmt">% clear command window</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// MATLAB patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">% Help</span>
+<span class="fn">help</span> sin               <span class="cmt">% quick help</span>
+<span class="fn">doc</span> sin                <span class="cmt">% full documentation</span></code></pre></div></div>
+<div class="section" id="matrices"><div class="section-header"><span class="icon">📦</span><h2>Matrices</h2></div><div class="code-wrapper"><pre><code><span class="cmt">% Create</span>
+A = [<span class="num">1 2 3</span>; <span class="num">4 5 6</span>; <span class="num">7 8 9</span>];    <span class="cmt">% 3×3 matrix</span>
+v = [<span class="num">1 2 3 4 5</span>];                 <span class="cmt">% row vector</span>
+c = [<span class="num">1</span>; <span class="num">2</span>; <span class="num">3</span>];                   <span class="cmt">% column vector</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>MATLAB Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt">% Special matrices</span>
+<span class="fn">zeros</span>(<span class="num">3</span>, <span class="num">4</span>)        <span class="cmt">% 3×4 zeros</span>
+<span class="fn">ones</span>(<span class="num">3</span>, <span class="num">4</span>)         <span class="cmt">% 3×4 ones</span>
+<span class="fn">eye</span>(<span class="num">4</span>)             <span class="cmt">% 4×4 identity</span>
+<span class="fn">rand</span>(<span class="num">3</span>, <span class="num">4</span>)         <span class="cmt">% 3×4 random [0,1)</span>
+<span class="fn">randn</span>(<span class="num">3</span>, <span class="num">4</span>)        <span class="cmt">% 3×4 normal dist</span>
+<span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">5</span>)  <span class="cmt">% 5 evenly spaced</span>
+<span class="num">1</span>:<span class="num">5</span>                 <span class="cmt">% [1 2 3 4 5]</span>
+<span class="num">0</span>:<span class="num">0.5</span>:<span class="num">3</span>            <span class="cmt">% [0 0.5 1 1.5 2 2.5 3]</span>
+
+<span class="cmt">% Properties</span>
+<span class="fn">size</span>(A)      <span class="fn">length</span>(v)     <span class="fn">numel</span>(A)</code></pre></div></div>
+<div class="section" id="indexing"><div class="section-header"><span class="icon">🔢</span><h2>Indexing</h2></div><div class="code-wrapper"><pre><code><span class="cmt">% 1-based indexing!</span>
+A(<span class="num">1</span>, <span class="num">2</span>)              <span class="cmt">% row 1, col 2</span>
+A(<span class="num">1</span>, :)              <span class="cmt">% entire row 1</span>
+A(:, <span class="num">2</span>)              <span class="cmt">% entire column 2</span>
+A(<span class="num">1</span>:<span class="num">2</span>, <span class="num">1</span>:<span class="num">2</span>)          <span class="cmt">% submatrix</span>
+A(<span class="kw">end</span>, :)            <span class="cmt">% last row</span>
+A(:)                  <span class="cmt">% all elements as column</span>
+
+<span class="cmt">% Logical indexing</span>
+A(A &gt; <span class="num">5</span>)             <span class="cmt">% elements > 5</span>
+A(A &gt; <span class="num">3</span> & A &lt; <span class="num">7</span>)    <span class="cmt">% between 3 and 7</span></code></pre></div></div>
+<div class="section" id="ops"><div class="section-header"><span class="icon">➕</span><h2>Operations</h2></div><div class="code-wrapper"><pre><code><span class="cmt">% Matrix arithmetic</span>
+A + B    A - B    A * B    A / B
+A'                       <span class="cmt">% transpose</span>
+<span class="fn">inv</span>(A)                   <span class="cmt">% inverse</span>
+<span class="fn">det</span>(A)                   <span class="cmt">% determinant</span>
+A \ b                    <span class="cmt">% solve Ax=b</span>
+
+<span class="cmt">% Element-wise (dot operator)</span>
+A .* B    A ./ B    A .^ <span class="num">2</span>
+
+<span class="cmt">% Statistics</span>
+<span class="fn">sum</span>(A)    <span class="fn">mean</span>(A)    <span class="fn">max</span>(A)    <span class="fn">min</span>(A)
+<span class="fn">std</span>(A)    <span class="fn">var</span>(A)     <span class="fn">median</span>(A)
+<span class="fn">sort</span>(A)   <span class="fn">cumsum</span>(A)
+
+<span class="cmt">% Math</span>
+<span class="fn">sqrt</span>(x)   <span class="fn">abs</span>(x)   <span class="fn">exp</span>(x)   <span class="fn">log</span>(x)
+<span class="fn">sin</span>(x)    <span class="fn">cos</span>(x)   <span class="fn">floor</span>(x) <span class="fn">ceil</span>(x)</code></pre></div></div>
+<div class="section" id="plot"><div class="section-header"><span class="icon">📊</span><h2>Plotting</h2></div><div class="code-wrapper"><pre><code><span class="cmt">% Basic plot</span>
+x = <span class="num">0</span>:<span class="num">0.1</span>:<span class="num">10</span>;
+y = <span class="fn">sin</span>(x);
+<span class="fn">plot</span>(x, y)
+<span class="fn">title</span>(<span class="str">'Sine Wave'</span>)
+<span class="fn">xlabel</span>(<span class="str">'x'</span>)
+<span class="fn">ylabel</span>(<span class="str">'sin(x)'</span>)
+<span class="fn">grid</span> on
+
+<span class="cmt">% Multiple plots</span>
+<span class="fn">hold</span> on
+<span class="fn">plot</span>(x, <span class="fn">cos</span>(x), <span class="str">'r--'</span>)
+<span class="fn">legend</span>(<span class="str">'sin'</span>, <span class="str">'cos'</span>)
+<span class="fn">hold</span> off
+
+<span class="cmt">% Other plot types</span>
+<span class="fn">scatter</span>(x, y)     <span class="fn">bar</span>(x, y)
+<span class="fn">histogram</span>(data)   <span class="fn">pie</span>(data)
+<span class="fn">subplot</span>(<span class="num">2</span>,<span class="num">1</span>,<span class="num">1</span>)   <span class="cmt">% 2 rows, 1 col, plot 1</span>
+
+<span class="cmt">% Save figure</span>
+<span class="fn">saveas</span>(gcf, <span class="str">'plot.png'</span>)</code></pre></div></div>
+<div class="section" id="control"><div class="section-header"><span class="icon">🔀</span><h2>Control Flow</h2></div><div class="code-wrapper"><pre><code><span class="cmt">% If</span>
+<span class="kw">if</span> x &gt; <span class="num">0</span>
+    <span class="fn">disp</span>(<span class="str">'positive'</span>)
+<span class="kw">elseif</span> x &lt; <span class="num">0</span>
+    <span class="fn">disp</span>(<span class="str">'negative'</span>)
+<span class="kw">else</span>
+    <span class="fn">disp</span>(<span class="str">'zero'</span>)
+<span class="kw">end</span>
+
+<span class="cmt">% For loop</span>
+<span class="kw">for</span> i = <span class="num">1</span>:<span class="num">10</span>
+    <span class="fn">fprintf</span>(<span class="str">'%d '</span>, i)
+<span class="kw">end</span>
+
+<span class="cmt">% While loop</span>
+i = <span class="num">1</span>;
+<span class="kw">while</span> i &lt;= <span class="num">5</span>
+    <span class="fn">disp</span>(i)
+    i = i + <span class="num">1</span>;
+<span class="kw">end</span>
+
+<span class="cmt">% Switch</span>
+<span class="kw">switch</span> day
+    <span class="kw">case</span> <span class="str">'Mon'</span>, <span class="fn">disp</span>(<span class="str">'Monday'</span>)
+    <span class="kw">case</span> <span class="str">'Tue'</span>, <span class="fn">disp</span>(<span class="str">'Tuesday'</span>)
+    <span class="kw">otherwise</span>, <span class="fn">disp</span>(<span class="str">'Other'</span>)
+<span class="kw">end</span></code></pre></div></div>
+<div class="section" id="functions"><div class="section-header"><span class="icon">⚡</span><h2>Functions</h2></div><div class="code-wrapper"><pre><code><span class="cmt">% Function file (save as myfunc.m)</span>
+<span class="kw">function</span> result = <span class="fn">myfunc</span>(x, y)
+    result = x + y;
+<span class="kw">end</span>
+
+<span class="cmt">% Multiple outputs</span>
+<span class="kw">function</span> [mn, mx] = <span class="fn">minmax</span>(arr)
+    mn = <span class="fn">min</span>(arr);
+    mx = <span class="fn">max</span>(arr);
+<span class="kw">end</span>
+
+<span class="cmt">% Anonymous function</span>
+f = @(x) x.^<span class="num">2</span> + <span class="num">1</span>;
+f(<span class="num">3</span>)                 <span class="cmt">% 10</span>
+
+<span class="cmt">% Apply to array</span>
+<span class="fn">arrayfun</span>(@(x) x^<span class="num">2</span>, [<span class="num">1 2 3</span>])
+<span class="fn">cellfun</span>(@length, {<span class="str">'hi'</span>, <span class="str">'hello'</span>})</code></pre></div></div>
+<div class="section" id="io"><div class="section-header"><span class="icon">💾</span><h2>I/O</h2></div><div class="code-wrapper"><pre><code><span class="cmt">% Load / Save</span>
+<span class="fn">save</span>(<span class="str">'data.mat'</span>, <span class="str">'x'</span>, <span class="str">'y'</span>)   <span class="cmt">% save variables</span>
+<span class="fn">load</span>(<span class="str">'data.mat'</span>)              <span class="cmt">% load variables</span>
+
+<span class="cmt">% CSV</span>
+data = <span class="fn">readmatrix</span>(<span class="str">'data.csv'</span>);
+<span class="fn">writematrix</span>(data, <span class="str">'out.csv'</span>);
+
+<span class="cmt">% Table</span>
+T = <span class="fn">readtable</span>(<span class="str">'data.csv'</span>);
+<span class="fn">writetable</span>(T, <span class="str">'out.csv'</span>);
+
+<span class="cmt">% File I/O</span>
+fid = <span class="fn">fopen</span>(<span class="str">'file.txt'</span>, <span class="str">'r'</span>);
+line = <span class="fn">fgetl</span>(fid);
+<span class="fn">fclose</span>(fid);</code></pre></div></div>

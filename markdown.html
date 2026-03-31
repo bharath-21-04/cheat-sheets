@@ -1,58 +1,150 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Markdown Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Markdown</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Markdown Cheatsheet</h1>
-  <p class="subtitle">Headings, lists, links, images, tables, code blocks &amp; GitHub Flavored Markdown</p>
-  <span class="tag tag-concept">Markup</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Markdown Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Markdown</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Markdown Cheatsheet</h1><p class="subtitle">Headings, formatting, links, images, tables &amp; more</p><span class="tag tag-concept">Reference</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#headings">Headings</a>
+    <a href="#format">Formatting</a>
+    <a href="#lists">Lists</a>
+    <a href="#links">Links &amp; Images</a>
+    <a href="#code">Code</a>
+    <a href="#tables">Tables</a>
+    <a href="#misc">Miscellaneous</a>
+    <a href="#gfm">GitHub Flavored</a>
+</div></div>
+<div class="section" id="headings"><div class="section-header"><span class="icon">📝</span><h2>Headings</h2></div><div class="code-wrapper"><pre><code># Heading 1
+## Heading 2
+### Heading 3
+#### Heading 4
+##### Heading 5
+###### Heading 6
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt">Alternative (for H1 and H2):</span>
+Heading 1
+=========
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Markdown content.</div>
-</div>
+Heading 2
+---------</code></pre></div></div>
+<div class="section" id="format"><div class="section-header"><span class="icon">✏️</span><h2>Formatting</h2></div><div class="code-wrapper"><pre><code>*italic*  or  _italic_
+**bold**  or  __bold__
+***bold italic***
+~~strikethrough~~
+`inline code`
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Markdown basics coming soon...</span></code></pre></div>
-</div>
+> Blockquote
+>> Nested blockquote
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Markdown patterns coming soon...</span></code></pre></div>
-</div>
+---           <span class="cmt">horizontal rule</span>
+***           <span class="cmt">horizontal rule</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Markdown Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt">Escaping special characters</span>
+\*not italic\*
+\# not a heading</code></pre></div></div>
+<div class="section" id="lists"><div class="section-header"><span class="icon">📋</span><h2>Lists</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Unordered</span>
+- Item 1
+- Item 2
+  - Nested item
+  - Nested item
+
+<span class="cmt">Ordered</span>
+1. First
+2. Second
+3. Third
+
+<span class="cmt">Task list (GitHub)</span>
+- [x] Completed task
+- [ ] Incomplete task
+- [ ] Another task
+
+<span class="cmt">Definition list (some parsers)</span>
+Term
+: Definition here</code></pre></div></div>
+<div class="section" id="links"><div class="section-header"><span class="icon">🔗</span><h2>Links &amp; Images</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Links</span>
+[Link text](https://example.com)
+[Link with title](https://example.com "Title")
+[Reference link][ref-id]
+[ref-id]: https://example.com
+
+<span class="cmt">Auto-link</span>
+&lt;https://example.com&gt;
+
+<span class="cmt">Images</span>
+![Alt text](image.png)
+![Alt text](image.png "Title")
+[![Image link](img.png)](https://url.com)
+
+<span class="cmt">Footnotes (extended)</span>
+Text with footnote[^1]
+[^1]: Footnote content here.</code></pre></div></div>
+<div class="section" id="code"><div class="section-header"><span class="icon">💻</span><h2>Code</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Inline code</span>
+Use `backticks` for inline code.
+
+<span class="cmt">Code block (fenced)</span>
+```python
+def hello():
+    print("Hello!")
+```
+
+```javascript
+const x = 42;
+```
+
+<span class="cmt">Indented code block (4 spaces)</span>
+    function hello() {
+        return "hi";
+    }</code></pre></div></div>
+<div class="section" id="tables"><div class="section-header"><span class="icon">📊</span><h2>Tables</h2></div><div class="code-wrapper"><pre><code>| Header 1 | Header 2 | Header 3 |
+|----------|----------|----------|
+| Cell 1   | Cell 2   | Cell 3   |
+| Cell 4   | Cell 5   | Cell 6   |
+
+<span class="cmt">Alignment</span>
+| Left     | Center   | Right    |
+|:---------|:--------:|---------:|
+| left     | center   | right    |</code></pre></div></div>
+<div class="section" id="misc"><div class="section-header"><span class="icon">✨</span><h2>Miscellaneous</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Emoji (GitHub)</span>
+:smile: :rocket: :tada: :+1:
+
+<span class="cmt">HTML in Markdown</span>
+&lt;details&gt;
+&lt;summary&gt;Click to expand&lt;/summary&gt;
+Hidden content here
+&lt;/details&gt;
+
+<span class="cmt">Line break</span>
+End line with two spaces  (soft break)
+Or use &lt;br&gt; tag
+
+<span class="cmt">Math (GitHub, some parsers)</span>
+Inline: $E = mc^2$
+Block:
+$$
+\sum_{i=1}^{n} x_i
+$$</code></pre></div></div>
+<div class="section" id="gfm"><div class="section-header"><span class="icon">🐙</span><h2>GitHub Flavored</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Task lists</span>
+- [x] Done
+- [ ] Todo
+
+<span class="cmt">Mentions &amp; References</span>
+@username     <span class="cmt">mention user</span>
+#123          <span class="cmt">issue/PR reference</span>
+SHA           <span class="cmt">commit reference</span>
+
+<span class="cmt">Alerts (GitHub)</span>
+&gt; [!NOTE]
+&gt; Information note
+
+&gt; [!WARNING]
+&gt; Warning message
+
+&gt; [!TIP]
+&gt; Helpful tip
+
+<span class="cmt">Mermaid diagrams</span>
+```mermaid
+graph LR
+  A --&gt; B --&gt; C
+```</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Markdown Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

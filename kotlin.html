@@ -15,7 +15,7 @@
 <div class="container">
 <div class="hero">
   <h1>Kotlin Cheatsheet</h1>
-  <p class="subtitle">Null safety, coroutines, data classes, sealed classes, collections, Android &amp; Ktor web dev</p>
+  <p class="subtitle">Null safety, coroutines, data classes, sealed classes, collections, generics &amp; Android basics</p>
   <span class="tag tag-lang">Language</span>
   <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
   <div class="search-count" id="searchCount"></div>
@@ -25,19 +25,19 @@
   <div class="toc-grid">
     <a href="#basics">Basics &amp; Types</a>
     <a href="#control">Control Flow</a>
-    <a href="#functions">Functions</a>
-    <a href="#classes">Classes &amp; OOP</a>
+    <a href="#functions">Functions &amp; Lambdas</a>
     <a href="#collections">Collections</a>
-    <a href="#generics">Generics &amp; Delegation</a>
-    <a href="#coroutines">Coroutines</a>
+    <a href="#classes">Classes &amp; OOP</a>
+    <a href="#generics">Generics</a>
+    <a href="#coroutines">Coroutines &amp; Flow</a>
     <a href="#error">Error Handling</a>
+    <a href="#dsl">DSLs &amp; Delegates</a>
     <a href="#android">Android Development</a>
-    <a href="#ktor">Ktor Web Development</a>
-    <a href="#dsl">DSL &amp; Advanced</a>
-    <a href="#testing">Testing</a>
+    <a href="#multiplatform">Multiplatform &amp; Web</a>
   </div>
 </div>
 
+<!-- ───────── BASICS ───────── -->
 <div class="section" id="basics">
   <div class="section-header"><span class="icon">⚡</span><h2>Basics &amp; Types</h2></div>
   <div class="code-wrapper"><pre><code><span class="kw">fun</span> <span class="fn">main</span>() {
@@ -49,8 +49,13 @@
 <span class="kw">var</span> age = <span class="num">30</span>             <span class="cmt">// mutable</span>
 <span class="kw">val</span> pi: <span class="tp">Double</span> = <span class="num">3.14</span>
 
-<span class="cmt">// Types: Int, Long, Double, Float, Boolean, Char, String</span>
+<span class="cmt">// Types: Int, Long, Double, Float, Boolean, Char, String, Byte, Short</span>
 <span class="kw">val</span> x: <span class="tp">Int</span> = <span class="num">42</span>
+<span class="kw">val</span> big: <span class="tp">Long</span> = <span class="num">100_000_000L</span>
+<span class="kw">val</span> f: <span class="tp">Float</span> = <span class="num">3.14f</span>
+<span class="kw">val</span> flag: <span class="tp">Boolean</span> = <span class="kw">true</span>
+
+<span class="cmt">// String templates</span>
 <span class="kw">val</span> s: <span class="tp">String</span> = <span class="str">"Hello ${name}, age $age"</span>
 <span class="kw">val</span> multiline = <span class="str">"""
     |Multi-line
@@ -65,16 +70,83 @@ nullable!!.length             <span class="cmt">// assert non-null (throws if nu
 
 <span class="cmt">// Type checks &amp; casts</span>
 <span class="kw">if</span> (obj <span class="kw">is</span> <span class="tp">String</span>) obj.length  <span class="cmt">// smart cast</span>
-<span class="kw">val</span> str = obj <span class="kw">as</span>? <span class="tp">String</span>       <span class="cmt">// safe cast (null if fails)</span></code></pre></div>
+<span class="kw">val</span> str = obj <span class="kw">as</span>? <span class="tp">String</span>       <span class="cmt">// safe cast (null if fails)</span>
+<span class="kw">val</span> str2 = obj <span class="kw">as</span> <span class="tp">String</span>       <span class="cmt">// unsafe cast (throws ClassCastException)</span>
+
+<span class="cmt">// Constants</span>
+<span class="kw">const val</span> MAX = <span class="num">100</span>          <span class="cmt">// compile-time constant (top-level or companion)</span>
+
+<span class="cmt">// Type aliases</span>
+<span class="kw">typealias</span> <span class="tp">UserMap</span> = Map&lt;<span class="tp">String</span>, <span class="tp">List</span>&lt;<span class="tp">Int</span>&gt;&gt;
+
+<span class="cmt">// Ranges</span>
+<span class="kw">val</span> r1 = <span class="num">1</span>..<span class="num">10</span>         <span class="cmt">// 1 to 10 inclusive</span>
+<span class="kw">val</span> r2 = <span class="num">1</span> until <span class="num">10</span>    <span class="cmt">// 1 to 9 (exclusive end)</span>
+<span class="kw">val</span> r3 = <span class="num">10</span> downTo <span class="num">1</span>   <span class="cmt">// descending</span>
+<span class="kw">val</span> r4 = <span class="num">1</span>..<span class="num">10</span> step <span class="num">2</span>  <span class="cmt">// 1, 3, 5, 7, 9</span></code></pre></div>
 </div>
 
+<!-- ───────── CONTROL FLOW ───────── -->
+<div class="section" id="control">
+  <div class="section-header"><span class="icon">🔀</span><h2>Control Flow</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// if is an expression</span>
+<span class="kw">val</span> max = <span class="kw">if</span> (a &gt; b) a <span class="kw">else</span> b
+
+<span class="cmt">// when (replaces switch)</span>
+<span class="kw">when</span> (x) {
+    <span class="num">1</span>          -&gt; println(<span class="str">"one"</span>)
+    <span class="num">2</span>, <span class="num">3</span>       -&gt; println(<span class="str">"two or three"</span>)
+    <span class="kw">in</span> <span class="num">4</span>..<span class="num">10</span>   -&gt; println(<span class="str">"4..10"</span>)
+    !<span class="kw">in</span> <span class="num">0</span>..<span class="num">20</span>  -&gt; println(<span class="str">"out of range"</span>)
+    <span class="kw">is</span> <span class="tp">String</span>  -&gt; println(<span class="str">"it's a string"</span>)
+    <span class="kw">else</span>       -&gt; println(<span class="str">"other"</span>)
+}
+
+<span class="cmt">// when as expression (must be exhaustive)</span>
+<span class="kw">val</span> label = <span class="kw">when</span> {
+    score &gt;= <span class="num">90</span> -&gt; <span class="str">"A"</span>
+    score &gt;= <span class="num">80</span> -&gt; <span class="str">"B"</span>
+    <span class="kw">else</span>        -&gt; <span class="str">"C"</span>
+}
+
+<span class="cmt">// for loops</span>
+<span class="kw">for</span> (i <span class="kw">in</span> <span class="num">1</span>..<span class="num">5</span>) println(i)
+<span class="kw">for</span> (i <span class="kw">in</span> <span class="num">5</span> downTo <span class="num">1</span> step <span class="num">2</span>) println(i)
+<span class="kw">for</span> ((index, value) <span class="kw">in</span> list.withIndex()) println(<span class="str">"$index: $value"</span>)
+<span class="kw">for</span> ((key, value) <span class="kw">in</span> map) println(<span class="str">"$key=$value"</span>)
+
+<span class="cmt">// while / do-while</span>
+<span class="kw">while</span> (x &gt; <span class="num">0</span>) { x-- }
+<span class="kw">do</span> { x++ } <span class="kw">while</span> (x &lt; <span class="num">10</span>)
+
+<span class="cmt">// Labels &amp; break/continue</span>
+outer@ <span class="kw">for</span> (i <span class="kw">in</span> <span class="num">1</span>..<span class="num">5</span>) {
+    <span class="kw">for</span> (j <span class="kw">in</span> <span class="num">1</span>..<span class="num">5</span>) {
+        <span class="kw">if</span> (j == <span class="num">3</span>) <span class="kw">break</span>@outer
+    }
+}
+
+<span class="cmt">// repeat</span>
+repeat(<span class="num">5</span>) { i -&gt; println(<span class="str">"Iteration $i"</span>) }</code></pre></div>
+</div>
+
+<!-- ───────── FUNCTIONS ───────── -->
 <div class="section" id="functions">
-  <div class="section-header"><span class="icon">🔧</span><h2>Functions</h2></div>
+  <div class="section-header"><span class="icon">🔧</span><h2>Functions &amp; Lambdas</h2></div>
   <div class="code-wrapper"><pre><code><span class="cmt">// Functions</span>
 <span class="kw">fun</span> <span class="fn">add</span>(a: <span class="tp">Int</span>, b: <span class="tp">Int</span>): <span class="tp">Int</span> = a + b  <span class="cmt">// expression body</span>
 <span class="kw">fun</span> <span class="fn">greet</span>(name: <span class="tp">String</span> = <span class="str">"World"</span>) = println(<span class="str">"Hello $name"</span>)
-greet()           <span class="cmt">// "Hello World"</span>
-greet(name = <span class="str">"Alice"</span>)  <span class="cmt">// named argument</span>
+greet()                 <span class="cmt">// "Hello World"</span>
+greet(name = <span class="str">"Alice"</span>)   <span class="cmt">// named argument</span>
+
+<span class="cmt">// vararg</span>
+<span class="kw">fun</span> <span class="fn">sum</span>(<span class="kw">vararg</span> nums: <span class="tp">Int</span>): <span class="tp">Int</span> = nums.sum()
+sum(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)
+sum(*intArrayOf(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>))  <span class="cmt">// spread operator</span>
+
+<span class="cmt">// Infix functions</span>
+<span class="kw">infix fun</span> <span class="tp">Int</span>.<span class="fn">times</span>(str: <span class="tp">String</span>) = str.repeat(<span class="kw">this</span>)
+<span class="num">3</span> times <span class="str">"Hi "</span>  <span class="cmt">// "Hi Hi Hi "</span>
 
 <span class="cmt">// Lambdas</span>
 <span class="kw">val</span> double = { x: <span class="tp">Int</span> -&gt; x * <span class="num">2</span> }
@@ -83,27 +155,104 @@ nums.filter { it % <span class="num">2</span> == <span class="num">0</span> }   
 nums.map { it * <span class="num">2</span> }
 nums.reduce { acc, n -&gt; acc + n }
 
+<span class="cmt">// Higher-order functions</span>
+<span class="kw">fun</span> <span class="fn">operate</span>(a: <span class="tp">Int</span>, b: <span class="tp">Int</span>, op: (<span class="tp">Int</span>, <span class="tp">Int</span>) -&gt; <span class="tp">Int</span>): <span class="tp">Int</span> = op(a, b)
+operate(<span class="num">3</span>, <span class="num">4</span>) { x, y -&gt; x + y }  <span class="cmt">// trailing lambda</span>
+
+<span class="cmt">// Function references</span>
+<span class="kw">val</span> ref = ::add              <span class="cmt">// top-level function reference</span>
+<span class="kw">val</span> ref2 = <span class="tp">String</span>::length    <span class="cmt">// member reference</span>
+listOf(<span class="str">"a"</span>,<span class="str">"bb"</span>).map(<span class="tp">String</span>::length)
+
+<span class="cmt">// Inline functions (avoid lambda allocation overhead)</span>
+<span class="kw">inline fun</span> &lt;<span class="kw">reified</span> <span class="tp">T</span>&gt; <span class="fn">isType</span>(value: <span class="tp">Any</span>): <span class="tp">Boolean</span> = value <span class="kw">is</span> <span class="tp">T</span>
+
 <span class="cmt">// Extension functions</span>
 <span class="kw">fun</span> <span class="tp">String</span>.<span class="fn">addExclaim</span>() = <span class="str">"$this!"</span>
 <span class="str">"Hello"</span>.addExclaim()  <span class="cmt">// "Hello!"</span>
 
 <span class="cmt">// Scope functions</span>
-person.let { println(it.name) }
-person.apply { name = <span class="str">"Bob"</span>; age = <span class="num">25</span> }
-person.also { log(it) }
-person.run { <span class="str">"$name is $age"</span> }
-<span class="kw">with</span>(person) { println(<span class="str">"$name $age"</span>) }</code></pre></div>
+person.let { println(it.name) }                  <span class="cmt">// let: 'it' ref, returns result</span>
+person.apply { name = <span class="str">"Bob"</span>; age = <span class="num">25</span> }          <span class="cmt">// apply: 'this' ref, returns receiver</span>
+person.also { log(it) }                          <span class="cmt">// also: 'it' ref, returns receiver</span>
+person.run { <span class="str">"$name is $age"</span> }                   <span class="cmt">// run: 'this' ref, returns result</span>
+<span class="kw">with</span>(person) { println(<span class="str">"$name $age"</span>) }           <span class="cmt">// with: 'this' ref, returns result</span></code></pre></div>
 </div>
 
+<!-- ───────── COLLECTIONS ───────── -->
+<div class="section" id="collections">
+  <div class="section-header"><span class="icon">📦</span><h2>Collections</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Immutable (read-only) collections</span>
+<span class="kw">val</span> list = listOf(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)
+<span class="kw">val</span> set = setOf(<span class="str">"a"</span>, <span class="str">"b"</span>)
+<span class="kw">val</span> map = mapOf(<span class="str">"x"</span> to <span class="num">1</span>, <span class="str">"y"</span> to <span class="num">2</span>)
+
+<span class="cmt">// Mutable collections</span>
+<span class="kw">val</span> mList = mutableListOf(<span class="num">1</span>, <span class="num">2</span>)
+mList.add(<span class="num">3</span>);  mList.removeAt(<span class="num">0</span>);  mList += <span class="num">4</span>
+<span class="kw">val</span> mSet = mutableSetOf(<span class="str">"a"</span>)
+<span class="kw">val</span> mMap = mutableMapOf(<span class="str">"x"</span> to <span class="num">1</span>)
+mMap[<span class="str">"y"</span>] = <span class="num">2</span>
+
+<span class="cmt">// Array</span>
+<span class="kw">val</span> arr = arrayOf(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)
+<span class="kw">val</span> intArr = intArrayOf(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>)
+<span class="kw">val</span> sized = Array(<span class="num">5</span>) { i -&gt; i * <span class="num">2</span> }  <span class="cmt">// [0,2,4,6,8]</span>
+
+<span class="cmt">// Collection operations</span>
+list.filter { it &gt; <span class="num">1</span> }               <span class="cmt">// [2, 3]</span>
+list.map { it * <span class="num">10</span> }                 <span class="cmt">// [10, 20, 30]</span>
+list.flatMap { listOf(it, it + <span class="num">1</span>) } <span class="cmt">// [1,2,2,3,3,4]</span>
+list.find { it &gt; <span class="num">1</span> }                 <span class="cmt">// 2 (first match or null)</span>
+list.any { it &gt; <span class="num">2</span> }                  <span class="cmt">// true</span>
+list.all { it &gt; <span class="num">0</span> }                  <span class="cmt">// true</span>
+list.none { it &gt; <span class="num">5</span> }                 <span class="cmt">// true</span>
+list.count { it &gt; <span class="num">1</span> }                <span class="cmt">// 2</span>
+list.groupBy { it % <span class="num">2</span> }              <span class="cmt">// {1=[1,3], 0=[2]}</span>
+list.associate { it to it * <span class="num">10</span> }     <span class="cmt">// {1=10, 2=20, 3=30}</span>
+list.partition { it &gt; <span class="num">1</span> }            <span class="cmt">// ([2,3], [1])</span>
+list.zip(listOf(<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>))      <span class="cmt">// [(1,a), (2,b), (3,c)]</span>
+list.chunked(<span class="num">2</span>)                      <span class="cmt">// [[1,2], [3]]</span>
+list.windowed(<span class="num">2</span>)                     <span class="cmt">// [[1,2], [2,3]]</span>
+list.fold(<span class="num">0</span>) { acc, n -&gt; acc + n }   <span class="cmt">// 6</span>
+list.reduce { acc, n -&gt; acc + n }    <span class="cmt">// 6</span>
+list.sorted()                        <span class="cmt">// natural order</span>
+list.sortedByDescending { it }
+list.take(<span class="num">2</span>);  list.drop(<span class="num">1</span>)
+list.distinct();  list.reversed()
+
+<span class="cmt">// Map operations</span>
+map.keys;  map.values;  map.entries
+map.getOrDefault(<span class="str">"z"</span>, <span class="num">0</span>)
+map.filter { (k, v) -&gt; v &gt; <span class="num">1</span> }
+map.mapValues { (_, v) -&gt; v * <span class="num">10</span> }
+map.mapKeys { (k, _) -&gt; k.uppercase() }
+
+<span class="cmt">// Sequences (lazy evaluation)</span>
+list.asSequence()
+    .filter { it &gt; <span class="num">1</span> }
+    .map { it * <span class="num">10</span> }
+    .toList()
+
+generateSequence(<span class="num">1</span>) { it * <span class="num">2</span> }.take(<span class="num">5</span>).toList()  <span class="cmt">// [1,2,4,8,16]</span></code></pre></div>
+</div>
+
+<!-- ───────── CLASSES ───────── -->
 <div class="section" id="classes">
   <div class="section-header"><span class="icon">🏛️</span><h2>Classes &amp; OOP</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Data class (auto equals, hashCode, toString, copy)</span>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Basic class</span>
+<span class="kw">class</span> <span class="tp">Person</span>(<span class="kw">val</span> name: <span class="tp">String</span>, <span class="kw">var</span> age: <span class="tp">Int</span>) {
+    <span class="kw">init</span> { println(<span class="str">"Created $name"</span>) }     <span class="cmt">// initializer block</span>
+    <span class="kw">constructor</span>(name: <span class="tp">String</span>) : <span class="kw">this</span>(name, <span class="num">0</span>)  <span class="cmt">// secondary constructor</span>
+}
+
+<span class="cmt">// Data class (auto equals, hashCode, toString, copy, componentN)</span>
 <span class="kw">data class</span> <span class="tp">User</span>(<span class="kw">val</span> name: <span class="tp">String</span>, <span class="kw">val</span> age: <span class="tp">Int</span>)
 <span class="kw">val</span> user = <span class="tp">User</span>(<span class="str">"Alice"</span>, <span class="num">30</span>)
 <span class="kw">val</span> copy = user.copy(age = <span class="num">31</span>)
 <span class="kw">val</span> (name, age) = user     <span class="cmt">// destructuring</span>
 
-<span class="cmt">// Sealed class</span>
+<span class="cmt">// Sealed class (restricted hierarchy)</span>
 <span class="kw">sealed class</span> <span class="tp">Result</span> {
     <span class="kw">data class</span> <span class="tp">Success</span>(<span class="kw">val</span> data: <span class="tp">String</span>) : <span class="tp">Result</span>()
     <span class="kw">data class</span> <span class="tp">Error</span>(<span class="kw">val</span> msg: <span class="tp">String</span>) : <span class="tp">Result</span>()
@@ -115,17 +264,91 @@ person.run { <span class="str">"$name is $age"</span> }
     <span class="tp">Result.Loading</span>    -&gt; println(<span class="str">"Loading..."</span>)
 }
 
+<span class="cmt">// Sealed interface (Kotlin 1.5+)</span>
+<span class="kw">sealed interface</span> <span class="tp">Shape</span>
+<span class="kw">data class</span> <span class="tp">Circle</span>(<span class="kw">val</span> r: <span class="tp">Double</span>) : <span class="tp">Shape</span>
+<span class="kw">data class</span> <span class="tp">Rect</span>(<span class="kw">val</span> w: <span class="tp">Double</span>, <span class="kw">val</span> h: <span class="tp">Double</span>) : <span class="tp">Shape</span>
+
+<span class="cmt">// Enum class</span>
+<span class="kw">enum class</span> <span class="tp">Direction</span>(val dx: <span class="tp">Int</span>, val dy: <span class="tp">Int</span>) {
+    UP(<span class="num">0</span>,<span class="num">1</span>), DOWN(<span class="num">0</span>,<span class="num">-1</span>), LEFT(<span class="num">-1</span>,<span class="num">0</span>), RIGHT(<span class="num">1</span>,<span class="num">0</span>);
+    <span class="kw">fun</span> <span class="fn">opposite</span>() = <span class="kw">when</span>(<span class="kw">this</span>) {
+        UP -&gt; DOWN;  DOWN -&gt; UP;  LEFT -&gt; RIGHT;  RIGHT -&gt; LEFT
+    }
+}
+
+<span class="cmt">// Value class (inline wrapper, zero overhead)</span>
+@JvmInline
+<span class="kw">value class</span> <span class="tp">Email</span>(<span class="kw">val</span> value: <span class="tp">String</span>)
+
 <span class="cmt">// Object (singleton) &amp; companion</span>
 <span class="kw">object</span> <span class="tp">Database</span> { <span class="kw">fun</span> <span class="fn">connect</span>() {} }
 <span class="kw">class</span> <span class="tp">MyClass</span> {
     <span class="kw">companion object</span> {
         <span class="kw">fun</span> <span class="fn">create</span>() = <span class="tp">MyClass</span>()  <span class="cmt">// like static</span>
     }
+}
+
+<span class="cmt">// Inheritance</span>
+<span class="kw">open class</span> <span class="tp">Animal</span>(<span class="kw">val</span> name: <span class="tp">String</span>) {
+    <span class="kw">open fun</span> <span class="fn">sound</span>() = <span class="str">"..."</span>
+}
+<span class="kw">class</span> <span class="tp">Dog</span>(name: <span class="tp">String</span>) : <span class="tp">Animal</span>(name) {
+    <span class="kw">override fun</span> <span class="fn">sound</span>() = <span class="str">"Woof!"</span>
+}
+
+<span class="cmt">// Interface</span>
+<span class="kw">interface</span> <span class="tp">Drawable</span> {
+    <span class="kw">fun</span> <span class="fn">draw</span>()
+    <span class="kw">fun</span> <span class="fn">description</span>() = <span class="str">"Drawable object"</span>  <span class="cmt">// default implementation</span>
+}
+
+<span class="cmt">// Abstract class</span>
+<span class="kw">abstract class</span> <span class="tp">Vehicle</span> {
+    <span class="kw">abstract val</span> speed: <span class="tp">Int</span>
+    <span class="kw">fun</span> <span class="fn">info</span>() = <span class="str">"Speed: $speed"</span>
+}
+
+<span class="cmt">// Delegation</span>
+<span class="kw">class</span> <span class="tp">CountingSet</span>&lt;<span class="tp">T</span>&gt;(
+    <span class="kw">val</span> inner: MutableSet&lt;<span class="tp">T</span>&gt; = mutableSetOf()
+) : MutableSet&lt;<span class="tp">T</span>&gt; <span class="kw">by</span> inner {
+    <span class="kw">var</span> addCount = <span class="num">0</span>
+    <span class="kw">override fun</span> <span class="fn">add</span>(elem: <span class="tp">T</span>): <span class="tp">Boolean</span> { addCount++; <span class="kw">return</span> inner.add(elem) }
 }</code></pre></div>
 </div>
 
+<!-- ───────── GENERICS ───────── -->
+<div class="section" id="generics">
+  <div class="section-header"><span class="icon">🔷</span><h2>Generics</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Generic class</span>
+<span class="kw">class</span> <span class="tp">Box</span>&lt;<span class="tp">T</span>&gt;(<span class="kw">val</span> value: <span class="tp">T</span>)
+<span class="kw">val</span> box = <span class="tp">Box</span>(<span class="str">"hello"</span>)  <span class="cmt">// Box&lt;String&gt; inferred</span>
+
+<span class="cmt">// Generic function</span>
+<span class="kw">fun</span> &lt;<span class="tp">T</span>&gt; <span class="fn">singletonList</span>(item: <span class="tp">T</span>): <span class="tp">List</span>&lt;<span class="tp">T</span>&gt; = listOf(item)
+
+<span class="cmt">// Bounded generics</span>
+<span class="kw">fun</span> &lt;<span class="tp">T</span> : <span class="tp">Comparable</span>&lt;<span class="tp">T</span>&gt;&gt; <span class="fn">sort</span>(list: <span class="tp">List</span>&lt;<span class="tp">T</span>&gt;) { }
+
+<span class="cmt">// Multiple bounds</span>
+<span class="kw">fun</span> &lt;<span class="tp">T</span>&gt; <span class="fn">copy</span>(item: <span class="tp">T</span>) <span class="kw">where</span> <span class="tp">T</span> : <span class="tp">Serializable</span>, <span class="tp">T</span> : <span class="tp">Comparable</span>&lt;<span class="tp">T</span>&gt; { }
+
+<span class="cmt">// Variance</span>
+<span class="kw">class</span> <span class="tp">Producer</span>&lt;<span class="kw">out</span> <span class="tp">T</span>&gt;(<span class="kw">val</span> value: <span class="tp">T</span>)    <span class="cmt">// covariant (out = producer)</span>
+<span class="kw">class</span> <span class="tp">Consumer</span>&lt;<span class="kw">in</span> <span class="tp">T</span>&gt; { <span class="kw">fun</span> consume(item: <span class="tp">T</span>) {} }  <span class="cmt">// contravariant</span>
+
+<span class="cmt">// Star projection (like Java's ?)</span>
+<span class="kw">fun</span> <span class="fn">printAll</span>(list: <span class="tp">List</span>&lt;*&gt;) { list.forEach { println(it) } }
+
+<span class="cmt">// Reified type parameters (inline only)</span>
+<span class="kw">inline fun</span> &lt;<span class="kw">reified</span> <span class="tp">T</span>&gt; <span class="fn">isA</span>(value: <span class="tp">Any</span>) = value <span class="kw">is</span> <span class="tp">T</span>
+isA&lt;<span class="tp">String</span>&gt;(<span class="str">"hi"</span>)  <span class="cmt">// true</span></code></pre></div>
+</div>
+
+<!-- ───────── COROUTINES ───────── -->
 <div class="section" id="coroutines">
-  <div class="section-header"><span class="icon">⚡</span><h2>Coroutines</h2></div>
+  <div class="section-header"><span class="icon">🌀</span><h2>Coroutines &amp; Flow</h2></div>
   <div class="code-wrapper"><pre><code><span class="kw">import</span> kotlinx.coroutines.*
 
 <span class="cmt">// Launch (fire and forget)</span>
@@ -137,7 +360,7 @@ person.run { <span class="str">"$name is $age"</span> }
     println(<span class="str">"Hello"</span>)
 }
 
-<span class="cmt">// Async (returns result)</span>
+<span class="cmt">// Async (returns result via Deferred)</span>
 <span class="kw">val</span> deferred = async { fetchData() }
 <span class="kw">val</span> result = deferred.await()
 
@@ -149,18 +372,377 @@ coroutineScope {
 }
 
 <span class="cmt">// Dispatchers</span>
-launch(Dispatchers.IO) { }       <span class="cmt">// I/O operations</span>
-launch(Dispatchers.Default) { }  <span class="cmt">// CPU-intensive</span>
+launch(Dispatchers.IO) { }       <span class="cmt">// I/O operations (network, disk)</span>
+launch(Dispatchers.Default) { }  <span class="cmt">// CPU-intensive work</span>
 launch(Dispatchers.Main) { }     <span class="cmt">// UI thread (Android)</span>
+launch(Dispatchers.Unconfined) { } <span class="cmt">// starts in caller thread</span>
 
-<span class="cmt">// Flow (reactive streams)</span>
+<span class="cmt">// withContext (switch dispatcher)</span>
+<span class="kw">suspend fun</span> <span class="fn">fetchData</span>(): <span class="tp">String</span> = withContext(Dispatchers.IO) {
+    <span class="cmt">// network call here</span>
+    <span class="str">"data"</span>
+}
+
+<span class="cmt">// Structured concurrency &amp; cancellation</span>
+<span class="kw">val</span> job = launch {
+    repeat(<span class="num">1000</span>) { i -&gt;
+        println(<span class="str">"job: $i"</span>)
+        delay(<span class="num">500</span>)         <span class="cmt">// cancellable suspension point</span>
+    }
+}
+delay(<span class="num">1300</span>)
+job.cancelAndJoin()  <span class="cmt">// cancel and wait for completion</span>
+
+<span class="cmt">// Timeout</span>
+withTimeout(<span class="num">3000</span>) { <span class="cmt">/* throws TimeoutCancellationException */</span> }
+withTimeoutOrNull(<span class="num">3000</span>) { <span class="cmt">/* returns null on timeout */</span> }
+
+<span class="cmt">// Flow (cold reactive stream)</span>
 <span class="kw">fun</span> <span class="fn">numbers</span>(): Flow&lt;<span class="tp">Int</span>&gt; = flow {
     <span class="kw">for</span> (i <span class="kw">in</span> <span class="num">1</span>..<span class="num">5</span>) {
         delay(<span class="num">100</span>)
         emit(i)
     }
 }
-numbers().filter { it % <span class="num">2</span> == <span class="num">0</span> }.collect { println(it) }</code></pre></div>
+numbers()
+    .filter { it % <span class="num">2</span> == <span class="num">0</span> }
+    .map { it * <span class="num">10</span> }
+    .collect { println(it) }
+
+<span class="cmt">// StateFlow &amp; SharedFlow</span>
+<span class="kw">val</span> state = MutableStateFlow(<span class="num">0</span>)    <span class="cmt">// hot, holds latest value</span>
+state.value = <span class="num">42</span>
+state.collect { println(it) }
+
+<span class="kw">val</span> shared = MutableSharedFlow&lt;<span class="tp">String</span>&gt;()  <span class="cmt">// hot, no initial value</span>
+shared.emit(<span class="str">"event"</span>)
+
+<span class="cmt">// Flow operators</span>
+flow.onEach { log(it) }
+flow.catch { e -&gt; emit(fallback) }
+flow.onCompletion { cause -&gt; <span class="cmt">/* cleanup */</span> }
+flow.debounce(<span class="num">300</span>)
+flow.distinctUntilChanged()
+flow.combine(otherFlow) { a, b -&gt; a + b }
+flow.flatMapLatest { fetchDetails(it) }</code></pre></div>
+</div>
+
+<!-- ───────── ERROR HANDLING ───────── -->
+<div class="section" id="error">
+  <div class="section-header"><span class="icon">🛡️</span><h2>Error Handling</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// try/catch/finally</span>
+<span class="kw">try</span> {
+    <span class="kw">val</span> result = riskyOperation()
+} <span class="kw">catch</span> (e: IOException) {
+    println(<span class="str">"IO error: ${e.message}"</span>)
+} <span class="kw">catch</span> (e: Exception) {
+    println(<span class="str">"Error: ${e.message}"</span>)
+} <span class="kw">finally</span> {
+    cleanup()
+}
+
+<span class="cmt">// try is an expression</span>
+<span class="kw">val</span> number = <span class="kw">try</span> { str.toInt() } <span class="kw">catch</span> (e: NumberFormatException) { <span class="num">0</span> }
+
+<span class="cmt">// throw is an expression (return type: Nothing)</span>
+<span class="kw">val</span> name = person.name ?: <span class="kw">throw</span> IllegalArgumentException(<span class="str">"Name required"</span>)
+
+<span class="cmt">// Custom exceptions</span>
+<span class="kw">class</span> <span class="tp">ApiException</span>(message: <span class="tp">String</span>, <span class="kw">val</span> code: <span class="tp">Int</span>) : Exception(message)
+
+<span class="cmt">// require / check / error (preconditions)</span>
+require(age &gt;= <span class="num">0</span>) { <span class="str">"Age must be non-negative"</span> }  <span class="cmt">// IllegalArgumentException</span>
+check(isInitialized) { <span class="str">"Not initialized"</span> }           <span class="cmt">// IllegalStateException</span>
+error(<span class="str">"Something went wrong"</span>)                         <span class="cmt">// IllegalStateException</span>
+
+<span class="cmt">// Result type (functional error handling)</span>
+<span class="kw">val</span> result = runCatching { riskyCall() }
+result.isSuccess
+result.isFailure
+result.getOrNull()
+result.getOrDefault(<span class="str">"fallback"</span>)
+result.getOrElse { e -&gt; <span class="str">"Error: ${e.message}"</span> }
+result.onSuccess { data -&gt; process(data) }
+       .onFailure { e -&gt; log(e) }
+result.map { it.uppercase() }
+result.recover { e -&gt; <span class="str">"recovered"</span> }</code></pre></div>
+</div>
+
+<!-- ───────── DSLs & DELEGATES ───────── -->
+<div class="section" id="dsl">
+  <div class="section-header"><span class="icon">🧩</span><h2>DSLs &amp; Delegates</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Property delegates</span>
+<span class="kw">val</span> lazyVal <span class="kw">by</span> lazy { expensiveCompute() }  <span class="cmt">// computed once on first access</span>
+
+<span class="kw">var</span> observed <span class="kw">by</span> Delegates.observable(<span class="str">"initial"</span>) { _, old, new -&gt;
+    println(<span class="str">"Changed from $old to $new"</span>)
+}
+
+<span class="kw">var</span> validated <span class="kw">by</span> Delegates.vetoable(<span class="num">0</span>) { _, _, new -&gt;
+    new &gt;= <span class="num">0</span>  <span class="cmt">// reject negative values</span>
+}
+
+<span class="cmt">// Map delegation</span>
+<span class="kw">class</span> <span class="tp">Config</span>(<span class="kw">val</span> map: Map&lt;<span class="tp">String</span>, <span class="tp">Any</span>?&gt;) {
+    <span class="kw">val</span> name: <span class="tp">String</span> <span class="kw">by</span> map
+    <span class="kw">val</span> age: <span class="tp">Int</span> <span class="kw">by</span> map
+}
+<span class="kw">val</span> config = <span class="tp">Config</span>(mapOf(<span class="str">"name"</span> to <span class="str">"Alice"</span>, <span class="str">"age"</span> to <span class="num">30</span>))
+
+<span class="cmt">// Type-safe builders (DSL)</span>
+<span class="kw">fun</span> <span class="fn">html</span>(block: <span class="tp">HTML</span>.() -&gt; Unit): <span class="tp">HTML</span> = <span class="tp">HTML</span>().apply(block)
+
+html {
+    head { title(<span class="str">"Page"</span>) }
+    body {
+        p(<span class="str">"Hello World"</span>)
+        ul {
+            listOf(<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>).forEach { li(it) }
+        }
+    }
+}
+
+<span class="cmt">// @DslMarker (restricts scope leaking)</span>
+@DslMarker
+<span class="kw">annotation class</span> <span class="tp">HtmlDsl</span>
+
+<span class="cmt">// Operator overloading</span>
+<span class="kw">data class</span> <span class="tp">Point</span>(<span class="kw">val</span> x: <span class="tp">Int</span>, <span class="kw">val</span> y: <span class="tp">Int</span>) {
+    <span class="kw">operator fun</span> <span class="fn">plus</span>(other: <span class="tp">Point</span>) = <span class="tp">Point</span>(x + other.x, y + other.y)
+    <span class="kw">operator fun</span> <span class="fn">times</span>(scale: <span class="tp">Int</span>) = <span class="tp">Point</span>(x * scale, y * scale)
+}
+<span class="tp">Point</span>(<span class="num">1</span>,<span class="num">2</span>) + <span class="tp">Point</span>(<span class="num">3</span>,<span class="num">4</span>)  <span class="cmt">// Point(4, 6)</span></code></pre></div>
+</div>
+
+<!-- ───────── ANDROID DEVELOPMENT ───────── -->
+<div class="section" id="android">
+  <div class="section-header"><span class="icon">📱</span><h2>Android Development</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// ── Jetpack Compose ──</span>
+
+<span class="cmt">// Composable function</span>
+@Composable
+<span class="kw">fun</span> <span class="fn">Greeting</span>(name: <span class="tp">String</span>, modifier: <span class="tp">Modifier</span> = Modifier) {
+    Text(text = <span class="str">"Hello $name!"</span>, modifier = modifier)
+}
+
+<span class="cmt">// State management</span>
+@Composable
+<span class="kw">fun</span> <span class="fn">Counter</span>() {
+    <span class="kw">var</span> count <span class="kw">by</span> remember { mutableStateOf(<span class="num">0</span>) }
+    Button(onClick = { count++ }) {
+        Text(<span class="str">"Count: $count"</span>)
+    }
+}
+
+<span class="cmt">// Common Compose layouts</span>
+Column(modifier = Modifier.fillMaxSize().padding(<span class="num">16</span>.dp)) {
+    Text(<span class="str">"Title"</span>, style = MaterialTheme.typography.headlineMedium)
+    Spacer(modifier = Modifier.height(<span class="num">8</span>.dp))
+    Row(horizontalArrangement = Arrangement.SpaceBetween) {
+        Icon(Icons.Default.Home, contentDescription = <span class="str">"Home"</span>)
+        Text(<span class="str">"Home"</span>)
+    }
+    LazyColumn {
+        items(users) { user -&gt; UserCard(user) }
+    }
+}
+
+<span class="cmt">// Navigation (Compose)</span>
+<span class="kw">val</span> navController = rememberNavController()
+NavHost(navController, startDestination = <span class="str">"home"</span>) {
+    composable(<span class="str">"home"</span>) { HomeScreen(navController) }
+    composable(<span class="str">"detail/{id}"</span>) { backStackEntry -&gt;
+        DetailScreen(backStackEntry.arguments?.getString(<span class="str">"id"</span>))
+    }
+}
+navController.navigate(<span class="str">"detail/42"</span>)
+
+<span class="cmt">// ── ViewModel ──</span>
+<span class="kw">class</span> <span class="tp">MainViewModel</span> : ViewModel() {
+    <span class="kw">private val</span> _uiState = MutableStateFlow(<span class="tp">UiState</span>())
+    <span class="kw">val</span> uiState = _uiState.asStateFlow()
+
+    <span class="kw">fun</span> <span class="fn">loadData</span>() {
+        viewModelScope.launch {
+            _uiState.value = <span class="tp">UiState</span>(loading = <span class="kw">true</span>)
+            <span class="kw">val</span> data = repository.fetchData()
+            _uiState.value = <span class="tp">UiState</span>(data = data)
+        }
+    }
+}
+
+<span class="cmt">// Collecting state in Compose</span>
+@Composable
+<span class="kw">fun</span> <span class="fn">Screen</span>(viewModel: <span class="tp">MainViewModel</span> = viewModel()) {
+    <span class="kw">val</span> uiState <span class="kw">by</span> viewModel.uiState.collectAsState()
+    <span class="kw">when</span> {
+        uiState.loading -&gt; CircularProgressIndicator()
+        uiState.error != <span class="kw">null</span> -&gt; Text(<span class="str">"Error: ${uiState.error}"</span>)
+        <span class="kw">else</span> -&gt; DataList(uiState.data)
+    }
+}
+
+<span class="cmt">// ── Room Database ──</span>
+@Entity(<span class="str">"users"</span>)
+<span class="kw">data class</span> <span class="tp">UserEntity</span>(
+    @PrimaryKey(<span class="kw">autoGenerate</span> = <span class="kw">true</span>) <span class="kw">val</span> id: <span class="tp">Int</span> = <span class="num">0</span>,
+    <span class="kw">val</span> name: <span class="tp">String</span>,
+    <span class="kw">val</span> email: <span class="tp">String</span>
+)
+
+@Dao
+<span class="kw">interface</span> <span class="tp">UserDao</span> {
+    @Query(<span class="str">"SELECT * FROM users"</span>)
+    <span class="kw">fun</span> <span class="fn">getAll</span>(): Flow&lt;List&lt;<span class="tp">UserEntity</span>&gt;&gt;
+
+    @Insert(<span class="kw">onConflict</span> = OnConflictStrategy.REPLACE)
+    <span class="kw">suspend fun</span> <span class="fn">insert</span>(user: <span class="tp">UserEntity</span>)
+
+    @Delete
+    <span class="kw">suspend fun</span> <span class="fn">delete</span>(user: <span class="tp">UserEntity</span>)
+}
+
+<span class="cmt">// ── Retrofit (Networking) ──</span>
+<span class="kw">interface</span> <span class="tp">ApiService</span> {
+    @GET(<span class="str">"users/{id}"</span>)
+    <span class="kw">suspend fun</span> <span class="fn">getUser</span>(@Path(<span class="str">"id"</span>) id: <span class="tp">Int</span>): <span class="tp">User</span>
+
+    @POST(<span class="str">"users"</span>)
+    <span class="kw">suspend fun</span> <span class="fn">createUser</span>(@Body user: <span class="tp">User</span>): Response&lt;<span class="tp">User</span>&gt;
+}
+
+<span class="kw">val</span> retrofit = Retrofit.Builder()
+    .baseUrl(<span class="str">"https://api.example.com/"</span>)
+    .addConverterFactory(GsonConverterFactory.create())
+    .build()
+
+<span class="cmt">// ── Hilt Dependency Injection ──</span>
+@HiltAndroidApp
+<span class="kw">class</span> <span class="tp">MyApp</span> : Application()
+
+@Module
+@InstallIn(SingletonComponent::<span class="kw">class</span>)
+<span class="kw">object</span> <span class="tp">AppModule</span> {
+    @Provides @Singleton
+    <span class="kw">fun</span> <span class="fn">provideApi</span>(): <span class="tp">ApiService</span> = retrofit.create(<span class="tp">ApiService</span>::<span class="kw">class</span>.java)
+}
+
+@HiltViewModel
+<span class="kw">class</span> <span class="tp">MainViewModel</span> @Inject <span class="kw">constructor</span>(
+    <span class="kw">private val</span> api: <span class="tp">ApiService</span>
+) : ViewModel() { }</code></pre></div>
+</div>
+
+<!-- ───────── MULTIPLATFORM & WEB ───────── -->
+<div class="section" id="multiplatform">
+  <div class="section-header"><span class="icon">🌐</span><h2>Kotlin Multiplatform &amp; Web</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// ── Kotlin Multiplatform (KMP) ──</span>
+<span class="cmt">// Share code between Android, iOS, Desktop, Web</span>
+
+<span class="cmt">// Shared module — expect/actual pattern</span>
+<span class="cmt">// commonMain/</span>
+<span class="kw">expect fun</span> <span class="fn">platformName</span>(): <span class="tp">String</span>
+<span class="kw">fun</span> <span class="fn">greet</span>() = <span class="str">"Hello from ${platformName()}"</span>
+
+<span class="cmt">// androidMain/</span>
+<span class="kw">actual fun</span> <span class="fn">platformName</span>() = <span class="str">"Android"</span>
+
+<span class="cmt">// iosMain/</span>
+<span class="kw">actual fun</span> <span class="fn">platformName</span>() = <span class="str">"iOS"</span>
+
+<span class="cmt">// Shared ViewModel with KMP</span>
+<span class="kw">class</span> <span class="tp">SharedViewModel</span> {
+    <span class="kw">private val</span> _state = MutableStateFlow(<span class="tp">UiState</span>())
+    <span class="kw">val</span> state = _state.asStateFlow()
+
+    <span class="kw">fun</span> <span class="fn">loadItems</span>() {
+        coroutineScope.launch {
+            <span class="kw">val</span> items = repository.getItems()
+            _state.value = <span class="tp">UiState</span>(items = items)
+        }
+    }
+}
+
+<span class="cmt">// ── Ktor (Server-Side Kotlin) ──</span>
+<span class="kw">fun</span> <span class="fn">main</span>() {
+    embeddedServer(Netty, port = <span class="num">8080</span>) {
+        install(ContentNegotiation) { json() }
+        install(StatusPages) {
+            exception&lt;Throwable&gt; { call, cause -&gt;
+                call.respondText(cause.message ?: <span class="str">"Error"</span>,
+                    status = HttpStatusCode.InternalServerError)
+            }
+        }
+        routing {
+            get(<span class="str">"/"</span>) { call.respondText(<span class="str">"Hello, Ktor!"</span>) }
+            get(<span class="str">"/users/{id}"</span>) {
+                <span class="kw">val</span> id = call.parameters[<span class="str">"id"</span>]?.toIntOrNull()
+                <span class="kw">val</span> user = userService.findById(id!!)
+                call.respond(user)
+            }
+            post(<span class="str">"/users"</span>) {
+                <span class="kw">val</span> user = call.receive&lt;<span class="tp">User</span>&gt;()
+                userService.create(user)
+                call.respond(HttpStatusCode.Created, user)
+            }
+        }
+    }.start(wait = <span class="kw">true</span>)
+}
+
+<span class="cmt">// Ktor Client (shared across platforms)</span>
+<span class="kw">val</span> client = HttpClient {
+    install(ContentNegotiation) { json() }
+    install(Logging) { level = LogLevel.INFO }
+}
+<span class="kw">val</span> response: <span class="tp">User</span> = client.get(<span class="str">"https://api.example.com/users/1"</span>).body()
+
+<span class="cmt">// ── Kotlin/JS ──</span>
+<span class="kw">fun</span> <span class="fn">main</span>() {
+    document.getElementById(<span class="str">"root"</span>)?.innerHTML = <span class="str">"Hello from Kotlin/JS"</span>
+}
+
+<span class="cmt">// Kotlin/JS interop with JavaScript</span>
+<span class="kw">external fun</span> <span class="fn">alert</span>(message: <span class="tp">String</span>)
+<span class="kw">external interface</span> <span class="tp">JsUser</span> {
+    <span class="kw">val</span> name: <span class="tp">String</span>
+    <span class="kw">val</span> age: <span class="tp">Int</span>
+}
+
+<span class="cmt">// ── Compose Multiplatform ──</span>
+<span class="cmt">// UI framework for Android, iOS, Desktop, Web</span>
+@Composable
+<span class="kw">fun</span> <span class="fn">App</span>() {
+    MaterialTheme {
+        <span class="kw">var</span> text <span class="kw">by</span> remember { mutableStateOf(<span class="str">"Hello, World!"</span>) }
+        Button(onClick = { text = <span class="str">"Clicked!"</span> }) {
+            Text(text)
+        }
+    }
+}
+
+<span class="cmt">// ── Kotlinx Serialization ──</span>
+@Serializable
+<span class="kw">data class</span> <span class="tp">User</span>(<span class="kw">val</span> name: <span class="tp">String</span>, <span class="kw">val</span> age: <span class="tp">Int</span>)
+<span class="kw">val</span> json = Json.encodeToString(<span class="tp">User</span>(<span class="str">"Alice"</span>, <span class="num">30</span>))
+<span class="kw">val</span> user = Json.decodeFromString&lt;<span class="tp">User</span>&gt;(json)
+
+<span class="cmt">// ── Gradle Kotlin DSL (build.gradle.kts) ──</span>
+plugins {
+    kotlin(<span class="str">"multiplatform"</span>) version <span class="str">"2.0.0"</span>
+    id(<span class="str">"org.jetbrains.compose"</span>)
+}
+kotlin {
+    androidTarget()
+    iosArm64()
+    js(IR) { browser() }
+    sourceSets {
+        commonMain.dependencies {
+            implementation(compose.runtime)
+            implementation(compose.material3)
+            implementation(<span class="str">"io.ktor:ktor-client-core:2.3.0"</span>)
+        }
+    }
+}</code></pre></div>
 </div>
 
 

@@ -1,58 +1,155 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LaTeX Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ LaTeX</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>LaTeX Cheatsheet</h1>
-  <p class="subtitle">Document structure, math typesetting, bibliographies, tables, figures &amp; packages</p>
-  <span class="tag tag-lang">Language / Markup</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>LaTeX Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ LaTeX</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>LaTeX Cheatsheet</h1><p class="subtitle">Document structure, math, formatting &amp; common commands</p><span class="tag tag-lang">Language</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#math">Math</a>
+    <a href="#format">Formatting</a>
+    <a href="#lists">Lists &amp; Tables</a>
+    <a href="#figures">Figures</a>
+    <a href="#refs">References</a>
+    <a href="#symbols">Symbols</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">📝</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt">% Basic document</span>
+\documentclass{article}
+\usepackage[utf8]{inputenc}
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive LaTeX content.</div>
-</div>
+\title{My Document}
+\author{Alice}
+\date{\today}
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// LaTeX basics coming soon...</span></code></pre></div>
-</div>
+\begin{document}
+\maketitle
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// LaTeX patterns coming soon...</span></code></pre></div>
-</div>
+\section{Introduction}
+Hello World.
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>LaTeX Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+\subsection{Sub-section}
+\subsubsection{Sub-sub-section}
+
+\end{document}
+
+<span class="cmt">% Document classes</span>
+\documentclass{article}    <span class="cmt">% short docs</span>
+\documentclass{report}     <span class="cmt">% longer docs</span>
+\documentclass{book}       <span class="cmt">% books</span>
+\documentclass{beamer}     <span class="cmt">% presentations</span></code></pre></div></div>
+<div class="section" id="math"><div class="section-header"><span class="icon">➕</span><h2>Math</h2></div><div class="code-wrapper"><pre><code><span class="cmt">% Inline math</span>
+$E = mc^2$
+$x_{i} + y^{2}$
+
+<span class="cmt">% Display math</span>
+\[ \sum_{i=1}^{n} x_i = x_1 + x_2 + \cdots + x_n \]
+
+<span class="cmt">% Equation (numbered)</span>
+\begin{equation}
+  f(x) = ax^2 + bx + c
+\end{equation}
+
+<span class="cmt">% Fractions</span>
+$\frac{a}{b}$    $\dfrac{a}{b}$
+
+<span class="cmt">% Roots</span>
+$\sqrt{x}$    $\sqrt[3]{x}$
+
+<span class="cmt">% Greek letters</span>
+$\alpha \beta \gamma \delta \epsilon$
+$\pi \sigma \theta \lambda \omega$
+
+<span class="cmt">% Operators</span>
+$\int_{0}^{\infty}$   $\prod$   $\sum$
+$\lim_{x \to \infty}$  $\partial$</code></pre></div></div>
+<div class="section" id="format"><div class="section-header"><span class="icon">✏️</span><h2>Formatting</h2></div><div class="code-wrapper"><pre><code><span class="cmt">% Text styles</span>
+\textbf{bold}
+\textit{italic}
+\underline{underline}
+\texttt{monospace}
+\textsc{Small Caps}
+\emph{emphasis}
+
+<span class="cmt">% Font sizes</span>
+{\tiny text}  {\small text}  {\normalsize text}
+{\large text}  {\Large text}  {\LARGE text}
+{\huge text}   {\Huge text}
+
+<span class="cmt">% Alignment</span>
+\begin{center} centered \end{center}
+\begin{flushleft} left \end{flushleft}
+\begin{flushright} right \end{flushright}
+
+<span class="cmt">% Spacing</span>
+\\                <span class="cmt">% line break</span>
+\newpage          <span class="cmt">% page break</span>
+\vspace{1cm}      <span class="cmt">% vertical space</span>
+\hspace{1cm}      <span class="cmt">% horizontal space</span></code></pre></div></div>
+<div class="section" id="lists"><div class="section-header"><span class="icon">📋</span><h2>Lists &amp; Tables</h2></div><div class="code-wrapper"><pre><code><span class="cmt">% Itemized (bullets)</span>
+\begin{itemize}
+  \item First
+  \item Second
+  \item Third
+\end{itemize}
+
+<span class="cmt">% Enumerated (numbered)</span>
+\begin{enumerate}
+  \item First
+  \item Second
+\end{enumerate}
+
+<span class="cmt">% Table</span>
+\begin{tabular}{|l|c|r|}
+  \hline
+  Left & Center & Right \\
+  \hline
+  A & B & C \\
+  D & E & F \\
+  \hline
+\end{tabular}
+
+<span class="cmt">% l=left  c=center  r=right  |=border</span></code></pre></div></div>
+<div class="section" id="figures"><div class="section-header"><span class="icon">🖼️</span><h2>Figures</h2></div><div class="code-wrapper"><pre><code><span class="cmt">% Include image</span>
+\usepackage{graphicx}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{image.png}
+  \caption{My figure caption}
+  \label{fig:myfig}
+\end{figure}
+
+<span class="cmt">% Reference: See Figure~\ref{fig:myfig}</span>
+
+<span class="cmt">% Placement options: h=here t=top b=bottom p=page</span></code></pre></div></div>
+<div class="section" id="refs"><div class="section-header"><span class="icon">📚</span><h2>References</h2></div><div class="code-wrapper"><pre><code><span class="cmt">% Labels and cross-references</span>
+\label{sec:intro}
+\ref{sec:intro}           <span class="cmt">% section number</span>
+\pageref{sec:intro}       <span class="cmt">% page number</span>
+
+<span class="cmt">% Bibliography</span>
+\begin{thebibliography}{9}
+  \bibitem{knuth} Knuth, D. \textit{The Art}.
+\end{thebibliography}
+
+\cite{knuth}              <span class="cmt">% citation [1]</span>
+
+<span class="cmt">% BibTeX (separate .bib file)</span>
+\bibliographystyle{plain}
+\bibliography{refs}</code></pre></div></div>
+<div class="section" id="symbols"><div class="section-header"><span class="icon">🔣</span><h2>Symbols</h2></div><div class="code-wrapper"><pre><code><span class="cmt">% Arrows</span>
+$\rightarrow$  $\leftarrow$  $\Rightarrow$
+$\leftrightarrow$  $\uparrow$  $\downarrow$
+
+<span class="cmt">% Relations</span>
+$\leq$  $\geq$  $\neq$  $\approx$
+$\equiv$  $\sim$  $\subset$  $\in$
+
+<span class="cmt">% Operators</span>
+$\times$  $\div$  $\pm$  $\cdot$
+$\cap$  $\cup$  $\wedge$  $\vee$
+
+<span class="cmt">% Misc</span>
+$\infty$  $\forall$  $\exists$  $\nabla$
+$\emptyset$  $\neg$  $\ldots$  $\cdots$</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>LaTeX Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

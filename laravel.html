@@ -1,58 +1,150 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Laravel Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Laravel</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Laravel Cheatsheet</h1>
-  <p class="subtitle">Routing, Eloquent ORM, Blade templates, middleware, auth &amp; artisan commands</p>
-  <span class="tag tag-fw">Framework / PHP</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Laravel Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Laravel</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Laravel Cheatsheet</h1><p class="subtitle">Artisan, routes, controllers, Eloquent, Blade &amp; middleware</p><span class="tag tag-fw">Framework</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#artisan">Artisan CLI</a>
+    <a href="#routes">Routes</a>
+    <a href="#controllers">Controllers</a>
+    <a href="#eloquent">Eloquent ORM</a>
+    <a href="#blade">Blade Templates</a>
+    <a href="#middleware">Middleware</a>
+    <a href="#auth">Authentication</a>
+</div></div>
+<div class="section" id="artisan"><div class="section-header"><span class="icon">⚙️</span><h2>Artisan CLI</h2></div><div class="code-wrapper"><pre><code>php artisan serve                    <span class="cmt"># dev server</span>
+php artisan make:model User -mcr     <span class="cmt"># model + migration + controller</span>
+php artisan make:controller UserController
+php artisan make:migration create_users_table
+php artisan migrate
+php artisan migrate:rollback
+php artisan migrate:fresh --seed
+php artisan db:seed
+php artisan make:middleware Auth
+php artisan route:list
+php artisan tinker                   <span class="cmt"># REPL</span>
+php artisan cache:clear
+php artisan config:cache
+php artisan queue:work</code></pre></div></div>
+<div class="section" id="routes"><div class="section-header"><span class="icon">🗺️</span><h2>Routes</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// routes/web.php or routes/api.php</span>
+<span class="kw">use</span> App\Http\Controllers\<span class="tp">UserController</span>;
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+Route::<span class="fn">get</span>(<span class="str">'/'</span>, <span class="kw">fn</span>() =&gt; <span class="fn">view</span>(<span class="str">'welcome'</span>));
+Route::<span class="fn">get</span>(<span class="str">'/users'</span>, [<span class="tp">UserController</span>::<span class="kw">class</span>, <span class="str">'index'</span>]);
+Route::<span class="fn">post</span>(<span class="str">'/users'</span>, [<span class="tp">UserController</span>::<span class="kw">class</span>, <span class="str">'store'</span>]);
+Route::<span class="fn">get</span>(<span class="str">'/users/{id}'</span>, [<span class="tp">UserController</span>::<span class="kw">class</span>, <span class="str">'show'</span>]);
+Route::<span class="fn">put</span>(<span class="str">'/users/{id}'</span>, [<span class="tp">UserController</span>::<span class="kw">class</span>, <span class="str">'update'</span>]);
+Route::<span class="fn">delete</span>(<span class="str">'/users/{id}'</span>, [<span class="tp">UserController</span>::<span class="kw">class</span>, <span class="str">'destroy'</span>]);
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Laravel content.</div>
-</div>
+<span class="cmt">// Resource route (all CRUD)</span>
+Route::<span class="fn">resource</span>(<span class="str">'users'</span>, <span class="tp">UserController</span>::<span class="kw">class</span>);
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Laravel basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">// API resource</span>
+Route::<span class="fn">apiResource</span>(<span class="str">'posts'</span>, <span class="tp">PostController</span>::<span class="kw">class</span>);
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Laravel patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">// Group with middleware</span>
+Route::<span class="fn">middleware</span>(<span class="str">'auth'</span>)-&gt;<span class="fn">group</span>(<span class="kw">function</span>() {
+    Route::<span class="fn">get</span>(<span class="str">'/dashboard'</span>, [<span class="tp">DashController</span>::<span class="kw">class</span>, <span class="str">'index'</span>]);
+});</code></pre></div></div>
+<div class="section" id="controllers"><div class="section-header"><span class="icon">🎮</span><h2>Controllers</h2></div><div class="code-wrapper"><pre><code><span class="kw">class</span> <span class="tp">UserController</span> <span class="kw">extends</span> <span class="tp">Controller</span>
+{
+    <span class="kw">public function</span> <span class="fn">index</span>()
+    {
+        <span class="kw">$users</span> = <span class="tp">User</span>::<span class="fn">all</span>();
+        <span class="kw">return</span> <span class="fn">view</span>(<span class="str">'users.index'</span>, <span class="fn">compact</span>(<span class="str">'users'</span>));
+    }
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Laravel Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+    <span class="kw">public function</span> <span class="fn">store</span>(<span class="tp">Request</span> <span class="kw">$request</span>)
+    {
+        <span class="kw">$validated</span> = <span class="kw">$request</span>-&gt;<span class="fn">validate</span>([
+            <span class="str">'name'</span> =&gt; <span class="str">'required|max:255'</span>,
+            <span class="str">'email'</span> =&gt; <span class="str">'required|email|unique:users'</span>,
+        ]);
+        <span class="tp">User</span>::<span class="fn">create</span>(<span class="kw">$validated</span>);
+        <span class="kw">return</span> <span class="fn">redirect</span>(<span class="str">'/users'</span>);
+    }
+
+    <span class="kw">public function</span> <span class="fn">show</span>(<span class="tp">User</span> <span class="kw">$user</span>)  <span class="cmt">// route model binding</span>
+    {
+        <span class="kw">return</span> <span class="fn">view</span>(<span class="str">'users.show'</span>, <span class="fn">compact</span>(<span class="str">'user'</span>));
+    }
+}</code></pre></div></div>
+<div class="section" id="eloquent"><div class="section-header"><span class="icon">🗄️</span><h2>Eloquent ORM</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Model</span>
+<span class="kw">class</span> <span class="tp">User</span> <span class="kw">extends</span> <span class="tp">Model</span> {
+    <span class="kw">protected</span> <span class="kw">$fillable</span> = [<span class="str">'name'</span>, <span class="str">'email'</span>];
+    <span class="kw">public function</span> <span class="fn">posts</span>() {
+        <span class="kw">return</span> <span class="kw">$this</span>-&gt;<span class="fn">hasMany</span>(<span class="tp">Post</span>::<span class="kw">class</span>);
+    }
+}
+
+<span class="cmt">// Queries</span>
+<span class="tp">User</span>::<span class="fn">all</span>();
+<span class="tp">User</span>::<span class="fn">find</span>(<span class="num">1</span>);
+<span class="tp">User</span>::<span class="fn">where</span>(<span class="str">'age'</span>, <span class="str">'>'</span>, <span class="num">18</span>)-&gt;<span class="fn">get</span>();
+<span class="tp">User</span>::<span class="fn">where</span>(<span class="str">'name'</span>, <span class="str">'Alice'</span>)-&gt;<span class="fn">first</span>();
+<span class="tp">User</span>::<span class="fn">where</span>(<span class="str">'active'</span>, <span class="kw">true</span>)-&gt;<span class="fn">count</span>();
+<span class="tp">User</span>::<span class="fn">orderBy</span>(<span class="str">'name'</span>)-&gt;<span class="fn">paginate</span>(<span class="num">15</span>);
+<span class="tp">User</span>::<span class="fn">with</span>(<span class="str">'posts'</span>)-&gt;<span class="fn">get</span>();     <span class="cmt">// eager load</span>
+
+<span class="cmt">// Create / Update / Delete</span>
+<span class="tp">User</span>::<span class="fn">create</span>([<span class="str">'name'</span> =&gt; <span class="str">'Alice'</span>]);
+<span class="kw">$user</span>-&gt;<span class="fn">update</span>([<span class="str">'name'</span> =&gt; <span class="str">'Bob'</span>]);
+<span class="kw">$user</span>-&gt;<span class="fn">delete</span>();
+<span class="tp">User</span>::<span class="fn">destroy</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]);</code></pre></div></div>
+<div class="section" id="blade"><div class="section-header"><span class="icon">🖼️</span><h2>Blade Templates</h2></div><div class="code-wrapper"><pre><code><span class="cmt">&lt;!-- Output --&gt;</span>
+{{ <span class="kw">$name</span> }}                  <span class="cmt">&lt;!-- escaped --&gt;</span>
+{!! <span class="kw">$html</span> !!}              <span class="cmt">&lt;!-- raw --&gt;</span>
+
+<span class="cmt">&lt;!-- Control --&gt;</span>
+@<span class="kw">if</span>(<span class="kw">$user</span>)
+    &lt;p&gt;{{ <span class="kw">$user</span>-&gt;name }}&lt;/p&gt;
+@<span class="kw">elseif</span>(<span class="kw">$guest</span>)
+    &lt;p&gt;Guest&lt;/p&gt;
+@<span class="kw">else</span>
+    &lt;p&gt;No user&lt;/p&gt;
+@<span class="kw">endif</span>
+
+@<span class="kw">foreach</span>(<span class="kw">$users</span> <span class="kw">as</span> <span class="kw">$user</span>)
+    &lt;li&gt;{{ <span class="kw">$user</span>-&gt;name }}&lt;/li&gt;
+@<span class="kw">endforeach</span>
+
+<span class="cmt">&lt;!-- Layout --&gt;</span>
+@<span class="fn">extends</span>(<span class="str">'layouts.app'</span>)
+@<span class="fn">section</span>(<span class="str">'content'</span>)
+    &lt;h1&gt;Page&lt;/h1&gt;
+@<span class="fn">endsection</span>
+
+<span class="cmt">&lt;!-- Components --&gt;</span>
+&lt;x-alert type=<span class="str">"warning"</span>&gt;Watch out!&lt;/x-alert&gt;</code></pre></div></div>
+<div class="section" id="middleware"><div class="section-header"><span class="icon">🛡️</span><h2>Middleware</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// app/Http/Middleware/CheckAge.php</span>
+<span class="kw">class</span> <span class="tp">CheckAge</span> {
+    <span class="kw">public function</span> <span class="fn">handle</span>(<span class="kw">$request</span>, <span class="tp">Closure</span> <span class="kw">$next</span>) {
+        <span class="kw">if</span> (<span class="kw">$request</span>-&gt;age &lt; <span class="num">18</span>) {
+            <span class="kw">return</span> <span class="fn">redirect</span>(<span class="str">'home'</span>);
+        }
+        <span class="kw">return</span> <span class="kw">$next</span>(<span class="kw">$request</span>);
+    }
+}
+
+<span class="cmt">// Register in Kernel.php</span>
+<span class="str">'check.age'</span> =&gt; <span class="tp">CheckAge</span>::<span class="kw">class</span>,
+
+<span class="cmt">// Use on route</span>
+Route::<span class="fn">get</span>(<span class="str">'/bar'</span>, <span class="kw">fn</span>() =&gt; ...)-&gt;<span class="fn">middleware</span>(<span class="str">'check.age'</span>);</code></pre></div></div>
+<div class="section" id="auth"><div class="section-header"><span class="icon">🔐</span><h2>Authentication</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Laravel Breeze (simple)</span>
+composer require laravel/breeze --dev
+php artisan breeze:install
+npm install &amp;&amp; npm run dev
+
+<span class="cmt">// In controller</span>
+<span class="fn">Auth</span>::<span class="fn">attempt</span>([<span class="str">'email'</span> =&gt; <span class="kw">$e</span>, <span class="str">'password'</span> =&gt; <span class="kw">$p</span>])
+<span class="fn">Auth</span>::<span class="fn">user</span>()           <span class="cmt">// current user</span>
+<span class="fn">Auth</span>::<span class="fn">check</span>()          <span class="cmt">// is logged in?</span>
+<span class="fn">Auth</span>::<span class="fn">logout</span>()
+
+<span class="cmt">// Protect routes</span>
+Route::<span class="fn">middleware</span>(<span class="str">'auth'</span>)-&gt;<span class="fn">group</span>(<span class="kw">function</span>() {
+    Route::<span class="fn">get</span>(<span class="str">'/dashboard'</span>, ...);
+});</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Laravel Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

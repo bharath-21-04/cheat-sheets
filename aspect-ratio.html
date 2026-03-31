@@ -1,58 +1,107 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Aspect Ratio Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Aspect Ratio</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Aspect Ratio Cheatsheet</h1>
-  <p class="subtitle">Common ratios, resolutions, screen sizes, video formats &amp; calculations</p>
-  <span class="tag tag-concept">Reference</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Aspect Ratios Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Aspect Ratios</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Aspect Ratios Cheatsheet</h1><p class="subtitle">Common aspect ratios for screen, video &amp; design</p><span class="tag tag-concept">Reference</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#common">Common Ratios</a>
+    <a href="#display">Display Standards</a>
+    <a href="#video">Video &amp; Film</a>
+    <a href="#social">Social Media</a>
+    <a href="#css">CSS Aspect Ratio</a>
+    <a href="#calc">Calculator</a>
+</div></div>
+<div class="section" id="common"><div class="section-header"><span class="icon">📐</span><h2>Common Aspect Ratios</h2></div><div class="code-wrapper"><pre><code>Ratio     Decimal    Usage
+1:1       1.000      Square, Instagram post
+4:3       1.333      Old TV, iPad
+3:2       1.500      DSLR photos, Surface
+16:9      1.778      Widescreen, YouTube
+16:10     1.600      MacBook, Dell monitors
+21:9      2.333      Ultrawide monitors
+32:9      3.556      Super ultrawide
+9:16      0.563      Mobile stories, TikTok
+2:3       0.667      Portrait photos
+3:4       0.750      Portrait tablet</code></pre></div></div>
+<div class="section" id="display"><div class="section-header"><span class="icon">🖥️</span><h2>Display Standards</h2></div><div class="code-wrapper"><pre><code>Standard      Ratio    Resolution
+HD (720p)     16:9     1280 × 720
+FHD (1080p)   16:9     1920 × 1080
+QHD (1440p)   16:9     2560 × 1440
+4K UHD        16:9     3840 × 2160
+5K            16:9     5120 × 2880
+8K UHD        16:9     7680 × 4320
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+WXGA          16:10    1280 × 800
+WUXGA         16:10    1920 × 1200
+MacBook Air   16:10    2560 × 1664
+MacBook Pro   ~3:2     3024 × 1964
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Aspect Ratio content.</div>
-</div>
+iPad          4:3      2048 × 1536
+iPad Pro 11"  ~4.3:3   2388 × 1668
+iPad Pro 13"  4:3      2732 × 2048</code></pre></div></div>
+<div class="section" id="video"><div class="section-header"><span class="icon">🎬</span><h2>Video &amp; Film Ratios</h2></div><div class="code-wrapper"><pre><code>Ratio      Name              Usage
+1.33:1     Academy          Classic 4:3 film
+1.375:1    Academy Flat     Old Academy
+1.43:1     IMAX             IMAX original
+1.78:1     HD               Standard TV/web
+1.85:1     US Widescreen    Theatrical
+1.90:1     IMAX Digital     IMAX digital
+2.00:1     Univisium        Netflix shows
+2.20:1     70mm             Todd-AO
+2.35:1     Scope            Anamorphic
+2.39:1     Panavision       Modern anamorphic
+2.76:1     Ultra Pana 70    Ben-Hur (1959)</code></pre></div></div>
+<div class="section" id="social"><div class="section-header"><span class="icon">📱</span><h2>Social Media Sizes</h2></div><div class="code-wrapper"><pre><code>Platform         Size (px)       Ratio
+Instagram Post   1080 × 1080     1:1
+Instagram Story  1080 × 1920     9:16
+Instagram Reel   1080 × 1920     9:16
+Facebook Post    1200 × 630      ~1.9:1
+Facebook Cover   820 × 312       ~2.6:1
+Twitter Post     1200 × 675      16:9
+Twitter Header   1500 × 500      3:1
+YouTube Thumb    1280 × 720      16:9
+LinkedIn Post    1200 × 627      ~1.9:1
+TikTok           1080 × 1920     9:16
+Pinterest Pin    1000 × 1500     2:3</code></pre></div></div>
+<div class="section" id="css"><div class="section-header"><span class="icon">🎨</span><h2>CSS Aspect Ratio</h2></div><div class="code-wrapper"><pre><code><span class="cmt">/* Modern CSS (well supported) */</span>
+.<span class="fn">video-container</span> {
+  <span class="kw">aspect-ratio</span>: <span class="num">16</span> / <span class="num">9</span>;
+  <span class="kw">width</span>: <span class="num">100%</span>;
+}
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Aspect Ratio basics coming soon...</span></code></pre></div>
-</div>
+.<span class="fn">square</span> {
+  <span class="kw">aspect-ratio</span>: <span class="num">1</span>;   <span class="cmt">/* same as 1/1 */</span>
+}
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Aspect Ratio patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">/* Old padding-bottom trick */</span>
+.<span class="fn">ratio-16-9</span> {
+  <span class="kw">position</span>: relative;
+  <span class="kw">padding-bottom</span>: <span class="num">56.25%</span>;  <span class="cmt">/* 9/16 = 56.25% */</span>
+}
+.<span class="fn">ratio-16-9</span> > * {
+  <span class="kw">position</span>: absolute;
+  <span class="kw">inset</span>: <span class="num">0</span>;
+}
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Aspect Ratio Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt">/* Common padding-bottom values */</span>
+<span class="cmt">1:1   → 100%</span>
+<span class="cmt">4:3   → 75%</span>
+<span class="cmt">3:2   → 66.67%</span>
+<span class="cmt">16:9  → 56.25%</span>
+<span class="cmt">21:9  → 42.86%</span></code></pre></div></div>
+<div class="section" id="calc"><div class="section-header"><span class="icon">🧮</span><h2>Quick Calculator</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Width from height:</span>
+width = height × ratio
+width = 1080 × (16/9) = 1920
+
+<span class="cmt"># Height from width:</span>
+height = width / ratio
+height = 1920 / (16/9) = 1080
+
+<span class="cmt"># Padding-bottom %:</span>
+padding = (height / width) × 100
+padding = (9 / 16) × 100 = 56.25%
+
+<span class="cmt"># Diagonal (Pythagorean):</span>
+diagonal = √(width² + height²)
+27" 16:9 → 23.5" × 13.2"</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Aspect Ratios Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

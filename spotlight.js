@@ -15,6 +15,8 @@
     { title: 'Ruby', file: 'ruby.html', desc: 'Strings, arrays, hashes, blocks, OOP, modules, enumerable, file I/O, Rails', tags: 'ruby rails language', cat: 'Languages' },
     { title: 'Rust', file: 'rust.html', desc: 'Ownership, borrowing, lifetimes, structs, enums, traits, pattern matching, Cargo', tags: 'rust language systems', cat: 'Languages' },
     { title: 'Swift', file: 'swift.html', desc: 'Optionals, collections, closures, protocols, async/await, actors, SwiftUI', tags: 'swift ios apple language', cat: 'Languages' },
+    { title: 'Kotlin', file: 'kotlin.html', desc: 'Null safety, coroutines, data classes, sealed classes, collections, generics, Android, Ktor, Multiplatform', tags: 'kotlin android jetpack compose ktor kmp', cat: 'Languages' },
+    { title: 'Dart', file: 'dart.html', desc: 'Classes, null safety, async, collections, mixins, generics, patterns, Flutter, Riverpod', tags: 'dart flutter riverpod mobile language', cat: 'Languages' },
     { title: 'Java + Spring Boot', file: 'java-springboot-dev.html', desc: 'REST APIs, JPA, Security, dependency injection, annotations, testing, configuration', tags: 'java spring boot jpa', cat: 'Java Ecosystem' },
     { title: 'Java Collections', file: 'java-collections.html', desc: 'List, Set, Map, Queue, Stack, Streams API, String methods, Arrays, Optional, java.time', tags: 'java collections streams', cat: 'Java Ecosystem' },
     { title: 'FastAPI + UV Python', file: 'fastapi-uv.html', desc: 'UV package manager, venv, FastAPI routes, Pydantic, auth, SQLAlchemy, Docker deployment', tags: 'fastapi uv python pydantic', cat: 'Backend Frameworks' },
@@ -139,7 +141,7 @@
     input.value = '';
     activeIdx = 0;
     render('');
-    requestAnimationFrame(() => input.focus());
+    setTimeout(() => { input.focus(); input.select(); }, 50);
   }
 
   function close() {

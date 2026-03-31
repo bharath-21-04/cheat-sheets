@@ -1,58 +1,187 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PHP Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ PHP</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>PHP Cheatsheet</h1>
-  <p class="subtitle">Arrays, OOP, PDO, Composer, sessions, error handling &amp; common functions</p>
-  <span class="tag tag-lang">Language</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>PHP Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ PHP</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>PHP Cheatsheet</h1><p class="subtitle">Syntax, variables, arrays, functions, OOP &amp; common patterns</p><span class="tag tag-lang">Language</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#strings">Strings</a>
+    <a href="#arrays">Arrays</a>
+    <a href="#functions">Functions</a>
+    <a href="#oop">OOP</a>
+    <a href="#control">Control Flow</a>
+    <a href="#io">File I/O</a>
+    <a href="#web">Web / HTTP</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">📝</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="kw">&lt;?php</span>
+<span class="cmt">// Variables ($ prefix, loosely typed)</span>
+<span class="kw">$name</span> = <span class="str">"Alice"</span>;
+<span class="kw">$age</span> = <span class="num">25</span>;
+<span class="kw">$pi</span> = <span class="num">3.14</span>;
+<span class="kw">$active</span> = <span class="kw">true</span>;
+<span class="kw">$nothing</span> = <span class="kw">null</span>;
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive PHP content.</div>
-</div>
+<span class="cmt">// Constants</span>
+<span class="kw">define</span>(<span class="str">"MAX"</span>, <span class="num">100</span>);
+<span class="kw">const</span> PI = <span class="num">3.14159</span>;
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// PHP basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">// Type casting</span>
+<span class="kw">$int</span> = (<span class="tp">int</span>) <span class="str">"42"</span>;
+<span class="kw">$str</span> = (<span class="tp">string</span>) <span class="num">42</span>;
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// PHP patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">// Type checking</span>
+<span class="fn">gettype</span>(<span class="kw">$name</span>);     <span class="cmt">// "string"</span>
+<span class="fn">is_string</span>(<span class="kw">$name</span>);   <span class="cmt">// true</span>
+<span class="fn">is_array</span>(<span class="kw">$arr</span>);     <span class="cmt">// true/false</span>
+<span class="fn">isset</span>(<span class="kw">$x</span>);          <span class="cmt">// is set &amp; not null</span>
+<span class="fn">empty</span>(<span class="kw">$x</span>);          <span class="cmt">// is empty/falsy</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>PHP Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt">// Output</span>
+<span class="fn">echo</span> <span class="str">"Hello $name"</span>;
+<span class="fn">print_r</span>(<span class="kw">$arr</span>);        <span class="cmt">// readable array</span>
+<span class="fn">var_dump</span>(<span class="kw">$x</span>);          <span class="cmt">// type + value</span></code></pre></div></div>
+<div class="section" id="strings"><div class="section-header"><span class="icon">📄</span><h2>Strings</h2></div><div class="code-wrapper"><pre><code><span class="kw">$s</span> = <span class="str">"Hello World"</span>;
+<span class="fn">strlen</span>(<span class="kw">$s</span>);                <span class="cmt">// 11</span>
+<span class="fn">strtoupper</span>(<span class="kw">$s</span>);            <span class="cmt">// HELLO WORLD</span>
+<span class="fn">strtolower</span>(<span class="kw">$s</span>);            <span class="cmt">// hello world</span>
+<span class="fn">substr</span>(<span class="kw">$s</span>, <span class="num">0</span>, <span class="num">5</span>);         <span class="cmt">// Hello</span>
+<span class="fn">str_replace</span>(<span class="str">"World"</span>, <span class="str">"PHP"</span>, <span class="kw">$s</span>);
+<span class="fn">strpos</span>(<span class="kw">$s</span>, <span class="str">"World"</span>);      <span class="cmt">// 6</span>
+<span class="fn">trim</span>(<span class="kw">$s</span>);   <span class="fn">ltrim</span>(<span class="kw">$s</span>);   <span class="fn">rtrim</span>(<span class="kw">$s</span>);
+<span class="fn">explode</span>(<span class="str">" "</span>, <span class="kw">$s</span>);          <span class="cmt">// split → array</span>
+<span class="fn">implode</span>(<span class="str">","</span>, <span class="kw">$arr</span>);        <span class="cmt">// join → string</span>
+<span class="fn">sprintf</span>(<span class="str">"Hi %s, age %d"</span>, <span class="kw">$name</span>, <span class="kw">$age</span>);
+
+<span class="cmt">// Heredoc</span>
+<span class="kw">$html</span> = &lt;&lt;&lt;HTML
+&lt;h1&gt;Hello $name&lt;/h1&gt;
+HTML;</code></pre></div></div>
+<div class="section" id="arrays"><div class="section-header"><span class="icon">📦</span><h2>Arrays</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Indexed array</span>
+<span class="kw">$fruits</span> = [<span class="str">"apple"</span>, <span class="str">"banana"</span>, <span class="str">"cherry"</span>];
+<span class="kw">$fruits</span>[<span class="num">0</span>];                  <span class="cmt">// apple</span>
+<span class="kw">$fruits</span>[] = <span class="str">"date"</span>;          <span class="cmt">// push</span>
+<span class="fn">count</span>(<span class="kw">$fruits</span>);              <span class="cmt">// 4</span>
+
+<span class="cmt">// Associative array</span>
+<span class="kw">$user</span> = [<span class="str">"name"</span> =&gt; <span class="str">"Alice"</span>, <span class="str">"age"</span> =&gt; <span class="num">25</span>];
+<span class="kw">$user</span>[<span class="str">"name"</span>];
+
+<span class="cmt">// Array functions</span>
+<span class="fn">array_push</span>(<span class="kw">$arr</span>, <span class="str">"val"</span>);
+<span class="fn">array_pop</span>(<span class="kw">$arr</span>);
+<span class="fn">array_shift</span>(<span class="kw">$arr</span>);     <span class="cmt">// remove first</span>
+<span class="fn">array_merge</span>(<span class="kw">$a</span>, <span class="kw">$b</span>);
+<span class="fn">array_keys</span>(<span class="kw">$arr</span>);
+<span class="fn">array_values</span>(<span class="kw">$arr</span>);
+<span class="fn">in_array</span>(<span class="str">"apple"</span>, <span class="kw">$fruits</span>);
+<span class="fn">array_map</span>(<span class="kw">fn</span>(<span class="kw">$x</span>) =&gt; <span class="kw">$x</span> * <span class="num">2</span>, <span class="kw">$nums</span>);
+<span class="fn">array_filter</span>(<span class="kw">$nums</span>, <span class="kw">fn</span>(<span class="kw">$x</span>) =&gt; <span class="kw">$x</span> &gt; <span class="num">5</span>);
+<span class="fn">sort</span>(<span class="kw">$arr</span>);   <span class="fn">rsort</span>(<span class="kw">$arr</span>);   <span class="fn">usort</span>(<span class="kw">$arr</span>, <span class="kw">$cmp</span>);</code></pre></div></div>
+<div class="section" id="functions"><div class="section-header"><span class="icon">⚡</span><h2>Functions</h2></div><div class="code-wrapper"><pre><code><span class="kw">function</span> <span class="fn">greet</span>(<span class="tp">string</span> <span class="kw">$name</span>): <span class="tp">string</span> {
+    <span class="kw">return</span> <span class="str">"Hello, $name!"</span>;
+}
+
+<span class="cmt">// Default params</span>
+<span class="kw">function</span> <span class="fn">add</span>(<span class="tp">int</span> <span class="kw">$a</span>, <span class="tp">int</span> <span class="kw">$b</span> = <span class="num">0</span>): <span class="tp">int</span> {
+    <span class="kw">return</span> <span class="kw">$a</span> + <span class="kw">$b</span>;
+}
+
+<span class="cmt">// Arrow function (PHP 7.4+)</span>
+<span class="kw">$double</span> = <span class="kw">fn</span>(<span class="kw">$x</span>) =&gt; <span class="kw">$x</span> * <span class="num">2</span>;
+
+<span class="cmt">// Closure</span>
+<span class="kw">$greet</span> = <span class="kw">function</span>(<span class="kw">$name</span>) <span class="kw">use</span> (<span class="kw">$prefix</span>) {
+    <span class="kw">return</span> <span class="str">"$prefix $name"</span>;
+};
+
+<span class="cmt">// Variadic</span>
+<span class="kw">function</span> <span class="fn">sum</span>(<span class="tp">int</span> ...<span class="kw">$nums</span>): <span class="tp">int</span> {
+    <span class="kw">return</span> <span class="fn">array_sum</span>(<span class="kw">$nums</span>);
+}
+
+<span class="cmt">// Nullable return</span>
+<span class="kw">function</span> <span class="fn">find</span>(<span class="tp">int</span> <span class="kw">$id</span>): ?<span class="tp">User</span> { }</code></pre></div></div>
+<div class="section" id="oop"><div class="section-header"><span class="icon">🏗️</span><h2>OOP</h2></div><div class="code-wrapper"><pre><code><span class="kw">class</span> <span class="tp">User</span> {
+    <span class="kw">public</span> <span class="kw">function</span> <span class="fn">__construct</span>(
+        <span class="kw">private</span> <span class="tp">string</span> <span class="kw">$name</span>,
+        <span class="kw">private</span> <span class="tp">int</span> <span class="kw">$age</span> = <span class="num">0</span>
+    ) {}
+    <span class="kw">public</span> <span class="kw">function</span> <span class="fn">getName</span>(): <span class="tp">string</span> {
+        <span class="kw">return</span> <span class="kw">$this</span>-&gt;name;
+    }
+}
+
+<span class="cmt">// Inheritance</span>
+<span class="kw">class</span> <span class="tp">Admin</span> <span class="kw">extends</span> <span class="tp">User</span> {
+    <span class="kw">public</span> <span class="kw">function</span> <span class="fn">__construct</span>(<span class="tp">string</span> <span class="kw">$name</span>) {
+        <span class="kw">parent</span>::<span class="fn">__construct</span>(<span class="kw">$name</span>, <span class="num">0</span>);
+    }
+}
+
+<span class="cmt">// Interface</span>
+<span class="kw">interface</span> <span class="tp">Printable</span> {
+    <span class="kw">public</span> <span class="kw">function</span> <span class="fn">toString</span>(): <span class="tp">string</span>;
+}
+
+<span class="cmt">// Trait</span>
+<span class="kw">trait</span> <span class="tp">Timestampable</span> {
+    <span class="kw">public</span> <span class="tp">DateTime</span> <span class="kw">$createdAt</span>;
+}
+
+<span class="cmt">// Enum (PHP 8.1+)</span>
+<span class="kw">enum</span> <span class="tp">Status</span>: <span class="tp">string</span> {
+    <span class="kw">case</span> Active = <span class="str">"active"</span>;
+    <span class="kw">case</span> Inactive = <span class="str">"inactive"</span>;
+}</code></pre></div></div>
+<div class="section" id="control"><div class="section-header"><span class="icon">🔀</span><h2>Control Flow</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Match (PHP 8+)</span>
+<span class="kw">$result</span> = <span class="kw">match</span>(<span class="kw">$status</span>) {
+    <span class="str">"active"</span> =&gt; <span class="str">"User is active"</span>,
+    <span class="str">"banned"</span> =&gt; <span class="str">"User is banned"</span>,
+    <span class="kw">default</span> =&gt; <span class="str">"Unknown"</span>,
+};
+
+<span class="cmt">// Null coalescing</span>
+<span class="kw">$name</span> = <span class="kw">$_GET</span>[<span class="str">"name"</span>] ?? <span class="str">"Guest"</span>;
+
+<span class="cmt">// Null safe operator</span>
+<span class="kw">$city</span> = <span class="kw">$user</span>?-&gt;<span class="fn">getAddress</span>()?-&gt;city;
+
+<span class="cmt">// Foreach</span>
+<span class="kw">foreach</span> (<span class="kw">$arr</span> <span class="kw">as</span> <span class="kw">$val</span>) { }
+<span class="kw">foreach</span> (<span class="kw">$arr</span> <span class="kw">as</span> <span class="kw">$key</span> =&gt; <span class="kw">$val</span>) { }
+
+<span class="cmt">// Try/catch</span>
+<span class="kw">try</span> { } <span class="kw">catch</span> (<span class="tp">Exception</span> <span class="kw">$e</span>) {
+    <span class="fn">echo</span> <span class="kw">$e</span>-&gt;<span class="fn">getMessage</span>();
+} <span class="kw">finally</span> { }</code></pre></div></div>
+<div class="section" id="io"><div class="section-header"><span class="icon">📁</span><h2>File I/O</h2></div><div class="code-wrapper"><pre><code><span class="fn">file_get_contents</span>(<span class="str">"file.txt"</span>);
+<span class="fn">file_put_contents</span>(<span class="str">"file.txt"</span>, <span class="kw">$data</span>);
+<span class="fn">file_put_contents</span>(<span class="str">"file.txt"</span>, <span class="kw">$data</span>, FILE_APPEND);
+<span class="fn">file_exists</span>(<span class="str">"file.txt"</span>);
+<span class="fn">is_file</span>(<span class="str">"file.txt"</span>);
+<span class="fn">unlink</span>(<span class="str">"file.txt"</span>);          <span class="cmt">// delete</span>
+<span class="fn">rename</span>(<span class="str">"old.txt"</span>, <span class="str">"new.txt"</span>);
+<span class="fn">file</span>(<span class="str">"file.txt"</span>);             <span class="cmt">// array of lines</span>
+
+<span class="cmt">// JSON</span>
+<span class="fn">json_encode</span>(<span class="kw">$data</span>);
+<span class="fn">json_decode</span>(<span class="kw">$json</span>, <span class="kw">true</span>);   <span class="cmt">// assoc array</span></code></pre></div></div>
+<div class="section" id="web"><div class="section-header"><span class="icon">🌐</span><h2>Web / HTTP</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Superglobals</span>
+<span class="kw">$_GET</span>[<span class="str">"id"</span>]         <span class="cmt">// query params</span>
+<span class="kw">$_POST</span>[<span class="str">"name"</span>]      <span class="cmt">// form data</span>
+<span class="kw">$_SESSION</span>[<span class="str">"user"</span>]   <span class="cmt">// session</span>
+<span class="kw">$_COOKIE</span>[<span class="str">"token"</span>]   <span class="cmt">// cookies</span>
+<span class="kw">$_SERVER</span>[<span class="str">"REQUEST_METHOD"</span>]
+<span class="kw">$_FILES</span>[<span class="str">"upload"</span>]   <span class="cmt">// uploaded file</span>
+
+<span class="cmt">// Headers</span>
+<span class="fn">header</span>(<span class="str">"Content-Type: application/json"</span>);
+<span class="fn">header</span>(<span class="str">"Location: /dashboard"</span>);
+<span class="fn">http_response_code</span>(<span class="num">404</span>);
+
+<span class="cmt">// Session</span>
+<span class="fn">session_start</span>();
+<span class="kw">$_SESSION</span>[<span class="str">"user"</span>] = <span class="str">"Alice"</span>;
+<span class="fn">session_destroy</span>();</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>PHP Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

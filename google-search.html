@@ -1,58 +1,95 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Google Search Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Google Search</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Google Search Cheatsheet</h1>
-  <p class="subtitle">Operators, filters, site search, date range, file type &amp; advanced tips</p>
-  <span class="tag tag-concept">Reference</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Google Search Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Google Search</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Google Search Cheatsheet</h1><p class="subtitle">Advanced search operators &amp; tips</p><span class="tag tag-concept">Reference</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#basic">Basic Operators</a>
+    <a href="#advanced">Advanced Operators</a>
+    <a href="#filters">Filters &amp; Time</a>
+    <a href="#site">Site Operators</a>
+    <a href="#file">File &amp; Cache</a>
+    <a href="#tips">Power Tips</a>
+</div></div>
+<div class="section" id="basic"><div class="section-header"><span class="icon">🔍</span><h2>Basic Operators</h2></div><div class="code-wrapper"><pre><code>"exact phrase"          <span class="cmt">Match exact phrase</span>
+word1 OR word2          <span class="cmt">Either term</span>
+word1 | word2           <span class="cmt">Same as OR</span>
+-exclude               <span class="cmt">Exclude a term</span>
+word1 AND word2         <span class="cmt">Both must appear</span>
+*                       <span class="cmt">Wildcard (any word)</span>
+(group OR terms)        <span class="cmt">Group operators</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt">Examples:</span>
+"machine learning" -course
+python OR javascript frameworks
+"how to * a website"
+(react OR vue) tutorial 2024</code></pre></div></div>
+<div class="section" id="advanced"><div class="section-header"><span class="icon">⚡</span><h2>Advanced Operators</h2></div><div class="code-wrapper"><pre><code>intitle:word             <span class="cmt">Word in page title</span>
+allintitle:word1 word2   <span class="cmt">All words in title</span>
+inurl:word               <span class="cmt">Word in URL</span>
+allinurl:word1 word2     <span class="cmt">All words in URL</span>
+intext:word              <span class="cmt">Word in body text</span>
+allintext:word1 word2    <span class="cmt">All words in body</span>
+inanchor:word            <span class="cmt">Word in link text</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Google Search content.</div>
-</div>
+<span class="cmt">Examples:</span>
+intitle:"cheat sheet" python
+inurl:docs react hooks
+allintext:fastapi async tutorial</code></pre></div></div>
+<div class="section" id="filters"><div class="section-header"><span class="icon">⏰</span><h2>Filters &amp; Time</h2></div><div class="code-wrapper"><pre><code>before:2024-01-01       <span class="cmt">Before date</span>
+after:2023-01-01        <span class="cmt">After date</span>
+2023..2024              <span class="cmt">Number range</span>
+$50..$100               <span class="cmt">Price range</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Google Search basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># URL time params (append to URL):</span>
+&amp;tbs=qdr:h              <span class="cmt">Past hour</span>
+&amp;tbs=qdr:d              <span class="cmt">Past day</span>
+&amp;tbs=qdr:w              <span class="cmt">Past week</span>
+&amp;tbs=qdr:m              <span class="cmt">Past month</span>
+&amp;tbs=qdr:y              <span class="cmt">Past year</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Google Search patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Verbatim search (exact match)</span>
+&amp;tbs=li:1</code></pre></div></div>
+<div class="section" id="site"><div class="section-header"><span class="icon">🌐</span><h2>Site Operators</h2></div><div class="code-wrapper"><pre><code>site:example.com         <span class="cmt">Search within site</span>
+site:.edu                <span class="cmt">Only .edu domains</span>
+site:reddit.com/r/python <span class="cmt">Specific subreddit</span>
+-site:pinterest.com      <span class="cmt">Exclude a site</span>
+related:example.com      <span class="cmt">Similar sites</span>
+info:example.com         <span class="cmt">Page info</span>
+link:example.com         <span class="cmt">Pages linking to</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Google Search Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt">Examples:</span>
+site:github.com "awesome list"
+site:stackoverflow.com python async
+react hooks -site:w3schools.com</code></pre></div></div>
+<div class="section" id="file"><div class="section-header"><span class="icon">📁</span><h2>File &amp; Cache</h2></div><div class="code-wrapper"><pre><code>filetype:pdf             <span class="cmt">Only PDF files</span>
+filetype:doc             <span class="cmt">Word documents</span>
+filetype:xls             <span class="cmt">Excel files</span>
+filetype:ppt             <span class="cmt">PowerPoint</span>
+filetype:csv             <span class="cmt">CSV files</span>
+ext:py                   <span class="cmt">Python files</span>
+cache:example.com        <span class="cmt">Cached version</span>
+
+<span class="cmt">Examples:</span>
+machine learning filetype:pdf
+"annual report" 2024 filetype:pdf
+python cheatsheet filetype:pdf site:.edu</code></pre></div></div>
+<div class="section" id="tips"><div class="section-header"><span class="icon">💡</span><h2>Power Tips</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Calculator</span>
+2^10                    <span class="cmt">Power calculation</span>
+sqrt(144)               <span class="cmt">Square root</span>
+5 miles in km           <span class="cmt">Unit convert</span>
+100 usd in eur          <span class="cmt">Currency convert</span>
+
+<span class="cmt"># Utility</span>
+define:word             <span class="cmt">Dictionary</span>
+weather 10001           <span class="cmt">Weather by ZIP</span>
+timer 5 minutes         <span class="cmt">Set timer</span>
+stocks AAPL             <span class="cmt">Stock price</span>
+
+<span class="cmt"># Common combos</span>
+"error message" site:stackoverflow.com
+best * alternatives 2024
+inurl:awesome-list site:github.com topic
+"powered by" inurl:login         <span class="cmt">Find login pages</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Google Search Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

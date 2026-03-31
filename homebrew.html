@@ -1,58 +1,99 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Homebrew Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Homebrew</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Homebrew Cheatsheet</h1>
-  <p class="subtitle">Install, update, search, taps, casks, services &amp; formula management</p>
-  <span class="tag tag-fw">Toolkit / macOS</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Homebrew Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Homebrew</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Homebrew Cheatsheet</h1><p class="subtitle">Install, update, manage packages &amp; casks on macOS</p><span class="tag tag-concept">DevOps</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#install">Install &amp; Remove</a>
+    <a href="#search">Search &amp; Info</a>
+    <a href="#update">Update &amp; Upgrade</a>
+    <a href="#casks">Casks (GUI Apps)</a>
+    <a href="#services">Services</a>
+    <a href="#taps">Taps &amp; Cleanup</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">🍺</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Install Homebrew</span>
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Homebrew content.</div>
-</div>
+brew --version             <span class="cmt"># check version</span>
+brew doctor                <span class="cmt"># diagnose issues</span>
+brew config                <span class="cmt"># show config</span>
+brew help                  <span class="cmt"># help</span>
+brew commands              <span class="cmt"># list all commands</span></code></pre></div></div>
+<div class="section" id="install"><div class="section-header"><span class="icon">📦</span><h2>Install &amp; Remove</h2></div><div class="code-wrapper"><pre><code>brew install &lt;package&gt;       <span class="cmt"># install formula</span>
+brew install node
+brew install python@3.12
+brew install git wget curl
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Homebrew basics coming soon...</span></code></pre></div>
-</div>
+brew uninstall &lt;package&gt;    <span class="cmt"># remove</span>
+brew reinstall &lt;package&gt;    <span class="cmt"># reinstall</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Homebrew patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Install specific version</span>
+brew install node@20
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Homebrew Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Link / unlink</span>
+brew link node
+brew unlink node
+brew link --overwrite node</code></pre></div></div>
+<div class="section" id="search"><div class="section-header"><span class="icon">🔍</span><h2>Search &amp; Info</h2></div><div class="code-wrapper"><pre><code>brew search &lt;query&gt;         <span class="cmt"># search formulae</span>
+brew search python
+brew search --cask chrome
+
+brew info &lt;package&gt;         <span class="cmt"># show details</span>
+brew info node
+
+brew list                   <span class="cmt"># installed formulae</span>
+brew list --cask            <span class="cmt"># installed casks</span>
+brew list --versions        <span class="cmt"># with versions</span>
+brew deps &lt;package&gt;         <span class="cmt"># dependencies</span>
+brew uses --installed &lt;pkg&gt; <span class="cmt"># reverse deps</span></code></pre></div></div>
+<div class="section" id="update"><div class="section-header"><span class="icon">🔄</span><h2>Update &amp; Upgrade</h2></div><div class="code-wrapper"><pre><code>brew update                 <span class="cmt"># update Homebrew itself</span>
+brew outdated               <span class="cmt"># list outdated packages</span>
+brew upgrade                <span class="cmt"># upgrade all</span>
+brew upgrade &lt;package&gt;      <span class="cmt"># upgrade one</span>
+
+<span class="cmt"># Pin (prevent upgrade)</span>
+brew pin &lt;package&gt;
+brew unpin &lt;package&gt;
+brew list --pinned</code></pre></div></div>
+<div class="section" id="casks"><div class="section-header"><span class="icon">🖥️</span><h2>Casks (GUI Apps)</h2></div><div class="code-wrapper"><pre><code>brew install --cask firefox
+brew install --cask visual-studio-code
+brew install --cask docker
+brew install --cask iterm2
+brew install --cask slack
+
+brew list --cask
+brew upgrade --cask
+brew uninstall --cask &lt;app&gt;
+
+<span class="cmt"># Popular casks</span>
+brew install --cask google-chrome
+brew install --cask spotify
+brew install --cask rectangle
+brew install --cask raycast</code></pre></div></div>
+<div class="section" id="services"><div class="section-header"><span class="icon">⚡</span><h2>Services</h2></div><div class="code-wrapper"><pre><code>brew services list           <span class="cmt"># show all services</span>
+brew services start &lt;svc&gt;    <span class="cmt"># start service</span>
+brew services stop &lt;svc&gt;     <span class="cmt"># stop</span>
+brew services restart &lt;svc&gt;  <span class="cmt"># restart</span>
+
+<span class="cmt"># Common services</span>
+brew services start postgresql
+brew services start redis
+brew services start mysql
+brew services start nginx</code></pre></div></div>
+<div class="section" id="taps"><div class="section-header"><span class="icon">🔌</span><h2>Taps &amp; Cleanup</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Taps (third-party repos)</span>
+brew tap                    <span class="cmt"># list taps</span>
+brew tap user/repo          <span class="cmt"># add tap</span>
+brew untap user/repo        <span class="cmt"># remove tap</span>
+
+<span class="cmt"># Cleanup</span>
+brew cleanup                <span class="cmt"># remove old versions</span>
+brew cleanup -s             <span class="cmt"># + remove cache</span>
+brew autoremove             <span class="cmt"># remove unused deps</span>
+
+<span class="cmt"># Bundler (Brewfile)</span>
+brew bundle dump            <span class="cmt"># generate Brewfile</span>
+brew bundle install         <span class="cmt"># install from Brewfile</span>
+brew bundle check           <span class="cmt"># check if satisfied</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Homebrew Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

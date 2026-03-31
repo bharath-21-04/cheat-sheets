@@ -1,58 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EJS Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ EJS</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>EJS Cheatsheet</h1>
-  <p class="subtitle">Template syntax, partials, includes, loops, conditionals &amp; Express integration</p>
-  <span class="tag tag-fw">Template Engine</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>EJS Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ EJS</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>EJS Cheatsheet</h1><p class="subtitle">Embedded JavaScript templates — tags, partials &amp; helpers</p><span class="tag tag-fw">Template</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#tags">Tags</a>
+    <a href="#control">Control Flow</a>
+    <a href="#partials">Partials</a>
+    <a href="#layout">Layout</a>
+    <a href="#express">With Express</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">📝</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt">&lt;!-- EJS = Embedded JavaScript Templates --&gt;</span>
+<span class="cmt">&lt;!-- File extension: .ejs --&gt;</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive EJS content.</div>
-</div>
+<span class="cmt">&lt;!-- Install --&gt;</span>
+npm install ejs
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// EJS basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">&lt;!-- Render from string --&gt;</span>
+<span class="kw">const</span> ejs = <span class="fn">require</span>(<span class="str">'ejs'</span>);
+<span class="kw">const</span> html = ejs.<span class="fn">render</span>(<span class="str">'Hello &lt;%= name %&gt;'</span>, { name: <span class="str">'Alice'</span> });
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// EJS patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">&lt;!-- Render from file --&gt;</span>
+ejs.<span class="fn">renderFile</span>(<span class="str">'template.ejs'</span>, { data }, (err, html) =&gt; { });</code></pre></div></div>
+<div class="section" id="tags"><div class="section-header"><span class="icon">🏷️</span><h2>Tags</h2></div><div class="code-wrapper"><pre><code><span class="cmt">&lt;!-- Output (escaped) --&gt;</span>
+&lt;%= name %&gt;                <span class="cmt">&lt;!-- HTML-escaped output --&gt;</span>
+&lt;%= user.email %&gt;
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>EJS Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt">&lt;!-- Raw output (unescaped) --&gt;</span>
+&lt;%- htmlContent %&gt;         <span class="cmt">&lt;!-- raw HTML --&gt;</span>
+
+<span class="cmt">&lt;!-- Scriptlet (no output) --&gt;</span>
+&lt;% code %&gt;                 <span class="cmt">&lt;!-- execute JS --&gt;</span>
+
+<span class="cmt">&lt;!-- Comment --&gt;</span>
+&lt;%# This is a comment %&gt;   <span class="cmt">&lt;!-- not in output --&gt;</span>
+
+<span class="cmt">&lt;!-- Whitespace control --&gt;</span>
+&lt;%_ code _%&gt;               <span class="cmt">&lt;!-- trim whitespace --&gt;</span></code></pre></div></div>
+<div class="section" id="control"><div class="section-header"><span class="icon">🔀</span><h2>Control Flow</h2></div><div class="code-wrapper"><pre><code><span class="cmt">&lt;!-- If / Else --&gt;</span>
+&lt;% <span class="kw">if</span> (user) { %&gt;
+  &lt;h1&gt;&lt;%= user.name %&gt;&lt;/h1&gt;
+&lt;% } <span class="kw">else</span> { %&gt;
+  &lt;h1&gt;Guest&lt;/h1&gt;
+&lt;% } %&gt;
+
+<span class="cmt">&lt;!-- Loop --&gt;</span>
+&lt;ul&gt;
+&lt;% items.<span class="fn">forEach</span>(<span class="kw">function</span>(item) { %&gt;
+  &lt;li&gt;&lt;%= item.name %&gt; - $&lt;%= item.price %&gt;&lt;/li&gt;
+&lt;% }); %&gt;
+&lt;/ul&gt;
+
+<span class="cmt">&lt;!-- For loop --&gt;</span>
+&lt;% <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i &lt; <span class="num">5</span>; i++) { %&gt;
+  &lt;p&gt;Item &lt;%= i %&gt;&lt;/p&gt;
+&lt;% } %&gt;
+
+<span class="cmt">&lt;!-- Ternary --&gt;</span>
+&lt;p&gt;&lt;%= active ? <span class="str">'Yes'</span> : <span class="str">'No'</span> %&gt;&lt;/p&gt;</code></pre></div></div>
+<div class="section" id="partials"><div class="section-header"><span class="icon">🧩</span><h2>Partials</h2></div><div class="code-wrapper"><pre><code><span class="cmt">&lt;!-- Include partial --&gt;</span>
+&lt;%- <span class="fn">include</span>(<span class="str">'header'</span>) %&gt;
+&lt;%- <span class="fn">include</span>(<span class="str">'partials/nav'</span>) %&gt;
+
+<span class="cmt">&lt;!-- Include with data --&gt;</span>
+&lt;%- <span class="fn">include</span>(<span class="str">'card'</span>, { title: <span class="str">'Hello'</span>, body: <span class="str">'World'</span> }) %&gt;
+
+<span class="cmt">&lt;!-- partials/card.ejs --&gt;</span>
+&lt;div class="card"&gt;
+  &lt;h2&gt;&lt;%= title %&gt;&lt;/h2&gt;
+  &lt;p&gt;&lt;%= body %&gt;&lt;/p&gt;
+&lt;/div&gt;</code></pre></div></div>
+<div class="section" id="layout"><div class="section-header"><span class="icon">📐</span><h2>Layout</h2></div><div class="code-wrapper"><pre><code><span class="cmt">&lt;!-- views/layout.ejs --&gt;</span>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;&lt;%= title %&gt;&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+  &lt;%- <span class="fn">include</span>(<span class="str">'partials/header'</span>) %&gt;
+  &lt;main&gt;
+    &lt;%- body %&gt;
+  &lt;/main&gt;
+  &lt;%- <span class="fn">include</span>(<span class="str">'partials/footer'</span>) %&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+
+<span class="cmt">&lt;!-- With express-ejs-layouts: --&gt;</span>
+npm install express-ejs-layouts
+app.<span class="fn">use</span>(<span class="fn">require</span>(<span class="str">'express-ejs-layouts'</span>));</code></pre></div></div>
+<div class="section" id="express"><div class="section-header"><span class="icon">🚀</span><h2>With Express</h2></div><div class="code-wrapper"><pre><code><span class="kw">const</span> express = <span class="fn">require</span>(<span class="str">'express'</span>);
+<span class="kw">const</span> app = <span class="fn">express</span>();
+
+app.<span class="fn">set</span>(<span class="str">'view engine'</span>, <span class="str">'ejs'</span>);
+app.<span class="fn">set</span>(<span class="str">'views'</span>, <span class="str">'./views'</span>);
+
+app.<span class="fn">get</span>(<span class="str">'/'</span>, (req, res) =&gt; {
+    res.<span class="fn">render</span>(<span class="str">'index'</span>, {
+        title: <span class="str">'Home'</span>,
+        users: [
+            { name: <span class="str">'Alice'</span> },
+            { name: <span class="str">'Bob'</span> }
+        ]
+    });
+});
+
+<span class="cmt">// views/index.ejs</span>
+&lt;h1&gt;&lt;%= title %&gt;&lt;/h1&gt;
+&lt;% users.<span class="fn">forEach</span>(u =&gt; { %&gt;
+  &lt;p&gt;&lt;%= u.name %&gt;&lt;/p&gt;
+&lt;% }) %&gt;</code></pre></div></div>

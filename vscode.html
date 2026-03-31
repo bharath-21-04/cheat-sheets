@@ -1,58 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VS Code Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ VS Code</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>VS Code Cheatsheet</h1>
-  <p class="subtitle">Shortcuts, extensions, settings, debugging, tasks, snippets &amp; keybindings</p>
-  <span class="tag tag-fw">Toolkit / Editor</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>VS Code Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ VS Code</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>VS Code Cheatsheet</h1><p class="subtitle">Keyboard shortcuts, settings, extensions &amp; productivity tips</p><span class="tag tag-concept">Tool</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#general">General</a>
+    <a href="#editing">Editing</a>
+    <a href="#nav">Navigation</a>
+    <a href="#search">Search &amp; Replace</a>
+    <a href="#multi">Multi-Cursor</a>
+    <a href="#terminal">Terminal</a>
+    <a href="#git">Git Integration</a>
+    <a href="#extensions">Extensions</a>
+</div></div>
+<div class="section" id="general"><div class="section-header"><span class="icon">⌨️</span><h2>General</h2></div><div class="code-wrapper"><pre><code>Cmd+Shift+P        <span class="cmt">Command Palette</span>
+Cmd+P               <span class="cmt">Quick Open file</span>
+Cmd+Shift+N         <span class="cmt">New window</span>
+Cmd+W               <span class="cmt">Close editor</span>
+Cmd+,               <span class="cmt">Settings</span>
+Cmd+K Cmd+S         <span class="cmt">Keyboard shortcuts</span>
+Cmd+B               <span class="cmt">Toggle sidebar</span>
+Cmd+J               <span class="cmt">Toggle panel</span>
+Ctrl+`              <span class="cmt">Toggle terminal</span>
+Cmd+Shift+E         <span class="cmt">Explorer</span>
+Cmd+Shift+F         <span class="cmt">Search</span>
+Cmd+Shift+G         <span class="cmt">Source Control</span>
+Cmd+Shift+X         <span class="cmt">Extensions</span>
+Cmd+Shift+D         <span class="cmt">Run &amp; Debug</span></code></pre></div></div>
+<div class="section" id="editing"><div class="section-header"><span class="icon">✏️</span><h2>Editing</h2></div><div class="code-wrapper"><pre><code>Cmd+X               <span class="cmt">Cut line</span>
+Cmd+C               <span class="cmt">Copy line</span>
+Opt+↑/↓             <span class="cmt">Move line up/down</span>
+Shift+Opt+↑/↓       <span class="cmt">Copy line up/down</span>
+Cmd+Shift+K         <span class="cmt">Delete line</span>
+Cmd+Enter           <span class="cmt">Insert line below</span>
+Cmd+Shift+Enter     <span class="cmt">Insert line above</span>
+Cmd+D               <span class="cmt">Select word / next occurrence</span>
+Cmd+Shift+L         <span class="cmt">Select all occurrences</span>
+Cmd+/               <span class="cmt">Toggle comment</span>
+Shift+Opt+A         <span class="cmt">Block comment</span>
+Cmd+]               <span class="cmt">Indent</span>
+Cmd+[               <span class="cmt">Outdent</span>
+Opt+Z               <span class="cmt">Toggle word wrap</span></code></pre></div></div>
+<div class="section" id="nav"><div class="section-header"><span class="icon">🔍</span><h2>Navigation</h2></div><div class="code-wrapper"><pre><code>Cmd+G               <span class="cmt">Go to line</span>
+Cmd+P               <span class="cmt">Go to file</span>
+Cmd+Shift+O         <span class="cmt">Go to symbol in file</span>
+Cmd+T               <span class="cmt">Go to symbol in workspace</span>
+F12                  <span class="cmt">Go to definition</span>
+Opt+F12              <span class="cmt">Peek definition</span>
+Shift+F12            <span class="cmt">Show references</span>
+Cmd+Shift+\         <span class="cmt">Jump to matching bracket</span>
+Ctrl+Tab             <span class="cmt">Switch editors</span>
+Ctrl+-               <span class="cmt">Go back</span>
+Ctrl+Shift+-         <span class="cmt">Go forward</span>
+Cmd+K Cmd+Q          <span class="cmt">Go to last edit</span></code></pre></div></div>
+<div class="section" id="search"><div class="section-header"><span class="icon">🔎</span><h2>Search &amp; Replace</h2></div><div class="code-wrapper"><pre><code>Cmd+F               <span class="cmt">Find</span>
+Cmd+H               <span class="cmt">Replace</span>
+Cmd+Shift+F          <span class="cmt">Find in files</span>
+Cmd+Shift+H          <span class="cmt">Replace in files</span>
+Cmd+G               <span class="cmt">Find next</span>
+Cmd+Shift+G          <span class="cmt">Find previous</span>
+Opt+Enter            <span class="cmt">Select all matches</span>
+Cmd+Opt+F            <span class="cmt">Toggle regex</span></code></pre></div></div>
+<div class="section" id="multi"><div class="section-header"><span class="icon">👆</span><h2>Multi-Cursor</h2></div><div class="code-wrapper"><pre><code>Opt+Click            <span class="cmt">Add cursor</span>
+Cmd+Opt+↑/↓          <span class="cmt">Add cursor above/below</span>
+Cmd+D                <span class="cmt">Select next occurrence</span>
+Cmd+Shift+L          <span class="cmt">Select all occurrences</span>
+Cmd+U                <span class="cmt">Undo last cursor</span>
+Esc                  <span class="cmt">Back to single cursor</span>
+Opt+Shift+I          <span class="cmt">Cursor at end of each line</span></code></pre></div></div>
+<div class="section" id="terminal"><div class="section-header"><span class="icon">💻</span><h2>Terminal</h2></div><div class="code-wrapper"><pre><code>Ctrl+`               <span class="cmt">Toggle terminal</span>
+Cmd+Shift+`          <span class="cmt">New terminal</span>
+Cmd+\                <span class="cmt">Split terminal</span>
+Cmd+Opt+← →          <span class="cmt">Switch terminal</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Terminal settings (settings.json)</span>
+"terminal.integrated.defaultProfile.osx": "zsh"
+"terminal.integrated.fontSize": 14</code></pre></div></div>
+<div class="section" id="git"><div class="section-header"><span class="icon">📜</span><h2>Git Integration</h2></div><div class="code-wrapper"><pre><code>Cmd+Shift+G          <span class="cmt">Open Source Control</span>
+<span class="cmt"># Stage: click + next to file</span>
+<span class="cmt"># Commit: type message → Cmd+Enter</span>
+<span class="cmt"># Push: click ··· → Push</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive VS Code content.</div>
-</div>
+<span class="cmt"># Useful settings</span>
+"git.autofetch": true
+"git.confirmSync": false
+"git.enableSmartCommit": true
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// VS Code basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Gutter indicators</span>
+<span class="cmt"># Green  = added lines</span>
+<span class="cmt"># Blue   = modified lines</span>
+<span class="cmt"># Red ▲  = deleted lines</span></code></pre></div></div>
+<div class="section" id="extensions"><div class="section-header"><span class="icon">🧩</span><h2>Extensions</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Essential extensions</span>
+Prettier               <span class="cmt">Code formatter</span>
+ESLint                 <span class="cmt">JS/TS linter</span>
+GitLens                <span class="cmt">Git blame/history</span>
+GitHub Copilot         <span class="cmt">AI pair programmer</span>
+Error Lens             <span class="cmt">Inline error display</span>
+Thunder Client         <span class="cmt">REST API client</span>
+Docker                 <span class="cmt">Docker support</span>
+Remote - SSH           <span class="cmt">Remote dev via SSH</span>
+Live Server            <span class="cmt">Local dev server</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// VS Code patterns coming soon...</span></code></pre></div>
-</div>
-
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>VS Code Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Install from CLI</span>
+code --install-extension esbenp.prettier-vscode
+code --list-extensions</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>VS Code Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

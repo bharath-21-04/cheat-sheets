@@ -15,7 +15,7 @@
 <div class="container">
 <div class="hero">
   <h1>Dart Cheatsheet</h1>
-  <p class="subtitle">Classes, null safety, async, collections, mixins &amp; Flutter essentials</p>
+  <p class="subtitle">Classes, null safety, async, collections, mixins, generics, patterns &amp; Flutter essentials</p>
   <span class="tag tag-lang">Language</span>
   <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
   <div class="search-count" id="searchCount"></div>
@@ -23,13 +23,20 @@
 
 <div class="toc"><div class="toc-title">Contents</div>
   <div class="toc-grid">
-    <a href="#basics">⚡</a>
-    <a href="#collections">📦</a>
-    <a href="#classes">🏛️</a>
-    <a href="#async">⚡</a>
+    <a href="#basics">Basics &amp; Types</a>
+    <a href="#control">Control Flow</a>
+    <a href="#functions">Functions</a>
+    <a href="#collections">Collections</a>
+    <a href="#classes">Classes &amp; OOP</a>
+    <a href="#generics">Generics &amp; Patterns</a>
+    <a href="#async">Async &amp; Futures</a>
+    <a href="#error">Error Handling</a>
+    <a href="#extensions">Extensions &amp; Utilities</a>
+    <a href="#flutter">Flutter Essentials</a>
   </div>
 </div>
 
+<!-- ───────── BASICS ───────── -->
 <div class="section" id="basics">
   <div class="section-header"><span class="icon">⚡</span><h2>Basics &amp; Types</h2></div>
   <div class="code-wrapper"><pre><code><span class="kw">void</span> <span class="fn">main</span>() {
@@ -43,90 +50,337 @@
 <span class="kw">const</span> pi = <span class="num">3.14</span>;          <span class="cmt">// compile-time constant</span>
 <span class="kw">late</span> <span class="tp">String</span> description;   <span class="cmt">// lazy initialization</span>
 
-<span class="cmt">// Types: int, double, String, bool, List, Map, Set, dynamic</span>
+<span class="cmt">// Types: int, double, String, bool, List, Map, Set, dynamic, num</span>
 <span class="kw">int</span> x = <span class="num">42</span>;
 <span class="kw">double</span> y = <span class="num">3.14</span>;
 <span class="kw">num</span> z = <span class="num">42</span>;               <span class="cmt">// int or double</span>
+<span class="kw">bool</span> flag = <span class="kw">true</span>;
+<span class="kw">dynamic</span> anything = <span class="num">42</span>;    <span class="cmt">// any type (avoid when possible)</span>
 
 <span class="cmt">// Null safety (sound by default)</span>
 <span class="tp">String</span>? nullable;         <span class="cmt">// can be null</span>
 <span class="tp">String</span> nonNull = <span class="str">'hi'</span>;   <span class="cmt">// cannot be null</span>
-<span class="kw">var</span> len = nullable?.length ?? <span class="num">0</span>;
-<span class="kw">var</span> val = nullable!;       <span class="cmt">// assert non-null</span>
+<span class="kw">var</span> len = nullable?.length ?? <span class="num">0</span>;   <span class="cmt">// null-aware access + default</span>
+<span class="kw">var</span> val2 = nullable!;              <span class="cmt">// assert non-null</span>
+nullable ??= <span class="str">'default'</span>;            <span class="cmt">// assign if null</span>
 
 <span class="cmt">// String interpolation</span>
 <span class="kw">var</span> msg = <span class="str">'Hello $name, age ${age + 1}'</span>;
 <span class="kw">var</span> multi = <span class="str">'''
   Multi-line string
-'''</span>;</code></pre></div>
+'''</span>;
+<span class="kw">var</span> raw = r<span class="str">'No \n escaping here'</span>;
+
+<span class="cmt">// Type checks</span>
+<span class="kw">if</span> (obj <span class="kw">is</span> <span class="tp">String</span>) print(obj.length);   <span class="cmt">// auto-promotes</span>
+<span class="kw">if</span> (obj <span class="kw">is!</span> <span class="tp">int</span>) print(<span class="str">'not an int'</span>);
+<span class="kw">var</span> str = obj <span class="kw">as</span> <span class="tp">String</span>;              <span class="cmt">// explicit cast</span>
+
+<span class="cmt">// Typedef</span>
+<span class="kw">typedef</span> <span class="tp">IntList</span> = List&lt;<span class="kw">int</span>&gt;;
+<span class="kw">typedef</span> <span class="tp">Compare</span>&lt;<span class="tp">T</span>&gt; = <span class="kw">int</span> Function(<span class="tp">T</span> a, <span class="tp">T</span> b);</code></pre></div>
 </div>
 
+<!-- ───────── CONTROL FLOW ───────── -->
+<div class="section" id="control">
+  <div class="section-header"><span class="icon">🔀</span><h2>Control Flow</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// if / else</span>
+<span class="kw">if</span> (score &gt;= <span class="num">90</span>) {
+  print(<span class="str">'A'</span>);
+} <span class="kw">else if</span> (score &gt;= <span class="num">80</span>) {
+  print(<span class="str">'B'</span>);
+} <span class="kw">else</span> {
+  print(<span class="str">'C'</span>);
+}
+
+<span class="cmt">// Conditional expression</span>
+<span class="kw">var</span> label = score &gt;= <span class="num">90</span> ? <span class="str">'A'</span> : <span class="str">'B'</span>;
+
+<span class="cmt">// switch (classic)</span>
+<span class="kw">switch</span> (command) {
+  <span class="kw">case</span> <span class="str">'start'</span>:
+    start();
+    <span class="kw">break</span>;
+  <span class="kw">case</span> <span class="str">'stop'</span>:
+  <span class="kw">case</span> <span class="str">'pause'</span>:
+    stop();
+    <span class="kw">break</span>;
+  <span class="kw">default</span>:
+    print(<span class="str">'unknown'</span>);
+}
+
+<span class="cmt">// Switch expression (Dart 3+)</span>
+<span class="kw">var</span> result = <span class="kw">switch</span> (value) {
+  <span class="num">1</span> =&gt; <span class="str">'one'</span>,
+  <span class="num">2</span> || <span class="num">3</span> =&gt; <span class="str">'two or three'</span>,
+  &gt;= <span class="num">4</span> &amp;&amp; &lt;= <span class="num">10</span> =&gt; <span class="str">'4-10'</span>,
+  _ =&gt; <span class="str">'other'</span>,
+};
+
+<span class="cmt">// for loops</span>
+<span class="kw">for</span> (<span class="kw">var</span> i = <span class="num">0</span>; i &lt; <span class="num">5</span>; i++) print(i);
+<span class="kw">for</span> (<span class="kw">var</span> item <span class="kw">in</span> list) print(item);
+list.forEach((item) =&gt; print(item));
+
+<span class="cmt">// while / do-while</span>
+<span class="kw">while</span> (x &gt; <span class="num">0</span>) { x--; }
+<span class="kw">do</span> { x++; } <span class="kw">while</span> (x &lt; <span class="num">10</span>);
+
+<span class="cmt">// Labeled loops</span>
+outer:
+<span class="kw">for</span> (<span class="kw">var</span> i = <span class="num">0</span>; i &lt; <span class="num">5</span>; i++) {
+  <span class="kw">for</span> (<span class="kw">var</span> j = <span class="num">0</span>; j &lt; <span class="num">5</span>; j++) {
+    <span class="kw">if</span> (j == <span class="num">3</span>) <span class="kw">break</span> outer;
+  }
+}
+
+<span class="cmt">// assert (debug only)</span>
+<span class="kw">assert</span>(age &gt;= <span class="num">0</span>, <span class="str">'Age must be non-negative'</span>);</code></pre></div>
+</div>
+
+<!-- ───────── FUNCTIONS ───────── -->
+<div class="section" id="functions">
+  <div class="section-header"><span class="icon">🔧</span><h2>Functions</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Basic function</span>
+<span class="kw">int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) =&gt; a + b;  <span class="cmt">// arrow syntax</span>
+
+<span class="kw">String</span> <span class="fn">greet</span>(<span class="tp">String</span> name) {
+  <span class="kw">return</span> <span class="str">'Hello $name'</span>;
+}
+
+<span class="cmt">// Optional positional parameters</span>
+<span class="kw">String</span> <span class="fn">say</span>(<span class="tp">String</span> from, <span class="tp">String</span> msg, [<span class="tp">String</span>? device]) {
+  <span class="kw">var</span> result = <span class="str">'$from says $msg'</span>;
+  <span class="kw">if</span> (device != <span class="kw">null</span>) result = <span class="str">'$result via $device'</span>;
+  <span class="kw">return</span> result;
+}
+
+<span class="cmt">// Named parameters (can be required)</span>
+<span class="kw">void</span> <span class="fn">createUser</span>({<span class="kw">required</span> <span class="tp">String</span> name, <span class="kw">int</span> age = <span class="num">0</span>}) {}
+createUser(name: <span class="str">'Alice'</span>, age: <span class="num">25</span>);
+
+<span class="cmt">// First-class functions</span>
+<span class="kw">var</span> multiply = (<span class="kw">int</span> a, <span class="kw">int</span> b) =&gt; a * b;
+<span class="kw">Function</span> makeAdder(<span class="kw">int</span> n) =&gt; (<span class="kw">int</span> i) =&gt; n + i;
+<span class="kw">var</span> add2 = makeAdder(<span class="num">2</span>);
+add2(<span class="num">3</span>);  <span class="cmt">// 5 — closure</span>
+
+<span class="cmt">// Higher-order functions</span>
+<span class="kw">void</span> <span class="fn">execute</span>(<span class="kw">int</span> Function(<span class="kw">int</span>, <span class="kw">int</span>) op) {
+  print(op(<span class="num">3</span>, <span class="num">4</span>));
+}
+execute((<span class="kw">a</span>, <span class="kw">b</span>) =&gt; a + b);
+
+<span class="cmt">// Tear-offs (function references)</span>
+list.forEach(print);                <span class="cmt">// top-level function</span>
+list.map(element.toString);         <span class="cmt">// instance method</span>
+list.where(<span class="tp">int</span>.parse != <span class="kw">null</span>);     <span class="cmt">// static method</span>
+
+<span class="cmt">// Cascade notation (..)</span>
+<span class="kw">var</span> paint = Paint()
+  ..color = Colors.red
+  ..strokeWidth = <span class="num">5.0</span>
+  ..style = PaintingStyle.stroke;</code></pre></div>
+</div>
+
+<!-- ───────── COLLECTIONS ───────── -->
 <div class="section" id="collections">
   <div class="section-header"><span class="icon">📦</span><h2>Collections</h2></div>
   <div class="code-wrapper"><pre><code><span class="cmt">// List</span>
-<span class="kw">var</span> list = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+<span class="kw">var</span> list = &lt;<span class="kw">int</span>&gt;[<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
 list.add(<span class="num">4</span>);  list.remove(<span class="num">2</span>);  list.length;
+list.insert(<span class="num">0</span>, <span class="num">99</span>);  list.removeAt(<span class="num">0</span>);
 list.where((n) =&gt; n &gt; <span class="num">2</span>).toList();
 list.map((n) =&gt; n * <span class="num">2</span>).toList();
 list.any((n) =&gt; n &gt; <span class="num">3</span>);
-list.sort();  list.reversed;
-list.fold(<span class="num">0</span>, (sum, n) =&gt; sum + n);
-[...<span class="kw">list</span>, <span class="num">5</span>, <span class="num">6</span>]            <span class="cmt">// spread operator</span>
-[<span class="kw">for</span> (<span class="kw">var</span> i <span class="kw">in</span> list) i * <span class="num">2</span>] <span class="cmt">// collection for</span>
-[<span class="kw">if</span> (flag) <span class="num">99</span>]              <span class="cmt">// collection if</span>
+list.every((n) =&gt; n &gt; <span class="num">0</span>);
+list.sort();  list.reversed.toList();
+list.fold&lt;<span class="kw">int</span>&gt;(<span class="num">0</span>, (sum, n) =&gt; sum + n);
+list.reduce((a, b) =&gt; a + b);
+list.firstWhere((n) =&gt; n &gt; <span class="num">2</span>);
+list.indexWhere((n) =&gt; n == <span class="num">3</span>);
+list.take(<span class="num">2</span>).toList();  list.skip(<span class="num">1</span>).toList();
+list.expand((n) =&gt; [n, n * <span class="num">10</span>]).toList();
+
+<span class="cmt">// Spread, collection if/for</span>
+[...<span class="kw">list</span>, <span class="num">5</span>, <span class="num">6</span>]                      <span class="cmt">// spread operator</span>
+[<span class="kw">for</span> (<span class="kw">var</span> i <span class="kw">in</span> list) i * <span class="num">2</span>]         <span class="cmt">// collection for</span>
+[<span class="kw">if</span> (flag) <span class="num">99</span>]                        <span class="cmt">// collection if</span>
+[...?nullableList]                     <span class="cmt">// null-aware spread</span>
 
 <span class="cmt">// Map</span>
-<span class="kw">var</span> map = {<span class="str">'a'</span>: <span class="num">1</span>, <span class="str">'b'</span>: <span class="num">2</span>};
+<span class="kw">var</span> map = &lt;<span class="tp">String</span>, <span class="kw">int</span>&gt;{<span class="str">'a'</span>: <span class="num">1</span>, <span class="str">'b'</span>: <span class="num">2</span>};
 map[<span class="str">'c'</span>] = <span class="num">3</span>;
-map.containsKey(<span class="str">'a'</span>);
+map.containsKey(<span class="str">'a'</span>);  map.containsValue(<span class="num">1</span>);
 map.forEach((k, v) =&gt; print(<span class="str">'$k: $v'</span>));
 map.entries;  map.keys;  map.values;
+map.update(<span class="str">'a'</span>, (v) =&gt; v + <span class="num">10</span>);
+map.removeWhere((k, v) =&gt; v &gt; <span class="num">2</span>);
+map.putIfAbsent(<span class="str">'d'</span>, () =&gt; <span class="num">4</span>);
+map.map((k, v) =&gt; MapEntry(k, v * <span class="num">2</span>));
 
 <span class="cmt">// Set</span>
-<span class="kw">var</span> set = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>};
+<span class="kw">var</span> set = &lt;<span class="kw">int</span>&gt;{<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>};
 set.add(<span class="num">4</span>);  set.contains(<span class="num">1</span>);
-set.union({<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>});  set.intersection({<span class="num">2</span>,<span class="num">3</span>});</code></pre></div>
+set.union({<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>});
+set.intersection({<span class="num">2</span>,<span class="num">3</span>});
+set.difference({<span class="num">1</span>});
+
+<span class="cmt">// Unmodifiable collections</span>
+<span class="kw">final</span> immutable = List.unmodifiable([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]);
+<span class="kw">const</span> constList = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];  <span class="cmt">// deeply immutable</span></code></pre></div>
 </div>
 
+<!-- ───────── CLASSES ───────── -->
 <div class="section" id="classes">
   <div class="section-header"><span class="icon">🏛️</span><h2>Classes &amp; OOP</h2></div>
   <div class="code-wrapper"><pre><code><span class="kw">class</span> <span class="tp">Person</span> {
   <span class="kw">final</span> <span class="tp">String</span> name;
-  <span class="kw">int</span> _age;              <span class="cmt">// private (underscore)</span>
+  <span class="kw">int</span> _age;              <span class="cmt">// private (underscore = library-level)</span>
 
-  <span class="fn">Person</span>(<span class="kw">this</span>.name, <span class="kw">this</span>._age);  <span class="cmt">// shorthand constructor</span>
+  <span class="fn">Person</span>(<span class="kw">this</span>.name, <span class="kw">this</span>._age);         <span class="cmt">// shorthand constructor</span>
   <span class="fn">Person</span>.guest() : name = <span class="str">'Guest'</span>, _age = <span class="num">0</span>;  <span class="cmt">// named constructor</span>
 
-  <span class="kw">int get</span> age =&gt; _age;
-  <span class="kw">set</span> age(<span class="kw">int</span> val) =&gt; _age = val;
+  <span class="kw">int get</span> age =&gt; _age;                   <span class="cmt">// getter</span>
+  <span class="kw">set</span> age(<span class="kw">int</span> val) =&gt; _age = val;        <span class="cmt">// setter</span>
 
   @<span class="kw">override</span>
   <span class="tp">String</span> <span class="fn">toString</span>() =&gt; <span class="str">'$name ($_age)'</span>;
+}
+
+<span class="cmt">// Const constructor (compile-time objects)</span>
+<span class="kw">class</span> <span class="tp">Point</span> {
+  <span class="kw">final double</span> x, y;
+  <span class="kw">const</span> <span class="fn">Point</span>(<span class="kw">this</span>.x, <span class="kw">this</span>.y);
+}
+<span class="kw">const</span> origin = <span class="tp">Point</span>(<span class="num">0</span>, <span class="num">0</span>);
+
+<span class="cmt">// Factory constructor</span>
+<span class="kw">class</span> <span class="tp">Logger</span> {
+  <span class="kw">static final</span> _cache = &lt;<span class="tp">String</span>, <span class="tp">Logger</span>&gt;{};
+  <span class="kw">factory</span> <span class="fn">Logger</span>(<span class="tp">String</span> name) =&gt; _cache.putIfAbsent(name, () =&gt; <span class="tp">Logger</span>._internal(name));
+  <span class="fn">Logger</span>._internal(<span class="kw">this</span>.name);
+  <span class="kw">final</span> <span class="tp">String</span> name;
 }
 
 <span class="cmt">// Inheritance</span>
 <span class="kw">class</span> <span class="tp">Student</span> <span class="kw">extends</span> <span class="tp">Person</span> {
   <span class="tp">String</span> school;
   <span class="fn">Student</span>(<span class="kw">super</span>.name, <span class="kw">super</span>.age, <span class="kw">this</span>.school);
+
+  @<span class="kw">override</span>
+  <span class="tp">String</span> <span class="fn">toString</span>() =&gt; <span class="str">'${super.toString()} at $school'</span>;
 }
 
-<span class="cmt">// Abstract + Interface</span>
+<span class="cmt">// Abstract class + Interface</span>
 <span class="kw">abstract class</span> <span class="tp">Shape</span> {
-  <span class="kw">double</span> <span class="fn">area</span>();
+  <span class="kw">double</span> <span class="fn">area</span>();           <span class="cmt">// abstract method</span>
+  <span class="kw">void</span> <span class="fn">describe</span>() =&gt; print(<span class="str">'Shape with area ${area()}'</span>);
+}
+
+<span class="cmt">// Implements (every class is an implicit interface)</span>
+<span class="kw">class</span> <span class="tp">MockPerson</span> <span class="kw">implements</span> <span class="tp">Person</span> {
+  @<span class="kw">override</span> <span class="tp">String</span> <span class="kw">get</span> name =&gt; <span class="str">'Mock'</span>;
+  <span class="cmt">// must implement ALL members</span>
 }
 
 <span class="cmt">// Mixin</span>
 <span class="kw">mixin</span> <span class="tp">Flyable</span> {
   <span class="kw">void</span> <span class="fn">fly</span>() =&gt; print(<span class="str">'Flying!'</span>);
 }
-<span class="kw">class</span> <span class="tp">Bird</span> <span class="kw">extends</span> <span class="tp">Animal</span> <span class="kw">with</span> <span class="tp">Flyable</span> {}
+<span class="kw">mixin</span> <span class="tp">Swimmable</span> {
+  <span class="kw">void</span> <span class="fn">swim</span>() =&gt; print(<span class="str">'Swimming!'</span>);
+}
+<span class="kw">class</span> <span class="tp">Duck</span> <span class="kw">extends</span> <span class="tp">Animal</span> <span class="kw">with</span> <span class="tp">Flyable</span>, <span class="tp">Swimmable</span> {}
 
-<span class="cmt">// Enum</span>
-<span class="kw">enum</span> <span class="tp">Status</span> { active, inactive, pending }</code></pre></div>
+<span class="cmt">// Mixin class (Dart 3+, can be both mixin and class)</span>
+<span class="kw">mixin class</span> <span class="tp">Musician</span> {
+  <span class="kw">void</span> <span class="fn">play</span>() =&gt; print(<span class="str">'Playing!'</span>);
+}
+
+<span class="cmt">// Sealed class (Dart 3+ — exhaustive pattern matching)</span>
+<span class="kw">sealed class</span> <span class="tp">Result</span> {}
+<span class="kw">class</span> <span class="tp">Success</span> <span class="kw">extends</span> <span class="tp">Result</span> { <span class="kw">final</span> <span class="tp">String</span> data; <span class="fn">Success</span>(<span class="kw">this</span>.data); }
+<span class="kw">class</span> <span class="tp">Failure</span> <span class="kw">extends</span> <span class="tp">Result</span> { <span class="kw">final</span> <span class="tp">String</span> error; <span class="fn">Failure</span>(<span class="kw">this</span>.error); }
+<span class="kw">class</span> <span class="tp">Loading</span> <span class="kw">extends</span> <span class="tp">Result</span> {}
+
+<span class="cmt">// Enum with members</span>
+<span class="kw">enum</span> <span class="tp">Status</span> {
+  active(<span class="str">'Active'</span>), inactive(<span class="str">'Inactive'</span>), pending(<span class="str">'Pending'</span>);
+  <span class="kw">final</span> <span class="tp">String</span> label;
+  <span class="kw">const</span> <span class="fn">Status</span>(<span class="kw">this</span>.label);
+}
+
+<span class="cmt">// Operator overloading</span>
+<span class="kw">class</span> <span class="tp">Vector</span> {
+  <span class="kw">final double</span> x, y;
+  <span class="kw">const</span> <span class="fn">Vector</span>(<span class="kw">this</span>.x, <span class="kw">this</span>.y);
+  <span class="tp">Vector</span> <span class="kw">operator</span> +(<span class="tp">Vector</span> other) =&gt; <span class="tp">Vector</span>(x + other.x, y + other.y);
+  <span class="kw">bool operator</span> ==(<span class="tp">Object</span> other) =&gt;
+      other <span class="kw">is</span> <span class="tp">Vector</span> &amp;&amp; x == other.x &amp;&amp; y == other.y;
+  @<span class="kw">override</span> <span class="kw">int get</span> hashCode =&gt; Object.hash(x, y);
+}</code></pre></div>
 </div>
 
+<!-- ───────── GENERICS & PATTERNS ───────── -->
+<div class="section" id="generics">
+  <div class="section-header"><span class="icon">🔷</span><h2>Generics &amp; Patterns</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Generic class</span>
+<span class="kw">class</span> <span class="tp">Box</span>&lt;<span class="tp">T</span>&gt; {
+  <span class="kw">final</span> <span class="tp">T</span> value;
+  <span class="fn">Box</span>(<span class="kw">this</span>.value);
+}
+<span class="kw">var</span> box = <span class="tp">Box</span>&lt;<span class="kw">int</span>&gt;(<span class="num">42</span>);
+
+<span class="cmt">// Generic function</span>
+<span class="tp">T</span> <span class="fn">first</span>&lt;<span class="tp">T</span>&gt;(List&lt;<span class="tp">T</span>&gt; items) =&gt; items.first;
+
+<span class="cmt">// Bounded generics</span>
+<span class="tp">T</span> <span class="fn">max</span>&lt;<span class="tp">T</span> <span class="kw">extends</span> Comparable&lt;<span class="tp">T</span>&gt;&gt;(<span class="tp">T</span> a, <span class="tp">T</span> b) =&gt; a.compareTo(b) &gt;= <span class="num">0</span> ? a : b;
+
+<span class="cmt">// Covariant</span>
+<span class="kw">class</span> <span class="tp">Animal</span> {}
+<span class="kw">class</span> <span class="tp">Cat</span> <span class="kw">extends</span> <span class="tp">Animal</span> {}
+<span class="kw">class</span> <span class="tp">Cage</span>&lt;<span class="tp">T</span> <span class="kw">extends</span> <span class="tp">Animal</span>&gt; {
+  <span class="kw">void</span> <span class="fn">put</span>(<span class="kw">covariant</span> <span class="tp">T</span> animal) {}
+}
+
+<span class="cmt">// ── Patterns (Dart 3+) ──</span>
+
+<span class="cmt">// Destructuring patterns</span>
+<span class="kw">var</span> (a, b) = (<span class="num">1</span>, <span class="num">2</span>);                     <span class="cmt">// record destructuring</span>
+<span class="kw">var</span> [x, y, ...rest] = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>];   <span class="cmt">// list pattern</span>
+<span class="kw">var</span> {<span class="str">'name'</span>: name, <span class="str">'age'</span>: age} = json; <span class="cmt">// map pattern</span>
+
+<span class="cmt">// Pattern matching in switch</span>
+<span class="kw">String</span> <span class="fn">describe</span>(<span class="tp">Result</span> r) =&gt; <span class="kw">switch</span> (r) {
+  Success(data: <span class="kw">var</span> d) =&gt; <span class="str">'Got: $d'</span>,
+  Failure(error: <span class="kw">var</span> e) =&gt; <span class="str">'Error: $e'</span>,
+  Loading() =&gt; <span class="str">'Loading...'</span>,
+};
+
+<span class="cmt">// Guard clause</span>
+<span class="kw">switch</span> (value) {
+  <span class="kw">case</span> <span class="kw">int</span> n <span class="kw">when</span> n &gt; <span class="num">0</span>:
+    print(<span class="str">'positive: $n'</span>);
+  <span class="kw">case</span> <span class="kw">int</span> n:
+    print(<span class="str">'non-positive: $n'</span>);
+}
+
+<span class="cmt">// if-case</span>
+<span class="kw">if</span> (json <span class="kw">case</span> {<span class="str">'name'</span>: <span class="tp">String</span> name, <span class="str">'age'</span>: <span class="kw">int</span> age}) {
+  print(<span class="str">'$name is $age'</span>);
+}
+
+<span class="cmt">// Records (Dart 3+)</span>
+(<span class="kw">int</span>, <span class="kw">int</span>) <span class="fn">swap</span>((<span class="kw">int</span>, <span class="kw">int</span>) pair) =&gt; (pair.$2, pair.$1);
+({<span class="tp">String</span> name, <span class="kw">int</span> age}) person = (name: <span class="str">'Alice'</span>, age: <span class="num">30</span>);
+print(person.name);</code></pre></div>
+</div>
+
+<!-- ───────── ASYNC ───────── -->
 <div class="section" id="async">
-  <div class="section-header"><span class="icon">⚡</span><h2>Async &amp; Futures</h2></div>
+  <div class="section-header"><span class="icon">🌀</span><h2>Async &amp; Futures</h2></div>
   <div class="code-wrapper"><pre><code><span class="cmt">// Future (async/await)</span>
 Future&lt;<span class="tp">String</span>&gt; <span class="fn">fetchData</span>() <span class="kw">async</span> {
   <span class="kw">var</span> response = <span class="kw">await</span> http.get(Uri.parse(url));
@@ -138,12 +392,26 @@ Future&lt;<span class="tp">String</span>&gt; <span class="fn">fetchData</span>()
   <span class="kw">var</span> data = <span class="kw">await</span> fetchData();
 } <span class="kw">on</span> SocketException {
   print(<span class="str">'No internet'</span>);
-} <span class="kw">catch</span> (e) {
+} <span class="kw">catch</span> (e, stackTrace) {
   print(<span class="str">'Error: $e'</span>);
+  print(<span class="str">'Stack: $stackTrace'</span>);
 }
 
 <span class="cmt">// Multiple futures</span>
 <span class="kw">var</span> results = <span class="kw">await</span> Future.wait([fetch1(), fetch2()]);
+<span class="kw">var</span> first = <span class="kw">await</span> Future.any([fetch1(), fetch2()]);  <span class="cmt">// first to complete</span>
+
+<span class="cmt">// Future constructors</span>
+Future.delayed(Duration(seconds: <span class="num">2</span>), () =&gt; <span class="str">'delayed'</span>);
+Future.value(<span class="num">42</span>);                              <span class="cmt">// already resolved</span>
+Future.error(Exception(<span class="str">'oops'</span>));               <span class="cmt">// already rejected</span>
+
+<span class="cmt">// Future chaining</span>
+fetchUser()
+  .then((user) =&gt; fetchPosts(user.id))
+  .then((posts) =&gt; print(posts))
+  .catchError((e) =&gt; print(<span class="str">'Error: $e'</span>))
+  .whenComplete(() =&gt; print(<span class="str">'Done'</span>));
 
 <span class="cmt">// Streams</span>
 Stream&lt;<span class="kw">int</span>&gt; <span class="fn">countStream</span>(<span class="kw">int</span> max) <span class="kw">async*</span> {
@@ -155,7 +423,234 @@ Stream&lt;<span class="kw">int</span>&gt; <span class="fn">countStream</span>(<s
 
 <span class="kw">await for</span> (<span class="kw">var</span> val <span class="kw">in</span> countStream(<span class="num">5</span>)) {
   print(val);
+}
+
+<span class="cmt">// Stream transformations</span>
+stream.map((n) =&gt; n * <span class="num">2</span>);
+stream.where((n) =&gt; n &gt; <span class="num">5</span>);
+stream.expand((n) =&gt; [n, n * <span class="num">10</span>]);
+stream.take(<span class="num">3</span>);
+stream.distinct();
+stream.handleError((e) =&gt; print(e));
+stream.listen(
+  (data) =&gt; print(data),
+  onError: (e) =&gt; print(e),
+  onDone: () =&gt; print(<span class="str">'done'</span>),
+  cancelOnError: <span class="kw">false</span>,
+);
+
+<span class="cmt">// StreamController (custom streams)</span>
+<span class="kw">final</span> controller = StreamController&lt;<span class="kw">int</span>&gt;.broadcast();
+controller.sink.add(<span class="num">1</span>);
+controller.stream.listen((val) =&gt; print(val));
+controller.close();
+
+<span class="cmt">// Isolates (true parallelism)</span>
+<span class="kw">var</span> result = <span class="kw">await</span> Isolate.run(() =&gt; heavyComputation());
+<span class="cmt">// or use compute() in Flutter</span></code></pre></div>
+</div>
+
+<!-- ───────── ERROR HANDLING ───────── -->
+<div class="section" id="error">
+  <div class="section-header"><span class="icon">🛡️</span><h2>Error Handling</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// try / on / catch / finally</span>
+<span class="kw">try</span> {
+  riskyOperation();
+} <span class="kw">on</span> FormatException catch (e) {
+  print(<span class="str">'Format error: $e'</span>);
+} <span class="kw">on</span> IOException {
+  print(<span class="str">'I/O error'</span>);            <span class="cmt">// catch without binding</span>
+} <span class="kw">catch</span> (e, stackTrace) {
+  print(<span class="str">'Unknown: $e'</span>);
+  print(stackTrace);
+} <span class="kw">finally</span> {
+  cleanup();
+}
+
+<span class="cmt">// Throw</span>
+<span class="kw">throw</span> FormatException(<span class="str">'Invalid input'</span>);
+<span class="kw">throw</span> <span class="str">'Something went wrong'</span>;        <span class="cmt">// can throw any object</span>
+
+<span class="cmt">// Custom exception</span>
+<span class="kw">class</span> <span class="tp">ApiException</span> <span class="kw">implements</span> Exception {
+  <span class="kw">final</span> <span class="tp">String</span> message;
+  <span class="kw">final int</span> statusCode;
+  <span class="fn">ApiException</span>(<span class="kw">this</span>.message, <span class="kw">this</span>.statusCode);
+  @<span class="kw">override</span>
+  <span class="tp">String</span> <span class="fn">toString</span>() =&gt; <span class="str">'ApiException($statusCode): $message'</span>;
+}
+
+<span class="cmt">// Rethrow</span>
+<span class="kw">try</span> {
+  riskyOperation();
+} <span class="kw">catch</span> (e) {
+  log(e);
+  <span class="kw">rethrow</span>;  <span class="cmt">// preserves original stack trace</span>
+}
+
+<span class="cmt">// Result pattern (functional style)</span>
+<span class="kw">sealed class</span> <span class="tp">Result</span>&lt;<span class="tp">T</span>&gt; {}
+<span class="kw">class</span> <span class="tp">Ok</span>&lt;<span class="tp">T</span>&gt; <span class="kw">extends</span> <span class="tp">Result</span>&lt;<span class="tp">T</span>&gt; { <span class="kw">final</span> <span class="tp">T</span> value; <span class="fn">Ok</span>(<span class="kw">this</span>.value); }
+<span class="kw">class</span> <span class="tp">Err</span>&lt;<span class="tp">T</span>&gt; <span class="kw">extends</span> <span class="tp">Result</span>&lt;<span class="tp">T</span>&gt; { <span class="kw">final</span> <span class="tp">String</span> error; <span class="fn">Err</span>(<span class="kw">this</span>.error); }
+
+Result&lt;<span class="tp">User</span>&gt; <span class="fn">getUser</span>(<span class="kw">int</span> id) {
+  <span class="kw">try</span> {
+    <span class="kw">return</span> Ok(fetchUser(id));
+  } <span class="kw">catch</span> (e) {
+    <span class="kw">return</span> Err(e.toString());
+  }
 }</code></pre></div>
+</div>
+
+<!-- ───────── EXTENSIONS & UTILITIES ───────── -->
+<div class="section" id="extensions">
+  <div class="section-header"><span class="icon">🧩</span><h2>Extensions &amp; Utilities</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Extension methods</span>
+<span class="kw">extension</span> <span class="tp">StringUtils</span> <span class="kw">on</span> <span class="tp">String</span> {
+  <span class="tp">String</span> <span class="kw">get</span> reversed =&gt; split(<span class="str">''</span>).reversed.join();
+  <span class="kw">bool get</span> isEmail =&gt; RegExp(r<span class="str">'^[\w.-]+@[\w.-]+\.\w+$'</span>).hasMatch(<span class="kw">this</span>);
+  <span class="tp">String</span> <span class="fn">truncate</span>(<span class="kw">int</span> len) =&gt; length &gt; len ? <span class="str">'${substring(0, len)}...'</span> : <span class="kw">this</span>;
+}
+<span class="str">'hello'</span>.reversed;       <span class="cmt">// 'olleh'</span>
+<span class="str">'a@b.com'</span>.isEmail;      <span class="cmt">// true</span>
+
+<span class="cmt">// Extension types (Dart 3.3+, zero-cost wrappers)</span>
+<span class="kw">extension type</span> <span class="tp">UserId</span>(<span class="kw">int</span> id) {
+  <span class="kw">bool get</span> isValid =&gt; id &gt; <span class="num">0</span>;
+}
+<span class="kw">var</span> uid = <span class="tp">UserId</span>(<span class="num">42</span>);
+uid.isValid;  <span class="cmt">// true</span>
+
+<span class="cmt">// RegExp</span>
+<span class="kw">var</span> re = RegExp(r<span class="str">'\d+'</span>);
+re.hasMatch(<span class="str">'abc123'</span>);          <span class="cmt">// true</span>
+re.firstMatch(<span class="str">'abc123'</span>)?.group(<span class="num">0</span>);  <span class="cmt">// '123'</span>
+<span class="str">'abc123def456'</span>.replaceAll(re, <span class="str">'#'</span>);  <span class="cmt">// 'abc#def#'</span>
+
+<span class="cmt">// DateTime</span>
+<span class="kw">var</span> now = DateTime.now();
+<span class="kw">var</span> date = DateTime(<span class="num">2026</span>, <span class="num">4</span>, <span class="num">1</span>);
+<span class="kw">var</span> parsed = DateTime.parse(<span class="str">'2026-04-01'</span>);
+now.difference(date).inDays;
+now.add(Duration(hours: <span class="num">3</span>));
+now.isBefore(date);  now.isAfter(date);
+
+<span class="cmt">// JSON encoding/decoding</span>
+<span class="kw">import</span> <span class="str">'dart:convert'</span>;
+<span class="kw">var</span> jsonStr = jsonEncode({<span class="str">'name'</span>: <span class="str">'Alice'</span>, <span class="str">'age'</span>: <span class="num">30</span>});
+<span class="kw">var</span> map = jsonDecode(jsonStr) <span class="kw">as</span> Map&lt;<span class="tp">String</span>, <span class="kw">dynamic</span>&gt;;
+
+<span class="cmt">// File I/O</span>
+<span class="kw">import</span> <span class="str">'dart:io'</span>;
+<span class="kw">var</span> content = <span class="kw">await</span> File(<span class="str">'data.txt'</span>).readAsString();
+<span class="kw">await</span> File(<span class="str">'output.txt'</span>).writeAsString(<span class="str">'Hello'</span>);
+<span class="kw">var</span> lines = <span class="kw">await</span> File(<span class="str">'data.txt'</span>).readAsLines();</code></pre></div>
+</div>
+
+<!-- ───────── FLUTTER ESSENTIALS ───────── -->
+<div class="section" id="flutter">
+  <div class="section-header"><span class="icon">📱</span><h2>Flutter Essentials</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// ── Stateless Widget ──</span>
+<span class="kw">class</span> <span class="tp">Greeting</span> <span class="kw">extends</span> StatelessWidget {
+  <span class="kw">final</span> <span class="tp">String</span> name;
+  <span class="kw">const</span> <span class="fn">Greeting</span>({<span class="kw">super</span>.key, <span class="kw">required this</span>.name});
+
+  @<span class="kw">override</span>
+  Widget <span class="fn">build</span>(BuildContext context) {
+    <span class="kw">return</span> Text(<span class="str">'Hello $name'</span>);
+  }
+}
+
+<span class="cmt">// ── Stateful Widget ──</span>
+<span class="kw">class</span> <span class="tp">Counter</span> <span class="kw">extends</span> StatefulWidget {
+  <span class="kw">const</span> <span class="fn">Counter</span>({<span class="kw">super</span>.key});
+  @<span class="kw">override</span>
+  State&lt;<span class="tp">Counter</span>&gt; <span class="fn">createState</span>() =&gt; _CounterState();
+}
+<span class="kw">class</span> <span class="tp">_CounterState</span> <span class="kw">extends</span> State&lt;<span class="tp">Counter</span>&gt; {
+  <span class="kw">int</span> _count = <span class="num">0</span>;
+  @<span class="kw">override</span>
+  Widget <span class="fn">build</span>(BuildContext context) {
+    <span class="kw">return</span> ElevatedButton(
+      onPressed: () =&gt; setState(() =&gt; _count++),
+      child: Text(<span class="str">'Count: $_count'</span>),
+    );
+  }
+}
+
+<span class="cmt">// ── Common Layouts ──</span>
+Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Text(<span class="str">'Title'</span>, style: Theme.of(context).textTheme.headlineMedium),
+    <span class="kw">const</span> SizedBox(height: <span class="num">8</span>),
+    Row(children: [Icon(Icons.home), Text(<span class="str">'Home'</span>)]),
+    Expanded(child: ListView.builder(
+      itemCount: items.length,
+      itemBuilder: (ctx, i) =&gt; ListTile(title: Text(items[i])),
+    )),
+  ],
+)
+
+<span class="cmt">// ── Navigation ──</span>
+Navigator.push(context, MaterialPageRoute(builder: (_) =&gt; DetailPage()));
+Navigator.pop(context);
+Navigator.pushNamed(context, <span class="str">'/detail'</span>, arguments: {<span class="str">'id'</span>: <span class="num">42</span>});
+
+<span class="cmt">// GoRouter (declarative)</span>
+<span class="kw">final</span> router = GoRouter(routes: [
+  GoRoute(path: <span class="str">'/'</span>, builder: (_, __) =&gt; HomePage()),
+  GoRoute(path: <span class="str">'/detail/:id'</span>, builder: (_, state) =&gt;
+      DetailPage(id: state.pathParameters[<span class="str">'id'</span>]!)),
+]);
+
+<span class="cmt">// ── State Management (Riverpod) ──</span>
+<span class="kw">final</span> counterProvider = StateProvider&lt;<span class="kw">int</span>&gt;((_) =&gt; <span class="num">0</span>);
+
+<span class="kw">class</span> <span class="tp">MyWidget</span> <span class="kw">extends</span> ConsumerWidget {
+  @<span class="kw">override</span>
+  Widget <span class="fn">build</span>(BuildContext context, WidgetRef ref) {
+    <span class="kw">final</span> count = ref.watch(counterProvider);
+    <span class="kw">return</span> ElevatedButton(
+      onPressed: () =&gt; ref.read(counterProvider.notifier).state++,
+      child: Text(<span class="str">'$count'</span>),
+    );
+  }
+}
+
+<span class="cmt">// AsyncNotifierProvider (Riverpod)</span>
+<span class="kw">final</span> usersProvider = AsyncNotifierProvider&lt;<span class="tp">UsersNotifier</span>, List&lt;<span class="tp">User</span>&gt;&gt;(
+    <span class="tp">UsersNotifier</span>.new);
+
+<span class="kw">class</span> <span class="tp">UsersNotifier</span> <span class="kw">extends</span> AsyncNotifier&lt;List&lt;<span class="tp">User</span>&gt;&gt; {
+  @<span class="kw">override</span>
+  Future&lt;List&lt;<span class="tp">User</span>&gt;&gt; <span class="fn">build</span>() <span class="kw">async</span> =&gt; <span class="kw">await</span> api.fetchUsers();
+}
+
+<span class="cmt">// ── HTTP &amp; Dio ──</span>
+<span class="kw">final</span> dio = Dio(BaseOptions(baseUrl: <span class="str">'https://api.example.com'</span>));
+<span class="kw">final</span> response = <span class="kw">await</span> dio.get(<span class="str">'/users'</span>);
+<span class="kw">final</span> users = (response.data <span class="kw">as</span> List).map((j) =&gt; <span class="tp">User</span>.fromJson(j)).toList();
+
+<span class="cmt">// ── JSON Serialization (freezed + json_serializable) ──</span>
+@freezed
+<span class="kw">class</span> <span class="tp">User</span> <span class="kw">with</span> _$User {
+  <span class="kw">const factory</span> <span class="fn">User</span>({
+    <span class="kw">required int</span> id,
+    <span class="kw">required</span> <span class="tp">String</span> name,
+    @Default(<span class="str">''</span>) <span class="tp">String</span> email,
+  }) = _User;
+  <span class="kw">factory</span> <span class="fn">User</span>.fromJson(Map&lt;<span class="tp">String</span>, <span class="kw">dynamic</span>&gt; json) =&gt; _$UserFromJson(json);
+}
+
+<span class="cmt">// ── Flutter CLI ──</span>
+<span class="cmt">// flutter create my_app</span>
+<span class="cmt">// flutter run -d chrome</span>
+<span class="cmt">// flutter build apk --release</span>
+<span class="cmt">// flutter build ios --release</span>
+<span class="cmt">// flutter pub add provider</span>
+<span class="cmt">// flutter pub run build_runner build</span>
+<span class="cmt">// dart run build_runner watch --delete-conflicting-outputs</span></code></pre></div>
 </div>
 
 

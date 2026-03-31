@@ -1,58 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Screen Resolutions Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Screen Resolutions</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Screen Resolutions Cheatsheet</h1>
-  <p class="subtitle">Display sizes, pixel densities, aspect ratios &amp; responsive breakpoints</p>
-  <span class="tag tag-concept">Reference</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Screen Resolutions Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Screen Resolutions</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Screen Resolutions Cheatsheet</h1><p class="subtitle">Display resolutions, DPI &amp; pixel density reference</p><span class="tag tag-concept">Reference</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#standard">Standard Resolutions</a>
+    <a href="#mobile">Mobile Devices</a>
+    <a href="#apple">Apple Devices</a>
+    <a href="#dpi">DPI &amp; Pixel Density</a>
+    <a href="#breakpoints">CSS Breakpoints</a>
+    <a href="#icons">Icon Sizes</a>
+</div></div>
+<div class="section" id="standard"><div class="section-header"><span class="icon">🖥️</span><h2>Standard Resolutions</h2></div><div class="code-wrapper"><pre><code>Name         Width  Height  Pixels(M)
+VGA           640    480     0.3
+SVGA          800    600     0.5
+XGA          1024    768     0.8
+HD (720p)    1280    720     0.9
+WXGA         1366    768     1.0
+HD+          1600    900     1.4
+FHD (1080p)  1920   1080     2.1
+WUXGA        1920   1200     2.3
+QHD (1440p)  2560   1440     3.7
+WQHD+        3440   1440     5.0
+4K UHD       3840   2160     8.3
+5K           5120   2880    14.7
+8K UHD       7680   4320    33.2</code></pre></div></div>
+<div class="section" id="mobile"><div class="section-header"><span class="icon">📱</span><h2>Mobile Devices</h2></div><div class="code-wrapper"><pre><code>Device                Resolution   PPI    Scale
+iPhone SE             1334 × 750   326    @2x
+iPhone 14             2532 × 1170  460    @3x
+iPhone 14 Pro         2556 × 1179  460    @3x
+iPhone 14 Pro Max     2796 × 1290  460    @3x
+iPhone 15 Pro         2556 × 1179  460    @3x
+iPhone 15 Pro Max     2796 × 1290  460    @3x
+Samsung S24           2340 × 1080  416    3x
+Samsung S24 Ultra     3120 × 1440  505    4x
+Pixel 8               2400 × 1080  428    2.5x
+Pixel 8 Pro           2992 × 1344  489    3.5x</code></pre></div></div>
+<div class="section" id="apple"><div class="section-header"><span class="icon">🍎</span><h2>Apple Devices</h2></div><div class="code-wrapper"><pre><code>Device                Res (native)     Scale  Logical
+MacBook Air 13" M2    2560 × 1664      @2x    1280 × 832
+MacBook Air 15" M2    2880 × 1864      @2x    1440 × 932
+MacBook Pro 14"       3024 × 1964      @2x    1512 × 982
+MacBook Pro 16"       3456 × 2234      @2x    1728 × 1117
+iMac 24"              4480 × 2520      @2x    2240 × 1260
+Pro Display XDR       6016 × 3384      @2x    3008 × 1692
+iPad 10th gen         2360 × 1640      @2x    1180 × 820
+iPad Air M2           2360 × 1640      @2x    1180 × 820
+iPad Pro 11" M4       2420 × 1668      @2x    1210 × 834
+iPad Pro 13" M4       2752 × 2064      @2x    1376 × 1032
+Apple Watch Ultra     502 × 410        @2x    251 × 205</code></pre></div></div>
+<div class="section" id="dpi"><div class="section-header"><span class="icon">🔍</span><h2>DPI &amp; Pixel Density</h2></div><div class="code-wrapper"><pre><code>DPI    Density    CSS Ratio    Usage
+ 72    1x (ldpi)  1            Old Mac
+ 96    1x (mdpi)  1            Windows std
+144    1.5x       1.5          Some Android
+160    1x         1            Android mdpi
+192    2x         2            Android xhdpi
+240    2.5x       2.5          Android
+320    2x         2            Retina @2x
+326    2x         2            iPhone std
+401    ~3x        3            iPhone Plus
+460    3x         3            iPhone Pro
+570    3.5x       3.5          Modern flagship
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt">/* CSS media query for Retina */</span>
+@media (-webkit-min-device-pixel-ratio: 2),
+       (min-resolution: 192dpi) {
+  <span class="cmt">/* high-DPI styles */</span>
+}</code></pre></div></div>
+<div class="section" id="breakpoints"><div class="section-header"><span class="icon">📊</span><h2>CSS Breakpoints</h2></div><div class="code-wrapper"><pre><code><span class="cmt">/* Tailwind CSS defaults */</span>
+sm:   640px     <span class="cmt">Small devices</span>
+md:   768px     <span class="cmt">Medium (tablets)</span>
+lg:   1024px    <span class="cmt">Large (laptops)</span>
+xl:   1280px    <span class="cmt">Extra large</span>
+2xl:  1536px    <span class="cmt">2XL screens</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Screen Resolutions content.</div>
-</div>
+<span class="cmt">/* Bootstrap 5 defaults */</span>
+sm:   576px
+md:   768px
+lg:   992px
+xl:   1200px
+xxl:  1400px
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Screen Resolutions basics coming soon...</span></code></pre></div>
-</div>
-
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Screen Resolutions patterns coming soon...</span></code></pre></div>
-</div>
-
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Screen Resolutions Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt">/* Mobile-first media queries */</span>
+@media (min-width: 640px)  { <span class="cmt">/* sm */</span> }
+@media (min-width: 768px)  { <span class="cmt">/* md */</span> }
+@media (min-width: 1024px) { <span class="cmt">/* lg */</span> }
+@media (min-width: 1280px) { <span class="cmt">/* xl */</span> }</code></pre></div></div>
+<div class="section" id="icons"><div class="section-header"><span class="icon">🎯</span><h2>Icon Sizes</h2></div><div class="code-wrapper"><pre><code>Platform        Sizes (px)
+Favicon         16, 32, 48, 64
+Apple Touch     180 × 180
+Android         48, 72, 96, 144, 192, 512
+iOS App Icons   20, 29, 40, 58, 60, 76, 80,
+                87, 120, 152, 167, 180, 1024
+macOS App       16, 32, 64, 128, 256, 512, 1024
+Google Play     512 × 512
+App Store       1024 × 1024
+PWA Manifest    192, 512
+Microsoft       44, 50, 150, 310
+Twitter Card    120 × 120 min
+Open Graph      1200 × 630</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Screen Resolutions Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

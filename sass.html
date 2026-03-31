@@ -1,58 +1,196 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sass Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Sass</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Sass Cheatsheet</h1>
-  <p class="subtitle">Variables, nesting, mixins, extends, functions, partials &amp; SCSS syntax</p>
-  <span class="tag tag-lang">Language / CSS</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Sass / SCSS Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Sass / SCSS</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Sass / SCSS Cheatsheet</h1><p class="subtitle">Variables, nesting, mixins, functions &amp; modules</p><span class="tag tag-lang">CSS</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#nesting">Nesting</a>
+    <a href="#variables">Variables</a>
+    <a href="#mixins">Mixins</a>
+    <a href="#extend">Extend &amp; Placeholder</a>
+    <a href="#functions">Functions</a>
+    <a href="#control">Control Flow</a>
+    <a href="#modules">Modules</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">📝</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// SCSS syntax (superset of CSS)</span>
+<span class="cmt">// File extension: .scss</span>
+<span class="cmt">// Compile: sass input.scss output.css</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Sass content.</div>
-</div>
+<span class="cmt">// Install</span>
+npm install -g sass
+<span class="cmt">// or</span>
+brew install sass/sass/sass
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Sass basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">// Watch mode</span>
+sass --watch input.scss:output.css
+sass --watch src/scss:dist/css</code></pre></div></div>
+<div class="section" id="nesting"><div class="section-header"><span class="icon">🔗</span><h2>Nesting</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Nesting selectors</span>
+.nav {
+  background: <span class="num">#333</span>;
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Sass patterns coming soon...</span></code></pre></div>
-</div>
+  ul {
+    list-style: none;
+  }
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Sass Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+  li {
+    display: inline-block;
+  }
+
+  a {
+    color: white;
+
+    &amp;:hover {        <span class="cmt">// & = parent selector</span>
+      color: <span class="num">#0af</span>;
+    }
+
+    &amp;.active {
+      font-weight: bold;
+    }
+  }
+}
+
+<span class="cmt">// Property nesting</span>
+.box {
+  border: {
+    width: <span class="num">1px</span>;
+    style: solid;
+    color: <span class="num">#ccc</span>;
+  }
+}</code></pre></div></div>
+<div class="section" id="variables"><div class="section-header"><span class="icon">💎</span><h2>Variables</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Variables with $</span>
+$primary: <span class="num">#3498db</span>;
+$font-stack: <span class="str">'Inter'</span>, sans-serif;
+$spacing: <span class="num">16px</span>;
+$radius: <span class="num">8px</span>;
+
+body {
+  font-family: $font-stack;
+  color: $primary;
+}
+
+.card {
+  padding: $spacing;
+  border-radius: $radius;
+  margin-bottom: $spacing * <span class="num">2</span>;
+}
+
+<span class="cmt">// Maps</span>
+$colors: (
+  primary: <span class="num">#3498db</span>,
+  danger:  <span class="num">#e74c3c</span>,
+  success: <span class="num">#2ecc71</span>,
+);
+
+.btn {
+  background: <span class="fn">map-get</span>($colors, primary);
+}</code></pre></div></div>
+<div class="section" id="mixins"><div class="section-header"><span class="icon">🔄</span><h2>Mixins</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Define mixin</span>
+@<span class="kw">mixin</span> flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+<span class="cmt">// Use mixin</span>
+.hero {
+  @<span class="kw">include</span> flex-center;
+  height: <span class="num">100vh</span>;
+}
+
+<span class="cmt">// Mixin with parameters</span>
+@<span class="kw">mixin</span> button($bg, $color: white) {
+  background: $bg;
+  color: $color;
+  padding: <span class="num">10px</span> <span class="num">20px</span>;
+  border: none;
+  border-radius: <span class="num">4px</span>;
+}
+
+.btn-primary { @<span class="kw">include</span> button(<span class="num">#3498db</span>); }
+.btn-danger  { @<span class="kw">include</span> button(<span class="num">#e74c3c</span>); }
+
+<span class="cmt">// Content block</span>
+@<span class="kw">mixin</span> responsive($bp) {
+  @media (min-width: $bp) { @content; }
+}
+.box { @<span class="kw">include</span> responsive(<span class="num">768px</span>) { width: <span class="num">50%</span>; } }</code></pre></div></div>
+<div class="section" id="extend"><div class="section-header"><span class="icon">🧬</span><h2>Extend &amp; Placeholder</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Extend</span>
+.message {
+  padding: <span class="num">10px</span>;
+  border: <span class="num">1px</span> solid <span class="num">#ccc</span>;
+}
+.success { @<span class="kw">extend</span> .message; color: green; }
+.error   { @<span class="kw">extend</span> .message; color: red; }
+
+<span class="cmt">// Placeholder selector (not compiled on its own)</span>
+%btn-base {
+  padding: <span class="num">10px</span> <span class="num">20px</span>;
+  border: none;
+  cursor: pointer;
+}
+.btn     { @<span class="kw">extend</span> %btn-base; }
+.btn-lg  { @<span class="kw">extend</span> %btn-base; font-size: <span class="num">1.2rem</span>; }</code></pre></div></div>
+<div class="section" id="functions"><div class="section-header"><span class="icon">⚡</span><h2>Functions</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Custom function</span>
+@<span class="kw">function</span> rem($px) {
+  @<span class="kw">return</span> $px / <span class="num">16</span> * <span class="num">1rem</span>;
+}
+h1 { font-size: <span class="fn">rem</span>(<span class="num">32</span>); }   <span class="cmt">// 2rem</span>
+
+<span class="cmt">// Built-in functions</span>
+<span class="fn">darken</span>($color, <span class="num">10%</span>)
+<span class="fn">lighten</span>($color, <span class="num">10%</span>)
+<span class="fn">mix</span>($c1, $c2, <span class="num">50%</span>)
+<span class="fn">rgba</span>($color, <span class="num">0.5</span>)
+<span class="fn">complement</span>($color)
+<span class="fn">percentage</span>(<span class="num">0.5</span>)           <span class="cmt">// 50%</span>
+<span class="fn">round</span>(<span class="num">4.6</span>)               <span class="cmt">// 5</span>
+<span class="fn">if</span>($condition, $a, $b)</code></pre></div></div>
+<div class="section" id="control"><div class="section-header"><span class="icon">🔀</span><h2>Control Flow</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Conditionals</span>
+@<span class="kw">if</span> $theme == dark {
+  background: <span class="num">#111</span>;
+} @<span class="kw">else if</span> $theme == light {
+  background: <span class="num">#fff</span>;
+} @<span class="kw">else</span> {
+  background: <span class="num">#888</span>;
+}
+
+<span class="cmt">// Each loop</span>
+$sizes: sm, md, lg;
+@<span class="kw">each</span> $size <span class="kw">in</span> $sizes {
+  .text-#{$size} { font-size: #{$size}; }
+}
+
+<span class="cmt">// For loop</span>
+@<span class="kw">for</span> $i <span class="kw">from</span> <span class="num">1</span> <span class="kw">through</span> <span class="num">12</span> {
+  .col-#{$i} { width: <span class="num">100%</span> / <span class="num">12</span> * $i; }
+}
+
+<span class="cmt">// While loop</span>
+$i: <span class="num">1</span>;
+@<span class="kw">while</span> $i &lt;= <span class="num">5</span> {
+  .mt-#{$i} { margin-top: $i * <span class="num">8px</span>; }
+  $i: $i + <span class="num">1</span>;
+}</code></pre></div></div>
+<div class="section" id="modules"><div class="section-header"><span class="icon">📦</span><h2>Modules</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// @use (modern, recommended)</span>
+@<span class="kw">use</span> <span class="str">'variables'</span>;
+@<span class="kw">use</span> <span class="str">'mixins'</span>;
+
+.box {
+  color: variables.$primary;
+  @<span class="kw">include</span> mixins.flex-center;
+}
+
+<span class="cmt">// Namespace alias</span>
+@<span class="kw">use</span> <span class="str">'variables'</span> <span class="kw">as</span> v;
+color: v.$primary;
+
+<span class="cmt">// @forward (re-export)</span>
+@<span class="kw">forward</span> <span class="str">'variables'</span>;
+@<span class="kw">forward</span> <span class="str">'mixins'</span>;
+
+<span class="cmt">// Partial files (underscore prefix)</span>
+<span class="cmt">// _variables.scss — won't compile alone</span>
+<span class="cmt">// @use 'variables' — imports _variables.scss</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Sass / SCSS Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

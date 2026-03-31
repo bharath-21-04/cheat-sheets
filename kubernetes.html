@@ -1,58 +1,144 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Kubernetes Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Kubernetes</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Kubernetes Cheatsheet</h1>
-  <p class="subtitle">Pods, deployments, services, configmaps, secrets, ingress &amp; kubectl commands</p>
-  <span class="tag tag-fw">DevOps / Orchestration</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Kubernetes Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Kubernetes</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Kubernetes Cheatsheet</h1><p class="subtitle">kubectl commands, pods, services, deployments &amp; config</p><span class="tag tag-concept">DevOps</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#kubectl">kubectl Basics</a>
+    <a href="#pods">Pods</a>
+    <a href="#deploy">Deployments</a>
+    <a href="#services">Services</a>
+    <a href="#config">ConfigMaps &amp; Secrets</a>
+    <a href="#namespace">Namespaces</a>
+    <a href="#debug">Debugging</a>
+    <a href="#yaml">YAML Templates</a>
+</div></div>
+<div class="section" id="kubectl"><div class="section-header"><span class="icon">⚙️</span><h2>kubectl Basics</h2></div><div class="code-wrapper"><pre><code>kubectl version --short
+kubectl cluster-info
+kubectl get nodes
+kubectl api-resources          <span class="cmt"># list all resource types</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Context &amp; config</span>
+kubectl config get-contexts
+kubectl config use-context my-cluster
+kubectl config current-context
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Kubernetes content.</div>
-</div>
+<span class="cmt"># Output formats</span>
+kubectl get pods -o wide       <span class="cmt"># more columns</span>
+kubectl get pods -o yaml       <span class="cmt"># YAML output</span>
+kubectl get pods -o json       <span class="cmt"># JSON output</span>
+kubectl get pods --sort-by=.metadata.name</code></pre></div></div>
+<div class="section" id="pods"><div class="section-header"><span class="icon">📦</span><h2>Pods</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># List pods</span>
+kubectl get pods
+kubectl get pods -A                     <span class="cmt"># all namespaces</span>
+kubectl get pods -l app=web             <span class="cmt"># by label</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Kubernetes basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Run a pod</span>
+kubectl run nginx --image=nginx
+kubectl run -it busybox --image=busybox -- sh
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Kubernetes patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Pod lifecycle</span>
+kubectl describe pod &lt;name&gt;
+kubectl logs &lt;pod&gt;                     <span class="cmt"># stdout logs</span>
+kubectl logs &lt;pod&gt; -c &lt;container&gt;      <span class="cmt"># specific container</span>
+kubectl logs -f &lt;pod&gt;                  <span class="cmt"># follow</span>
+kubectl exec -it &lt;pod&gt; -- /bin/bash    <span class="cmt"># shell into pod</span>
+kubectl port-forward &lt;pod&gt; 8080:80
+kubectl delete pod &lt;name&gt;
+kubectl cp &lt;pod&gt;:/path ./local-path</code></pre></div></div>
+<div class="section" id="deploy"><div class="section-header"><span class="icon">🚀</span><h2>Deployments</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Create</span>
+kubectl create deployment web --image=nginx --replicas=3
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Kubernetes Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Manage</span>
+kubectl get deployments
+kubectl describe deployment web
+kubectl scale deployment web --replicas=5
+kubectl set image deployment/web nginx=nginx:1.25
+
+<span class="cmt"># Rollout</span>
+kubectl rollout status deployment/web
+kubectl rollout history deployment/web
+kubectl rollout undo deployment/web
+kubectl rollout restart deployment/web
+
+<span class="cmt"># Autoscale</span>
+kubectl autoscale deployment web --min=2 --max=10 --cpu-percent=80</code></pre></div></div>
+<div class="section" id="services"><div class="section-header"><span class="icon">🌐</span><h2>Services</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Expose deployment</span>
+kubectl expose deployment web --port=80 --type=ClusterIP
+kubectl expose deployment web --port=80 --type=NodePort
+kubectl expose deployment web --port=80 --type=LoadBalancer
+
+kubectl get services
+kubectl describe service web
+kubectl delete service web
+
+<span class="cmt"># Service types</span>
+<span class="cmt"># ClusterIP    — internal only (default)</span>
+<span class="cmt"># NodePort     — expose on node IP:port</span>
+<span class="cmt"># LoadBalancer — external load balancer</span>
+<span class="cmt"># ExternalName — CNAME alias</span></code></pre></div></div>
+<div class="section" id="config"><div class="section-header"><span class="icon">🔐</span><h2>ConfigMaps &amp; Secrets</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># ConfigMap</span>
+kubectl create configmap myconfig --from-literal=KEY=value
+kubectl create configmap myconfig --from-file=config.yaml
+kubectl get configmaps
+kubectl describe configmap myconfig
+
+<span class="cmt"># Secrets</span>
+kubectl create secret generic mysecret --from-literal=pass=s3cret
+kubectl get secrets
+kubectl describe secret mysecret
+
+<span class="cmt"># Use in pod</span>
+envFrom:
+  - configMapRef:
+      name: myconfig
+  - secretRef:
+      name: mysecret</code></pre></div></div>
+<div class="section" id="namespace"><div class="section-header"><span class="icon">📂</span><h2>Namespaces</h2></div><div class="code-wrapper"><pre><code>kubectl get namespaces
+kubectl create namespace staging
+kubectl delete namespace staging
+
+<span class="cmt"># Work in a namespace</span>
+kubectl get pods -n staging
+kubectl apply -f app.yaml -n staging
+
+<span class="cmt"># Set default namespace</span>
+kubectl config set-context --current --namespace=staging</code></pre></div></div>
+<div class="section" id="debug"><div class="section-header"><span class="icon">🔧</span><h2>Debugging</h2></div><div class="code-wrapper"><pre><code>kubectl get events --sort-by=.metadata.creationTimestamp
+kubectl top nodes              <span class="cmt"># resource usage</span>
+kubectl top pods
+kubectl describe pod &lt;name&gt;    <span class="cmt"># check Events section</span>
+kubectl logs &lt;pod&gt; --previous  <span class="cmt"># crashed container logs</span>
+
+<span class="cmt"># Debug container</span>
+kubectl debug -it &lt;pod&gt; --image=busybox
+
+<span class="cmt"># Dry run</span>
+kubectl apply -f app.yaml --dry-run=client
+kubectl diff -f app.yaml</code></pre></div></div>
+<div class="section" id="yaml"><div class="section-header"><span class="icon">📄</span><h2>YAML Templates</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Deployment</span>
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.25
+        ports:
+        - containerPort: 80
+
+<span class="cmt"># Apply / Delete</span>
+kubectl apply -f deployment.yaml
+kubectl delete -f deployment.yaml</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Kubernetes Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

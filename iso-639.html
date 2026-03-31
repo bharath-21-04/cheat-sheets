@@ -1,58 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ISO 639-1 Language Codes Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ ISO 639-1 Language Codes</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>ISO 639-1 Language Codes Cheatsheet</h1>
-  <p class="subtitle">Language codes, country codes, locale identifiers &amp; i18n reference</p>
-  <span class="tag tag-concept">Reference</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>ISO 639 Language Codes Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ ISO 639 Language Codes</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>ISO 639 Language Codes Cheatsheet</h1><p class="subtitle">Two-letter and three-letter language codes</p><span class="tag tag-concept">Reference</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#common">Common Codes</a>
+    <a href="#european">European</a>
+    <a href="#asian">Asian</a>
+    <a href="#other">Other Languages</a>
+    <a href="#locale">Locale Format</a>
+    <a href="#usage">Usage in HTML</a>
+</div></div>
+<div class="section" id="common"><div class="section-header"><span class="icon">🌐</span><h2>Common Language Codes</h2></div><div class="code-wrapper"><pre><code>Code  Lang3  Language
+en    eng    English
+es    spa    Spanish
+fr    fra    French
+de    deu    German
+it    ita    Italian
+pt    por    Portuguese
+ru    rus    Russian
+zh    zho    Chinese
+ja    jpn    Japanese
+ko    kor    Korean
+ar    ara    Arabic
+hi    hin    Hindi</code></pre></div></div>
+<div class="section" id="european"><div class="section-header"><span class="icon">🇪🇺</span><h2>European Languages</h2></div><div class="code-wrapper"><pre><code>Code  Language       Code  Language
+bg    Bulgarian      cs    Czech
+da    Danish         nl    Dutch
+el    Greek          et    Estonian
+fi    Finnish        ga    Irish
+hr    Croatian       hu    Hungarian
+is    Icelandic      lt    Lithuanian
+lv    Latvian        mk    Macedonian
+mt    Maltese        no    Norwegian
+pl    Polish         ro    Romanian
+sk    Slovak         sl    Slovenian
+sr    Serbian        sv    Swedish
+uk    Ukrainian      cy    Welsh</code></pre></div></div>
+<div class="section" id="asian"><div class="section-header"><span class="icon">🌏</span><h2>Asian Languages</h2></div><div class="code-wrapper"><pre><code>Code  Language       Code  Language
+bn    Bengali        gu    Gujarati
+he    Hebrew         id    Indonesian
+kn    Kannada        lo    Lao
+ml    Malayalam      mn    Mongolian
+ms    Malay          my    Burmese
+ne    Nepali         pa    Punjabi
+si    Sinhala        ta    Tamil
+te    Telugu         th    Thai
+tl    Tagalog        tr    Turkish
+ur    Urdu           vi    Vietnamese</code></pre></div></div>
+<div class="section" id="other"><div class="section-header"><span class="icon">🗺️</span><h2>Other Languages</h2></div><div class="code-wrapper"><pre><code>Code  Language       Code  Language
+af    Afrikaans      am    Amharic
+az    Azerbaijani    eu    Basque
+ca    Catalan        eo    Esperanto
+haw   Hawaiian       ig    Igbo
+jv    Javanese       kk    Kazakh
+km    Khmer          rw    Kinyarwanda
+la    Latin          mg    Malagasy
+so    Somali         su    Sundanese
+sw    Swahili        uz    Uzbek
+yo    Yoruba         zu    Zulu</code></pre></div></div>
+<div class="section" id="locale"><div class="section-header"><span class="icon">🏷️</span><h2>Locale Format</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Format: language_REGION  or  language-Region</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+en-US    English (US)
+en-GB    English (UK)
+en-AU    English (Australia)
+fr-FR    French (France)
+fr-CA    French (Canada)
+pt-BR    Portuguese (Brazil)
+pt-PT    Portuguese (Portugal)
+zh-CN    Chinese (Simplified)
+zh-TW    Chinese (Traditional)
+es-MX    Spanish (Mexico)
+es-ES    Spanish (Spain)
+de-AT    German (Austria)
+ja-JP    Japanese (Japan)</code></pre></div></div>
+<div class="section" id="usage"><div class="section-header"><span class="icon">💻</span><h2>Usage in HTML &amp; APIs</h2></div><div class="code-wrapper"><pre><code><span class="cmt">&lt;!-- HTML lang attribute --&gt;</span>
+&lt;html lang="en"&gt;
+&lt;html lang="fr-CA"&gt;
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive ISO 639-1 Language Codes content.</div>
-</div>
+<span class="cmt">&lt;!-- Content language --&gt;</span>
+&lt;meta http-equiv="content-language" content="en"&gt;
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// ISO 639-1 Language Codes basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># HTTP Header</span>
+Accept-Language: en-US,en;q=0.9,fr;q=0.8
+Content-Language: en-US
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// ISO 639-1 Language Codes patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># hreflang for SEO</span>
+&lt;link rel="alternate" hreflang="es" href="/es/"&gt;
+&lt;link rel="alternate" hreflang="x-default" href="/"&gt;
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>ISO 639-1 Language Codes Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># JavaScript Intl</span>
+<span class="kw">new</span> Intl.DateTimeFormat(<span class="str">'de-DE'</span>)
+<span class="kw">new</span> Intl.NumberFormat(<span class="str">'ja-JP'</span>)</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>ISO 639 Language Codes Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

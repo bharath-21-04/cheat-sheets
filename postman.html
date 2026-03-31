@@ -1,58 +1,134 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Postman Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Postman</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Postman Cheatsheet</h1>
-  <p class="subtitle">Requests, collections, environments, tests, variables &amp; API documentation</p>
-  <span class="tag tag-fw">Toolkit / API</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Postman Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Postman</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Postman Cheatsheet</h1><p class="subtitle">API testing, collections, variables, scripts &amp; automation</p><span class="tag tag-concept">Tool</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#variables">Variables</a>
+    <a href="#tests">Test Scripts</a>
+    <a href="#prereq">Pre-request Scripts</a>
+    <a href="#collections">Collections</a>
+    <a href="#env">Environments</a>
+    <a href="#advanced">Advanced</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">📮</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt">GET    — Retrieve resource</span>
+<span class="cmt">POST   — Create resource</span>
+<span class="cmt">PUT    — Full update</span>
+<span class="cmt">PATCH  — Partial update</span>
+<span class="cmt">DELETE — Remove resource</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Postman content.</div>
-</div>
+<span class="cmt">Headers</span>
+Content-Type: application/json
+Authorization: Bearer &lt;token&gt;
+Accept: application/json
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Postman basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">Body (raw JSON)</span>
+{
+  "name": "Alice",
+  "email": "alice@test.com"
+}
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Postman patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">Query Params</span>
+GET /users?page=1&amp;limit=10</code></pre></div></div>
+<div class="section" id="variables"><div class="section-header"><span class="icon">💎</span><h2>Variables</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Variable scopes (precedence):</span>
+<span class="cmt">Local → Data → Environment → Collection → Global</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Postman Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt">Use in URL / headers / body:</span>
+{{base_url}}/api/users
+Authorization: Bearer {{token}}
+
+<span class="cmt">Set in scripts:</span>
+pm.globals.<span class="fn">set</span>(<span class="str">"key"</span>, <span class="str">"value"</span>);
+pm.environment.<span class="fn">set</span>(<span class="str">"key"</span>, <span class="str">"value"</span>);
+pm.collectionVariables.<span class="fn">set</span>(<span class="str">"key"</span>, <span class="str">"value"</span>);
+pm.variables.<span class="fn">set</span>(<span class="str">"key"</span>, <span class="str">"value"</span>);   <span class="cmt">// local</span>
+
+<span class="cmt">Get in scripts:</span>
+pm.variables.<span class="fn">get</span>(<span class="str">"key"</span>);           <span class="cmt">// auto scope</span>
+pm.environment.<span class="fn">get</span>(<span class="str">"key"</span>);</code></pre></div></div>
+<div class="section" id="tests"><div class="section-header"><span class="icon">✅</span><h2>Test Scripts</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Status code</span>
+pm.test(<span class="str">"Status 200"</span>, () =&gt; {
+    pm.response.to.have.status(<span class="num">200</span>);
+});
+
+<span class="cmt">// JSON body</span>
+pm.test(<span class="str">"Has name"</span>, () =&gt; {
+    <span class="kw">const</span> json = pm.response.<span class="fn">json</span>();
+    pm.<span class="fn">expect</span>(json.name).to.<span class="fn">eql</span>(<span class="str">"Alice"</span>);
+});
+
+<span class="cmt">// Response time</span>
+pm.test(<span class="str">"Fast response"</span>, () =&gt; {
+    pm.<span class="fn">expect</span>(pm.response.responseTime).to.be.<span class="fn">below</span>(<span class="num">500</span>);
+});
+
+<span class="cmt">// Headers</span>
+pm.test(<span class="str">"Content-Type JSON"</span>, () =&gt; {
+    pm.response.to.have.<span class="fn">header</span>(<span class="str">"Content-Type"</span>);
+});
+
+<span class="cmt">// Save response data</span>
+<span class="kw">const</span> json = pm.response.<span class="fn">json</span>();
+pm.environment.<span class="fn">set</span>(<span class="str">"userId"</span>, json.id);</code></pre></div></div>
+<div class="section" id="prereq"><div class="section-header"><span class="icon">⚡</span><h2>Pre-request Scripts</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Generate timestamp</span>
+pm.variables.<span class="fn">set</span>(<span class="str">"timestamp"</span>, Date.<span class="fn">now</span>());
+
+<span class="cmt">// Random data</span>
+pm.variables.<span class="fn">set</span>(<span class="str">"randomEmail"</span>,
+    <span class="str">`user${Math.random().toString(36).substr(2)}@test.com`</span>);
+
+<span class="cmt">// Dynamic variables (built-in)</span>
+{{$randomFirstName}}
+{{$randomEmail}}
+{{$randomInt}}
+{{$timestamp}}
+{{$guid}}</code></pre></div></div>
+<div class="section" id="collections"><div class="section-header"><span class="icon">📁</span><h2>Collections</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Collection = folder of organized requests</span>
+
+<span class="cmt">Features:</span>
+<span class="cmt">• Group related requests</span>
+<span class="cmt">• Share with team</span>
+<span class="cmt">• Run all with Collection Runner</span>
+<span class="cmt">• Export / Import as JSON</span>
+<span class="cmt">• Add collection-level variables</span>
+<span class="cmt">• Add collection-level auth</span>
+
+<span class="cmt">Collection Runner options:</span>
+<span class="cmt">• Iterations: run N times</span>
+<span class="cmt">• Delay: ms between requests</span>
+<span class="cmt">• Data file: CSV/JSON for data-driven tests</span>
+
+<span class="cmt">CLI (Newman):</span>
+npm install -g newman
+newman run collection.json -e env.json
+newman run collection.json --iteration-count 5</code></pre></div></div>
+<div class="section" id="env"><div class="section-header"><span class="icon">🌍</span><h2>Environments</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Environment = set of key-value variables</span>
+
+<span class="cmt">Common setup:</span>
+<span class="cmt">• Dev:  base_url = http://localhost:3000</span>
+<span class="cmt">• Staging: base_url = https://staging.api.com</span>
+<span class="cmt">• Prod: base_url = https://api.com</span>
+
+<span class="cmt">Switch environments via dropdown</span>
+<span class="cmt">Use {{base_url}} in requests</span>
+
+<span class="cmt">Initial vs Current value:</span>
+<span class="cmt">• Initial = shared (synced)</span>
+<span class="cmt">• Current = local only (secrets)</span></code></pre></div></div>
+<div class="section" id="advanced"><div class="section-header"><span class="icon">🔧</span><h2>Advanced</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Chain requests — save token from login</span>
+<span class="cmt">// Login response test script:</span>
+<span class="kw">const</span> json = pm.response.<span class="fn">json</span>();
+pm.environment.<span class="fn">set</span>(<span class="str">"token"</span>, json.token);
+<span class="cmt">// Next request header: Bearer {{token}}</span>
+
+<span class="cmt">// Send request from script</span>
+pm.<span class="fn">sendRequest</span>(<span class="str">"https://api.com/token"</span>, (err, res) =&gt; {
+    pm.environment.<span class="fn">set</span>(<span class="str">"token"</span>, res.<span class="fn">json</span>().token);
+});
+
+<span class="cmt">// Skip or repeat</span>
+postman.<span class="fn">setNextRequest</span>(<span class="str">"Request Name"</span>);  <span class="cmt">// jump to</span>
+postman.<span class="fn">setNextRequest</span>(<span class="kw">null</span>);             <span class="cmt">// stop runner</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Postman Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

@@ -1,58 +1,111 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>XPath Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ XPath</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>XPath Cheatsheet</h1>
-  <p class="subtitle">Axes, predicates, functions, expressions, node selection &amp; XQuery basics</p>
-  <span class="tag tag-fw">Toolkit / Query</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>XPath Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ XPath</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>XPath Cheatsheet</h1><p class="subtitle">Syntax for selecting nodes in XML/HTML documents</p><span class="tag tag-concept">Reference</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#axes">Axes</a>
+    <a href="#predicates">Predicates</a>
+    <a href="#functions">Functions</a>
+    <a href="#operators">Operators</a>
+    <a href="#patterns">Common Patterns</a>
+    <a href="#css">XPath vs CSS</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">📝</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Node selection</span>
+/              <span class="cmt">root node</span>
+//             <span class="cmt">anywhere in document</span>
+.              <span class="cmt">current node</span>
+..             <span class="cmt">parent node</span>
+@              <span class="cmt">attribute</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive XPath content.</div>
-</div>
+<span class="cmt">Examples</span>
+/html/body/div         <span class="cmt">absolute path</span>
+//div                  <span class="cmt">all divs anywhere</span>
+//div/p                <span class="cmt">p children of any div</span>
+//div//p               <span class="cmt">p descendants of any div</span>
+//@class               <span class="cmt">all class attributes</span>
+//a/@href              <span class="cmt">href of all links</span></code></pre></div></div>
+<div class="section" id="axes"><div class="section-header"><span class="icon">🔄</span><h2>Axes</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Axis — direction from context node</span>
+ancestor::div           <span class="cmt">ancestor divs</span>
+ancestor-or-self::div   <span class="cmt">self or ancestor divs</span>
+child::p                <span class="cmt">child paragraphs (default)</span>
+descendant::span        <span class="cmt">all descendant spans</span>
+descendant-or-self::*   <span class="cmt">self + descendants</span>
+following::p            <span class="cmt">all following p</span>
+following-sibling::li   <span class="cmt">following siblings</span>
+parent::div             <span class="cmt">parent if div</span>
+preceding::p            <span class="cmt">all preceding p</span>
+preceding-sibling::li   <span class="cmt">preceding siblings</span>
+self::div               <span class="cmt">self if div</span></code></pre></div></div>
+<div class="section" id="predicates"><div class="section-header"><span class="icon">🎯</span><h2>Predicates</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Filter with []</span>
+//li[1]                  <span class="cmt">first li child</span>
+//li[last()]             <span class="cmt">last li</span>
+//li[position() &lt; 3]     <span class="cmt">first two</span>
+//div[@class]            <span class="cmt">divs with class attr</span>
+//div[@class="main"]     <span class="cmt">exact match</span>
+//div[@id="app"]
+//input[@type="text"]
+//a[@href and @class]    <span class="cmt">multiple attrs</span>
+//p[text()="Hello"]      <span class="cmt">by text content</span>
+//div[count(p) &gt; 2]      <span class="cmt">divs with 3+ p children</span></code></pre></div></div>
+<div class="section" id="functions"><div class="section-header"><span class="icon">⚡</span><h2>Functions</h2></div><div class="code-wrapper"><pre><code><span class="cmt">String functions</span>
+contains(@class, "btn")        <span class="cmt">class contains "btn"</span>
+starts-with(@id, "user")       <span class="cmt">id starts with</span>
+normalize-space(text())        <span class="cmt">trim whitespace</span>
+string-length(text())          <span class="cmt">text length</span>
+concat("a", "b")               <span class="cmt">concatenation</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// XPath basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">Node functions</span>
+text()                         <span class="cmt">text content</span>
+name()                         <span class="cmt">element name</span>
+count(//li)                    <span class="cmt">count nodes</span>
+position()                     <span class="cmt">current position</span>
+last()                         <span class="cmt">last position</span>
+not(condition)                 <span class="cmt">negation</span></code></pre></div></div>
+<div class="section" id="operators"><div class="section-header"><span class="icon">🔧</span><h2>Operators</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Comparison</span>
+=   !=   &lt;   &gt;   &lt;=   &gt;=
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// XPath patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">Logical</span>
+and     or      not()
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>XPath Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt">Union</span>
+//h1 | //h2 | //h3        <span class="cmt">select all three</span>
+
+<span class="cmt">Examples</span>
+//div[@class="a" or @class="b"]
+//input[@type!="hidden"]
+//li[position() &gt;= 2 and position() &lt;= 4]</code></pre></div></div>
+<div class="section" id="patterns"><div class="section-header"><span class="icon">📋</span><h2>Common Patterns</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Class contains (like CSS .btn)</span>
+//div[contains(@class, "btn")]
+
+<span class="cmt"># Text contains</span>
+//a[contains(text(), "Click")]
+
+<span class="cmt"># Following text</span>
+//label[text()="Email"]/following-sibling::input
+
+<span class="cmt"># Nth child</span>
+//ul/li[3]
+
+<span class="cmt"># Not</span>
+//div[not(@class)]
+//div[not(contains(@class, "hidden"))]
+
+<span class="cmt"># Wildcard</span>
+//*[@id="app"]              <span class="cmt">any element with id</span>
+//div/*                     <span class="cmt">all direct children</span></code></pre></div></div>
+<div class="section" id="css"><div class="section-header"><span class="icon">🔄</span><h2>XPath vs CSS Selectors</h2></div><div class="code-wrapper"><pre><code><span class="cmt">CSS                          XPath</span>
+div                          //div
+#id                          //*[@id="id"]
+.class                       //*[contains(@class,"class")]
+div &gt; p                      //div/p
+div p                        //div//p
+div + p                      //div/following-sibling::p[1]
+div ~ p                      //div/following-sibling::p
+:first-child                 [1]
+:last-child                  [last()]
+[attr="val"]                 [@attr="val"]
+:nth-child(3)                [3]</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>XPath Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

@@ -1,58 +1,113 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HTML Character Entities Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ HTML Character Entities</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>HTML Character Entities Cheatsheet</h1>
-  <p class="subtitle">Special characters, symbols, arrows, math operators &amp; named entities</p>
-  <span class="tag tag-concept">Reference</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>HTML Entities Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ HTML Entities</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>HTML Entities Cheatsheet</h1><p class="subtitle">Named &amp; numeric character references</p><span class="tag tag-concept">Reference</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#common">Common</a>
+    <a href="#math">Math &amp; Logic</a>
+    <a href="#arrows">Arrows</a>
+    <a href="#currency">Currency</a>
+    <a href="#punctuation">Punctuation</a>
+    <a href="#greek">Greek Letters</a>
+    <a href="#numeric">Numeric Format</a>
+</div></div>
+<div class="section" id="common"><div class="section-header"><span class="icon">📝</span><h2>Common Entities</h2></div><div class="code-wrapper"><pre><code>Entity      Char  Description
+&amp;amp;       &amp;     Ampersand
+&amp;lt;        &lt;     Less than
+&amp;gt;        &gt;     Greater than
+&amp;quot;      "     Double quote
+&amp;apos;      '     Apostrophe
+&amp;nbsp;            Non-breaking space
+&amp;copy;      ©     Copyright
+&amp;reg;       ®     Registered
+&amp;trade;     ™     Trademark
+&amp;hellip;    …     Ellipsis
+&amp;mdash;     —     Em dash
+&amp;ndash;     –     En dash
+&amp;laquo;     «     Left guillemet
+&amp;raquo;     »     Right guillemet</code></pre></div></div>
+<div class="section" id="math"><div class="section-header"><span class="icon">🔢</span><h2>Math &amp; Logic Entities</h2></div><div class="code-wrapper"><pre><code>Entity        Char  Description
+&amp;plus;        +     Plus
+&amp;minus;       −     Minus
+&amp;times;       ×     Multiplication
+&amp;divide;      ÷     Division
+&amp;equals;      =     Equals
+&amp;ne;          ≠     Not equal
+&amp;lt;          <     Less than
+&amp;gt;          >     Greater than
+&amp;le;          ≤     Less or equal
+&amp;ge;          ≥     Greater or equal
+&amp;sum;         ∑     Summation
+&amp;prod;        ∏     Product
+&amp;radic;       √     Square root
+&amp;infin;       ∞     Infinity
+&amp;int;         ∫     Integral
+&amp;part;        ∂     Partial
+&amp;empty;       ∅     Empty set
+&amp;isin;        ∈     Element of
+&amp;notin;       ∉     Not element of
+&amp;sub;         ⊂     Subset</code></pre></div></div>
+<div class="section" id="arrows"><div class="section-header"><span class="icon">➡️</span><h2>Arrow Entities</h2></div><div class="code-wrapper"><pre><code>Entity        Char  Description
+&amp;larr;        ←     Left arrow
+&amp;uarr;        ↑     Up arrow
+&amp;rarr;        →     Right arrow
+&amp;darr;        ↓     Down arrow
+&amp;harr;        ↔     Left-right
+&amp;lArr;        ⇐     Double left
+&amp;rArr;        ⇒     Double right
+&amp;hArr;        ⇔     Double left-right
+&amp;crarr;       ↵     Carriage return</code></pre></div></div>
+<div class="section" id="currency"><div class="section-header"><span class="icon">💰</span><h2>Currency Entities</h2></div><div class="code-wrapper"><pre><code>Entity        Char  Description
+&amp;dollar;      $     Dollar
+&amp;cent;        ¢     Cent
+&amp;pound;       £     Pound
+&amp;yen;         ¥     Yen / Yuan
+&amp;euro;        €     Euro
+&amp;curren;      ¤     General currency
+&#8377;         ₹     Rupee (&#x20B9;)
+&#8382;         ₾     Lari
+&#8369;         ₱     Peso</code></pre></div></div>
+<div class="section" id="punctuation"><div class="section-header"><span class="icon">✏️</span><h2>Punctuation Entities</h2></div><div class="code-wrapper"><pre><code>Entity        Char  Description
+&amp;lsquo;       '    Left single quote
+&amp;rsquo;       '    Right single quote
+&amp;ldquo;       "    Left double quote
+&amp;rdquo;       "    Right double quote
+&amp;bull;        •     Bullet
+&amp;middot;      ·     Middle dot
+&amp;sect;        §     Section
+&amp;para;        ¶     Paragraph
+&amp;dagger;      †     Dagger
+&amp;Dagger;      ‡     Double dagger
+&amp;permil;      ‰     Per mille
+&amp;deg;         °     Degree
+&amp;micro;       µ     Micro</code></pre></div></div>
+<div class="section" id="greek"><div class="section-header"><span class="icon">🏛️</span><h2>Greek Letter Entities</h2></div><div class="code-wrapper"><pre><code>Uppercase         Lowercase
+&amp;Alpha;   Α      &amp;alpha;   α
+&amp;Beta;    Β      &amp;beta;    β
+&amp;Gamma;   Γ      &amp;gamma;   γ
+&amp;Delta;   Δ      &amp;delta;   δ
+&amp;Epsilon; Ε      &amp;epsilon; ε
+&amp;Theta;   Θ      &amp;theta;   θ
+&amp;Lambda;  Λ      &amp;lambda;  λ
+&amp;Pi;      Π      &amp;pi;      π
+&amp;Sigma;   Σ      &amp;sigma;   σ
+&amp;Omega;   Ω      &amp;omega;   ω
+&amp;Phi;     Φ      &amp;phi;     φ</code></pre></div></div>
+<div class="section" id="numeric"><div class="section-header"><span class="icon">🔧</span><h2>Numeric Format</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Decimal: &amp;#DDD;  Hex: &amp;#xHHHH;</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+&amp;#169;      ©     <span class="cmt">Decimal</span>
+&amp;#xA9;      ©     <span class="cmt">Hex</span>
+&amp;#8364;     €     <span class="cmt">Euro decimal</span>
+&amp;#x20AC;    €     <span class="cmt">Euro hex</span>
+&amp;#10003;    ✓     <span class="cmt">Check mark</span>
+&amp;#10007;    ✗     <span class="cmt">Ballot X</span>
+&amp;#9733;     ★     <span class="cmt">Black star</span>
+&amp;#9829;     ♥     <span class="cmt">Heart</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive HTML Character Entities content.</div>
-</div>
-
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// HTML Character Entities basics coming soon...</span></code></pre></div>
-</div>
-
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// HTML Character Entities patterns coming soon...</span></code></pre></div>
-</div>
-
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>HTML Character Entities Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Unicode emoji (hex)</span>
+&amp;#x1F600;   😀    <span class="cmt">Grinning</span>
+&amp;#x1F680;   🚀    <span class="cmt">Rocket</span>
+&amp;#x2705;    ✅    <span class="cmt">Check</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>HTML Entities Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

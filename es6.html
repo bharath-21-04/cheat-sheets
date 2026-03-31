@@ -1,58 +1,180 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ES6+ Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ ES6+</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>ES6+ Cheatsheet</h1>
-  <p class="subtitle">Arrow functions, destructuring, spread/rest, template literals, modules &amp; iterators</p>
-  <span class="tag tag-fw">JavaScript / ES6</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>ES6+ Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ ES6+</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>ES6+ Cheatsheet</h1><p class="subtitle">Modern JavaScript features — let/const, destructuring, modules &amp; more</p><span class="tag tag-lang">Language</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#vars">Variables</a>
+    <a href="#arrows">Arrow Functions</a>
+    <a href="#destruct">Destructuring</a>
+    <a href="#template">Template Literals</a>
+    <a href="#spread">Spread &amp; Rest</a>
+    <a href="#modules">Modules</a>
+    <a href="#promises">Promises &amp; Async</a>
+    <a href="#classes">Classes</a>
+    <a href="#misc">Misc Features</a>
+</div></div>
+<div class="section" id="vars"><div class="section-header"><span class="icon">📌</span><h2>Variables</h2></div><div class="code-wrapper"><pre><code><span class="kw">let</span> x = <span class="num">10</span>;        <span class="cmt">// block-scoped, reassignable</span>
+<span class="kw">const</span> y = <span class="num">20</span>;      <span class="cmt">// block-scoped, constant ref</span>
+<span class="cmt">// var is function-scoped — avoid in modern code</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt">// const doesn't mean immutable</span>
+<span class="kw">const</span> arr = [<span class="num">1</span>,<span class="num">2</span>];
+arr.<span class="fn">push</span>(<span class="num">3</span>);       <span class="cmt">// OK — mutating content</span>
+<span class="cmt">// arr = [4,5];    // Error — reassignment</span></code></pre></div></div>
+<div class="section" id="arrows"><div class="section-header"><span class="icon">⚡</span><h2>Arrow Functions</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Concise syntax</span>
+<span class="kw">const</span> add = (a, b) =&gt; a + b;
+<span class="kw">const</span> sq = x =&gt; x * x;          <span class="cmt">// single param</span>
+<span class="kw">const</span> greet = () =&gt; <span class="str">"hi"</span>;       <span class="cmt">// no params</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive ES6+ content.</div>
-</div>
+<span class="cmt">// Multi-line body</span>
+<span class="kw">const</span> calc = (a, b) =&gt; {
+    <span class="kw">const</span> sum = a + b;
+    <span class="kw">return</span> sum * <span class="num">2</span>;
+};
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// ES6+ basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">// Return object literal (wrap in parens)</span>
+<span class="kw">const</span> make = (name) =&gt; ({ name, active: <span class="kw">true</span> });
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// ES6+ patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">// No own `this` — inherits from enclosing scope</span>
+<span class="kw">const</span> obj = {
+    items: [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>],
+    log() { <span class="kw">this</span>.items.<span class="fn">forEach</span>(i =&gt; console.<span class="fn">log</span>(i)); }
+};</code></pre></div></div>
+<div class="section" id="destruct"><div class="section-header"><span class="icon">📦</span><h2>Destructuring</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Array destructuring</span>
+<span class="kw">const</span> [a, b, ...rest] = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>];
+<span class="cmt">// a=1, b=2, rest=[3,4]</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>ES6+ Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt">// Skip elements</span>
+<span class="kw">const</span> [, second] = [<span class="num">10</span>, <span class="num">20</span>];
+
+<span class="cmt">// Object destructuring</span>
+<span class="kw">const</span> { name, age } = user;
+<span class="kw">const</span> { name: n, age: a } = user;  <span class="cmt">// rename</span>
+<span class="kw">const</span> { x = <span class="num">10</span> } = {};             <span class="cmt">// default</span>
+
+<span class="cmt">// Nested</span>
+<span class="kw">const</span> { address: { city } } = user;
+
+<span class="cmt">// Function params</span>
+<span class="kw">function</span> <span class="fn">greet</span>({ name, age = <span class="num">0</span> }) {
+    <span class="kw">return</span> <span class="str">`${name} is ${age}`</span>;
+}</code></pre></div></div>
+<div class="section" id="template"><div class="section-header"><span class="icon">💬</span><h2>Template Literals</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Interpolation</span>
+<span class="kw">const</span> msg = <span class="str">`Hello, ${name}!`</span>;
+<span class="kw">const</span> math = <span class="str">`2+3 = ${2+3}`</span>;
+
+<span class="cmt">// Multi-line</span>
+<span class="kw">const</span> html = <span class="str">`
+&lt;div&gt;
+  &lt;h1&gt;${title}&lt;/h1&gt;
+  &lt;p&gt;${body}&lt;/p&gt;
+&lt;/div&gt;`</span>;
+
+<span class="cmt">// Tagged templates</span>
+<span class="kw">function</span> <span class="fn">highlight</span>(strings, ...values) {
+    <span class="kw">return</span> strings.<span class="fn">reduce</span>((r, s, i) =&gt;
+        <span class="str">`${r}${s}&lt;b&gt;${values[i]||''}&lt;/b&gt;`</span>, <span class="str">''</span>);
+}
+<span class="kw">const</span> out = highlight<span class="str">`Hello ${name}, age ${age}`</span>;</code></pre></div></div>
+<div class="section" id="spread"><div class="section-header"><span class="icon">🔄</span><h2>Spread &amp; Rest</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Spread — expand iterable</span>
+<span class="kw">const</span> a = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+<span class="kw">const</span> b = [...a, <span class="num">4</span>, <span class="num">5</span>];    <span class="cmt">// [1,2,3,4,5]</span>
+<span class="kw">const</span> copy = [...a];        <span class="cmt">// shallow copy</span>
+
+<span class="cmt">// Object spread</span>
+<span class="kw">const</span> obj = { ...defaults, ...overrides };
+
+<span class="cmt">// Rest — collect remaining</span>
+<span class="kw">function</span> <span class="fn">sum</span>(...nums) {
+    <span class="kw">return</span> nums.<span class="fn">reduce</span>((t, n) =&gt; t + n, <span class="num">0</span>);
+}
+
+<span class="cmt">// Rest in destructuring</span>
+<span class="kw">const</span> { id, ...rest } = user;</code></pre></div></div>
+<div class="section" id="modules"><div class="section-header"><span class="icon">📥</span><h2>Modules</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Named exports</span>
+<span class="kw">export</span> <span class="kw">const</span> PI = <span class="num">3.14</span>;
+<span class="kw">export</span> <span class="kw">function</span> <span class="fn">add</span>(a, b) { <span class="kw">return</span> a + b; }
+
+<span class="cmt">// Default export</span>
+<span class="kw">export default</span> <span class="kw">class</span> <span class="tp">User</span> { }
+
+<span class="cmt">// Import named</span>
+<span class="kw">import</span> { PI, add } <span class="kw">from</span> <span class="str">'./math.js'</span>;
+
+<span class="cmt">// Import default</span>
+<span class="kw">import</span> User <span class="kw">from</span> <span class="str">'./User.js'</span>;
+
+<span class="cmt">// Import all</span>
+<span class="kw">import</span> * <span class="kw">as</span> math <span class="kw">from</span> <span class="str">'./math.js'</span>;
+
+<span class="cmt">// Dynamic import</span>
+<span class="kw">const</span> mod = <span class="kw">await</span> <span class="fn">import</span>(<span class="str">'./heavy.js'</span>);
+
+<span class="cmt">// Re-export</span>
+<span class="kw">export</span> { add } <span class="kw">from</span> <span class="str">'./math.js'</span>;</code></pre></div></div>
+<div class="section" id="promises"><div class="section-header"><span class="icon">🔮</span><h2>Promises &amp; Async/Await</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Promise</span>
+<span class="kw">const</span> p = <span class="kw">new</span> <span class="fn">Promise</span>((resolve, reject) =&gt; {
+    setTimeout(() =&gt; <span class="fn">resolve</span>(<span class="str">'done'</span>), <span class="num">1000</span>);
+});
+p.<span class="fn">then</span>(val =&gt; console.<span class="fn">log</span>(val))
+ .<span class="fn">catch</span>(err =&gt; console.<span class="fn">error</span>(err))
+ .<span class="fn">finally</span>(() =&gt; console.<span class="fn">log</span>(<span class="str">'finished'</span>));
+
+<span class="cmt">// Promise combinators</span>
+Promise.<span class="fn">all</span>([p1, p2])         <span class="cmt">// all resolve</span>
+Promise.<span class="fn">allSettled</span>([p1, p2])  <span class="cmt">// all complete</span>
+Promise.<span class="fn">race</span>([p1, p2])        <span class="cmt">// first to settle</span>
+Promise.<span class="fn">any</span>([p1, p2])         <span class="cmt">// first to resolve</span>
+
+<span class="cmt">// Async / Await</span>
+<span class="kw">async function</span> <span class="fn">fetchData</span>() {
+    <span class="kw">try</span> {
+        <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'/api/data'</span>);
+        <span class="kw">const</span> data = <span class="kw">await</span> res.<span class="fn">json</span>();
+        <span class="kw">return</span> data;
+    } <span class="kw">catch</span> (err) {
+        console.<span class="fn">error</span>(err);
+    }
+}</code></pre></div></div>
+<div class="section" id="classes"><div class="section-header"><span class="icon">🏗️</span><h2>Classes</h2></div><div class="code-wrapper"><pre><code><span class="kw">class</span> <span class="tp">Animal</span> {
+    #name;  <span class="cmt">// private field</span>
+    <span class="fn">constructor</span>(name) { <span class="kw">this</span>.#name = name; }
+    <span class="fn">speak</span>() { <span class="kw">return</span> <span class="str">`${this.#name} speaks`</span>; }
+    <span class="kw">get</span> <span class="fn">info</span>() { <span class="kw">return</span> <span class="kw">this</span>.#name; }
+    <span class="kw">static</span> <span class="fn">create</span>(n) { <span class="kw">return new</span> <span class="tp">Animal</span>(n); }
+}
+
+<span class="kw">class</span> <span class="tp">Dog</span> <span class="kw">extends</span> <span class="tp">Animal</span> {
+    <span class="fn">constructor</span>(name, breed) {
+        <span class="kw">super</span>(name);
+        <span class="kw">this</span>.breed = breed;
+    }
+    <span class="fn">speak</span>() { <span class="kw">return</span> <span class="str">`${super.speak()} — Woof!`</span>; }
+}</code></pre></div></div>
+<div class="section" id="misc"><div class="section-header"><span class="icon">✨</span><h2>Misc Features</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Optional chaining</span>
+user?.address?.city          <span class="cmt">// undefined if null</span>
+
+<span class="cmt">// Nullish coalescing</span>
+<span class="kw">const</span> name = input ?? <span class="str">'default'</span>;   <span class="cmt">// only null/undefined</span>
+
+<span class="cmt">// Logical assignment</span>
+x ??= <span class="num">5</span>;  x ||= <span class="num">5</span>;  x &amp;&amp;= <span class="num">5</span>;
+
+<span class="cmt">// for..of  (iterables)</span>
+<span class="kw">for</span> (<span class="kw">const</span> item <span class="kw">of</span> arr) { }
+
+<span class="cmt">// Map &amp; Set</span>
+<span class="kw">const</span> m = <span class="kw">new</span> <span class="tp">Map</span>();  m.<span class="fn">set</span>(<span class="str">'k'</span>, <span class="str">'v'</span>);
+<span class="kw">const</span> s = <span class="kw">new</span> <span class="tp">Set</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">2</span>,<span class="num">3</span>]); <span class="cmt">// {1,2,3}</span>
+
+<span class="cmt">// Symbol</span>
+<span class="kw">const</span> id = <span class="fn">Symbol</span>(<span class="str">'id'</span>);
+
+<span class="cmt">// Array methods</span>
+arr.<span class="fn">find</span>(x =&gt; x &gt; <span class="num">3</span>)    arr.<span class="fn">findIndex</span>(...)
+arr.<span class="fn">includes</span>(<span class="num">5</span>)        arr.<span class="fn">flat</span>(<span class="num">2</span>)
+arr.<span class="fn">flatMap</span>(fn)         Object.<span class="fn">entries</span>(obj)
+Object.<span class="fn">fromEntries</span>(entries)</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>ES6+ Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

@@ -1,58 +1,139 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PyTorch Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ PyTorch</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>PyTorch Cheatsheet</h1>
-  <p class="subtitle">Tensors, autograd, neural networks, training loops, datasets &amp; GPU acceleration</p>
-  <span class="tag tag-lang">Python / AI</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>PyTorch Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ PyTorch</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>PyTorch Cheatsheet</h1><p class="subtitle">Tensors, autograd, models, training loops &amp; common operations</p><span class="tag tag-lang">AI / ML</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#tensors">Tensors</a>
+    <a href="#ops">Operations</a>
+    <a href="#autograd">Autograd</a>
+    <a href="#models">Models</a>
+    <a href="#training">Training Loop</a>
+    <a href="#data">Data Loading</a>
+    <a href="#gpu">GPU &amp; Device</a>
+</div></div>
+<div class="section" id="tensors"><div class="section-header"><span class="icon">📦</span><h2>Tensors</h2></div><div class="code-wrapper"><pre><code><span class="kw">import</span> torch
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Create tensors</span>
+x = torch.<span class="fn">tensor</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])
+x = torch.<span class="fn">zeros</span>(<span class="num">3</span>, <span class="num">4</span>)
+x = torch.<span class="fn">ones</span>(<span class="num">2</span>, <span class="num">3</span>)
+x = torch.<span class="fn">randn</span>(<span class="num">3</span>, <span class="num">4</span>)           <span class="cmt"># normal dist</span>
+x = torch.<span class="fn">rand</span>(<span class="num">3</span>, <span class="num">4</span>)            <span class="cmt"># uniform [0,1)</span>
+x = torch.<span class="fn">arange</span>(<span class="num">0</span>, <span class="num">10</span>)
+x = torch.<span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">100</span>)
+x = torch.<span class="fn">eye</span>(<span class="num">4</span>)
+x = torch.<span class="fn">empty</span>(<span class="num">3</span>, <span class="num">3</span>)
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive PyTorch content.</div>
-</div>
+<span class="cmt"># From numpy</span>
+x = torch.<span class="fn">from_numpy</span>(np_array)
+np_array = x.<span class="fn">numpy</span>()
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// PyTorch basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Properties</span>
+x.shape   x.dtype   x.device   x.requires_grad</code></pre></div></div>
+<div class="section" id="ops"><div class="section-header"><span class="icon">➕</span><h2>Operations</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Element-wise</span>
+x + y    x - y    x * y    x / y    x ** <span class="num">2</span>
+torch.<span class="fn">sqrt</span>(x)   torch.<span class="fn">exp</span>(x)   torch.<span class="fn">log</span>(x)
+torch.<span class="fn">abs</span>(x)    torch.<span class="fn">clamp</span>(x, <span class="num">0</span>, <span class="num">1</span>)
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// PyTorch patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Matrix</span>
+x @ y             <span class="cmt"># matmul</span>
+torch.<span class="fn">mm</span>(x, y)    <span class="cmt"># matmul 2D</span>
+torch.<span class="fn">bmm</span>(x, y)   <span class="cmt"># batch matmul</span>
+x.T               <span class="cmt"># transpose</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>PyTorch Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Reduction</span>
+x.<span class="fn">sum</span>()   x.<span class="fn">mean</span>()   x.<span class="fn">max</span>()   x.<span class="fn">min</span>()
+x.<span class="fn">sum</span>(dim=<span class="num">0</span>)   x.<span class="fn">argmax</span>(dim=<span class="num">1</span>)
+
+<span class="cmt"># Reshape</span>
+x.<span class="fn">view</span>(<span class="num">2</span>, -<span class="num">1</span>)    x.<span class="fn">reshape</span>(<span class="num">2</span>, -<span class="num">1</span>)
+x.<span class="fn">unsqueeze</span>(<span class="num">0</span>)   x.<span class="fn">squeeze</span>()
+x.<span class="fn">flatten</span>()      x.<span class="fn">permute</span>(<span class="num">2</span>,<span class="num">0</span>,<span class="num">1</span>)
+torch.<span class="fn">cat</span>([x,y], dim=<span class="num">0</span>)   torch.<span class="fn">stack</span>([x,y])</code></pre></div></div>
+<div class="section" id="autograd"><div class="section-header"><span class="icon">🔄</span><h2>Autograd</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Enable gradient tracking</span>
+x = torch.<span class="fn">tensor</span>([<span class="num">2.0</span>], requires_grad=<span class="kw">True</span>)
+y = x ** <span class="num">2</span> + <span class="num">3</span> * x + <span class="num">1</span>
+y.<span class="fn">backward</span>()           <span class="cmt"># compute gradients</span>
+x.grad                  <span class="cmt"># dy/dx = 2x + 3 = 7</span>
+
+<span class="cmt"># Detach from graph</span>
+z = x.<span class="fn">detach</span>()
+<span class="kw">with</span> torch.<span class="fn">no_grad</span>():
+    <span class="cmt"># inference only</span>
+    pred = model(x)
+
+<span class="cmt"># Zero gradients</span>
+optimizer.<span class="fn">zero_grad</span>()</code></pre></div></div>
+<div class="section" id="models"><div class="section-header"><span class="icon">🏗️</span><h2>Building Models</h2></div><div class="code-wrapper"><pre><code><span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+
+<span class="kw">class</span> <span class="tp">Net</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        <span class="fn">super</span>().__init__()
+        self.fc1 = nn.<span class="fn">Linear</span>(<span class="num">784</span>, <span class="num">128</span>)
+        self.fc2 = nn.<span class="fn">Linear</span>(<span class="num">128</span>, <span class="num">10</span>)
+        self.relu = nn.<span class="fn">ReLU</span>()
+        self.dropout = nn.<span class="fn">Dropout</span>(<span class="num">0.2</span>)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        x = self.relu(self.fc1(x))
+        x = self.dropout(x)
+        <span class="kw">return</span> self.fc2(x)
+
+<span class="cmt"># Sequential</span>
+model = nn.<span class="fn">Sequential</span>(
+    nn.<span class="fn">Linear</span>(<span class="num">784</span>, <span class="num">128</span>),
+    nn.<span class="fn">ReLU</span>(),
+    nn.<span class="fn">Linear</span>(<span class="num">128</span>, <span class="num">10</span>)
+)
+
+<span class="cmt"># Common layers</span>
+nn.Linear   nn.Conv2d   nn.LSTM   nn.GRU
+nn.BatchNorm1d   nn.LayerNorm   nn.Embedding</code></pre></div></div>
+<div class="section" id="training"><div class="section-header"><span class="icon">🏋️</span><h2>Training Loop</h2></div><div class="code-wrapper"><pre><code>model = <span class="fn">Net</span>()
+criterion = nn.<span class="fn">CrossEntropyLoss</span>()
+optimizer = torch.optim.<span class="fn">Adam</span>(model.parameters(), lr=<span class="num">0.001</span>)
+
+<span class="kw">for</span> epoch <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>):
+    model.<span class="fn">train</span>()
+    <span class="kw">for</span> batch_x, batch_y <span class="kw">in</span> train_loader:
+        optimizer.<span class="fn">zero_grad</span>()
+        output = model(batch_x)
+        loss = criterion(output, batch_y)
+        loss.<span class="fn">backward</span>()
+        optimizer.<span class="fn">step</span>()
+
+    <span class="cmt"># Validation</span>
+    model.<span class="fn">eval</span>()
+    <span class="kw">with</span> torch.<span class="fn">no_grad</span>():
+        <span class="kw">for</span> val_x, val_y <span class="kw">in</span> val_loader:
+            pred = model(val_x)
+
+<span class="cmt"># Save / Load</span>
+torch.<span class="fn">save</span>(model.state_dict(), <span class="str">"model.pth"</span>)
+model.<span class="fn">load_state_dict</span>(torch.<span class="fn">load</span>(<span class="str">"model.pth"</span>))</code></pre></div></div>
+<div class="section" id="data"><div class="section-header"><span class="icon">📊</span><h2>Data Loading</h2></div><div class="code-wrapper"><pre><code><span class="kw">from</span> torch.utils.data <span class="kw">import</span> Dataset, DataLoader
+
+<span class="kw">class</span> <span class="tp">MyDataset</span>(Dataset):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, X, y):
+        self.X = torch.<span class="fn">tensor</span>(X, dtype=torch.float32)
+        self.y = torch.<span class="fn">tensor</span>(y, dtype=torch.long)
+    <span class="kw">def</span> <span class="fn">__len__</span>(self): <span class="kw">return</span> <span class="fn">len</span>(self.X)
+    <span class="kw">def</span> <span class="fn">__getitem__</span>(self, idx): <span class="kw">return</span> self.X[idx], self.y[idx]
+
+loader = <span class="fn">DataLoader</span>(dataset, batch_size=<span class="num">32</span>, shuffle=<span class="kw">True</span>, num_workers=<span class="num">4</span>)</code></pre></div></div>
+<div class="section" id="gpu"><div class="section-header"><span class="icon">🖥️</span><h2>GPU &amp; Device</h2></div><div class="code-wrapper"><pre><code>device = torch.device(<span class="str">"cuda"</span> <span class="kw">if</span> torch.cuda.<span class="fn">is_available</span>() <span class="kw">else</span> <span class="str">"cpu"</span>)
+model = model.<span class="fn">to</span>(device)
+x = x.<span class="fn">to</span>(device)
+
+<span class="cmt"># Apple Silicon</span>
+device = torch.device(<span class="str">"mps"</span> <span class="kw">if</span> torch.backends.mps.<span class="fn">is_available</span>() <span class="kw">else</span> <span class="str">"cpu"</span>)
+
+<span class="cmt"># Multi-GPU</span>
+model = nn.<span class="fn">DataParallel</span>(model)
+
+<span class="cmt"># Memory</span>
+torch.cuda.<span class="fn">empty_cache</span>()
+torch.cuda.<span class="fn">memory_summary</span>()</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>PyTorch Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

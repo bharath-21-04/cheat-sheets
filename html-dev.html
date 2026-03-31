@@ -1,58 +1,166 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HTML Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ HTML</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>HTML Cheatsheet</h1>
-  <p class="subtitle">Semantic elements, forms, attributes, meta tags, accessibility &amp; best practices</p>
-  <span class="tag tag-lang">Language / Markup</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>HTML Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ HTML</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>HTML Cheatsheet</h1><p class="subtitle">Elements, attributes, forms, semantic tags &amp; best practices</p><span class="tag tag-lang">Language</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#boiler">Boilerplate</a>
+    <a href="#text">Text Elements</a>
+    <a href="#lists">Lists &amp; Tables</a>
+    <a href="#forms">Forms</a>
+    <a href="#semantic">Semantic HTML</a>
+    <a href="#media">Media</a>
+    <a href="#meta">Meta &amp; Head</a>
+    <a href="#entities">Entities</a>
+</div></div>
+<div class="section" id="boiler"><div class="section-header"><span class="icon">📝</span><h2>Boilerplate</h2></div><div class="code-wrapper"><pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=<span class="str">"en"</span>&gt;
+&lt;head&gt;
+  &lt;meta charset=<span class="str">"UTF-8"</span>&gt;
+  &lt;meta name=<span class="str">"viewport"</span>
+    content=<span class="str">"width=device-width, initial-scale=1.0"</span>&gt;
+  &lt;meta name=<span class="str">"description"</span> content=<span class="str">"Page description"</span>&gt;
+  &lt;title&gt;Page Title&lt;/title&gt;
+  &lt;link rel=<span class="str">"stylesheet"</span> href=<span class="str">"styles.css"</span>&gt;
+  &lt;link rel=<span class="str">"icon"</span> href=<span class="str">"favicon.ico"</span>&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Hello World&lt;/h1&gt;
+  &lt;script src=<span class="str">"app.js"</span>&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre></div></div>
+<div class="section" id="text"><div class="section-header"><span class="icon">📄</span><h2>Text Elements</h2></div><div class="code-wrapper"><pre><code>&lt;h1&gt; to &lt;h6&gt;      <span class="cmt">Headings</span>
+&lt;p&gt;              <span class="cmt">Paragraph</span>
+&lt;br&gt;             <span class="cmt">Line break</span>
+&lt;hr&gt;             <span class="cmt">Horizontal rule</span>
+&lt;strong&gt;          <span class="cmt">Bold (semantic)</span>
+&lt;em&gt;             <span class="cmt">Italic (semantic)</span>
+&lt;b&gt; &lt;i&gt;          <span class="cmt">Bold / Italic (visual)</span>
+&lt;mark&gt;           <span class="cmt">Highlight</span>
+&lt;del&gt;            <span class="cmt">Strikethrough</span>
+&lt;ins&gt;            <span class="cmt">Inserted text</span>
+&lt;sub&gt; &lt;sup&gt;      <span class="cmt">Subscript / Superscript</span>
+&lt;code&gt;           <span class="cmt">Inline code</span>
+&lt;pre&gt;            <span class="cmt">Preformatted text</span>
+&lt;blockquote&gt;     <span class="cmt">Block quotation</span>
+&lt;abbr&gt;           <span class="cmt">Abbreviation</span>
+&lt;a href=<span class="str">"url"</span>&gt;  <span class="cmt">Hyperlink</span>
+&lt;span&gt;           <span class="cmt">Inline container</span>
+&lt;div&gt;            <span class="cmt">Block container</span></code></pre></div></div>
+<div class="section" id="lists"><div class="section-header"><span class="icon">📋</span><h2>Lists &amp; Tables</h2></div><div class="code-wrapper"><pre><code><span class="cmt">&lt;!-- Unordered list --&gt;</span>
+&lt;ul&gt;
+  &lt;li&gt;Item 1&lt;/li&gt;
+  &lt;li&gt;Item 2&lt;/li&gt;
+&lt;/ul&gt;
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt">&lt;!-- Ordered list --&gt;</span>
+&lt;ol type=<span class="str">"1"</span>&gt;  <span class="cmt">&lt;!-- 1, A, a, I, i --&gt;</span>
+  &lt;li&gt;First&lt;/li&gt;
+  &lt;li&gt;Second&lt;/li&gt;
+&lt;/ol&gt;
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive HTML content.</div>
-</div>
+<span class="cmt">&lt;!-- Description list --&gt;</span>
+&lt;dl&gt;
+  &lt;dt&gt;Term&lt;/dt&gt;
+  &lt;dd&gt;Definition&lt;/dd&gt;
+&lt;/dl&gt;
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// HTML basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">&lt;!-- Table --&gt;</span>
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Age&lt;/th&gt;&lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;&lt;td&gt;Alice&lt;/td&gt;&lt;td&gt;30&lt;/td&gt;&lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;</code></pre></div></div>
+<div class="section" id="forms"><div class="section-header"><span class="icon">📝</span><h2>Forms</h2></div><div class="code-wrapper"><pre><code>&lt;form action=<span class="str">"/submit"</span> method=<span class="str">"POST"</span>&gt;
+  &lt;label for=<span class="str">"name"</span>&gt;Name&lt;/label&gt;
+  &lt;input type=<span class="str">"text"</span> id=<span class="str">"name"</span> name=<span class="str">"name"</span> required&gt;
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// HTML patterns coming soon...</span></code></pre></div>
-</div>
+  &lt;input type=<span class="str">"email"</span> placeholder=<span class="str">"Email"</span>&gt;
+  &lt;input type=<span class="str">"password"</span>&gt;
+  &lt;input type=<span class="str">"number"</span> min=<span class="str">"0"</span> max=<span class="str">"100"</span>&gt;
+  &lt;input type=<span class="str">"date"</span>&gt;
+  &lt;input type=<span class="str">"file"</span> accept=<span class="str">"image/*"</span>&gt;
+  &lt;input type=<span class="str">"range"</span> min=<span class="str">"0"</span> max=<span class="str">"100"</span>&gt;
+  &lt;input type=<span class="str">"checkbox"</span>&gt; Agree
+  &lt;input type=<span class="str">"radio"</span> name=<span class="str">"size"</span> value=<span class="str">"s"</span>&gt; Small
+  &lt;input type=<span class="str">"hidden"</span> name=<span class="str">"csrf"</span> value=<span class="str">"token"</span>&gt;
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>HTML Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+  &lt;select name=<span class="str">"color"</span>&gt;
+    &lt;option value=<span class="str">"red"</span>&gt;Red&lt;/option&gt;
+    &lt;option value=<span class="str">"blue"</span>&gt;Blue&lt;/option&gt;
+  &lt;/select&gt;
+
+  &lt;textarea rows=<span class="str">"4"</span>&gt;&lt;/textarea&gt;
+  &lt;button type=<span class="str">"submit"</span>&gt;Submit&lt;/button&gt;
+&lt;/form&gt;</code></pre></div></div>
+<div class="section" id="semantic"><div class="section-header"><span class="icon">🏗️</span><h2>Semantic HTML</h2></div><div class="code-wrapper"><pre><code>&lt;header&gt;       <span class="cmt">Page/section header</span>
+&lt;nav&gt;          <span class="cmt">Navigation links</span>
+&lt;main&gt;         <span class="cmt">Main content (once per page)</span>
+&lt;article&gt;      <span class="cmt">Self-contained content</span>
+&lt;section&gt;      <span class="cmt">Thematic grouping</span>
+&lt;aside&gt;        <span class="cmt">Sidebar content</span>
+&lt;footer&gt;       <span class="cmt">Page/section footer</span>
+&lt;figure&gt;       <span class="cmt">Image + caption container</span>
+&lt;figcaption&gt;   <span class="cmt">Figure caption</span>
+&lt;details&gt;      <span class="cmt">Collapsible content</span>
+&lt;summary&gt;      <span class="cmt">Details heading</span>
+&lt;time&gt;         <span class="cmt">Date/time</span>
+&lt;dialog&gt;       <span class="cmt">Modal dialog</span>
+&lt;template&gt;     <span class="cmt">Hidden template</span></code></pre></div></div>
+<div class="section" id="media"><div class="section-header"><span class="icon">🎬</span><h2>Media</h2></div><div class="code-wrapper"><pre><code><span class="cmt">&lt;!-- Image --&gt;</span>
+&lt;img src=<span class="str">"photo.jpg"</span> alt=<span class="str">"Description"</span>
+     width=<span class="str">"300"</span> loading=<span class="str">"lazy"</span>&gt;
+
+<span class="cmt">&lt;!-- Responsive image --&gt;</span>
+&lt;picture&gt;
+  &lt;source media=<span class="str">"(min-width:800px)"</span> srcset=<span class="str">"lg.jpg"</span>&gt;
+  &lt;img src=<span class="str">"sm.jpg"</span> alt=<span class="str">"Photo"</span>&gt;
+&lt;/picture&gt;
+
+<span class="cmt">&lt;!-- Video --&gt;</span>
+&lt;video controls width=<span class="str">"640"</span>&gt;
+  &lt;source src=<span class="str">"movie.mp4"</span> type=<span class="str">"video/mp4"</span>&gt;
+&lt;/video&gt;
+
+<span class="cmt">&lt;!-- Audio --&gt;</span>
+&lt;audio controls&gt;
+  &lt;source src=<span class="str">"song.mp3"</span> type=<span class="str">"audio/mpeg"</span>&gt;
+&lt;/audio&gt;
+
+<span class="cmt">&lt;!-- Iframe --&gt;</span>
+&lt;iframe src=<span class="str">"page.html"</span> width=<span class="str">"600"</span> height=<span class="str">"400"</span>&gt;&lt;/iframe&gt;</code></pre></div></div>
+<div class="section" id="meta"><div class="section-header"><span class="icon">🔧</span><h2>Meta &amp; Head</h2></div><div class="code-wrapper"><pre><code><span class="cmt">&lt;!-- Essential meta --&gt;</span>
+&lt;meta charset=<span class="str">"UTF-8"</span>&gt;
+&lt;meta name=<span class="str">"viewport"</span> content=<span class="str">"width=device-width, initial-scale=1"</span>&gt;
+&lt;meta name=<span class="str">"description"</span> content=<span class="str">"Page description"</span>&gt;
+
+<span class="cmt">&lt;!-- Open Graph (social) --&gt;</span>
+&lt;meta property=<span class="str">"og:title"</span> content=<span class="str">"Title"</span>&gt;
+&lt;meta property=<span class="str">"og:description"</span> content=<span class="str">"Description"</span>&gt;
+&lt;meta property=<span class="str">"og:image"</span> content=<span class="str">"image.jpg"</span>&gt;
+
+<span class="cmt">&lt;!-- Favicon --&gt;</span>
+&lt;link rel=<span class="str">"icon"</span> type=<span class="str">"image/png"</span> href=<span class="str">"favicon.png"</span>&gt;
+
+<span class="cmt">&lt;!-- Preload / Preconnect --&gt;</span>
+&lt;link rel=<span class="str">"preload"</span> href=<span class="str">"font.woff2"</span> as=<span class="str">"font"</span>&gt;
+&lt;link rel=<span class="str">"preconnect"</span> href=<span class="str">"https://api.com"</span>&gt;</code></pre></div></div>
+<div class="section" id="entities"><div class="section-header"><span class="icon">🔣</span><h2>Entities</h2></div><div class="code-wrapper"><pre><code>&amp;lt;        &lt;         <span class="cmt">less than</span>
+&amp;gt;        &gt;         <span class="cmt">greater than</span>
+&amp;amp;       &amp;         <span class="cmt">ampersand</span>
+&amp;quot;      "         <span class="cmt">double quote</span>
+&amp;apos;      '         <span class="cmt">apostrophe</span>
+&amp;nbsp;                <span class="cmt">non-breaking space</span>
+&amp;copy;      ©         <span class="cmt">copyright</span>
+&amp;reg;       ®         <span class="cmt">registered</span>
+&amp;trade;     ™         <span class="cmt">trademark</span>
+&amp;mdash;     —         <span class="cmt">em dash</span>
+&amp;ndash;     –         <span class="cmt">en dash</span>
+&amp;hellip;    …         <span class="cmt">ellipsis</span>
+&amp;larr;      ←         <span class="cmt">left arrow</span>
+&amp;rarr;      →         <span class="cmt">right arrow</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>HTML Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

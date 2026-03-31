@@ -1,58 +1,145 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ChatGPT Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ ChatGPT</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>ChatGPT Cheatsheet</h1>
-  <p class="subtitle">Prompt engineering, system prompts, API usage, plugins, GPTs &amp; best practices</p>
-  <span class="tag tag-fw">AI / Tool</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>ChatGPT Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ ChatGPT</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>ChatGPT Cheatsheet</h1><p class="subtitle">Prompting techniques, tips &amp; shortcuts for AI assistants</p><span class="tag tag-concept">AI</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#prompts">Prompt Patterns</a>
+    <a href="#roles">Role Prompting</a>
+    <a href="#chain">Chain of Thought</a>
+    <a href="#output">Output Control</a>
+    <a href="#coding">Coding Prompts</a>
+    <a href="#tips">Power Tips</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">🤖</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Be specific and clear</span>
+❌ "Tell me about Python"
+✅ "Explain Python list comprehensions with
+   3 examples, beginner-friendly"
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive ChatGPT content.</div>
-</div>
+<span class="cmt">Provide context</span>
+"I'm building a REST API in Node.js using
+Express. How do I add JWT authentication?"
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// ChatGPT basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">Specify format</span>
+"Give me a markdown table comparing..."
+"Respond as a numbered list"
+"Keep it under 100 words"
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// ChatGPT patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">Iterate</span>
+"Make it shorter"
+"Add error handling"
+"Explain like I'm 5"</code></pre></div></div>
+<div class="section" id="prompts"><div class="section-header"><span class="icon">📝</span><h2>Prompt Patterns</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Few-shot prompting</span>
+"Translate the following:
+ Happy → Feliz
+ Sad → Triste
+ Angry → "
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>ChatGPT Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt">Template pattern</span>
+"I want you to act as a [ROLE].
+ Your task is [TASK].
+ Here is the context: [CONTEXT].
+ Output format: [FORMAT]."
+
+<span class="cmt">Constraint prompting</span>
+"Answer in exactly 3 bullet points"
+"Use only words a 10-year-old would know"
+"Respond in valid JSON only"
+
+<span class="cmt">Iterative refinement</span>
+"Take your last answer and improve the
+ error handling. Also add type hints."</code></pre></div></div>
+<div class="section" id="roles"><div class="section-header"><span class="icon">🎭</span><h2>Role Prompting</h2></div><div class="code-wrapper"><pre><code><span class="cmt">System message examples</span>
+"You are a senior Python developer.
+ Write clean, PEP 8 compliant code."
+
+"You are a database expert. Optimize
+ this SQL query for PostgreSQL 16."
+
+"You are a technical writer. Explain
+ this concept clearly for beginners."
+
+"You are a code reviewer. Review this
+ code for bugs, security issues, and
+ suggest improvements."
+
+"You are a Unix sysadmin. Help me
+ debug this server configuration."</code></pre></div></div>
+<div class="section" id="chain"><div class="section-header"><span class="icon">🔗</span><h2>Chain of Thought</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Step-by-step reasoning</span>
+"Think step by step before answering."
+
+"Let's solve this step by step:
+ 1. First, identify the problem
+ 2. Then, list possible solutions
+ 3. Finally, recommend the best one"
+
+<span class="cmt">Explain your reasoning</span>
+"Solve this and show your work:
+ What's the time complexity of
+ merge sort? Explain why."
+
+<span class="cmt">Self-consistency</span>
+"Generate 3 different solutions to
+ this problem, then pick the best one
+ and explain why."</code></pre></div></div>
+<div class="section" id="output"><div class="section-header"><span class="icon">📋</span><h2>Output Control</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Format requests</span>
+"Return as JSON"
+"Format as a markdown table"
+"Give me a bulleted list"
+"Write as a Python function"
+"Output as CSV"
+
+<span class="cmt">Length control</span>
+"In one sentence"
+"In 3 bullet points"
+"Write a 500-word article"
+"Be concise — max 50 words"
+
+<span class="cmt">Tone control</span>
+"Professional tone"
+"Casual and friendly"
+"Technical for an expert audience"
+"ELI5 (Explain Like I'm 5)"</code></pre></div></div>
+<div class="section" id="coding"><div class="section-header"><span class="icon">💻</span><h2>Coding Prompts</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Code generation</span>
+"Write a Python function that takes a list
+ of integers and returns the top 3 most
+ frequent elements. Include type hints,
+ docstring, and handle edge cases."
+
+<span class="cmt">Code review</span>
+"Review this code for:
+ - Bugs and edge cases
+ - Performance issues
+ - Security vulnerabilities
+ - Code style improvements"
+
+<span class="cmt">Debugging</span>
+"This code gives [ERROR]. Here's the code:
+ [CODE]. What's wrong and how do I fix it?"
+
+<span class="cmt">Refactoring</span>
+"Refactor this to use [PATTERN/PRINCIPLE].
+ Explain each change you made."</code></pre></div></div>
+<div class="section" id="tips"><div class="section-header"><span class="icon">⚡</span><h2>Power Tips</h2></div><div class="code-wrapper"><pre><code><span class="cmt">• Use delimiters for clarity</span>
+  """code here""" or ```code```
+
+<span class="cmt">• Ask for alternatives</span>
+  "Give me 3 different ways to do this"
+
+<span class="cmt">• Negative prompting</span>
+  "Do NOT use any external libraries"
+  "Don't explain — just give the code"
+
+<span class="cmt">• Splitting complex tasks</span>
+  Break into sub-tasks, solve each
+
+<span class="cmt">• Temperature analogy</span>
+  "Be creative" = more varied answers
+  "Be precise" = more deterministic
+
+<span class="cmt">• Ask to verify</span>
+  "Check your answer for correctness"
+  "Are there any edge cases you missed?"</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>ChatGPT Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>
