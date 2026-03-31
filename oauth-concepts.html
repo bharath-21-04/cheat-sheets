@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OAuth &amp; Authentication Concepts Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+</head>
+<body>
+
+<nav>
+  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ OAuth &amp; Auth</span></div>
+  <div class="nav-right"><a href="index.html">All Sheets</a></div>
+</nav>
+
+<div class="container">
+
+<div class="hero">
+  <h1>OAuth &amp; Authentication Concepts</h1>
+  <p class="subtitle">OAuth 2.0, OpenID Connect, JWT, JWKS, PKCE, and modern auth patterns</p>
+  <span class="tag tag-auth">Security / Auth</span>
+</div>
+
+<div class="toc">
+  <div class="toc-title">Contents</div>
+  <div class="toc-grid">
+    <a href="#oauth2">OAuth 2.0 Overview</a>
+    <a href="#auth-code">Authorization Code Flow</a>
+    <a href="#pkce">PKCE (Proof Key)</a>
+    <a href="#client-creds">Client Credentials</a>
+    <a href="#implicit">Implicit &amp; Device Flow</a>
+    <a href="#tokens">Access &amp; Refresh Tokens</a>
+    <a href="#jwt">JWT (JSON Web Token)</a>
+    <a href="#jwt-claims">JWT Claims</a>
+    <a href="#jwks">JWKS (JSON Web Key Set)</a>
+    <a href="#oidc">OpenID Connect (OIDC)</a>
+    <a href="#scopes">Scopes &amp; Consent</a>
+    <a href="#token-introspection">Token Introspection</a>
+    <a href="#security">Security Best Practices</a>
+    <a href="#comparison">Protocol Comparison</a>
+  </div>
+</div>
+
+<!-- ===== OAUTH 2.0 OVERVIEW ===== -->
+<div class="section" id="oauth2">
+  <div class="section-header"><span class="icon">🔐</span><h2>OAuth 2.0 Overview</h2></div>
+  <p>OAuth 2.0 is an <strong>authorization framework</strong> that lets third-party apps access a user's resources without exposing their credentials. It delegates authentication to the service that hosts the user account.</p>
+
+  <h3>Key Roles</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Role</th><th>Description</th><th>Example</th></tr>
+      <tr><td><strong>Resource Owner</strong></td><td>The user who owns the data</td><td>You (the end user)</td></tr>
+      <tr><td><strong>Client</strong></td><td>The application requesting access</td><td>Your web/mobile app</td></tr>
+      <tr><td><strong>Authorization Server</strong></td><td>Issues tokens after authentication</td><td>Google, Auth0, Keycloak</td></tr>
+      <tr><td><strong>Resource Server</strong></td><td>Hosts the protected resources (API)</td><td>Google Drive API</td></tr>
+    </table>
+  </div>
+
+  <div class="note">
+    <strong>OAuth 2.0 vs Authentication:</strong> OAuth 2.0 is an <em>authorization</em> protocol — it answers "what can this app do?" not "who is this user?" For authentication (identity), you need <strong>OpenID Connect (OIDC)</strong> built on top of OAuth 2.0.
+  </div>
+
+  <h3>OAuth 2.0 Grant Types</h3>
+  <div class="diagram-box">Client App              Authorization Server          Resource Server
+    │                          │                            │
+    │─── Authorization Req ──▶│                            │
+    │◀── Authorization Grant ──│                            │
+    │                          │                            │
+    │─── Exchange Grant ──────▶│                            │
+    │◀── Access Token ─────────│                            │
+    │                          │                            │
+    │─── API Request + Token ──────────────────────────────▶│
+    │◀── Protected Resource ────────────────────────────────│</div>
+</div>
+
+<!-- ===== AUTHORIZATION CODE FLOW ===== -->
+<div class="section" id="auth-code">
+  <div class="section-header"><span class="icon">🔑</span><h2>Authorization Code Flow</h2></div>
+  <p>The most secure and commonly used flow for server-side web apps. The client never sees the user's credentials.</p>
+
+  <h3>Step-by-Step Flow</h3>
+  <div class="diagram-box">1. User clicks "Login with Google"
+2. App redirects to Authorization Server:
+   GET /authorize?
+     response_type=code&amp;
+     client_id=abc123&amp;
+     redirect_uri=https://app.com/callback&amp;
+     scope=openid profile email&amp;
+     state=random_csrf_token
+
+3. User logs in &amp; consents
+4. Auth server redirects back:
+   GET /callback?code=AUTH_CODE&amp;state=random_csrf_token
+
+5. App exchanges code for tokens (server-to-server):
+   POST /token
+     grant_type=authorization_code&amp;
+     code=AUTH_CODE&amp;
+     client_id=abc123&amp;
+     client_secret=SECRET&amp;
+     redirect_uri=https://app.com/callback
+
+6. Auth server returns: { access_token, refresh_token, id_token }</div>
+
+  <div class="note tip">
+    <strong>Why use a code?</strong> The authorization code is exchanged server-side, so the access token never passes through the browser. The <code>state</code> parameter prevents CSRF attacks.
+  </div>
+
+  <h3>Token Exchange Request</h3>
+  <div class="code-block"><pre><code><span class="cm">// Server-side token exchange</span>
+<span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'https://auth.example.com/token'</span>, {
+  method: <span class="str">'POST'</span>,
+  headers: { <span class="str">'Content-Type'</span>: <span class="str">'application/x-www-form-urlencoded'</span> },
+  body: <span class="kw">new</span> <span class="tp">URLSearchParams</span>({
+    grant_type: <span class="str">'authorization_code'</span>,
+    code: authCode,
+    client_id: <span class="str">'abc123'</span>,
+    client_secret: process.env.CLIENT_SECRET,
+    redirect_uri: <span class="str">'https://app.com/callback'</span>
+  })
+});
+<span class="kw">const</span> { access_token, refresh_token, id_token } = <span class="kw">await</span> response.<span class="fn">json</span>();</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== PKCE ===== -->
+<div class="section" id="pkce">
+  <div class="section-header"><span class="icon">🛡️</span><h2>PKCE (Proof Key for Code Exchange)</h2></div>
+  <p>PKCE (pronounced "pixy") protects the authorization code flow for <strong>public clients</strong> (SPAs, mobile apps) that cannot securely store a client secret.</p>
+
+  <h3>How PKCE Works</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Step</th><th>Action</th><th>Detail</th></tr>
+      <tr><td><strong>1</strong></td><td>Generate <code>code_verifier</code></td><td>Random string, 43–128 chars (A-Z, a-z, 0-9, -, ., _, ~)</td></tr>
+      <tr><td><strong>2</strong></td><td>Create <code>code_challenge</code></td><td><code>BASE64URL(SHA256(code_verifier))</code></td></tr>
+      <tr><td><strong>3</strong></td><td>Send challenge in /authorize</td><td><code>code_challenge=...&amp;code_challenge_method=S256</code></td></tr>
+      <tr><td><strong>4</strong></td><td>Send verifier in /token</td><td><code>code_verifier=ORIGINAL_STRING</code></td></tr>
+      <tr><td><strong>5</strong></td><td>Server verifies</td><td>Server hashes verifier and compares with stored challenge</td></tr>
+    </table>
+  </div>
+
+  <div class="code-block"><pre><code><span class="cm">// Generate PKCE code_verifier and code_challenge</span>
+<span class="kw">function</span> <span class="fn">generateCodeVerifier</span>() {
+  <span class="kw">const</span> array = <span class="kw">new</span> <span class="tp">Uint8Array</span>(<span class="num">32</span>);
+  crypto.<span class="fn">getRandomValues</span>(array);
+  <span class="kw">return</span> <span class="fn">btoa</span>(<span class="tp">String</span>.<span class="fn">fromCharCode</span>(...array))
+    .<span class="fn">replace</span>(<span class="str">/\+/g</span>, <span class="str">'-'</span>).<span class="fn">replace</span>(<span class="str">/\//g</span>, <span class="str">'_'</span>).<span class="fn">replace</span>(<span class="str">/=+$/</span>, <span class="str">''</span>);
+}
+
+<span class="kw">async function</span> <span class="fn">generateCodeChallenge</span>(verifier) {
+  <span class="kw">const</span> encoder = <span class="kw">new</span> <span class="tp">TextEncoder</span>();
+  <span class="kw">const</span> data = encoder.<span class="fn">encode</span>(verifier);
+  <span class="kw">const</span> digest = <span class="kw">await</span> crypto.subtle.<span class="fn">digest</span>(<span class="str">'SHA-256'</span>, data);
+  <span class="kw">return</span> <span class="fn">btoa</span>(<span class="tp">String</span>.<span class="fn">fromCharCode</span>(...<span class="kw">new</span> <span class="tp">Uint8Array</span>(digest)))
+    .<span class="fn">replace</span>(<span class="str">/\+/g</span>, <span class="str">'-'</span>).<span class="fn">replace</span>(<span class="str">/\//g</span>, <span class="str">'_'</span>).<span class="fn">replace</span>(<span class="str">/=+$/</span>, <span class="str">''</span>);
+}
+
+<span class="cm">// Usage in authorization URL</span>
+<span class="kw">const</span> verifier = <span class="fn">generateCodeVerifier</span>();
+<span class="kw">const</span> challenge = <span class="kw">await</span> <span class="fn">generateCodeChallenge</span>(verifier);
+<span class="cm">// Store verifier in sessionStorage for later use</span>
+
+<span class="kw">const</span> authUrl = <span class="str">`https://auth.example.com/authorize?
+  response_type=code&amp;
+  client_id=abc123&amp;
+  code_challenge=<span class="kw">${</span>challenge<span class="kw">}</span>&amp;
+  code_challenge_method=S256&amp;
+  redirect_uri=https://app.com/callback`</span>;</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <div class="note warning">
+    <strong>Always use S256:</strong> The <code>plain</code> method sends the verifier as the challenge (no hashing) — only use <code>S256</code> in production.
+  </div>
+</div>
+
+<!-- ===== CLIENT CREDENTIALS ===== -->
+<div class="section" id="client-creds">
+  <div class="section-header"><span class="icon">🤖</span><h2>Client Credentials Flow</h2></div>
+  <p>Used for <strong>machine-to-machine</strong> (M2M) communication where no user is involved — the app authenticates as itself.</p>
+
+  <div class="code-block"><pre><code><span class="cm">// Client Credentials — server-to-server auth</span>
+<span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'https://auth.example.com/token'</span>, {
+  method: <span class="str">'POST'</span>,
+  headers: {
+    <span class="str">'Content-Type'</span>: <span class="str">'application/x-www-form-urlencoded'</span>,
+    <span class="str">'Authorization'</span>: <span class="str">`Basic <span class="kw">${</span><span class="fn">btoa</span>(<span class="str">`${CLIENT_ID}:${CLIENT_SECRET}`</span>)<span class="kw">}</span>`</span>
+  },
+  body: <span class="kw">new</span> <span class="tp">URLSearchParams</span>({
+    grant_type: <span class="str">'client_credentials'</span>,
+    scope: <span class="str">'api:read api:write'</span>
+  })
+});</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <div class="note">
+    <strong>Use cases:</strong> Microservice communication, cron jobs, CI/CD pipelines, backend services calling other APIs.
+  </div>
+</div>
+
+<!-- ===== IMPLICIT & DEVICE FLOW ===== -->
+<div class="section" id="implicit">
+  <div class="section-header"><span class="icon">📱</span><h2>Implicit &amp; Device Flow</h2></div>
+
+  <h3>Implicit Flow (Deprecated)</h3>
+  <div class="note warning">
+    <strong>Deprecated in OAuth 2.1:</strong> Tokens are returned directly in the URL fragment — vulnerable to token leakage. Use <strong>Authorization Code + PKCE</strong> instead.
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Aspect</th><th>Implicit</th><th>Auth Code + PKCE</th></tr>
+      <tr><td>Token delivery</td><td>URL fragment (#access_token=...)</td><td>Server-side exchange</td></tr>
+      <tr><td>Refresh tokens</td><td>Not supported</td><td>Supported</td></tr>
+      <tr><td>Security</td><td>Vulnerable to interception</td><td>Protected by PKCE challenge</td></tr>
+      <tr><td>Status</td><td>Deprecated</td><td>Recommended</td></tr>
+    </table>
+  </div>
+
+  <h3>Device Authorization Flow</h3>
+  <p>For devices with limited input (TVs, CLI tools, IoT). User authorizes on a separate device.</p>
+  <div class="diagram-box">1. Device requests device code:
+   POST /device/code → { device_code, user_code: "ABCD-1234", verification_uri }
+
+2. Device displays: "Go to https://auth.example.com/device and enter ABCD-1234"
+
+3. User opens URL on phone/laptop, enters code, logs in, consents
+
+4. Device polls for token:
+   POST /token { grant_type=urn:ietf:params:oauth:grant-type:device_code,
+                  device_code=DEVICE_CODE }
+
+5. Once user approves → returns access_token</div>
+</div>
+
+<!-- ===== ACCESS & REFRESH TOKENS ===== -->
+<div class="section" id="tokens">
+  <div class="section-header"><span class="icon">🎟️</span><h2>Access &amp; Refresh Tokens</h2></div>
+
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Property</th><th>Access Token</th><th>Refresh Token</th></tr>
+      <tr><td><strong>Purpose</strong></td><td>Authorize API requests</td><td>Get new access tokens</td></tr>
+      <tr><td><strong>Lifetime</strong></td><td>Short (5–60 min)</td><td>Long (days–months)</td></tr>
+      <tr><td><strong>Sent to</strong></td><td>Resource Server (API)</td><td>Authorization Server only</td></tr>
+      <tr><td><strong>Format</strong></td><td>JWT or opaque string</td><td>Usually opaque</td></tr>
+      <tr><td><strong>Storage</strong></td><td>Memory (SPA) or cookie</td><td>Secure httpOnly cookie</td></tr>
+      <tr><td><strong>Revocable</strong></td><td>Not easily (until expiry)</td><td>Yes, via revocation endpoint</td></tr>
+    </table>
+  </div>
+
+  <h3>Token Refresh Flow</h3>
+  <div class="code-block"><pre><code><span class="cm">// Refresh an expired access token</span>
+<span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'https://auth.example.com/token'</span>, {
+  method: <span class="str">'POST'</span>,
+  headers: { <span class="str">'Content-Type'</span>: <span class="str">'application/x-www-form-urlencoded'</span> },
+  body: <span class="kw">new</span> <span class="tp">URLSearchParams</span>({
+    grant_type: <span class="str">'refresh_token'</span>,
+    refresh_token: storedRefreshToken,
+    client_id: <span class="str">'abc123'</span>
+  })
+});
+<span class="cm">// Returns new { access_token, refresh_token (rotated) }</span></code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <div class="note tip">
+    <strong>Refresh Token Rotation:</strong> Each use of a refresh token returns a new one and invalidates the old. If a stolen token is used, the server detects reuse and revokes the entire family.
+  </div>
+</div>
+
+<!-- ===== JWT ===== -->
+<div class="section" id="jwt">
+  <div class="section-header"><span class="icon">📝</span><h2>JWT (JSON Web Token)</h2></div>
+  <p>A compact, URL-safe token format for securely transmitting claims between parties. Consists of three Base64URL-encoded parts separated by dots.</p>
+
+  <h3>JWT Structure</h3>
+  <div class="diagram-box">eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.signature
+├── Header ──────────┤├── Payload ───────────────────┤├── Signature ──┤
+
+HEADER:              PAYLOAD:                 SIGNATURE:
+{                    {                        RSASHA256(
+  "alg": "RS256",     "sub": "user123",        base64UrlEncode(header) + "." +
+  "typ": "JWT",       "name": "John",          base64UrlEncode(payload),
+  "kid": "key-1"      "iat": 1716239022,       publicKey
+}                      "exp": 1716242622      )</div>
+
+  <h3>Common Signing Algorithms</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Algorithm</th><th>Type</th><th>Key</th><th>Use Case</th></tr>
+      <tr><td><code>HS256</code></td><td>Symmetric (HMAC)</td><td>Shared secret</td><td>Single service, internal APIs</td></tr>
+      <tr><td><code>RS256</code></td><td>Asymmetric (RSA)</td><td>Public/private key pair</td><td>Distributed systems, OIDC providers</td></tr>
+      <tr><td><code>ES256</code></td><td>Asymmetric (ECDSA)</td><td>Elliptic curve keys</td><td>Performance-critical, mobile</td></tr>
+      <tr><td><code>EdDSA</code></td><td>Asymmetric (Ed25519)</td><td>Edwards curve keys</td><td>Modern high-performance signing</td></tr>
+    </table>
+  </div>
+
+  <div class="note warning">
+    <strong>Never use <code>alg: "none"</code>:</strong> Disabling signature verification is a critical vulnerability. Always validate the <code>alg</code> header against an allowlist.
+  </div>
+</div>
+
+<!-- ===== JWT CLAIMS ===== -->
+<div class="section" id="jwt-claims">
+  <div class="section-header"><span class="icon">📋</span><h2>JWT Claims</h2></div>
+  <p>Claims are key-value pairs in the JWT payload. They carry information about the user, token, and authorization.</p>
+
+  <h3>Registered (Standard) Claims</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Claim</th><th>Full Name</th><th>Description</th><th>Example</th></tr>
+      <tr><td><code>iss</code></td><td>Issuer</td><td>Who issued this token</td><td><code>"https://auth.example.com"</code></td></tr>
+      <tr><td><code>sub</code></td><td>Subject</td><td>Unique identifier for the user</td><td><code>"user_abc123"</code></td></tr>
+      <tr><td><code>aud</code></td><td>Audience</td><td>Intended recipient(s) of the token</td><td><code>"https://api.example.com"</code></td></tr>
+      <tr><td><code>exp</code></td><td>Expiration</td><td>Epoch time when token expires</td><td><code>1716242622</code></td></tr>
+      <tr><td><code>nbf</code></td><td>Not Before</td><td>Token not valid before this time</td><td><code>1716239022</code></td></tr>
+      <tr><td><code>iat</code></td><td>Issued At</td><td>When the token was created</td><td><code>1716239022</code></td></tr>
+      <tr><td><code>jti</code></td><td>JWT ID</td><td>Unique token identifier (prevents replay)</td><td><code>"a1b2c3d4"</code></td></tr>
+    </table>
+  </div>
+
+  <h3>Common Custom Claims</h3>
+  <div class="code-block"><pre><code>{
+  <span class="str">"iss"</span>: <span class="str">"https://auth.example.com"</span>,
+  <span class="str">"sub"</span>: <span class="str">"user_abc123"</span>,
+  <span class="str">"aud"</span>: <span class="str">"https://api.example.com"</span>,
+  <span class="str">"exp"</span>: <span class="num">1716242622</span>,
+  <span class="str">"iat"</span>: <span class="num">1716239022</span>,
+  <span class="str">"scope"</span>: <span class="str">"openid profile email"</span>,
+  <span class="str">"roles"</span>: [<span class="str">"admin"</span>, <span class="str">"editor"</span>],
+  <span class="str">"org_id"</span>: <span class="str">"org_xyz"</span>,
+  <span class="str">"email"</span>: <span class="str">"john@example.com"</span>,
+  <span class="str">"email_verified"</span>: <span class="kw">true</span>
+}</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Validation Checklist</h3>
+  <ul>
+    <li>Verify <strong>signature</strong> using the correct key (from JWKS)</li>
+    <li>Check <code>exp</code> — reject expired tokens</li>
+    <li>Check <code>nbf</code> — reject tokens used too early</li>
+    <li>Check <code>iss</code> — must match your expected issuer</li>
+    <li>Check <code>aud</code> — must include your API's identifier</li>
+    <li>Check <code>alg</code> — must be in your allowlist (never accept <code>"none"</code>)</li>
+  </ul>
+</div>
+
+<!-- ===== JWKS ===== -->
+<div class="section" id="jwks">
+  <div class="section-header"><span class="icon">🔑</span><h2>JWKS (JSON Web Key Set)</h2></div>
+  <p>A JWKS is a JSON document containing the <strong>public keys</strong> used to verify JWT signatures. Published at a well-known URL by the authorization server.</p>
+
+  <h3>JWKS Endpoint</h3>
+  <div class="code-block"><pre><code><span class="cm">// Typically at: https://auth.example.com/.well-known/jwks.json</span>
+{
+  <span class="str">"keys"</span>: [
+    {
+      <span class="str">"kty"</span>: <span class="str">"RSA"</span>,            <span class="cm">// Key type</span>
+      <span class="str">"kid"</span>: <span class="str">"key-2024-01"</span>,     <span class="cm">// Key ID — matches JWT header 'kid'</span>
+      <span class="str">"use"</span>: <span class="str">"sig"</span>,             <span class="cm">// Usage: signing</span>
+      <span class="str">"alg"</span>: <span class="str">"RS256"</span>,           <span class="cm">// Algorithm</span>
+      <span class="str">"n"</span>:   <span class="str">"0vx7agoebGc..."</span>,  <span class="cm">// RSA modulus (Base64URL)</span>
+      <span class="str">"e"</span>:   <span class="str">"AQAB"</span>             <span class="cm">// RSA exponent</span>
+    }
+  ]
+}</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>How JWT + JWKS Verification Works</h3>
+  <div class="diagram-box">1. Client sends JWT to Resource Server
+2. Server reads JWT header → extracts "kid" (key ID)
+3. Server fetches JWKS from auth server (cached)
+4. Server finds the matching key by "kid"
+5. Server verifies JWT signature using the public key
+6. If valid → process the claims</div>
+
+  <h3>Key Rotation</h3>
+  <ul>
+    <li>Auth servers <strong>rotate keys periodically</strong> for security</li>
+    <li>JWKS always contains the <strong>current + recent keys</strong></li>
+    <li>The <code>kid</code> in the JWT header identifies which key was used</li>
+    <li>Resource servers should <strong>cache JWKS</strong> with a TTL (e.g. 1 hour) and re-fetch on <code>kid</code> cache miss</li>
+    <li>Never hardcode public keys — always fetch from JWKS endpoint</li>
+  </ul>
+</div>
+
+<!-- ===== OIDC ===== -->
+<div class="section" id="oidc">
+  <div class="section-header"><span class="icon">🪪</span><h2>OpenID Connect (OIDC)</h2></div>
+  <p>OIDC is an <strong>identity layer on top of OAuth 2.0</strong>. While OAuth handles authorization, OIDC adds standardized authentication — telling your app <em>who</em> the user is.</p>
+
+  <h3>What OIDC Adds to OAuth 2.0</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Feature</th><th>OAuth 2.0</th><th>OIDC (OAuth 2.0 + Identity)</th></tr>
+      <tr><td>Purpose</td><td>Authorization (access to resources)</td><td>Authentication (user identity)</td></tr>
+      <tr><td>ID Token</td><td>Not defined</td><td>JWT with user claims</td></tr>
+      <tr><td>UserInfo endpoint</td><td>Not standardized</td><td><code>/userinfo</code></td></tr>
+      <tr><td>Discovery</td><td>Not standardized</td><td><code>/.well-known/openid-configuration</code></td></tr>
+      <tr><td>Standard scopes</td><td>App-defined</td><td><code>openid</code>, <code>profile</code>, <code>email</code>, <code>address</code>, <code>phone</code></td></tr>
+    </table>
+  </div>
+
+  <h3>ID Token Claims</h3>
+  <div class="code-block"><pre><code><span class="cm">// ID token payload (returned when scope includes "openid")</span>
+{
+  <span class="str">"iss"</span>: <span class="str">"https://auth.example.com"</span>,
+  <span class="str">"sub"</span>: <span class="str">"user_abc123"</span>,
+  <span class="str">"aud"</span>: <span class="str">"client_abc123"</span>,      <span class="cm">// Your app's client_id</span>
+  <span class="str">"exp"</span>: <span class="num">1716242622</span>,
+  <span class="str">"iat"</span>: <span class="num">1716239022</span>,
+  <span class="str">"nonce"</span>: <span class="str">"n-0S6_WzA2Mj"</span>,    <span class="cm">// Prevents replay attacks</span>
+  <span class="str">"auth_time"</span>: <span class="num">1716239020</span>,     <span class="cm">// When user actually authenticated</span>
+  <span class="str">"name"</span>: <span class="str">"John Doe"</span>,
+  <span class="str">"email"</span>: <span class="str">"john@example.com"</span>,
+  <span class="str">"email_verified"</span>: <span class="kw">true</span>,
+  <span class="str">"picture"</span>: <span class="str">"https://example.com/john.jpg"</span>
+}</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Discovery Document</h3>
+  <p>Every OIDC provider publishes a discovery document at <code>/.well-known/openid-configuration</code>:</p>
+  <div class="code-block"><pre><code>{
+  <span class="str">"issuer"</span>: <span class="str">"https://auth.example.com"</span>,
+  <span class="str">"authorization_endpoint"</span>: <span class="str">"https://auth.example.com/authorize"</span>,
+  <span class="str">"token_endpoint"</span>: <span class="str">"https://auth.example.com/token"</span>,
+  <span class="str">"userinfo_endpoint"</span>: <span class="str">"https://auth.example.com/userinfo"</span>,
+  <span class="str">"jwks_uri"</span>: <span class="str">"https://auth.example.com/.well-known/jwks.json"</span>,
+  <span class="str">"scopes_supported"</span>: [<span class="str">"openid"</span>, <span class="str">"profile"</span>, <span class="str">"email"</span>],
+  <span class="str">"response_types_supported"</span>: [<span class="str">"code"</span>],
+  <span class="str">"id_token_signing_alg_values_supported"</span>: [<span class="str">"RS256"</span>]
+}</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== SCOPES ===== -->
+<div class="section" id="scopes">
+  <div class="section-header"><span class="icon">🎯</span><h2>Scopes &amp; Consent</h2></div>
+  <p>Scopes define what access the client is requesting. The user sees a consent screen listing these permissions.</p>
+
+  <h3>Standard OIDC Scopes</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Scope</th><th>Claims Returned</th></tr>
+      <tr><td><code>openid</code></td><td><code>sub</code> (required for OIDC — triggers ID token)</td></tr>
+      <tr><td><code>profile</code></td><td><code>name</code>, <code>family_name</code>, <code>given_name</code>, <code>picture</code>, <code>locale</code></td></tr>
+      <tr><td><code>email</code></td><td><code>email</code>, <code>email_verified</code></td></tr>
+      <tr><td><code>address</code></td><td><code>address</code> (structured JSON)</td></tr>
+      <tr><td><code>phone</code></td><td><code>phone_number</code>, <code>phone_number_verified</code></td></tr>
+      <tr><td><code>offline_access</code></td><td>Grants a refresh token</td></tr>
+    </table>
+  </div>
+
+  <h3>Custom API Scopes</h3>
+  <div class="code-block"><pre><code><span class="cm">// Common patterns for API scopes</span>
+<span class="str">"scope"</span>: <span class="str">"read:users write:users delete:users"</span>    <span class="cm">// Resource-based</span>
+<span class="str">"scope"</span>: <span class="str">"api.read api.write api.admin"</span>            <span class="cm">// Namespace-based</span>
+<span class="str">"scope"</span>: <span class="str">"repos:read gists:write orgs:admin"</span>       <span class="cm">// GitHub-style</span></code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== TOKEN INTROSPECTION ===== -->
+<div class="section" id="token-introspection">
+  <div class="section-header"><span class="icon">🔍</span><h2>Token Introspection &amp; Revocation</h2></div>
+
+  <h3>Token Introspection (RFC 7662)</h3>
+  <p>Allows resource servers to check if an <strong>opaque token</strong> is valid and get its metadata.</p>
+  <div class="code-block"><pre><code><span class="cm">// POST to introspection endpoint</span>
+POST /introspect
+Authorization: Basic base64(client_id:client_secret)
+Content-Type: application/x-www-form-urlencoded
+
+token=ACCESS_TOKEN&amp;token_type_hint=access_token
+
+<span class="cm">// Response</span>
+{
+  <span class="str">"active"</span>: <span class="kw">true</span>,
+  <span class="str">"sub"</span>: <span class="str">"user_abc123"</span>,
+  <span class="str">"client_id"</span>: <span class="str">"my_app"</span>,
+  <span class="str">"scope"</span>: <span class="str">"read write"</span>,
+  <span class="str">"exp"</span>: <span class="num">1716242622</span>,
+  <span class="str">"token_type"</span>: <span class="str">"Bearer"</span>
+}</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Token Revocation (RFC 7009)</h3>
+  <div class="code-block"><pre><code><span class="cm">// Revoke a token (usually refresh token on logout)</span>
+POST /revoke
+Authorization: Basic base64(client_id:client_secret)
+Content-Type: application/x-www-form-urlencoded
+
+token=REFRESH_TOKEN&amp;token_type_hint=refresh_token
+
+<span class="cm">// Returns 200 OK (always, even if token was already invalid)</span></code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <div class="note">
+    <strong>JWT vs Opaque:</strong> JWTs can be verified locally (no network call). Opaque tokens require introspection. JWTs are harder to revoke — you need a token blocklist or short expiry + refresh tokens.
+  </div>
+</div>
+
+<!-- ===== SECURITY ===== -->
+<div class="section" id="security">
+  <div class="section-header"><span class="icon">🛡️</span><h2>Security Best Practices</h2></div>
+
+  <h3>Token Storage (Frontend)</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Storage</th><th>XSS Risk</th><th>CSRF Risk</th><th>Recommendation</th></tr>
+      <tr><td><code>localStorage</code></td><td>Vulnerable</td><td>Safe</td><td>Avoid for sensitive tokens</td></tr>
+      <tr><td><code>sessionStorage</code></td><td>Vulnerable</td><td>Safe</td><td>OK for short-lived tokens</td></tr>
+      <tr><td><code>httpOnly cookie</code></td><td>Safe</td><td>Vulnerable</td><td>Best — add CSRF protection</td></tr>
+      <tr><td>In-memory variable</td><td>Safe</td><td>Safe</td><td>Best for SPAs (lost on refresh)</td></tr>
+    </table>
+  </div>
+
+  <h3>Checklist</h3>
+  <ul>
+    <li>Always use <strong>HTTPS</strong> — tokens in transit must be encrypted</li>
+    <li>Use <strong>PKCE</strong> for all public clients (SPAs, mobile, CLI)</li>
+    <li>Validate <strong>state</strong> parameter to prevent CSRF</li>
+    <li>Use <strong>nonce</strong> in OIDC to prevent replay attacks</li>
+    <li>Set short <strong>access token expiry</strong> (5–15 min)</li>
+    <li>Implement <strong>refresh token rotation</strong></li>
+    <li>Use <strong>exact redirect URI matching</strong> (no wildcards)</li>
+    <li>Store secrets server-side only — never in frontend code</li>
+    <li>Validate <code>iss</code>, <code>aud</code>, <code>exp</code> on every JWT</li>
+    <li>Use an allowlist for <code>alg</code> — reject <code>"none"</code></li>
+    <li>Implement <strong>token revocation</strong> on logout</li>
+  </ul>
+
+  <h3>Common Vulnerabilities</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Attack</th><th>Description</th><th>Prevention</th></tr>
+      <tr><td><strong>CSRF</strong></td><td>Attacker tricks user into authorizing a malicious request</td><td><code>state</code> parameter</td></tr>
+      <tr><td><strong>Token Leakage</strong></td><td>Token exposed in URL, logs, or referrer header</td><td>Use auth code flow, not implicit</td></tr>
+      <tr><td><strong>Code Interception</strong></td><td>Auth code stolen in transit (mobile deep links)</td><td>PKCE</td></tr>
+      <tr><td><strong>Replay Attack</strong></td><td>Stolen token reused</td><td><code>nonce</code>, <code>jti</code>, short expiry</td></tr>
+      <tr><td><strong>alg:none</strong></td><td>Forged JWT with disabled signature</td><td>Validate alg against allowlist</td></tr>
+      <tr><td><strong>SSRF via redirect_uri</strong></td><td>Redirect to attacker-controlled URL</td><td>Exact URI matching, pre-registered URIs</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== COMPARISON ===== -->
+<div class="section" id="comparison">
+  <div class="section-header"><span class="icon">⚖️</span><h2>Protocol &amp; Flow Comparison</h2></div>
+
+  <h3>When to Use Which Flow</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Scenario</th><th>Recommended Flow</th><th>Why</th></tr>
+      <tr><td>Server-side web app</td><td>Authorization Code</td><td>Client secret stored securely on server</td></tr>
+      <tr><td>SPA (React, Vue, etc.)</td><td>Auth Code + PKCE</td><td>No client secret; PKCE protects the flow</td></tr>
+      <tr><td>Mobile app</td><td>Auth Code + PKCE</td><td>Same as SPA; use custom URL scheme for redirect</td></tr>
+      <tr><td>CLI / device</td><td>Device Authorization</td><td>No browser; user authorizes on separate device</td></tr>
+      <tr><td>Server-to-server (M2M)</td><td>Client Credentials</td><td>No user involved; app authenticates as itself</td></tr>
+      <tr><td>Need user identity</td><td>OIDC (any flow + <code>openid</code> scope)</td><td>Returns ID token with user claims</td></tr>
+    </table>
+  </div>
+
+  <h3>OAuth 2.0 vs OAuth 2.1</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Change</th><th>OAuth 2.0</th><th>OAuth 2.1 (Draft)</th></tr>
+      <tr><td>PKCE</td><td>Optional</td><td>Required for all clients</td></tr>
+      <tr><td>Implicit flow</td><td>Allowed</td><td>Removed</td></tr>
+      <tr><td>Password grant</td><td>Allowed</td><td>Removed</td></tr>
+      <tr><td>Redirect URI</td><td>Loose matching</td><td>Exact string matching required</td></tr>
+      <tr><td>Refresh tokens</td><td>No rotation required</td><td>Rotation recommended</td></tr>
+    </table>
+  </div>
+</div>
+
+<a href="#" class="back-top">Back to top</a>
+
+<footer>
+  OAuth &amp; Authentication Concepts Cheatsheet — Quick reference for modern auth patterns
+</footer>
+
+</div>
+
+<script>
+function copyCode(btn) {
+  const code = btn.previousElementSibling.querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>

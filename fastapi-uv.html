@@ -5,23 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FastAPI &amp; UV Python Cheatsheet</title>
   <link rel="stylesheet" href="styles.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 </head>
 <body>
-<nav class="top-nav">
-  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ FastAPI &amp; UV</span></a>
-  <a class="home-link" href="index.html">← All Sheets</a>
+<nav>
+  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ FastAPI &amp; UV</span></div>
+  <div class="nav-right"><a href="index.html">All Sheets</a></div>
 </nav>
 <div class="container">
 <div class="hero">
   <h1>FastAPI &amp; UV Python</h1>
   <p class="subtitle">REST APIs, validation, auth, middleware, SQLAlchemy, background tasks, testing &amp; UV package manager</p>
-  <span class="badge">Framework</span>
+  <span class="tag tag-fw">Framework</span>
   <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Filter sections…" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
   <div class="search-count" id="searchCount"></div>
 </div>
 
-<div class="toc"><h2>Table of Contents</h2>
+<div class="toc"><div class="toc-title">Contents</div>
   <div class="toc-grid">
     <a href="#uv">UV — Python Package Manager</a>
     <a href="#setup">FastAPI Setup</a>

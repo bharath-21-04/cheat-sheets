@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Better Auth Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+</head>
+<body>
+
+<nav>
+  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Better Auth</span></div>
+  <div class="nav-right"><a href="index.html">All Sheets</a></div>
+</nav>
+
+<div class="container">
+
+<div class="hero">
+  <h1>Better Auth Cheatsheet</h1>
+  <p class="subtitle">Framework-agnostic TypeScript authentication library — email/password, OAuth, sessions, 2FA &amp; more</p>
+  <span class="tag tag-auth">Security / Auth</span>
+</div>
+
+<div class="toc">
+  <div class="toc-title">Contents</div>
+  <div class="toc-grid">
+    <a href="#overview">Overview &amp; Install</a>
+    <a href="#server-setup">Server Setup</a>
+    <a href="#client-setup">Client Setup</a>
+    <a href="#email-password">Email &amp; Password</a>
+    <a href="#oauth-providers">OAuth Providers</a>
+    <a href="#sessions">Session Management</a>
+    <a href="#middleware">Middleware &amp; Protection</a>
+    <a href="#user-management">User Management</a>
+    <a href="#two-factor">Two-Factor Auth (2FA)</a>
+    <a href="#plugins">Plugins &amp; Extensions</a>
+    <a href="#database">Database Adapters</a>
+    <a href="#react-integration">React Integration</a>
+    <a href="#nextjs">Next.js Integration</a>
+  </div>
+</div>
+
+<!-- ===== OVERVIEW ===== -->
+<div class="section" id="overview">
+  <div class="section-header"><span class="icon">📦</span><h2>Overview &amp; Installation</h2></div>
+  <p>Better Auth is a <strong>framework-agnostic</strong>, TypeScript-first authentication library. It provides a complete auth solution with built-in support for email/password, OAuth, sessions, and extensibility via plugins.</p>
+
+  <h3>Key Features</h3>
+  <ul>
+    <li><strong>Framework agnostic</strong> — works with any JS/TS framework or vanilla Node.js</li>
+    <li><strong>Built-in database support</strong> — Prisma, Drizzle, Kysely, MongoDB, and more</li>
+    <li><strong>OAuth providers</strong> — Google, GitHub, Discord, Apple, and 20+ more</li>
+    <li><strong>Session management</strong> — cookie-based with automatic refresh</li>
+    <li><strong>Plugin system</strong> — 2FA, magic links, organization management, etc.</li>
+    <li><strong>TypeScript-first</strong> — fully typed API with inference</li>
+  </ul>
+
+  <h3>Installation</h3>
+  <div class="code-block"><pre><code><span class="cm"># Install better-auth</span>
+<span class="fn">npm</span> install better-auth
+
+<span class="cm"># Or with your preferred package manager</span>
+<span class="fn">pnpm</span> add better-auth
+<span class="fn">bun</span> add better-auth
+<span class="fn">yarn</span> add better-auth</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <div class="code-block"><pre><code><span class="cm"># Generate database tables (after setting up auth config)</span>
+<span class="fn">npx</span> better-auth migrate
+
+<span class="cm"># Or generate the schema and migrate yourself</span>
+<span class="fn">npx</span> better-auth generate</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== SERVER SETUP ===== -->
+<div class="section" id="server-setup">
+  <div class="section-header"><span class="icon">⚙️</span><h2>Server Setup</h2></div>
+
+  <h3>Basic Configuration</h3>
+  <div class="code-block"><pre><code><span class="cm">// auth.ts — server-side auth configuration</span>
+<span class="kw">import</span> { <span class="fn">betterAuth</span> } <span class="kw">from</span> <span class="str">"better-auth"</span>;
+
+<span class="kw">export const</span> auth = <span class="fn">betterAuth</span>({
+  <span class="cm">// Database connection</span>
+  database: {
+    provider: <span class="str">"postgresql"</span>,   <span class="cm">// or "mysql", "sqlite"</span>
+    url: process.env.DATABASE_URL,
+  },
+
+  <span class="cm">// Email &amp; password authentication</span>
+  emailAndPassword: {
+    enabled: <span class="kw">true</span>,
+    minPasswordLength: <span class="num">8</span>,
+    maxPasswordLength: <span class="num">128</span>,
+    requireEmailVerification: <span class="kw">false</span>,
+  },
+
+  <span class="cm">// Session configuration</span>
+  session: {
+    expiresIn: <span class="num">60</span> * <span class="num">60</span> * <span class="num">24</span> * <span class="num">7</span>,   <span class="cm">// 7 days (in seconds)</span>
+    updateAge: <span class="num">60</span> * <span class="num">60</span> * <span class="num">24</span>,       <span class="cm">// Update session every 24h</span>
+    cookieCache: {
+      enabled: <span class="kw">true</span>,
+      maxAge: <span class="num">60</span> * <span class="num">5</span>,              <span class="cm">// Cache session in cookie for 5 min</span>
+    },
+  },
+
+  <span class="cm">// Base URL of your app</span>
+  baseURL: process.env.BETTER_AUTH_URL,  <span class="cm">// e.g. "http://localhost:3000"</span>
+  secret: process.env.BETTER_AUTH_SECRET,
+});</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Mount as Route Handler</h3>
+  <div class="code-block"><pre><code><span class="cm">// Express</span>
+<span class="kw">import</span> express <span class="kw">from</span> <span class="str">"express"</span>;
+<span class="kw">import</span> { <span class="fn">toNodeHandler</span> } <span class="kw">from</span> <span class="str">"better-auth/node"</span>;
+<span class="kw">import</span> { auth } <span class="kw">from</span> <span class="str">"./auth"</span>;
+
+<span class="kw">const</span> app = <span class="fn">express</span>();
+app.<span class="fn">all</span>(<span class="str">"/api/auth/*"</span>, <span class="fn">toNodeHandler</span>(auth));
+
+<span class="cm">// Hono</span>
+<span class="kw">import</span> { <span class="tp">Hono</span> } <span class="kw">from</span> <span class="str">"hono"</span>;
+<span class="kw">import</span> { <span class="fn">toHonoHandler</span> } <span class="kw">from</span> <span class="str">"better-auth/hono"</span>;
+
+<span class="kw">const</span> app = <span class="kw">new</span> <span class="tp">Hono</span>();
+app.<span class="fn">all</span>(<span class="str">"/api/auth/*"</span>, <span class="fn">toHonoHandler</span>(auth));
+
+<span class="cm">// Next.js (app/api/auth/[...all]/route.ts)</span>
+<span class="kw">import</span> { <span class="fn">toNextJsHandler</span> } <span class="kw">from</span> <span class="str">"better-auth/next-js"</span>;
+<span class="kw">import</span> { auth } <span class="kw">from</span> <span class="str">"@/lib/auth"</span>;
+
+<span class="kw">export const</span> { GET, POST } = <span class="fn">toNextJsHandler</span>(auth);</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <div class="note">
+    <strong>Environment variables:</strong> Set <code>BETTER_AUTH_URL</code> (your app URL) and <code>BETTER_AUTH_SECRET</code> (random 32+ char string). Generate a secret with <code>openssl rand -base64 32</code>.
+  </div>
+</div>
+
+<!-- ===== CLIENT SETUP ===== -->
+<div class="section" id="client-setup">
+  <div class="section-header"><span class="icon">💻</span><h2>Client Setup</h2></div>
+
+  <div class="code-block"><pre><code><span class="cm">// lib/auth-client.ts — client-side auth instance</span>
+<span class="kw">import</span> { <span class="fn">createAuthClient</span> } <span class="kw">from</span> <span class="str">"better-auth/client"</span>;
+
+<span class="kw">export const</span> authClient = <span class="fn">createAuthClient</span>({
+  baseURL: <span class="str">"http://localhost:3000"</span>,  <span class="cm">// Your server URL</span>
+});
+
+<span class="cm">// Destructure commonly used methods</span>
+<span class="kw">export const</span> {
+  signIn,
+  signUp,
+  signOut,
+  useSession,      <span class="cm">// React hook</span>
+  getSession,      <span class="cm">// Async getter</span>
+} = authClient;</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== EMAIL & PASSWORD ===== -->
+<div class="section" id="email-password">
+  <div class="section-header"><span class="icon">📧</span><h2>Email &amp; Password Auth</h2></div>
+
+  <h3>Sign Up</h3>
+  <div class="code-block"><pre><code><span class="kw">import</span> { authClient } <span class="kw">from</span> <span class="str">"@/lib/auth-client"</span>;
+
+<span class="kw">const</span> { data, error } = <span class="kw">await</span> authClient.<span class="fn">signUp</span>.<span class="fn">email</span>({
+  email: <span class="str">"user@example.com"</span>,
+  password: <span class="str">"securePassword123"</span>,
+  name: <span class="str">"John Doe"</span>,
+  image: <span class="str">"https://example.com/avatar.jpg"</span>,  <span class="cm">// optional</span>
+});
+
+<span class="kw">if</span> (error) {
+  console.<span class="fn">error</span>(error.message);  <span class="cm">// e.g. "User already exists"</span>
+} <span class="kw">else</span> {
+  console.<span class="fn">log</span>(data.user, data.session);
+}</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Sign In</h3>
+  <div class="code-block"><pre><code><span class="kw">const</span> { data, error } = <span class="kw">await</span> authClient.<span class="fn">signIn</span>.<span class="fn">email</span>({
+  email: <span class="str">"user@example.com"</span>,
+  password: <span class="str">"securePassword123"</span>,
+  callbackURL: <span class="str">"/dashboard"</span>,  <span class="cm">// redirect after sign in (optional)</span>
+});</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Sign Out</h3>
+  <div class="code-block"><pre><code><span class="kw">await</span> authClient.<span class="fn">signOut</span>({
+  fetchOptions: {
+    onSuccess: () <span class="kw">=&gt;</span> {
+      router.<span class="fn">push</span>(<span class="str">"/login"</span>);  <span class="cm">// redirect to login page</span>
+    },
+  },
+});</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Password Reset</h3>
+  <div class="code-block"><pre><code><span class="cm">// Server config — enable password reset</span>
+emailAndPassword: {
+  enabled: <span class="kw">true</span>,
+  sendResetPassword: <span class="kw">async</span> ({ user, url }) <span class="kw">=&gt;</span> {
+    <span class="cm">// Send email with reset link</span>
+    <span class="kw">await</span> <span class="fn">sendEmail</span>({
+      to: user.email,
+      subject: <span class="str">"Reset your password"</span>,
+      html: <span class="str">`&lt;a href="<span class="kw">${</span>url<span class="kw">}</span>"&gt;Reset Password&lt;/a&gt;`</span>,
+    });
+  },
+}
+
+<span class="cm">// Client — request reset</span>
+<span class="kw">await</span> authClient.<span class="fn">forgetPassword</span>({
+  email: <span class="str">"user@example.com"</span>,
+  redirectTo: <span class="str">"/reset-password"</span>,
+});
+
+<span class="cm">// Client — submit new password (on reset page)</span>
+<span class="kw">await</span> authClient.<span class="fn">resetPassword</span>({
+  newPassword: <span class="str">"newSecurePassword"</span>,
+});</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== OAUTH PROVIDERS ===== -->
+<div class="section" id="oauth-providers">
+  <div class="section-header"><span class="icon">🔗</span><h2>OAuth Providers</h2></div>
+
+  <h3>Server Configuration</h3>
+  <div class="code-block"><pre><code><span class="kw">export const</span> auth = <span class="fn">betterAuth</span>({
+  <span class="cm">// ... other config</span>
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    },
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    },
+    discord: {
+      clientId: process.env.DISCORD_CLIENT_ID!,
+      clientSecret: process.env.DISCORD_CLIENT_SECRET!,
+    },
+    apple: {
+      clientId: process.env.APPLE_CLIENT_ID!,
+      clientSecret: process.env.APPLE_CLIENT_SECRET!,
+    },
+  },
+});</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Client — Social Sign In</h3>
+  <div class="code-block"><pre><code><span class="cm">// Sign in with Google</span>
+<span class="kw">await</span> authClient.<span class="fn">signIn</span>.<span class="fn">social</span>({
+  provider: <span class="str">"google"</span>,
+  callbackURL: <span class="str">"/dashboard"</span>,
+});
+
+<span class="cm">// Sign in with GitHub</span>
+<span class="kw">await</span> authClient.<span class="fn">signIn</span>.<span class="fn">social</span>({
+  provider: <span class="str">"github"</span>,
+  callbackURL: <span class="str">"/dashboard"</span>,
+});</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Available Providers</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Provider</th><th>Key</th><th>Scopes Available</th></tr>
+      <tr><td>Google</td><td><code>google</code></td><td>email, profile, openid</td></tr>
+      <tr><td>GitHub</td><td><code>github</code></td><td>user:email, read:user</td></tr>
+      <tr><td>Discord</td><td><code>discord</code></td><td>identify, email</td></tr>
+      <tr><td>Apple</td><td><code>apple</code></td><td>name, email</td></tr>
+      <tr><td>Microsoft</td><td><code>microsoft</code></td><td>User.Read, openid</td></tr>
+      <tr><td>Twitter/X</td><td><code>twitter</code></td><td>users.read, tweet.read</td></tr>
+      <tr><td>Spotify</td><td><code>spotify</code></td><td>user-read-email</td></tr>
+      <tr><td>Twitch</td><td><code>twitch</code></td><td>user:read:email</td></tr>
+    </table>
+  </div>
+
+  <div class="note tip">
+    <strong>Redirect URI:</strong> Set your OAuth redirect URI to <code>{baseURL}/api/auth/callback/{provider}</code> in each provider's developer console.
+  </div>
+</div>
+
+<!-- ===== SESSIONS ===== -->
+<div class="section" id="sessions">
+  <div class="section-header"><span class="icon">🍪</span><h2>Session Management</h2></div>
+
+  <h3>Get Current Session</h3>
+  <div class="code-block"><pre><code><span class="cm">// Client-side — async</span>
+<span class="kw">const</span> { data: session } = <span class="kw">await</span> authClient.<span class="fn">getSession</span>();
+console.<span class="fn">log</span>(session?.user);    <span class="cm">// { id, name, email, image, ... }</span>
+console.<span class="fn">log</span>(session?.session); <span class="cm">// { id, userId, expiresAt, ... }</span>
+
+<span class="cm">// Server-side — in API route or middleware</span>
+<span class="kw">const</span> session = <span class="kw">await</span> auth.api.<span class="fn">getSession</span>({
+  headers: req.headers,  <span class="cm">// Pass the request headers</span>
+});
+
+<span class="kw">if</span> (!session) {
+  <span class="kw">return</span> <span class="kw">new</span> <span class="tp">Response</span>(<span class="str">"Unauthorized"</span>, { status: <span class="num">401</span> });
+}</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Session Object Shape</h3>
+  <div class="code-block"><pre><code>{
+  user: {
+    <span class="str">id</span>: <span class="str">"user_abc123"</span>,
+    <span class="str">name</span>: <span class="str">"John Doe"</span>,
+    <span class="str">email</span>: <span class="str">"john@example.com"</span>,
+    <span class="str">emailVerified</span>: <span class="kw">true</span>,
+    <span class="str">image</span>: <span class="str">"https://..."</span>,
+    <span class="str">createdAt</span>: <span class="str">"2024-01-01T00:00:00Z"</span>,
+    <span class="str">updatedAt</span>: <span class="str">"2024-01-01T00:00:00Z"</span>,
+  },
+  session: {
+    <span class="str">id</span>: <span class="str">"sess_xyz"</span>,
+    <span class="str">userId</span>: <span class="str">"user_abc123"</span>,
+    <span class="str">expiresAt</span>: <span class="str">"2024-01-08T00:00:00Z"</span>,
+    <span class="str">ipAddress</span>: <span class="str">"192.168.1.1"</span>,
+    <span class="str">userAgent</span>: <span class="str">"Mozilla/5.0 ..."</span>,
+  }
+}</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>List Active Sessions</h3>
+  <div class="code-block"><pre><code><span class="cm">// List all active sessions for current user</span>
+<span class="kw">const</span> { data: sessions } = <span class="kw">await</span> authClient.<span class="fn">listSessions</span>();
+
+<span class="cm">// Revoke a specific session (e.g. logout from another device)</span>
+<span class="kw">await</span> authClient.<span class="fn">revokeSession</span>({ id: sessionId });
+
+<span class="cm">// Revoke all other sessions</span>
+<span class="kw">await</span> authClient.<span class="fn">revokeOtherSessions</span>();</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== MIDDLEWARE ===== -->
+<div class="section" id="middleware">
+  <div class="section-header"><span class="icon">🛡️</span><h2>Middleware &amp; Route Protection</h2></div>
+
+  <h3>Next.js Middleware</h3>
+  <div class="code-block"><pre><code><span class="cm">// middleware.ts</span>
+<span class="kw">import</span> { <span class="fn">betterAuth</span> } <span class="kw">from</span> <span class="str">"better-auth/next-js"</span>;
+<span class="kw">import</span> { auth } <span class="kw">from</span> <span class="str">"@/lib/auth"</span>;
+
+<span class="kw">export default async function</span> <span class="fn">middleware</span>(req) {
+  <span class="kw">const</span> session = <span class="kw">await</span> auth.api.<span class="fn">getSession</span>({
+    headers: req.headers,
+  });
+
+  <span class="kw">if</span> (!session) {
+    <span class="kw">return</span> <span class="tp">NextResponse</span>.<span class="fn">redirect</span>(<span class="kw">new</span> <span class="tp">URL</span>(<span class="str">"/login"</span>, req.url));
+  }
+}
+
+<span class="kw">export const</span> config = {
+  matcher: [<span class="str">"/dashboard/:path*"</span>, <span class="str">"/settings/:path*"</span>],
+};</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Server-Side Protection (API Routes)</h3>
+  <div class="code-block"><pre><code><span class="cm">// Express middleware</span>
+<span class="kw">async function</span> <span class="fn">requireAuth</span>(req, res, next) {
+  <span class="kw">const</span> session = <span class="kw">await</span> auth.api.<span class="fn">getSession</span>({
+    headers: req.headers,
+  });
+  
+  <span class="kw">if</span> (!session) {
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">401</span>).<span class="fn">json</span>({ error: <span class="str">"Unauthorized"</span> });
+  }
+  
+  req.user = session.user;
+  req.session = session.session;
+  <span class="fn">next</span>();
+}
+
+app.<span class="fn">get</span>(<span class="str">"/api/profile"</span>, requireAuth, (req, res) <span class="kw">=&gt;</span> {
+  res.<span class="fn">json</span>(req.user);
+});</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== USER MANAGEMENT ===== -->
+<div class="section" id="user-management">
+  <div class="section-header"><span class="icon">👤</span><h2>User Management</h2></div>
+
+  <div class="code-block"><pre><code><span class="cm">// Update user profile</span>
+<span class="kw">await</span> authClient.<span class="fn">updateUser</span>({
+  name: <span class="str">"New Name"</span>,
+  image: <span class="str">"https://new-avatar.com/pic.jpg"</span>,
+});
+
+<span class="cm">// Change password</span>
+<span class="kw">await</span> authClient.<span class="fn">changePassword</span>({
+  currentPassword: <span class="str">"oldPassword"</span>,
+  newPassword: <span class="str">"newPassword"</span>,
+  revokeOtherSessions: <span class="kw">true</span>,  <span class="cm">// logout everywhere else</span>
+});
+
+<span class="cm">// Change email</span>
+<span class="kw">await</span> authClient.<span class="fn">changeEmail</span>({
+  newEmail: <span class="str">"new@example.com"</span>,
+  callbackURL: <span class="str">"/settings"</span>,
+});
+
+<span class="cm">// Delete account</span>
+<span class="kw">await</span> authClient.<span class="fn">deleteUser</span>({
+  password: <span class="str">"currentPassword"</span>,  <span class="cm">// re-authenticate</span>
+});</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== 2FA ===== -->
+<div class="section" id="two-factor">
+  <div class="section-header"><span class="icon">🔐</span><h2>Two-Factor Authentication (2FA)</h2></div>
+
+  <h3>Server Setup</h3>
+  <div class="code-block"><pre><code><span class="kw">import</span> { <span class="fn">betterAuth</span> } <span class="kw">from</span> <span class="str">"better-auth"</span>;
+<span class="kw">import</span> { <span class="fn">twoFactor</span> } <span class="kw">from</span> <span class="str">"better-auth/plugins"</span>;
+
+<span class="kw">export const</span> auth = <span class="fn">betterAuth</span>({
+  <span class="cm">// ... other config</span>
+  plugins: [
+    <span class="fn">twoFactor</span>({
+      issuer: <span class="str">"MyApp"</span>,           <span class="cm">// Shown in authenticator app</span>
+      otpOptions: {
+        digits: <span class="num">6</span>,
+        period: <span class="num">30</span>,              <span class="cm">// seconds</span>
+      },
+      backupCodes: {
+        length: <span class="num">10</span>,              <span class="cm">// number of backup codes</span>
+        customCodes: undefined,   <span class="cm">// or provide your own</span>
+      },
+    }),
+  ],
+});</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Client Setup</h3>
+  <div class="code-block"><pre><code><span class="kw">import</span> { <span class="fn">createAuthClient</span> } <span class="kw">from</span> <span class="str">"better-auth/client"</span>;
+<span class="kw">import</span> { <span class="fn">twoFactorClient</span> } <span class="kw">from</span> <span class="str">"better-auth/client/plugins"</span>;
+
+<span class="kw">export const</span> authClient = <span class="fn">createAuthClient</span>({
+  plugins: [<span class="fn">twoFactorClient</span>()],
+});</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>2FA Flow</h3>
+  <div class="code-block"><pre><code><span class="cm">// 1. Enable 2FA — returns TOTP URI &amp; backup codes</span>
+<span class="kw">const</span> { data } = <span class="kw">await</span> authClient.twoFactor.<span class="fn">enable</span>({
+  password: <span class="str">"currentPassword"</span>,
+});
+<span class="cm">// data.totpURI → use to generate QR code</span>
+<span class="cm">// data.backupCodes → show once to user</span>
+
+<span class="cm">// 2. Verify setup with a TOTP code from authenticator</span>
+<span class="kw">await</span> authClient.twoFactor.<span class="fn">verifyTotp</span>({
+  code: <span class="str">"123456"</span>,
+});
+
+<span class="cm">// 3. During sign-in, if 2FA is enabled:</span>
+<span class="kw">const</span> { data, error } = <span class="kw">await</span> authClient.<span class="fn">signIn</span>.<span class="fn">email</span>({
+  email: <span class="str">"user@example.com"</span>,
+  password: <span class="str">"password"</span>,
+});
+<span class="cm">// If 2FA is required, data.twoFactorRedirect = true</span>
+
+<span class="cm">// 4. Submit TOTP code</span>
+<span class="kw">await</span> authClient.twoFactor.<span class="fn">verifyTotp</span>({
+  code: <span class="str">"123456"</span>,
+});
+
+<span class="cm">// 5. Disable 2FA</span>
+<span class="kw">await</span> authClient.twoFactor.<span class="fn">disable</span>({
+  password: <span class="str">"currentPassword"</span>,
+});</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== PLUGINS ===== -->
+<div class="section" id="plugins">
+  <div class="section-header"><span class="icon">🧩</span><h2>Plugins &amp; Extensions</h2></div>
+
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Plugin</th><th>Import</th><th>Description</th></tr>
+      <tr><td><strong>Two Factor</strong></td><td><code>twoFactor</code></td><td>TOTP, backup codes, recovery</td></tr>
+      <tr><td><strong>Magic Link</strong></td><td><code>magicLink</code></td><td>Passwordless email login</td></tr>
+      <tr><td><strong>Organization</strong></td><td><code>organization</code></td><td>Multi-tenant org management</td></tr>
+      <tr><td><strong>Admin</strong></td><td><code>admin</code></td><td>User management, impersonation</td></tr>
+      <tr><td><strong>Username</strong></td><td><code>username</code></td><td>Add username field to users</td></tr>
+      <tr><td><strong>Phone Number</strong></td><td><code>phoneNumber</code></td><td>Phone-based auth with OTP</td></tr>
+      <tr><td><strong>Anonymous</strong></td><td><code>anonymous</code></td><td>Link anonymous users to accounts</td></tr>
+      <tr><td><strong>Bearer</strong></td><td><code>bearer</code></td><td>API key / bearer token auth</td></tr>
+    </table>
+  </div>
+
+  <h3>Using Multiple Plugins</h3>
+  <div class="code-block"><pre><code><span class="kw">import</span> { <span class="fn">twoFactor</span>, <span class="fn">magicLink</span>, <span class="fn">organization</span> } <span class="kw">from</span> <span class="str">"better-auth/plugins"</span>;
+
+<span class="kw">export const</span> auth = <span class="fn">betterAuth</span>({
+  plugins: [
+    <span class="fn">twoFactor</span>({ issuer: <span class="str">"MyApp"</span> }),
+    <span class="fn">magicLink</span>({
+      sendMagicLink: <span class="kw">async</span> ({ email, url }) <span class="kw">=&gt;</span> {
+        <span class="kw">await</span> <span class="fn">sendEmail</span>({ to: email, subject: <span class="str">"Login Link"</span>, html: <span class="str">`&lt;a href="${url}"&gt;Login&lt;/a&gt;`</span> });
+      },
+    }),
+    <span class="fn">organization</span>(),
+  ],
+});</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== DATABASE ===== -->
+<div class="section" id="database">
+  <div class="section-header"><span class="icon">🗄️</span><h2>Database Adapters</h2></div>
+
+  <h3>Prisma</h3>
+  <div class="code-block"><pre><code><span class="kw">import</span> { <span class="fn">betterAuth</span> } <span class="kw">from</span> <span class="str">"better-auth"</span>;
+<span class="kw">import</span> { <span class="fn">prismaAdapter</span> } <span class="kw">from</span> <span class="str">"better-auth/adapters/prisma"</span>;
+<span class="kw">import</span> { <span class="tp">PrismaClient</span> } <span class="kw">from</span> <span class="str">"@prisma/client"</span>;
+
+<span class="kw">const</span> prisma = <span class="kw">new</span> <span class="tp">PrismaClient</span>();
+
+<span class="kw">export const</span> auth = <span class="fn">betterAuth</span>({
+  database: <span class="fn">prismaAdapter</span>(prisma, {
+    provider: <span class="str">"postgresql"</span>,
+  }),
+});</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Drizzle</h3>
+  <div class="code-block"><pre><code><span class="kw">import</span> { <span class="fn">drizzleAdapter</span> } <span class="kw">from</span> <span class="str">"better-auth/adapters/drizzle"</span>;
+<span class="kw">import</span> { db } <span class="kw">from</span> <span class="str">"./db"</span>;
+
+<span class="kw">export const</span> auth = <span class="fn">betterAuth</span>({
+  database: <span class="fn">drizzleAdapter</span>(db, {
+    provider: <span class="str">"pg"</span>,  <span class="cm">// or "mysql", "sqlite"</span>
+  }),
+});</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Database Tables Created</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Table</th><th>Purpose</th><th>Key Columns</th></tr>
+      <tr><td><code>user</code></td><td>User accounts</td><td>id, name, email, emailVerified, image</td></tr>
+      <tr><td><code>session</code></td><td>Active sessions</td><td>id, userId, expiresAt, ipAddress, userAgent</td></tr>
+      <tr><td><code>account</code></td><td>OAuth linked accounts</td><td>id, userId, providerId, accountId</td></tr>
+      <tr><td><code>verification</code></td><td>Email verification tokens</td><td>id, identifier, value, expiresAt</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== REACT ===== -->
+<div class="section" id="react-integration">
+  <div class="section-header"><span class="icon">⚛️</span><h2>React Integration</h2></div>
+
+  <div class="code-block"><pre><code><span class="cm">// hooks/useAuth.ts</span>
+<span class="kw">import</span> { authClient } <span class="kw">from</span> <span class="str">"@/lib/auth-client"</span>;
+
+<span class="kw">export function</span> <span class="fn">useAuth</span>() {
+  <span class="kw">const</span> { data: session, isPending, error } = authClient.<span class="fn">useSession</span>();
+  
+  <span class="kw">return</span> {
+    user: session?.user ?? <span class="kw">null</span>,
+    session: session?.session ?? <span class="kw">null</span>,
+    isLoading: isPending,
+    isAuthenticated: !!session?.user,
+    error,
+  };
+}
+
+<span class="cm">// components/ProtectedPage.tsx</span>
+<span class="kw">export function</span> <span class="fn">ProtectedPage</span>({ children }) {
+  <span class="kw">const</span> { user, isLoading, isAuthenticated } = <span class="fn">useAuth</span>();
+
+  <span class="kw">if</span> (isLoading) <span class="kw">return</span> <span class="str">&lt;div&gt;</span>Loading...<span class="str">&lt;/div&gt;</span>;
+  <span class="kw">if</span> (!isAuthenticated) <span class="kw">return</span> <span class="str">&lt;</span><span class="tp">Navigate</span> to=<span class="str">"/login"</span> <span class="str">/&gt;</span>;
+
+  <span class="kw">return</span> children;
+}
+
+<span class="cm">// components/LoginButton.tsx</span>
+<span class="kw">export function</span> <span class="fn">LoginButton</span>() {
+  <span class="kw">return</span> (
+    <span class="str">&lt;button</span> onClick={() <span class="kw">=&gt;</span> authClient.<span class="fn">signIn</span>.<span class="fn">social</span>({ provider: <span class="str">"google"</span> })}<span class="str">&gt;</span>
+      Sign in with Google
+    <span class="str">&lt;/button&gt;</span>
+  );
+}</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== NEXT.JS ===== -->
+<div class="section" id="nextjs">
+  <div class="section-header"><span class="icon">▲</span><h2>Next.js Integration</h2></div>
+
+  <h3>File Structure</h3>
+  <div class="code-block"><pre><code>├── lib/
+│   ├── auth.ts              <span class="cm"># Server-side auth config</span>
+│   └── auth-client.ts       <span class="cm"># Client-side auth instance</span>
+├── app/
+│   ├── api/auth/[...all]/
+│   │   └── route.ts         <span class="cm"># Auth API route handler</span>
+│   ├── (auth)/
+│   │   ├── login/page.tsx
+│   │   └── register/page.tsx
+│   └── (protected)/
+│       ├── layout.tsx        <span class="cm"># Auth check wrapper</span>
+│       └── dashboard/page.tsx
+└── middleware.ts             <span class="cm"># Route protection</span></code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Server Components</h3>
+  <div class="code-block"><pre><code><span class="cm">// app/(protected)/dashboard/page.tsx</span>
+<span class="kw">import</span> { auth } <span class="kw">from</span> <span class="str">"@/lib/auth"</span>;
+<span class="kw">import</span> { headers } <span class="kw">from</span> <span class="str">"next/headers"</span>;
+<span class="kw">import</span> { redirect } <span class="kw">from</span> <span class="str">"next/navigation"</span>;
+
+<span class="kw">export default async function</span> <span class="fn">DashboardPage</span>() {
+  <span class="kw">const</span> session = <span class="kw">await</span> auth.api.<span class="fn">getSession</span>({
+    headers: <span class="kw">await</span> <span class="fn">headers</span>(),
+  });
+
+  <span class="kw">if</span> (!session) <span class="fn">redirect</span>(<span class="str">"/login"</span>);
+
+  <span class="kw">return</span> (
+    <span class="str">&lt;div&gt;</span>
+      <span class="str">&lt;h1&gt;</span>Welcome, {session.user.name}<span class="str">&lt;/h1&gt;</span>
+      <span class="str">&lt;p&gt;</span>{session.user.email}<span class="str">&lt;/p&gt;</span>
+    <span class="str">&lt;/div&gt;</span>
+  );
+}</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <div class="note tip">
+    <strong>Pro tip:</strong> Use <code>auth.api.getSession()</code> in server components and API routes. Use <code>authClient.useSession()</code> in client components. Never import the server auth config in client code.
+  </div>
+</div>
+
+<a href="#" class="back-top">Back to top</a>
+
+<footer>
+  Better Auth Cheatsheet — Quick reference for the better-auth TypeScript authentication library
+</footer>
+
+</div>
+
+<script>
+function copyCode(btn) {
+  const code = btn.previousElementSibling.querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>
