@@ -810,6 +810,174 @@ footer {
     display: none;
 }
 
+/* ================================================= */
+/* ===== MULTI-COLUMN CHEATSHEET GRID ===== */
+/* ================================================= */
+
+/* Wider container for cheatsheet pages */
+.sheet-container {
+    max-width: 1200px;
+}
+
+/* Masonry-style multi-column layout */
+.sections-grid {
+    column-count: 2;
+    column-gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Each section becomes a card */
+.sections-grid .section {
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0 1.15rem 0.75rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    transition: border-color 0.2s;
+}
+
+.sections-grid .section:hover {
+    border-color: var(--border-lit);
+}
+
+/* Adjust section header inside cards */
+.sections-grid .section-header {
+    margin: 0.85rem 0 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.sections-grid .section-header h2 {
+    font-size: 1.05rem;
+}
+
+/* Reduce code block spacing inside cards */
+.sections-grid pre {
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 0;
+}
+
+.sections-grid pre code {
+    font-size: 0.78rem;
+    line-height: 1.55;
+}
+
+/* Code wrapper positioning for copy button */
+.code-wrapper {
+    position: relative;
+}
+
+/* Tables inside cards */
+.sections-grid table {
+    font-size: 0.8rem;
+}
+
+.sections-grid th {
+    font-size: 0.7rem;
+    padding: 0.5rem 0.6rem;
+}
+
+.sections-grid td {
+    padding: 0.4rem 0.6rem;
+}
+
+/* Notes inside cards */
+.sections-grid .note {
+    font-size: 0.82rem;
+    padding: 0.7rem 0.85rem;
+}
+
+/* Lists inside cards */
+.sections-grid ul,
+.sections-grid ol {
+    margin: 0.4rem 0 0.5rem 1rem;
+}
+
+.sections-grid li {
+    font-size: 0.82rem;
+    margin-bottom: 0.2rem;
+}
+
+/* h3/h4 inside cards */
+.sections-grid h3 {
+    font-size: 0.95rem;
+    margin: 1rem 0 0.4rem;
+}
+
+.sections-grid h4 {
+    font-size: 0.85rem;
+    margin: 0.75rem 0 0.3rem;
+}
+
+.sections-grid p {
+    font-size: 0.85rem;
+}
+
+/* ── Collapsible Content ── */
+.section-content {
+    position: relative;
+    overflow: hidden;
+}
+
+.section-content.needs-expand {
+    /* max-height is set dynamically via JS */
+}
+
+.section-content.needs-expand::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: linear-gradient(to bottom, transparent, var(--bg-card));
+    pointer-events: none;
+    z-index: 1;
+}
+
+.section-content.expanded {
+    max-height: none !important;
+}
+
+.section-content.expanded::after {
+    display: none;
+}
+
+/* Show more / Show less button */
+.section-expand-btn {
+    display: none;
+    width: 100%;
+    background: transparent;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--accent);
+    padding: 0.35rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.section-expand-btn.visible {
+    display: block;
+}
+
+.section-expand-btn:hover {
+    background: rgba(88, 166, 255, 0.08);
+    border-color: var(--accent);
+}
+
+/* Search-hidden sections in grid */
+.sections-grid .section.search-hidden {
+    display: none;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
     nav {
@@ -839,6 +1007,15 @@ footer {
     .card-grid {
         grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     }
+
+    /* Single column on tablets */
+    .sheet-container {
+        max-width: var(--max-w);
+    }
+
+    .sections-grid {
+        column-count: 1;
+    }
 }
 
 @media (max-width: 480px) {
@@ -860,6 +1037,10 @@ footer {
 
     .search-box {
         min-width: 100%;
+    }
+
+    .sections-grid {
+        column-count: 1;
     }
 }
 
