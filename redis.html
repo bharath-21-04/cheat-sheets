@@ -1,58 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Redis Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Redis</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Redis Cheatsheet</h1>
-  <p class="subtitle">Data types, commands, pub/sub, caching patterns, persistence &amp; Lua scripting</p>
-  <span class="tag tag-db">Database / Cache</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Redis Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Redis</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Redis Cheatsheet</h1><p class="subtitle">Keys, strings, hashes, lists, sets, pub/sub &amp; configuration</p><span class="tag tag-db">Database</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#connect">Connection</a>
+    <a href="#strings">Strings</a>
+    <a href="#keys">Keys</a>
+    <a href="#hashes">Hashes</a>
+    <a href="#lists">Lists</a>
+    <a href="#sets">Sets</a>
+    <a href="#sorted">Sorted Sets</a>
+    <a href="#pubsub">Pub/Sub</a>
+    <a href="#admin">Administration</a>
+</div></div>
+<div class="section" id="connect"><div class="section-header"><span class="icon">🔗</span><h2>Connection</h2></div><div class="code-wrapper"><pre><code>redis-cli                       <span class="cmt"># connect local</span>
+redis-cli -h host -p <span class="num">6379</span> -a pass
+redis-cli --url redis://user:pass@host:<span class="num">6379</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+PING                            <span class="cmt"># → PONG</span>
+SELECT <span class="num">1</span>                        <span class="cmt"># switch database</span>
+DBSIZE                          <span class="cmt"># number of keys</span>
+INFO                            <span class="cmt"># server info</span></code></pre></div></div>
+<div class="section" id="strings"><div class="section-header"><span class="icon">📝</span><h2>Strings</h2></div><div class="code-wrapper"><pre><code>SET key <span class="str">"value"</span>
+GET key
+SETNX key <span class="str">"value"</span>               <span class="cmt"># set if not exists</span>
+SETEX key <span class="num">3600</span> <span class="str">"value"</span>          <span class="cmt"># set with TTL (seconds)</span>
+MSET k1 <span class="str">"v1"</span> k2 <span class="str">"v2"</span>           <span class="cmt"># multi set</span>
+MGET k1 k2                      <span class="cmt"># multi get</span>
+INCR counter                    <span class="cmt"># increment by 1</span>
+INCRBY counter <span class="num">5</span>                <span class="cmt"># increment by 5</span>
+DECR counter
+APPEND key <span class="str">" more"</span>               <span class="cmt"># append string</span>
+STRLEN key                      <span class="cmt"># string length</span></code></pre></div></div>
+<div class="section" id="keys"><div class="section-header"><span class="icon">🔑</span><h2>Key Operations</h2></div><div class="code-wrapper"><pre><code>KEYS *                          <span class="cmt"># all keys (avoid in prod!)</span>
+KEYS user:*                     <span class="cmt"># pattern match</span>
+SCAN <span class="num">0</span> MATCH user:* COUNT <span class="num">100</span>   <span class="cmt"># safe iteration</span>
+EXISTS key                      <span class="cmt"># check exists</span>
+DEL key                         <span class="cmt"># delete</span>
+UNLINK key                      <span class="cmt"># async delete</span>
+TYPE key                        <span class="cmt"># get type</span>
+RENAME key newkey
+EXPIRE key <span class="num">3600</span>                 <span class="cmt"># set TTL</span>
+TTL key                         <span class="cmt"># remaining TTL</span>
+PERSIST key                     <span class="cmt"># remove TTL</span>
+RANDOMKEY                       <span class="cmt"># random key</span></code></pre></div></div>
+<div class="section" id="hashes"><div class="section-header"><span class="icon">📋</span><h2>Hashes</h2></div><div class="code-wrapper"><pre><code>HSET user:1 name <span class="str">"Alice"</span> age <span class="num">25</span>
+HGET user:1 name
+HGETALL user:1                  <span class="cmt"># all fields</span>
+HMSET user:1 name <span class="str">"Alice"</span> age <span class="num">25</span>
+HMGET user:1 name age
+HDEL user:1 age
+HEXISTS user:1 name
+HKEYS user:1                    <span class="cmt"># all field names</span>
+HVALS user:1                    <span class="cmt"># all values</span>
+HLEN user:1                     <span class="cmt"># number of fields</span>
+HINCRBY user:1 age <span class="num">1</span></code></pre></div></div>
+<div class="section" id="lists"><div class="section-header"><span class="icon">📃</span><h2>Lists</h2></div><div class="code-wrapper"><pre><code>LPUSH mylist <span class="str">"a"</span>                <span class="cmt"># push left</span>
+RPUSH mylist <span class="str">"b"</span>                <span class="cmt"># push right</span>
+LPOP mylist                     <span class="cmt"># pop left</span>
+RPOP mylist                     <span class="cmt"># pop right</span>
+LRANGE mylist <span class="num">0</span> -<span class="num">1</span>              <span class="cmt"># all elements</span>
+LRANGE mylist <span class="num">0</span> <span class="num">4</span>               <span class="cmt"># first 5</span>
+LLEN mylist                     <span class="cmt"># length</span>
+LINDEX mylist <span class="num">0</span>                 <span class="cmt"># get by index</span>
+LSET mylist <span class="num">0</span> <span class="str">"new"</span>             <span class="cmt"># set by index</span>
+LTRIM mylist <span class="num">0</span> <span class="num">99</span>               <span class="cmt"># keep first 100</span>
+BLPOP mylist <span class="num">30</span>                 <span class="cmt"># blocking pop (30s timeout)</span></code></pre></div></div>
+<div class="section" id="sets"><div class="section-header"><span class="icon">🎯</span><h2>Sets</h2></div><div class="code-wrapper"><pre><code>SADD myset <span class="str">"a"</span> <span class="str">"b"</span> <span class="str">"c"</span>
+SMEMBERS myset                  <span class="cmt"># all members</span>
+SISMEMBER myset <span class="str">"a"</span>             <span class="cmt"># check membership</span>
+SCARD myset                     <span class="cmt"># count</span>
+SREM myset <span class="str">"b"</span>                  <span class="cmt"># remove</span>
+SPOP myset                      <span class="cmt"># random remove</span>
+SRANDMEMBER myset <span class="num">2</span>             <span class="cmt"># random 2 members</span>
+SUNION set1 set2                <span class="cmt"># union</span>
+SINTER set1 set2                <span class="cmt"># intersection</span>
+SDIFF set1 set2                 <span class="cmt"># difference</span></code></pre></div></div>
+<div class="section" id="sorted"><div class="section-header"><span class="icon">📊</span><h2>Sorted Sets</h2></div><div class="code-wrapper"><pre><code>ZADD leaders <span class="num">100</span> <span class="str">"Alice"</span> <span class="num">85</span> <span class="str">"Bob"</span>
+ZRANGE leaders <span class="num">0</span> -<span class="num">1</span>             <span class="cmt"># by rank (asc)</span>
+ZREVRANGE leaders <span class="num">0</span> <span class="num">2</span>           <span class="cmt"># top 3</span>
+ZRANGE leaders <span class="num">0</span> -<span class="num">1</span> WITHSCORES
+ZSCORE leaders <span class="str">"Alice"</span>          <span class="cmt"># get score</span>
+ZRANK leaders <span class="str">"Alice"</span>           <span class="cmt"># get rank</span>
+ZINCRBY leaders <span class="num">10</span> <span class="str">"Alice"</span>      <span class="cmt"># increment</span>
+ZCARD leaders                   <span class="cmt"># count</span>
+ZRANGEBYSCORE leaders <span class="num">80</span> <span class="num">100</span>    <span class="cmt"># by score range</span>
+ZREM leaders <span class="str">"Bob"</span></code></pre></div></div>
+<div class="section" id="pubsub"><div class="section-header"><span class="icon">📡</span><h2>Pub/Sub</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Subscribe</span>
+SUBSCRIBE channel1 channel2
+PSUBSCRIBE news:*               <span class="cmt"># pattern subscribe</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Redis content.</div>
-</div>
+<span class="cmt"># Publish (from another client)</span>
+PUBLISH channel1 <span class="str">"Hello!"</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Redis basics coming soon...</span></code></pre></div>
-</div>
-
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Redis patterns coming soon...</span></code></pre></div>
-</div>
-
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Redis Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Unsubscribe</span>
+UNSUBSCRIBE channel1</code></pre></div></div>
+<div class="section" id="admin"><div class="section-header"><span class="icon">🔧</span><h2>Administration</h2></div><div class="code-wrapper"><pre><code>FLUSHDB                         <span class="cmt"># clear current DB</span>
+FLUSHALL                        <span class="cmt"># clear all DBs</span>
+SAVE                            <span class="cmt"># sync save to disk</span>
+BGSAVE                          <span class="cmt"># async save</span>
+CONFIG SET maxmemory 256mb
+CONFIG SET maxmemory-policy allkeys-lru
+SLOWLOG GET <span class="num">10</span>                  <span class="cmt"># slow queries</span>
+CLIENT LIST                     <span class="cmt"># connected clients</span>
+MONITOR                         <span class="cmt"># real-time commands</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Redis Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

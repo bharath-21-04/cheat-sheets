@@ -1,58 +1,131 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MySQL Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ MySQL</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>MySQL Cheatsheet</h1>
-  <p class="subtitle">DDL, DML, joins, indexes, stored procedures, triggers &amp; performance tuning</p>
-  <span class="tag tag-db">Database / SQL</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>MySQL Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ MySQL</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>MySQL Cheatsheet</h1><p class="subtitle">DDL, DML, queries, joins, functions &amp; administration</p><span class="tag tag-db">Database</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#connect">Connection</a>
+    <a href="#ddl">DDL (Tables)</a>
+    <a href="#dml">DML (Data)</a>
+    <a href="#queries">Queries</a>
+    <a href="#joins">Joins</a>
+    <a href="#functions">Functions</a>
+    <a href="#admin">Administration</a>
+</div></div>
+<div class="section" id="connect"><div class="section-header"><span class="icon">🔗</span><h2>Connection</h2></div><div class="code-wrapper"><pre><code>mysql -u root -p
+mysql -u user -p -h hostname dbname
+mysql -u user -p -e <span class="str">"SELECT 1"</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Basic commands</span>
+SHOW DATABASES;
+USE mydb;
+SHOW TABLES;
+DESCRIBE users;
+SHOW CREATE TABLE users;</code></pre></div></div>
+<div class="section" id="ddl"><div class="section-header"><span class="icon">🏗️</span><h2>DDL (Tables)</h2></div><div class="code-wrapper"><pre><code><span class="cmt">-- Create table</span>
+<span class="kw">CREATE TABLE</span> users (
+  id <span class="tp">INT</span> <span class="kw">AUTO_INCREMENT PRIMARY KEY</span>,
+  name <span class="tp">VARCHAR</span>(<span class="num">100</span>) <span class="kw">NOT NULL</span>,
+  email <span class="tp">VARCHAR</span>(<span class="num">255</span>) <span class="kw">UNIQUE</span>,
+  age <span class="tp">INT</span> <span class="kw">DEFAULT</span> <span class="num">0</span>,
+  created_at <span class="tp">TIMESTAMP</span> <span class="kw">DEFAULT CURRENT_TIMESTAMP</span>,
+  <span class="kw">INDEX</span> idx_name (name)
+);
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive MySQL content.</div>
-</div>
+<span class="cmt">-- Alter table</span>
+<span class="kw">ALTER TABLE</span> users <span class="kw">ADD</span> phone <span class="tp">VARCHAR</span>(<span class="num">20</span>);
+<span class="kw">ALTER TABLE</span> users <span class="kw">DROP COLUMN</span> phone;
+<span class="kw">ALTER TABLE</span> users <span class="kw">MODIFY</span> name <span class="tp">VARCHAR</span>(<span class="num">200</span>);
+<span class="kw">ALTER TABLE</span> users <span class="kw">RENAME TO</span> accounts;
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// MySQL basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">-- Drop</span>
+<span class="kw">DROP TABLE IF EXISTS</span> users;
+<span class="kw">TRUNCATE TABLE</span> users;</code></pre></div></div>
+<div class="section" id="dml"><div class="section-header"><span class="icon">📝</span><h2>DML (Insert/Update/Delete)</h2></div><div class="code-wrapper"><pre><code><span class="cmt">-- Insert</span>
+<span class="kw">INSERT INTO</span> users (name, email) <span class="kw">VALUES</span> (<span class="str">'Alice'</span>, <span class="str">'a@b.com'</span>);
+<span class="kw">INSERT INTO</span> users (name, email) <span class="kw">VALUES</span>
+  (<span class="str">'Bob'</span>, <span class="str">'b@b.com'</span>),
+  (<span class="str">'Carol'</span>, <span class="str">'c@b.com'</span>);
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// MySQL patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">-- Update</span>
+<span class="kw">UPDATE</span> users <span class="kw">SET</span> age = <span class="num">26</span> <span class="kw">WHERE</span> name = <span class="str">'Alice'</span>;
+<span class="kw">UPDATE</span> users <span class="kw">SET</span> age = age + <span class="num">1</span>;
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>MySQL Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt">-- Delete</span>
+<span class="kw">DELETE FROM</span> users <span class="kw">WHERE</span> id = <span class="num">1</span>;
+<span class="kw">DELETE FROM</span> users <span class="kw">WHERE</span> age &lt; <span class="num">18</span>;
+
+<span class="cmt">-- Upsert</span>
+<span class="kw">INSERT INTO</span> users (id, name) <span class="kw">VALUES</span> (<span class="num">1</span>, <span class="str">'Alice'</span>)
+  <span class="kw">ON DUPLICATE KEY UPDATE</span> name = <span class="str">'Alice'</span>;</code></pre></div></div>
+<div class="section" id="queries"><div class="section-header"><span class="icon">🔍</span><h2>Queries</h2></div><div class="code-wrapper"><pre><code><span class="kw">SELECT</span> * <span class="kw">FROM</span> users;
+<span class="kw">SELECT</span> name, email <span class="kw">FROM</span> users <span class="kw">WHERE</span> age &gt; <span class="num">18</span>;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">ORDER BY</span> name <span class="kw">ASC</span>;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">LIMIT</span> <span class="num">10</span> <span class="kw">OFFSET</span> <span class="num">20</span>;
+<span class="kw">SELECT DISTINCT</span> status <span class="kw">FROM</span> users;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> name <span class="kw">LIKE</span> <span class="str">'A%'</span>;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> age <span class="kw">IN</span> (<span class="num">25</span>, <span class="num">30</span>, <span class="num">35</span>);
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> age <span class="kw">BETWEEN</span> <span class="num">18</span> <span class="kw">AND</span> <span class="num">65</span>;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> email <span class="kw">IS NOT NULL</span>;
+
+<span class="cmt">-- Aggregation</span>
+<span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> users;
+<span class="kw">SELECT</span> status, <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> users <span class="kw">GROUP BY</span> status;
+<span class="kw">SELECT</span> status, <span class="fn">AVG</span>(age) <span class="kw">FROM</span> users <span class="kw">GROUP BY</span> status <span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) &gt; <span class="num">5</span>;
+
+<span class="cmt">-- Subquery</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> age &gt; (<span class="kw">SELECT</span> <span class="fn">AVG</span>(age) <span class="kw">FROM</span> users);</code></pre></div></div>
+<div class="section" id="joins"><div class="section-header"><span class="icon">🔗</span><h2>Joins</h2></div><div class="code-wrapper"><pre><code><span class="cmt">-- INNER JOIN</span>
+<span class="kw">SELECT</span> u.name, o.total
+<span class="kw">FROM</span> users u
+<span class="kw">INNER JOIN</span> orders o <span class="kw">ON</span> u.id = o.user_id;
+
+<span class="cmt">-- LEFT JOIN</span>
+<span class="kw">SELECT</span> u.name, o.total
+<span class="kw">FROM</span> users u
+<span class="kw">LEFT JOIN</span> orders o <span class="kw">ON</span> u.id = o.user_id;
+
+<span class="cmt">-- RIGHT JOIN / FULL OUTER JOIN (emulated)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> a <span class="kw">RIGHT JOIN</span> b <span class="kw">ON</span> a.id = b.a_id;
+
+<span class="cmt">-- Self join</span>
+<span class="kw">SELECT</span> e.name, m.name <span class="kw">AS</span> manager
+<span class="kw">FROM</span> employees e
+<span class="kw">LEFT JOIN</span> employees m <span class="kw">ON</span> e.manager_id = m.id;</code></pre></div></div>
+<div class="section" id="functions"><div class="section-header"><span class="icon">🔧</span><h2>Common Functions</h2></div><div class="code-wrapper"><pre><code><span class="cmt">-- String</span>
+<span class="fn">CONCAT</span>(<span class="str">'Hello'</span>, <span class="str">' '</span>, <span class="str">'World'</span>)
+<span class="fn">UPPER</span>(name)  <span class="fn">LOWER</span>(name)
+<span class="fn">SUBSTRING</span>(name, <span class="num">1</span>, <span class="num">3</span>)
+<span class="fn">LENGTH</span>(name)  <span class="fn">TRIM</span>(name)
+<span class="fn">REPLACE</span>(name, <span class="str">'old'</span>, <span class="str">'new'</span>)
+
+<span class="cmt">-- Date</span>
+<span class="fn">NOW</span>()  <span class="fn">CURDATE</span>()  <span class="fn">CURTIME</span>()
+<span class="fn">DATE_FORMAT</span>(created_at, <span class="str">'%Y-%m-%d'</span>)
+<span class="fn">DATEDIFF</span>(NOW(), created_at)
+<span class="fn">DATE_ADD</span>(NOW(), <span class="kw">INTERVAL</span> <span class="num">7</span> DAY)
+
+<span class="cmt">-- Aggregate</span>
+<span class="fn">COUNT</span>  <span class="fn">SUM</span>  <span class="fn">AVG</span>  <span class="fn">MIN</span>  <span class="fn">MAX</span>
+<span class="fn">GROUP_CONCAT</span>(name <span class="kw">SEPARATOR</span> <span class="str">', '</span>)
+
+<span class="cmt">-- Conditional</span>
+<span class="kw">IF</span>(age &gt; <span class="num">18</span>, <span class="str">'adult'</span>, <span class="str">'minor'</span>)
+<span class="kw">CASE WHEN</span> age &gt; <span class="num">18</span> <span class="kw">THEN</span> <span class="str">'adult'</span> <span class="kw">ELSE</span> <span class="str">'minor'</span> <span class="kw">END</span>
+<span class="fn">COALESCE</span>(name, <span class="str">'Unknown'</span>)
+<span class="fn">IFNULL</span>(name, <span class="str">'N/A'</span>)</code></pre></div></div>
+<div class="section" id="admin"><div class="section-header"><span class="icon">⚙️</span><h2>Administration</h2></div><div class="code-wrapper"><pre><code><span class="cmt">-- Users</span>
+<span class="kw">CREATE USER</span> <span class="str">'app'</span>@<span class="str">'%'</span> <span class="kw">IDENTIFIED BY</span> <span class="str">'password'</span>;
+<span class="kw">GRANT ALL ON</span> mydb.* <span class="kw">TO</span> <span class="str">'app'</span>@<span class="str">'%'</span>;
+<span class="kw">FLUSH PRIVILEGES</span>;
+
+<span class="cmt">-- Backup &amp; Restore</span>
+mysqldump -u root -p mydb &gt; backup.sql
+mysql -u root -p mydb &lt; backup.sql
+
+<span class="cmt">-- Performance</span>
+<span class="kw">EXPLAIN</span> <span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> email = <span class="str">'a@b.com'</span>;
+SHOW PROCESSLIST;
+SHOW STATUS;</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>MySQL Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

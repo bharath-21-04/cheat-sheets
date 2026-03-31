@@ -1,58 +1,120 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>RegEx Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ RegEx</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>RegEx Cheatsheet</h1>
-  <p class="subtitle">Character classes, quantifiers, groups, lookahead, backreferences &amp; common patterns</p>
-  <span class="tag tag-concept">Linux / Pattern</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Regex Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Regex</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Regex Cheatsheet</h1><p class="subtitle">Regular expressions — syntax, quantifiers, groups, lookahead &amp; common patterns</p><span class="tag tag-concept">Reference</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#chars">Characters</a>
+    <a href="#quantifiers">Quantifiers</a>
+    <a href="#anchors">Anchors</a>
+    <a href="#groups">Groups</a>
+    <a href="#classes">Character Classes</a>
+    <a href="#flags">Flags</a>
+    <a href="#lookaround">Lookaround</a>
+    <a href="#examples">Common Patterns</a>
+</div></div>
+<div class="section" id="chars"><div class="section-header"><span class="icon">📝</span><h2>Characters</h2></div><div class="code-wrapper"><pre><code>.         <span class="cmt"># any character (except newline)</span>
+\d        <span class="cmt"># digit [0-9]</span>
+\D        <span class="cmt"># non-digit</span>
+\w        <span class="cmt"># word char [a-zA-Z0-9_]</span>
+\W        <span class="cmt"># non-word char</span>
+\s        <span class="cmt"># whitespace [ \t\n\r\f]</span>
+\S        <span class="cmt"># non-whitespace</span>
+\         <span class="cmt"># escape special char</span>
+\n        <span class="cmt"># newline</span>
+\t        <span class="cmt"># tab</span></code></pre></div></div>
+<div class="section" id="quantifiers"><div class="section-header"><span class="icon">🔢</span><h2>Quantifiers</h2></div><div class="code-wrapper"><pre><code>*         <span class="cmt"># 0 or more</span>
++         <span class="cmt"># 1 or more</span>
+?         <span class="cmt"># 0 or 1 (optional)</span>
+{<span class="num">3</span>}       <span class="cmt"># exactly 3</span>
+{<span class="num">2</span>,<span class="num">5</span>}     <span class="cmt"># 2 to 5</span>
+{<span class="num">2</span>,}      <span class="cmt"># 2 or more</span>
+{,<span class="num">5</span>}      <span class="cmt"># up to 5</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Greedy vs Lazy</span>
+.*        <span class="cmt"># greedy (match as much as possible)</span>
+.*?       <span class="cmt"># lazy (match as little as possible)</span>
+.+?       <span class="cmt"># lazy one or more</span></code></pre></div></div>
+<div class="section" id="anchors"><div class="section-header"><span class="icon">⚓</span><h2>Anchors &amp; Boundaries</h2></div><div class="code-wrapper"><pre><code>^         <span class="cmt"># start of string/line</span>
+$         <span class="cmt"># end of string/line</span>
+\b        <span class="cmt"># word boundary</span>
+\B        <span class="cmt"># non-word boundary</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive RegEx content.</div>
-</div>
+<span class="cmt"># Examples</span>
+^Hello    <span class="cmt"># line starting with "Hello"</span>
+world$    <span class="cmt"># line ending with "world"</span>
+\bcat\b   <span class="cmt"># whole word "cat" (not "catch")</span></code></pre></div></div>
+<div class="section" id="groups"><div class="section-header"><span class="icon">📦</span><h2>Groups &amp; Alternation</h2></div><div class="code-wrapper"><pre><code>(abc)     <span class="cmt"># capturing group</span>
+(?:abc)   <span class="cmt"># non-capturing group</span>
+a|b       <span class="cmt"># alternation (a OR b)</span>
+\<span class="num">1</span>        <span class="cmt"># backreference to group 1</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// RegEx basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Named groups</span>
+(?P&lt;name&gt;pattern)   <span class="cmt"># Python named group</span>
+(?&lt;name&gt;pattern)    <span class="cmt"># JS/C# named group</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// RegEx patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Examples</span>
+(\d{3})-(\d{4})     <span class="cmt"># capture phone parts</span>
+(cat|dog)s?          <span class="cmt"># "cat", "cats", "dog", "dogs"</span>
+(\w+)\s+\<span class="num">1</span>          <span class="cmt"># repeated word</span></code></pre></div></div>
+<div class="section" id="classes"><div class="section-header"><span class="icon">📐</span><h2>Character Classes</h2></div><div class="code-wrapper"><pre><code>[abc]     <span class="cmt"># a, b, or c</span>
+[^abc]    <span class="cmt"># NOT a, b, or c</span>
+[a-z]     <span class="cmt"># lowercase letter</span>
+[A-Z]     <span class="cmt"># uppercase letter</span>
+[0-9]     <span class="cmt"># digit</span>
+[a-zA-Z]  <span class="cmt"># any letter</span>
+[a-zA-Z0-9_]  <span class="cmt"># same as \w</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>RegEx Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># POSIX classes (in some engines)</span>
+[:alpha:]   <span class="cmt"># letters</span>
+[:digit:]   <span class="cmt"># digits</span>
+[:alnum:]   <span class="cmt"># letters + digits</span>
+[:space:]   <span class="cmt"># whitespace</span></code></pre></div></div>
+<div class="section" id="flags"><div class="section-header"><span class="icon">🏴</span><h2>Flags / Modifiers</h2></div><div class="code-wrapper"><pre><code>i    <span class="cmt"># case insensitive</span>
+g    <span class="cmt"># global (all matches)</span>
+m    <span class="cmt"># multiline (^ $ match line boundaries)</span>
+s    <span class="cmt"># dotall (. matches newline)</span>
+x    <span class="cmt"># verbose (ignore whitespace, allow comments)</span>
+u    <span class="cmt"># unicode</span>
+
+<span class="cmt"># Usage (JavaScript)</span>
+/pattern/gi
+<span class="cmt"># Usage (Python)</span>
+re.compile(r<span class="str">"pattern"</span>, re.IGNORECASE | re.MULTILINE)</code></pre></div></div>
+<div class="section" id="lookaround"><div class="section-header"><span class="icon">👀</span><h2>Lookaround</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Lookahead (match if followed by)</span>
+foo(?=bar)      <span class="cmt"># "foo" followed by "bar"</span>
+foo(?!bar)      <span class="cmt"># "foo" NOT followed by "bar"</span>
+
+<span class="cmt"># Lookbehind (match if preceded by)</span>
+(?&lt;=foo)bar     <span class="cmt"># "bar" preceded by "foo"</span>
+(?&lt;!foo)bar     <span class="cmt"># "bar" NOT preceded by "foo"</span>
+
+<span class="cmt"># Examples</span>
+\d+(?=px)       <span class="cmt"># number before "px"</span>
+(?&lt;=\$)\d+      <span class="cmt"># number after "$"</span>
+(?&lt;!\d)\d{3}(?!\d)  <span class="cmt"># exactly 3 digits</span></code></pre></div></div>
+<div class="section" id="examples"><div class="section-header"><span class="icon">💡</span><h2>Common Patterns</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Email</span>
+[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}
+
+<span class="cmt"># URL</span>
+https?://[\w.-]+(/[\w./-]*)?
+
+<span class="cmt"># IP Address</span>
+\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b
+
+<span class="cmt"># Phone (US)</span>
+(\+1[-.])?\(?\d{3}\)?[-.]?\d{3}[-.]?\d{4}
+
+<span class="cmt"># Date (YYYY-MM-DD)</span>
+\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])
+
+<span class="cmt"># HTML tag</span>
+&lt;([a-z]+)([^&lt;]*)(?:&gt;(.*?)&lt;/\1&gt;|/&gt;)
+
+<span class="cmt"># Password (8+ chars, upper, lower, digit)</span>
+^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$
+
+<span class="cmt"># Remove HTML tags</span>
+&lt;[^&gt;]*&gt;</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Regex Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

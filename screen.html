@@ -1,58 +1,92 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Screen Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Screen</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Screen Cheatsheet</h1>
-  <p class="subtitle">Sessions, windows, splitting, detach/attach, scrollback &amp; configuration</p>
-  <span class="tag tag-concept">Linux / Command</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Screen Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Screen</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Screen Cheatsheet</h1><p class="subtitle">GNU Screen sessions, windows, regions &amp; detach/attach</p><span class="tag tag-concept">Linux / Tool</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#sessions">Sessions</a>
+    <a href="#windows">Windows</a>
+    <a href="#regions">Regions</a>
+    <a href="#scrollback">Scrollback</a>
+    <a href="#config">Configuration</a>
+    <a href="#reference">Quick Reference</a>
+</div></div>
+<div class="section" id="sessions"><div class="section-header"><span class="icon">📺</span><h2>Sessions</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Create</span>
+screen                        <span class="cmt"># new session</span>
+screen -S myname              <span class="cmt"># named session</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Detach</span>
+Ctrl+a  d                     <span class="cmt"># detach</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Screen content.</div>
-</div>
+<span class="cmt"># Reattach</span>
+screen -ls                    <span class="cmt"># list sessions</span>
+screen -r                     <span class="cmt"># reattach</span>
+screen -r myname              <span class="cmt"># reattach by name</span>
+screen -dr myname             <span class="cmt"># detach &amp; reattach</span>
+screen -x myname              <span class="cmt"># multi-attach (share)</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Screen basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Kill</span>
+Ctrl+a  :quit                 <span class="cmt"># kill session</span>
+screen -X -S myname quit</code></pre></div></div>
+<div class="section" id="windows"><div class="section-header"><span class="icon">🪟</span><h2>Windows</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># All commands start with Ctrl+a</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Screen patterns coming soon...</span></code></pre></div>
-</div>
+Ctrl+a  c       <span class="cmt"># create window</span>
+Ctrl+a  A       <span class="cmt"># rename window</span>
+Ctrl+a  w       <span class="cmt"># list windows</span>
+Ctrl+a  n       <span class="cmt"># next window</span>
+Ctrl+a  p       <span class="cmt"># previous window</span>
+Ctrl+a  <span class="num">0-9</span>     <span class="cmt"># go to window N</span>
+Ctrl+a  k       <span class="cmt"># kill window</span>
+Ctrl+a  <span class="str">"</span>       <span class="cmt"># window list (navigate)</span></code></pre></div></div>
+<div class="section" id="regions"><div class="section-header"><span class="icon">📐</span><h2>Regions (Splits)</h2></div><div class="code-wrapper"><pre><code>Ctrl+a  S       <span class="cmt"># split horizontal</span>
+Ctrl+a  |       <span class="cmt"># split vertical</span>
+Ctrl+a  Tab     <span class="cmt"># switch region</span>
+Ctrl+a  X       <span class="cmt"># close current region</span>
+Ctrl+a  Q       <span class="cmt"># close all other regions</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Screen Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># After splitting, create/switch window in region:</span>
+Ctrl+a  c       <span class="cmt"># new window in region</span>
+Ctrl+a  n       <span class="cmt"># existing window</span></code></pre></div></div>
+<div class="section" id="scrollback"><div class="section-header"><span class="icon">📜</span><h2>Scrollback &amp; Copy</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Enter scrollback/copy mode</span>
+Ctrl+a  [       <span class="cmt"># or Ctrl+a Esc</span>
+
+<span class="cmt"># In scrollback mode:</span>
+↑ ↓ PgUp PgDn  <span class="cmt"># scroll</span>
+Space           <span class="cmt"># start/end selection</span>
+Enter           <span class="cmt"># copy &amp; exit</span>
+
+<span class="cmt"># Paste</span>
+Ctrl+a  ]       <span class="cmt"># paste buffer</span>
+
+<span class="cmt"># Increase scrollback buffer</span>
+Ctrl+a  :scrollback <span class="num">10000</span></code></pre></div></div>
+<div class="section" id="config"><div class="section-header"><span class="icon">⚙️</span><h2>Configuration (~/.screenrc)</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Status bar</span>
+<span class="kw">hardstatus</span> alwayslastline
+<span class="kw">hardstatus</span> string <span class="str">"%{= bw}%-w%{+b}%n %t%{-}%+w"</span>
+
+<span class="cmt"># Scrollback buffer</span>
+<span class="kw">defscrollback</span> <span class="num">10000</span>
+
+<span class="cmt"># No startup message</span>
+<span class="kw">startup_message</span> off
+
+<span class="cmt"># Visual bell</span>
+<span class="kw">vbell</span> on
+
+<span class="cmt"># Default shell</span>
+<span class="kw">shell</span> /bin/zsh</code></pre></div></div>
+<div class="section" id="reference"><div class="section-header"><span class="icon">📋</span><h2>Quick Reference (Ctrl+a + ...)</h2></div><div class="code-wrapper"><pre><code>c     <span class="cmt"># create window</span>
+n/p   <span class="cmt"># next/prev window</span>
+d     <span class="cmt"># detach</span>
+k     <span class="cmt"># kill window</span>
+A     <span class="cmt"># rename</span>
+S     <span class="cmt"># split horizontal</span>
+|     <span class="cmt"># split vertical</span>
+Tab   <span class="cmt"># switch region</span>
+X     <span class="cmt"># close region</span>
+[     <span class="cmt"># copy/scroll mode</span>
+]     <span class="cmt"># paste</span>
+?     <span class="cmt"># help</span>
+:     <span class="cmt"># command prompt</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Screen Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

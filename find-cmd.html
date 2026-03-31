@@ -1,58 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Find Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Find</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Find Cheatsheet</h1>
-  <p class="subtitle">File search, predicates, actions, -exec, -name, -type &amp; common patterns</p>
-  <span class="tag tag-concept">Linux / Command</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Find Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Find</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Find Cheatsheet</h1><p class="subtitle">File search by name, type, size, time, permissions &amp; actions</p><span class="tag tag-concept">Linux / Command</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#name">By Name</a>
+    <a href="#type">By Type &amp; Size</a>
+    <a href="#time">By Time</a>
+    <a href="#perms">By Permissions</a>
+    <a href="#actions">Actions</a>
+    <a href="#examples">Examples</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">🔍</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Syntax</span>
+find [path] [expression]
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Find content.</div>
-</div>
+find .                          <span class="cmt"># list everything</span>
+find /var/log                   <span class="cmt"># search in /var/log</span>
+find . -maxdepth <span class="num">1</span>              <span class="cmt"># current dir only</span>
+find . -maxdepth <span class="num">2</span>              <span class="cmt"># 2 levels deep</span>
+find . -mindepth <span class="num">2</span>              <span class="cmt"># skip first level</span></code></pre></div></div>
+<div class="section" id="name"><div class="section-header"><span class="icon">📛</span><h2>By Name</h2></div><div class="code-wrapper"><pre><code>find . -name <span class="str">"*.py"</span>             <span class="cmt"># exact pattern (case sensitive)</span>
+find . -iname <span class="str">"*.py"</span>            <span class="cmt"># case insensitive</span>
+find . -name <span class="str">"test*"</span>            <span class="cmt"># starts with "test"</span>
+find . -not -name <span class="str">"*.log"</span>       <span class="cmt"># exclude pattern</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Find basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Path pattern</span>
+find . -path <span class="str">"*/src/*.js"</span>
+find . -not -path <span class="str">"*/node_modules/*"</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Find patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Regex</span>
+find . -regex <span class="str">".*\.(py|js)"</span></code></pre></div></div>
+<div class="section" id="type"><div class="section-header"><span class="icon">📁</span><h2>By Type &amp; Size</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Type</span>
+find . -type f                  <span class="cmt"># regular files</span>
+find . -type d                  <span class="cmt"># directories</span>
+find . -type l                  <span class="cmt"># symlinks</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Find Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Size</span>
+find . -size +<span class="num">100</span>M              <span class="cmt"># larger than 100MB</span>
+find . -size -<span class="num">1</span>k               <span class="cmt"># smaller than 1KB</span>
+find . -size <span class="num">50</span>M               <span class="cmt"># exactly 50MB</span>
+find . -empty                   <span class="cmt"># empty files/dirs</span>
+
+<span class="cmt"># Size units: c(bytes) k(KB) M(MB) G(GB)</span></code></pre></div></div>
+<div class="section" id="time"><div class="section-header"><span class="icon">🕐</span><h2>By Time</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Modified time (days)</span>
+find . -mtime -<span class="num">7</span>               <span class="cmt"># last 7 days</span>
+find . -mtime +<span class="num">30</span>              <span class="cmt"># more than 30 days ago</span>
+find . -mtime <span class="num">0</span>                <span class="cmt"># today</span>
+
+<span class="cmt"># Modified time (minutes)</span>
+find . -mmin -<span class="num">60</span>               <span class="cmt"># last 60 minutes</span>
+
+<span class="cmt"># Access time / Change time</span>
+find . -atime -<span class="num">7</span>               <span class="cmt"># accessed in last 7 days</span>
+find . -ctime -<span class="num">7</span>               <span class="cmt"># status changed</span>
+
+<span class="cmt"># Newer than file</span>
+find . -newer reference.txt</code></pre></div></div>
+<div class="section" id="perms"><div class="section-header"><span class="icon">🔐</span><h2>By Permissions &amp; Owner</h2></div><div class="code-wrapper"><pre><code>find . -perm <span class="num">644</span>                <span class="cmt"># exact permissions</span>
+find . -perm -<span class="num">644</span>               <span class="cmt"># at least these perms</span>
+find . -perm /<span class="num">111</span>               <span class="cmt"># any execute bit</span>
+
+find . -user username
+find . -group groupname
+find . -uid <span class="num">1000</span>
+find . -nouser                  <span class="cmt"># no matching user</span></code></pre></div></div>
+<div class="section" id="actions"><div class="section-header"><span class="icon">⚡</span><h2>Actions</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Execute command</span>
+find . -name <span class="str">"*.log"</span> -exec rm {} \;
+find . -name <span class="str">"*.py"</span> -exec grep -l <span class="str">"TODO"</span> {} +
+
+<span class="cmt"># Print (default)</span>
+find . -name <span class="str">"*.txt"</span> -print
+find . -name <span class="str">"*.txt"</span> -print0     <span class="cmt"># null-delimited</span>
+
+<span class="cmt"># Delete</span>
+find . -name <span class="str">"*.tmp"</span> -delete
+
+<span class="cmt"># Confirm before action</span>
+find . -name <span class="str">"*.log"</span> -ok rm {} \;
+
+<span class="cmt"># With xargs</span>
+find . -name <span class="str">"*.txt"</span> -print0 | xargs -0 grep <span class="str">"pattern"</span></code></pre></div></div>
+<div class="section" id="examples"><div class="section-header"><span class="icon">💡</span><h2>Common Examples</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Find large files</span>
+find / -type f -size +<span class="num">500</span>M <span class="num">2</span>&gt;/dev/null
+
+<span class="cmt"># Find and delete old logs</span>
+find /var/log -name <span class="str">"*.log"</span> -mtime +<span class="num">90</span> -delete
+
+<span class="cmt"># Count files by extension</span>
+find . -type f | sed <span class="str">'s/.*\.//'</span> | sort | uniq -c | sort -rn
+
+<span class="cmt"># Find duplicate filenames</span>
+find . -type f -printf <span class="str">"%f\n"</span> | sort | uniq -d
+
+<span class="cmt"># Fix permissions</span>
+find . -type f -exec chmod <span class="num">644</span> {} +
+find . -type d -exec chmod <span class="num">755</span> {} +
+
+<span class="cmt"># Find recently modified</span>
+find . -type f -mmin -<span class="num">30</span> -ls</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Find Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

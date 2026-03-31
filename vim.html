@@ -1,58 +1,141 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vim Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Vim</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Vim Cheatsheet</h1>
-  <p class="subtitle">Modes, motions, commands, registers, macros, splits &amp; plugin management</p>
-  <span class="tag tag-fw">Toolkit / Editor</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Vim Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Vim</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Vim Cheatsheet</h1><p class="subtitle">Modes, navigation, editing, search, macros &amp; configuration</p><span class="tag tag-concept">Editor</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#modes">Modes</a>
+    <a href="#nav">Navigation</a>
+    <a href="#edit">Editing</a>
+    <a href="#search">Search &amp; Replace</a>
+    <a href="#visual">Visual Mode</a>
+    <a href="#files">Files &amp; Buffers</a>
+    <a href="#macros">Macros</a>
+    <a href="#config">Configuration</a>
+</div></div>
+<div class="section" id="modes"><div class="section-header"><span class="icon">🔄</span><h2>Modes</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Normal mode (default) — navigation &amp; commands</span>
+<span class="cmt"># Insert mode — typing text</span>
+<span class="cmt"># Visual mode — selecting text</span>
+<span class="cmt"># Command mode — ex commands (:)</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+i       <span class="cmt"># insert before cursor</span>
+I       <span class="cmt"># insert at line start</span>
+a       <span class="cmt"># insert after cursor</span>
+A       <span class="cmt"># insert at line end</span>
+o       <span class="cmt"># new line below</span>
+O       <span class="cmt"># new line above</span>
+Esc     <span class="cmt"># back to normal mode</span></code></pre></div></div>
+<div class="section" id="nav"><div class="section-header"><span class="icon">🧭</span><h2>Navigation</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Character</span>
+h j k l             <span class="cmt"># ← ↓ ↑ →</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Vim content.</div>
-</div>
+<span class="cmt"># Word</span>
+w       <span class="cmt"># next word</span>       b   <span class="cmt"># prev word</span>
+e       <span class="cmt"># end of word</span>     W   <span class="cmt"># next WORD</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Vim basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Line</span>
+<span class="num">0</span>       <span class="cmt"># line start</span>      $   <span class="cmt"># line end</span>
+^       <span class="cmt"># first non-blank</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Vim patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># File</span>
+gg      <span class="cmt"># file start</span>      G   <span class="cmt"># file end</span>
+:<span class="num">42</span>     <span class="cmt"># go to line 42</span>
+Ctrl+d  <span class="cmt"># half page down</span>  Ctrl+u  <span class="cmt"># half page up</span>
+Ctrl+f  <span class="cmt"># page down</span>       Ctrl+b  <span class="cmt"># page up</span>
+{       <span class="cmt"># prev paragraph</span>  }   <span class="cmt"># next paragraph</span>
+%       <span class="cmt"># matching bracket</span></code></pre></div></div>
+<div class="section" id="edit"><div class="section-header"><span class="icon">✏️</span><h2>Editing</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Delete</span>
+x       <span class="cmt"># delete char</span>      X    <span class="cmt"># delete before</span>
+dd      <span class="cmt"># delete line</span>      D    <span class="cmt"># delete to end</span>
+dw      <span class="cmt"># delete word</span>      d$   <span class="cmt"># delete to end</span>
+d0      <span class="cmt"># delete to start</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Vim Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Change (delete + insert mode)</span>
+cc      <span class="cmt"># change line</span>      cw   <span class="cmt"># change word</span>
+C       <span class="cmt"># change to end</span>    ci"  <span class="cmt"># change inside ""</span>
+
+<span class="cmt"># Copy &amp; Paste</span>
+yy      <span class="cmt"># yank (copy) line</span>
+yw      <span class="cmt"># yank word</span>
+p       <span class="cmt"># paste after</span>      P    <span class="cmt"># paste before</span>
+
+<span class="cmt"># Undo &amp; Redo</span>
+u       <span class="cmt"># undo</span>             Ctrl+r  <span class="cmt"># redo</span>
+
+<span class="cmt"># Other</span>
+.       <span class="cmt"># repeat last command</span>
+~       <span class="cmt"># toggle case</span>
+J       <span class="cmt"># join lines</span>
+&gt;&gt;      <span class="cmt"># indent</span>           &lt;&lt;   <span class="cmt"># unindent</span></code></pre></div></div>
+<div class="section" id="search"><div class="section-header"><span class="icon">🔍</span><h2>Search &amp; Replace</h2></div><div class="code-wrapper"><pre><code>/pattern     <span class="cmt"># search forward</span>
+?pattern     <span class="cmt"># search backward</span>
+n            <span class="cmt"># next match</span>
+N            <span class="cmt"># previous match</span>
+*            <span class="cmt"># search word under cursor</span>
+
+<span class="cmt"># Replace</span>
+:s/old/new/           <span class="cmt"># first in line</span>
+:s/old/new/g          <span class="cmt"># all in line</span>
+:%s/old/new/g         <span class="cmt"># all in file</span>
+:%s/old/new/gc        <span class="cmt"># all with confirm</span>
+:<span class="num">5</span>,<span class="num">10</span>s/old/new/g      <span class="cmt"># lines 5-10</span>
+
+<span class="cmt"># Clear search highlight</span>
+:noh</code></pre></div></div>
+<div class="section" id="visual"><div class="section-header"><span class="icon">👁️</span><h2>Visual Mode</h2></div><div class="code-wrapper"><pre><code>v       <span class="cmt"># character selection</span>
+V       <span class="cmt"># line selection</span>
+Ctrl+v  <span class="cmt"># block selection</span>
+
+<span class="cmt"># In visual mode:</span>
+d       <span class="cmt"># delete selected</span>
+y       <span class="cmt"># yank selected</span>
+&gt;       <span class="cmt"># indent</span>
+&lt;       <span class="cmt"># unindent</span>
+~       <span class="cmt"># toggle case</span>
+:       <span class="cmt"># command on selection</span>
+
+<span class="cmt"># Select inner/around</span>
+vi"     <span class="cmt"># select inside quotes</span>
+va(     <span class="cmt"># select around parens</span>
+vit     <span class="cmt"># select inside HTML tag</span>
+viw     <span class="cmt"># select inner word</span>
+vip     <span class="cmt"># select inner paragraph</span></code></pre></div></div>
+<div class="section" id="files"><div class="section-header"><span class="icon">📁</span><h2>Files &amp; Buffers</h2></div><div class="code-wrapper"><pre><code>:w              <span class="cmt"># save</span>
+:q              <span class="cmt"># quit</span>
+:wq  or  :x     <span class="cmt"># save &amp; quit</span>
+:q!             <span class="cmt"># quit without saving</span>
+:e file.txt     <span class="cmt"># open file</span>
+:bn  :bp        <span class="cmt"># next/prev buffer</span>
+:ls             <span class="cmt"># list buffers</span>
+:sp file.txt    <span class="cmt"># horizontal split</span>
+:vsp file.txt   <span class="cmt"># vertical split</span>
+Ctrl+w h/j/k/l  <span class="cmt"># navigate splits</span>
+:tabnew f.txt   <span class="cmt"># new tab</span>
+gt   gT         <span class="cmt"># next/prev tab</span></code></pre></div></div>
+<div class="section" id="macros"><div class="section-header"><span class="icon">🎬</span><h2>Macros &amp; Registers</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Record macro</span>
+qa        <span class="cmt"># start recording into register 'a'</span>
+<span class="cmt">&lt;do commands&gt;</span>
+q         <span class="cmt"># stop recording</span>
+
+<span class="cmt"># Play macro</span>
+@a        <span class="cmt"># play register 'a'</span>
+@@        <span class="cmt"># repeat last macro</span>
+<span class="num">10</span>@a      <span class="cmt"># play 10 times</span>
+
+<span class="cmt"># Registers</span>
+<span class="str">"</span>ay      <span class="cmt"># yank into register 'a'</span>
+<span class="str">"</span>ap      <span class="cmt"># paste from register 'a'</span>
+:reg      <span class="cmt"># show all registers</span></code></pre></div></div>
+<div class="section" id="config"><div class="section-header"><span class="icon">⚙️</span><h2>Configuration (.vimrc)</h2></div><div class="code-wrapper"><pre><code><span class="kw">set</span> number                <span class="cmt">" line numbers</span>
+<span class="kw">set</span> relativenumber        <span class="cmt">" relative numbers</span>
+<span class="kw">set</span> tabstop=<span class="num">4</span>             <span class="cmt">" tab width</span>
+<span class="kw">set</span> shiftwidth=<span class="num">4</span>
+<span class="kw">set</span> expandtab             <span class="cmt">" spaces instead of tabs</span>
+<span class="kw">set</span> autoindent
+<span class="kw">set</span> hlsearch incsearch    <span class="cmt">" search highlight</span>
+<span class="kw">set</span> ignorecase smartcase
+<span class="kw">set</span> mouse=a               <span class="cmt">" enable mouse</span>
+<span class="kw">set</span> clipboard=unnamedplus <span class="cmt">" system clipboard</span>
+<span class="kw">syntax on</span>
+<span class="kw">filetype plugin indent on</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Vim Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

@@ -1,58 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sed Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Sed Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head>
 <body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Sed</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Sed</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
 <div class="container">
-<div class="hero">
-  <h1>Sed Cheatsheet</h1>
-  <p class="subtitle">Substitution, deletion, insertion, addresses, hold space &amp; text transformation</p>
-  <span class="tag tag-concept">Linux / Command</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<div class="hero"><h1>Sed Cheatsheet</h1><p class="subtitle">Stream editor for text transformations, substitution &amp; filtering</p><span class="tag tag-concept">Linux / Command</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#substitute">Substitution</a>
+    <a href="#delete">Delete &amp; Insert</a>
+    <a href="#address">Address Ranges</a>
+    <a href="#advanced">Advanced</a>
+    <a href="#examples">Examples</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">📝</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Basic syntax</span>
+sed <span class="str">'command'</span> file.txt            <span class="cmt"># print to stdout</span>
+sed -i <span class="str">'command'</span> file.txt          <span class="cmt"># edit in-place</span>
+sed -i.bak <span class="str">'command'</span> file.txt      <span class="cmt"># in-place with backup</span>
+sed -n <span class="str">'command'</span> file.txt          <span class="cmt"># suppress default output</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Sed content.</div>
-</div>
+<span class="cmt"># Print specific lines</span>
+sed -n <span class="str">'5p'</span> file.txt               <span class="cmt"># line 5</span>
+sed -n <span class="str">'5,10p'</span> file.txt            <span class="cmt"># lines 5-10</span>
+sed -n <span class="str">'$p'</span> file.txt               <span class="cmt"># last line</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Sed basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Pipe usage</span>
+echo <span class="str">"hello world"</span> | sed <span class="str">'s/world/Sed/'</span>
+cat file.txt | sed <span class="str">'s/old/new/g'</span></code></pre></div></div>
+<div class="section" id="substitute"><div class="section-header"><span class="icon">🔄</span><h2>Substitution</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Replace first occurrence per line</span>
+sed <span class="str">'s/old/new/'</span> file.txt
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Sed patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Replace all occurrences</span>
+sed <span class="str">'s/old/new/g'</span> file.txt
 
+<span class="cmt"># Case insensitive</span>
+sed <span class="str">'s/old/new/gi'</span> file.txt
+
+<span class="cmt"># Replace Nth occurrence</span>
+sed <span class="str">'s/old/new/2'</span> file.txt         <span class="cmt"># 2nd match</span>
+
+<span class="cmt"># Different delimiter</span>
+sed <span class="str">'s|/usr/local|/opt|g'</span> file.txt
+sed <span class="str">'s#http://#https://#g'</span> file.txt
+
+<span class="cmt"># Backreferences</span>
+sed <span class="str">'s/\(.*\)@\(.*\)/User: \1, Domain: \2/'</span> emails.txt
+
+<span class="cmt"># Replace only on matching lines</span>
+sed <span class="str">'/error/s/old/new/g'</span> file.txt
+
+<span class="cmt"># Replace &amp; print only changed lines</span>
+sed -n <span class="str">'s/old/new/gp'</span> file.txt</code></pre></div></div>
+<div class="section" id="delete"><div class="section-header"><span class="icon">✂️</span><h2>Delete &amp; Insert</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Delete line</span>
+sed <span class="str">'3d'</span> file.txt                 <span class="cmt"># line 3</span>
+sed <span class="str">'$d'</span> file.txt                 <span class="cmt"># last line</span>
+sed <span class="str">'3,5d'</span> file.txt               <span class="cmt"># lines 3-5</span>
+sed <span class="str">'/pattern/d'</span> file.txt         <span class="cmt"># matching lines</span>
+sed <span class="str">'/^$/d'</span> file.txt              <span class="cmt"># empty lines</span>
+sed <span class="str">'/^#/d'</span> file.txt              <span class="cmt"># comment lines</span>
+
+<span class="cmt"># Insert before line</span>
+sed <span class="str">'3i\New line text'</span> file.txt
+
+<span class="cmt"># Append after line</span>
+sed <span class="str">'3a\New line text'</span> file.txt
+
+<span class="cmt"># Replace entire line</span>
+sed <span class="str">'3c\Replacement line'</span> file.txt</code></pre></div></div>
+<div class="section" id="address"><div class="section-header"><span class="icon">📍</span><h2>Address Ranges</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Line number</span>
+sed <span class="str">'5s/old/new/'</span>               <span class="cmt"># only line 5</span>
+
+<span class="cmt"># Range</span>
+sed <span class="str">'5,10s/old/new/'</span>            <span class="cmt"># lines 5–10</span>
+
+<span class="cmt"># Pattern</span>
+sed <span class="str">'/START/,/END/s/old/new/'</span>   <span class="cmt"># between patterns</span>
+
+<span class="cmt"># From pattern to end</span>
+sed <span class="str">'/START/,$s/old/new/'</span>
+
+<span class="cmt"># Every Nth line</span>
+sed <span class="str">'0~2s/old/new/'</span>            <span class="cmt"># every 2nd line</span>
+
+<span class="cmt"># Not matching</span>
+sed <span class="str">'/pattern/!d'</span>              <span class="cmt"># delete non-matching (like grep)</span></code></pre></div></div>
+<div class="section" id="advanced"><div class="section-header"><span class="icon">🚀</span><h2>Advanced</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Multiple commands</span>
+sed -e <span class="str">'s/a/A/'</span> -e <span class="str">'s/b/B/'</span> file.txt
+sed <span class="str">'s/a/A/; s/b/B/'</span> file.txt
+
+<span class="cmt"># Read from script file</span>
+sed -f commands.sed file.txt
+
+<span class="cmt"># Append file content after match</span>
+sed <span class="str">'/MARKER/r insert.txt'</span> file.txt
+
+<span class="cmt"># Write matches to file</span>
+sed -n <span class="str">'/error/w errors.txt'</span> file.txt
+
+<span class="cmt"># Transliterate (like tr)</span>
+sed <span class="str">'y/abc/ABC/'</span> file.txt
+
+<span class="cmt"># Hold space (multi-line)</span>
+sed <span class="str">'N;s/\n/ /'</span> file.txt         <span class="cmt"># join pairs of lines</span></code></pre></div></div>
+<div class="section" id="examples"><div class="section-header"><span class="icon">💡</span><h2>Common Examples</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Remove trailing whitespace</span>
+sed <span class="str">'s/[[:space:]]*$//'</span> file.txt
+
+<span class="cmt"># Remove leading whitespace</span>
+sed <span class="str">'s/^[[:space:]]*//'</span> file.txt
+
+<span class="cmt"># Add line numbers</span>
+sed <span class="str">'='</span> file.txt | sed <span class="str">'N;s/\n/\t/'</span>
+
+<span class="cmt"># Extract between markers</span>
+sed -n <span class="str">'/BEGIN/,/END/p'</span> file.txt
+
+<span class="cmt"># Double-space a file</span>
+sed <span class="str">'G'</span> file.txt
+
+<span class="cmt"># Remove HTML tags</span>
+sed <span class="str">'s/&lt;[^&gt;]*&gt;//g'</span> page.html
+
+<span class="cmt"># Dos to Unix line endings</span>
+sed <span class="str">'s/\r$//'</span> file.txt
+
+<span class="cmt"># Replace in multiple files</span>
+find . -name <span class="str">"*.txt"</span> -exec sed -i <span class="str">'s/old/new/g'</span> {} +</code></pre></div></div>
 </div>
 <button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
 <footer>Sed Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script>
+</body></html>

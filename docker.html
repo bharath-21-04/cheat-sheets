@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Docker Cheatsheet</title>
   <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 </head>
 <body>
 <nav>
@@ -15,40 +14,188 @@
 <div class="container">
 <div class="hero">
   <h1>Docker Cheatsheet</h1>
-  <p class="subtitle">Dockerfile, images, containers, volumes, networking, compose &amp; best practices</p>
-  <span class="tag tag-fw">DevOps / Containers</span>
+  <p class="subtitle">Images, containers, volumes, networking, Compose &amp; Dockerfile</p>
+  <span class="tag tag-fw">DevOps</span>
   <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
   <div class="search-count" id="searchCount"></div>
 </div>
-
 <div class="toc"><div class="toc-title">Contents</div>
   <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
+    <a href="#images">Images</a>
+    <a href="#containers">Containers</a>
+    <a href="#dockerfile">Dockerfile</a>
+    <a href="#volumes">Volumes</a>
+    <a href="#networking">Networking</a>
+    <a href="#compose">Docker Compose</a>
+    <a href="#registry">Registry</a>
+    <a href="#cleanup">Cleanup</a>
+    <a href="#best">Best Practices</a>
   </div>
 </div>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Docker content.</div>
+<div class="section" id="images">
+  <div class="section-header"><span class="icon">🐳</span><h2>Images</h2></div>
+  <div class="code-wrapper"><pre><code>docker images                   <span class="cmt"># list</span>
+docker pull nginx:latest
+docker pull node:<span class="num">20</span>-alpine
+docker build -t myapp:v1 .
+docker build -t myapp -f Dockerfile.prod .
+docker build --no-cache -t myapp .
+docker tag myapp:v1 myapp:latest
+docker rmi nginx
+docker image prune              <span class="cmt"># remove unused</span>
+docker history myapp:v1         <span class="cmt"># show layers</span></code></pre></div>
 </div>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Docker basics coming soon...</span></code></pre></div>
+<div class="section" id="containers">
+  <div class="section-header"><span class="icon">📦</span><h2>Containers</h2></div>
+  <div class="code-wrapper"><pre><code>docker run -d nginx               <span class="cmt"># detached</span>
+docker run -d -p <span class="num">8080</span>:<span class="num">80</span> nginx    <span class="cmt"># port map</span>
+docker run -d --name web nginx
+docker run -it ubuntu bash        <span class="cmt"># interactive</span>
+docker run --rm alpine echo hi
+docker run -e KEY=val myapp
+docker run --env-file .env myapp
+
+docker ps                         <span class="cmt"># running</span>
+docker ps -a                      <span class="cmt"># all</span>
+docker stop web   docker start web
+docker rm -f web
+
+docker exec -it web bash
+docker logs -f --tail <span class="num">100</span> web
+docker stats
+docker cp file.txt web:/app/
+docker cp web:/app/log.txt .</code></pre></div>
 </div>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Docker patterns coming soon...</span></code></pre></div>
+<div class="section" id="dockerfile">
+  <div class="section-header"><span class="icon">📄</span><h2>Dockerfile</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Multi-stage Node.js</span>
+<span class="kw">FROM</span> node:<span class="num">20</span>-alpine <span class="kw">AS</span> builder
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> package*.json ./
+<span class="kw">RUN</span> npm ci --only=production
+<span class="kw">COPY</span> . .
+<span class="kw">RUN</span> npm run build
+
+<span class="kw">FROM</span> node:<span class="num">20</span>-alpine
+<span class="kw">WORKDIR</span> /app
+<span class="kw">COPY</span> --from=builder /app/dist ./dist
+<span class="kw">COPY</span> --from=builder /app/node_modules ./node_modules
+<span class="kw">EXPOSE</span> <span class="num">3000</span>
+<span class="kw">USER</span> node
+<span class="kw">CMD</span> [<span class="str">"node"</span>, <span class="str">"dist/index.js"</span>]
+
+<span class="cmt"># Key instructions</span>
+<span class="kw">ARG</span> VERSION=latest
+<span class="kw">ENV</span> NODE_ENV=production
+<span class="kw">HEALTHCHECK</span> CMD curl -f http://localhost:<span class="num">3000</span>/health
+<span class="kw">ENTRYPOINT</span> [<span class="str">"node"</span>]
+<span class="kw">CMD</span> [<span class="str">"server.js"</span>]</code></pre></div>
+</div>
+
+<div class="section" id="volumes">
+  <div class="section-header"><span class="icon">💾</span><h2>Volumes</h2></div>
+  <div class="code-wrapper"><pre><code>docker volume create mydata
+docker run -v mydata:/app/data nginx
+docker volume ls
+docker volume inspect mydata
+docker volume rm mydata
+
+<span class="cmt"># Bind mount</span>
+docker run -v $(pwd):/app nginx
+docker run -v ./config:/etc/nginx:ro
+
+<span class="cmt"># tmpfs</span>
+docker run --tmpfs /tmp nginx</code></pre></div>
+</div>
+
+<div class="section" id="networking">
+  <div class="section-header"><span class="icon">🌐</span><h2>Networking</h2></div>
+  <div class="code-wrapper"><pre><code>docker network create mynet
+docker network ls
+docker run -d --name db --network mynet postgres
+docker run -d --name app --network mynet myapp
+<span class="cmt"># app reaches db at hostname "db"</span>
+
+<span class="cmt"># Port mapping</span>
+-p <span class="num">8080</span>:<span class="num">80</span>            <span class="cmt"># host:container</span>
+-p <span class="num">127.0.0.1</span>:<span class="num">8080</span>:<span class="num">80</span>  <span class="cmt"># localhost only</span>
+-P                       <span class="cmt"># map all EXPOSE ports</span></code></pre></div>
+</div>
+
+<div class="section" id="compose">
+  <div class="section-header"><span class="icon">🎼</span><h2>Docker Compose</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># docker-compose.yml</span>
+<span class="kw">version:</span> <span class="str">"3.9"</span>
+<span class="kw">services:</span>
+  <span class="kw">app:</span>
+    <span class="kw">build:</span> .
+    <span class="kw">ports:</span> [<span class="str">"3000:3000"</span>]
+    <span class="kw">environment:</span>
+      - DATABASE_URL=postgres://u:p@db/mydb
+    <span class="kw">depends_on:</span> [db]
+    <span class="kw">volumes:</span> [<span class="str">".:/app"</span>]
+
+  <span class="kw">db:</span>
+    <span class="kw">image:</span> postgres:<span class="num">16</span>-alpine
+    <span class="kw">environment:</span>
+      POSTGRES_USER: u
+      POSTGRES_PASSWORD: p
+    <span class="kw">volumes:</span> [<span class="str">"pgdata:/var/lib/postgresql/data"</span>]
+<span class="kw">volumes:</span>
+  pgdata:
+
+<span class="cmt"># Commands</span>
+docker compose up -d
+docker compose down -v
+docker compose logs -f app
+docker compose exec app bash
+docker compose build
+docker compose ps</code></pre></div>
+</div>
+
+<div class="section" id="registry">
+  <div class="section-header"><span class="icon">🏪</span><h2>Registry</h2></div>
+  <div class="code-wrapper"><pre><code>docker login
+docker tag myapp user/myapp:v1
+docker push user/myapp:v1
+docker save myapp -o myapp.tar
+docker load -i myapp.tar</code></pre></div>
+</div>
+
+<div class="section" id="cleanup">
+  <div class="section-header"><span class="icon">🧹</span><h2>Cleanup</h2></div>
+  <div class="code-wrapper"><pre><code>docker container prune
+docker image prune -a
+docker volume prune
+docker system prune -a --volumes
+docker system df</code></pre></div>
+</div>
+
+<div class="section" id="best">
+  <div class="section-header"><span class="icon">✅</span><h2>Best Practices</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># .dockerignore</span>
+node_modules  .git  *.md  .env  dist
+
+<span class="cmt"># Tips</span>
+<span class="cmt"># 1. Use specific tags (not :latest)</span>
+<span class="cmt"># 2. Multi-stage builds</span>
+<span class="cmt"># 3. Run as non-root (USER node)</span>
+<span class="cmt"># 4. COPY over ADD</span>
+<span class="cmt"># 5. Combine RUN to reduce layers</span>
+<span class="cmt"># 6. Put least-changing layers first</span>
+<span class="cmt"># 7. --no-cache-dir for pip</span>
+<span class="cmt"># 8. Add HEALTHCHECK</span>
+<span class="cmt"># 9. Alpine/Slim base images</span></code></pre></div>
 </div>
 
 </div>
 <button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
 <footer>Docker Cheatsheet &middot; 2026</footer>
 <script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
+document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});
 const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
 const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
 </script>

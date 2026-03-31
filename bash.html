@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Bash Cheatsheet</title>
   <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 </head>
 <body>
 <nav>
@@ -15,40 +14,224 @@
 <div class="container">
 <div class="hero">
   <h1>Bash Cheatsheet</h1>
-  <p class="subtitle">Variables, loops, conditionals, functions, pipes, redirection &amp; scripting patterns</p>
+  <p class="subtitle">Variables, loops, conditionals, functions, pipes, redirection &amp; scripting</p>
   <span class="tag tag-concept">Linux / Shell</span>
   <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
   <div class="search-count" id="searchCount"></div>
 </div>
-
 <div class="toc"><div class="toc-title">Contents</div>
   <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
+    <a href="#variables">Variables</a>
+    <a href="#arrays">Arrays</a>
+    <a href="#conditionals">Conditionals</a>
+    <a href="#loops">Loops</a>
+    <a href="#functions">Functions</a>
+    <a href="#io">I/O &amp; Redirection</a>
+    <a href="#pipes">Pipes &amp; Process</a>
+    <a href="#string-ops">String Operations</a>
+    <a href="#file-test">File Tests</a>
+    <a href="#one-liners">One-Liners</a>
   </div>
 </div>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Bash content.</div>
+<div class="section" id="variables">
+  <div class="section-header"><span class="icon">🔤</span><h2>Variables &amp; Strings</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Assignment (no spaces around =)</span>
+<span class="kw">NAME</span>=<span class="str">"Alice"</span>
+<span class="kw">AGE</span>=<span class="num">25</span>
+<span class="kw">readonly</span> PI=<span class="num">3.14</span>
+<span class="kw">export</span> PATH=<span class="str">"$PATH:/usr/local/bin"</span>
+
+<span class="cmt"># Interpolation &amp; quoting</span>
+<span class="kw">echo</span> <span class="str">"Hello, $NAME"</span>       <span class="cmt"># expands</span>
+<span class="kw">echo</span> <span class="str">'Hello, $NAME'</span>       <span class="cmt"># literal</span>
+<span class="kw">echo</span> <span class="str">"Length: ${#NAME}"</span>    <span class="cmt"># 5</span>
+<span class="kw">echo</span> <span class="str">"${NAME,,}"</span>          <span class="cmt"># lowercase</span>
+<span class="kw">echo</span> <span class="str">"${NAME^^}"</span>          <span class="cmt"># uppercase</span>
+<span class="kw">echo</span> <span class="str">"${NAME:0:3}"</span>        <span class="cmt"># substring → Ali</span>
+<span class="kw">echo</span> <span class="str">"${NAME/li/LI}"</span>      <span class="cmt"># replace → ALIce</span>
+
+<span class="cmt"># Defaults</span>
+<span class="kw">echo</span> <span class="str">"${VAR:-default}"</span>     <span class="cmt"># use default if unset</span>
+<span class="kw">echo</span> <span class="str">"${VAR:=default}"</span>     <span class="cmt"># set &amp; use if unset</span>
+
+<span class="cmt"># Special variables</span>
+<span class="kw">$0</span> <span class="cmt"># script name</span>   <span class="kw">$1</span> <span class="cmt"># 1st arg</span>   <span class="kw">$#</span> <span class="cmt"># arg count</span>
+<span class="kw">$@</span> <span class="cmt"># all args</span>      <span class="kw">$?</span> <span class="cmt"># exit status</span>
+<span class="kw">$$</span> <span class="cmt"># current PID</span>   <span class="kw">$!</span> <span class="cmt"># last bg PID</span></code></pre></div>
 </div>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Bash basics coming soon...</span></code></pre></div>
+<div class="section" id="arrays">
+  <div class="section-header"><span class="icon">📦</span><h2>Arrays</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Indexed array</span>
+<span class="kw">fruits</span>=(<span class="str">"apple"</span> <span class="str">"banana"</span> <span class="str">"cherry"</span>)
+<span class="kw">echo</span> <span class="str">"${fruits[0]}"</span>       <span class="cmt"># apple</span>
+<span class="kw">echo</span> <span class="str">"${fruits[@]}"</span>       <span class="cmt"># all</span>
+<span class="kw">echo</span> <span class="str">"${#fruits[@]}"</span>      <span class="cmt"># length</span>
+fruits+=(<span class="str">"date"</span>)           <span class="cmt"># append</span>
+<span class="kw">unset</span> fruits[<span class="num">1</span>]
+
+<span class="cmt"># Associative array (bash 4+)</span>
+<span class="kw">declare -A</span> colors
+colors[red]=<span class="str">"#ff0000"</span>
+<span class="kw">echo</span> <span class="str">"${!colors[@]}"</span>      <span class="cmt"># keys</span>
+
+<span class="cmt"># Iterate</span>
+<span class="kw">for</span> f <span class="kw">in</span> <span class="str">"${fruits[@]}"</span>; <span class="kw">do</span> <span class="kw">echo</span> <span class="str">"$f"</span>; <span class="kw">done</span></code></pre></div>
 </div>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Bash patterns coming soon...</span></code></pre></div>
+<div class="section" id="conditionals">
+  <div class="section-header"><span class="icon">🔀</span><h2>Conditionals</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">if</span> [[ <span class="str">"$NAME"</span> == <span class="str">"Alice"</span> ]]; <span class="kw">then</span>
+  <span class="kw">echo</span> <span class="str">"Hi Alice"</span>
+<span class="kw">elif</span> [[ <span class="str">"$AGE"</span> -gt <span class="num">18</span> ]]; <span class="kw">then</span>
+  <span class="kw">echo</span> <span class="str">"Adult"</span>
+<span class="kw">else</span>
+  <span class="kw">echo</span> <span class="str">"Minor"</span>
+<span class="kw">fi</span>
+
+<span class="cmt"># Operators</span>
+-eq -ne -lt -gt -le -ge           <span class="cmt"># numeric</span>
+== != &lt; &gt;                         <span class="cmt"># string</span>
+-z <span class="str">"$a"</span>   <span class="cmt"># empty</span>   -n <span class="str">"$a"</span>   <span class="cmt"># not empty</span>
+&amp;&amp; || !                           <span class="cmt"># logical</span>
+
+<span class="cmt"># Case</span>
+<span class="kw">case</span> <span class="str">"$1"</span> <span class="kw">in</span>
+  start) <span class="kw">echo</span> <span class="str">"Starting"</span> ;;
+  stop)  <span class="kw">echo</span> <span class="str">"Stopping"</span> ;;
+  *)     <span class="kw">echo</span> <span class="str">"Usage: $0 {start|stop}"</span> ;;
+<span class="kw">esac</span></code></pre></div>
+</div>
+
+<div class="section" id="loops">
+  <div class="section-header"><span class="icon">🔁</span><h2>Loops</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">for</span> i <span class="kw">in</span> <span class="num">1 2 3</span>; <span class="kw">do</span> <span class="kw">echo</span> <span class="str">"$i"</span>; <span class="kw">done</span>
+<span class="kw">for</span> i <span class="kw">in</span> {<span class="num">1</span>..<span class="num">10</span>}; <span class="kw">do</span> <span class="kw">echo</span> <span class="str">"$i"</span>; <span class="kw">done</span>
+<span class="kw">for</span> ((i=<span class="num">0</span>; i&lt;<span class="num">10</span>; i++)); <span class="kw">do</span> <span class="kw">echo</span> <span class="str">"$i"</span>; <span class="kw">done</span>
+
+<span class="cmt"># While / Until</span>
+<span class="kw">while</span> [[ <span class="str">"$c"</span> -lt <span class="num">5</span> ]]; <span class="kw">do</span> ((c++)); <span class="kw">done</span>
+<span class="kw">until</span> [[ <span class="str">"$s"</span> == <span class="str">"ready"</span> ]]; <span class="kw">do</span> sleep <span class="num">1</span>; <span class="kw">done</span>
+
+<span class="cmt"># Read file line by line</span>
+<span class="kw">while</span> IFS= <span class="kw">read</span> -r line; <span class="kw">do</span>
+  <span class="kw">echo</span> <span class="str">"$line"</span>
+<span class="kw">done</span> &lt; file.txt</code></pre></div>
+</div>
+
+<div class="section" id="functions">
+  <div class="section-header"><span class="icon">⚡</span><h2>Functions</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">greet</span>() {
+  <span class="kw">local</span> name=<span class="str">"$1"</span>
+  <span class="kw">echo</span> <span class="str">"Hello, $name!"</span>
+  <span class="kw">return</span> <span class="num">0</span>
+}
+greet <span class="str">"Alice"</span>
+
+<span class="cmt"># Capture output</span>
+<span class="kw">add</span>() { <span class="kw">echo</span> $(( $1 + $2 )); }
+result=$(<span class="fn">add</span> <span class="num">3</span> <span class="num">4</span>)
+
+<span class="cmt"># Error handling</span>
+<span class="kw">set -euo pipefail</span>
+<span class="kw">trap</span> <span class="str">"echo Error on line $LINENO"</span> ERR
+<span class="kw">trap</span> cleanup EXIT</code></pre></div>
+</div>
+
+<div class="section" id="io">
+  <div class="section-header"><span class="icon">📁</span><h2>I/O &amp; Redirection</h2></div>
+  <div class="code-wrapper"><pre><code>cmd &gt; file.txt        <span class="cmt"># overwrite</span>
+cmd &gt;&gt; file.txt       <span class="cmt"># append</span>
+cmd &lt; file.txt        <span class="cmt"># stdin from file</span>
+cmd <span class="num">2</span>&gt; err.log        <span class="cmt"># stderr to file</span>
+cmd &amp;&gt; all.log         <span class="cmt"># stdout+stderr</span>
+cmd &gt; /dev/null <span class="num">2</span>&gt;&amp;<span class="num">1</span>  <span class="cmt"># discard all</span>
+
+<span class="cmt"># Here document</span>
+<span class="kw">cat</span> &lt;&lt;EOF
+Hello $NAME
+EOF
+
+<span class="cmt"># Here string</span>
+<span class="kw">grep</span> <span class="str">"pat"</span> &lt;&lt;&lt; <span class="str">"search this"</span>
+
+<span class="cmt"># Process substitution</span>
+<span class="kw">diff</span> &lt;(ls dir1) &lt;(ls dir2)</code></pre></div>
+</div>
+
+<div class="section" id="pipes">
+  <div class="section-header"><span class="icon">🔗</span><h2>Pipes &amp; Process</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">cat</span> f.txt | <span class="kw">grep</span> <span class="str">"err"</span> | <span class="kw">wc</span> -l
+<span class="kw">ps aux</span> | <span class="kw">grep</span> <span class="str">"node"</span> | <span class="kw">awk</span> <span class="str">'{print $2}'</span>
+<span class="kw">find</span> . -name <span class="str">"*.tmp"</span> | <span class="kw">xargs</span> rm -f
+
+<span class="cmt"># Command substitution</span>
+<span class="kw">today</span>=$(<span class="fn">date</span> +%Y-%m-%d)
+
+<span class="cmt"># Background jobs</span>
+long_cmd &amp;
+<span class="kw">jobs</span>   <span class="kw">fg</span> %<span class="num">1</span>   <span class="kw">wait</span>
+
+<span class="cmt"># Subshell (doesn't affect parent)</span>
+(<span class="kw">cd</span> /tmp &amp;&amp; <span class="kw">ls</span>)</code></pre></div>
+</div>
+
+<div class="section" id="string-ops">
+  <div class="section-header"><span class="icon">✂️</span><h2>String Operations</h2></div>
+  <div class="code-wrapper"><pre><code>str=<span class="str">"Hello World"</span>
+<span class="kw">echo</span> <span class="str">"${str:6}"</span>        <span class="cmt"># World</span>
+<span class="kw">echo</span> <span class="str">"${str:0:5}"</span>      <span class="cmt"># Hello</span>
+
+file=<span class="str">"archive.tar.gz"</span>
+<span class="kw">echo</span> <span class="str">"${file%.*}"</span>      <span class="cmt"># archive.tar (shortest from end)</span>
+<span class="kw">echo</span> <span class="str">"${file%%.*}"</span>     <span class="cmt"># archive (longest from end)</span>
+<span class="kw">echo</span> <span class="str">"${file#*.}"</span>      <span class="cmt"># tar.gz (shortest from start)</span>
+<span class="kw">echo</span> <span class="str">"${file##*.}"</span>     <span class="cmt"># gz (longest from start)</span>
+
+<span class="kw">echo</span> <span class="str">"${str/World/Bash}"</span> <span class="cmt"># Hello Bash (first)</span>
+<span class="kw">echo</span> <span class="str">"${str//l/L}"</span>       <span class="cmt"># HeLLo WorLd (all)</span></code></pre></div>
+</div>
+
+<div class="section" id="file-test">
+  <div class="section-header"><span class="icon">📋</span><h2>File Tests</h2></div>
+  <div class="code-wrapper"><pre><code>[[ -f <span class="str">"f"</span> ]]   <span class="cmt"># regular file</span>
+[[ -d <span class="str">"d"</span> ]]   <span class="cmt"># directory</span>
+[[ -e <span class="str">"p"</span> ]]   <span class="cmt"># exists</span>
+[[ -r <span class="str">"f"</span> ]]   <span class="cmt"># readable</span>
+[[ -w <span class="str">"f"</span> ]]   <span class="cmt"># writable</span>
+[[ -x <span class="str">"f"</span> ]]   <span class="cmt"># executable</span>
+[[ -s <span class="str">"f"</span> ]]   <span class="cmt"># not empty</span>
+[[ -L <span class="str">"f"</span> ]]   <span class="cmt"># symlink</span>
+[[ <span class="str">"$a"</span> -nt <span class="str">"$b"</span> ]]  <span class="cmt"># newer than</span></code></pre></div>
+</div>
+
+<div class="section" id="one-liners">
+  <div class="section-header"><span class="icon">💡</span><h2>One-Liners</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Count lines in *.py</span>
+<span class="kw">find</span> . -name <span class="str">"*.py"</span> -exec <span class="kw">wc</span> -l {} + | <span class="kw">tail</span> -<span class="num">1</span>
+
+<span class="cmt"># Parallel download</span>
+<span class="kw">cat</span> urls.txt | <span class="kw">xargs</span> -P <span class="num">4</span> -I {} curl -sO {}
+
+<span class="cmt"># Quick server</span>
+<span class="kw">python3</span> -m http.server <span class="num">8080</span>
+
+<span class="cmt"># Largest files</span>
+<span class="kw">du</span> -ah . | <span class="kw">sort</span> -rh | <span class="kw">head</span> -<span class="num">20</span>
+
+<span class="cmt"># Replace in files</span>
+<span class="kw">find</span> . -name <span class="str">"*.txt"</span> -exec <span class="kw">sed</span> -i <span class="str">'s/old/new/g'</span> {} +
+
+<span class="cmt"># Monitor log</span>
+<span class="kw">tail</span> -f /var/log/syslog | <span class="kw">grep</span> --line-buffered <span class="str">"error"</span></code></pre></div>
 </div>
 
 </div>
 <button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
 <footer>Bash Cheatsheet &middot; 2026</footer>
 <script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
+document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});
 const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
 const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
 </script>

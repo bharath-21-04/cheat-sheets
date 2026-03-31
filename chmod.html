@@ -1,58 +1,99 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chmod Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Chmod</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Chmod Cheatsheet</h1>
-  <p class="subtitle">Permissions, octal notation, symbolic mode, recursive &amp; special bits</p>
-  <span class="tag tag-concept">Linux / Command</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Chmod Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Chmod</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Chmod Cheatsheet</h1><p class="subtitle">File permissions, ownership, octal notation &amp; special modes</p><span class="tag tag-concept">Linux / Command</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#octal">Octal Mode</a>
+    <a href="#symbolic">Symbolic Mode</a>
+    <a href="#special">Special Permissions</a>
+    <a href="#chown">chown &amp; chgrp</a>
+    <a href="#reference">Reference Table</a>
+    <a href="#examples">Examples</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">🔒</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># View permissions</span>
+ls -l file.txt
+<span class="cmt"># -rwxr-xr-- 1 user group 1234 Jan 1 file.txt</span>
+<span class="cmt">#  ╰owner╯╰group╯╰other╯</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Chmod content.</div>
-</div>
+<span class="cmt"># Permission characters</span>
+r = read    (<span class="num">4</span>)
+w = write   (<span class="num">2</span>)
+x = execute (<span class="num">1</span>)
+- = none    (<span class="num">0</span>)
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Chmod basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># chmod syntax</span>
+chmod [options] mode file
+chmod <span class="num">755</span> script.sh              <span class="cmt"># octal</span>
+chmod u+x script.sh              <span class="cmt"># symbolic</span></code></pre></div></div>
+<div class="section" id="octal"><div class="section-header"><span class="icon">🔢</span><h2>Octal (Numeric) Mode</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Three digits: owner, group, other</span>
+<span class="cmt"># Each digit = sum of r(4) + w(2) + x(1)</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Chmod patterns coming soon...</span></code></pre></div>
-</div>
+chmod <span class="num">777</span> file   <span class="cmt"># rwxrwxrwx — full access</span>
+chmod <span class="num">755</span> file   <span class="cmt"># rwxr-xr-x — standard executable</span>
+chmod <span class="num">644</span> file   <span class="cmt"># rw-r--r-- — standard file</span>
+chmod <span class="num">600</span> file   <span class="cmt"># rw------- — private file</span>
+chmod <span class="num">700</span> dir    <span class="cmt"># rwx------ — private directory</span>
+chmod <span class="num">666</span> file   <span class="cmt"># rw-rw-rw- — everyone read/write</span>
+chmod <span class="num">444</span> file   <span class="cmt"># r--r--r-- — read only all</span>
+chmod <span class="num">500</span> script <span class="cmt"># r-x------ — owner read+execute</span></code></pre></div></div>
+<div class="section" id="symbolic"><div class="section-header"><span class="icon">✏️</span><h2>Symbolic Mode</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Who: u=owner, g=group, o=other, a=all</span>
+<span class="cmt"># Action: +=add, -=remove, ==set exactly</span>
+<span class="cmt"># Permission: r, w, x</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Chmod Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+chmod u+x file          <span class="cmt"># add execute for owner</span>
+chmod g-w file          <span class="cmt"># remove write for group</span>
+chmod o=r file          <span class="cmt"># set other to read only</span>
+chmod a+r file          <span class="cmt"># add read for everyone</span>
+chmod u+rwx,g+rx,o+r f  <span class="cmt"># combined = 754</span>
+chmod go-rwx file       <span class="cmt"># remove all from group+other</span>
+
+<span class="cmt"># Recursive</span>
+chmod -R <span class="num">755</span> directory/
+chmod -R u+rwX dir/     <span class="cmt"># X = execute only for dirs</span></code></pre></div></div>
+<div class="section" id="special"><div class="section-header"><span class="icon">⭐</span><h2>Special Permissions</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Setuid (4) — run as file owner</span>
+chmod <span class="num">4755</span> program    <span class="cmt"># -rwsr-xr-x</span>
+chmod u+s program
+
+<span class="cmt"># Setgid (2) — run as file group / inherit dir group</span>
+chmod <span class="num">2755</span> dir       <span class="cmt"># drwxr-sr-x</span>
+chmod g+s dir
+
+<span class="cmt"># Sticky bit (1) — only owner can delete in dir</span>
+chmod <span class="num">1777</span> /tmp      <span class="cmt"># drwxrwxrwt</span>
+chmod +t dir</code></pre></div></div>
+<div class="section" id="chown"><div class="section-header"><span class="icon">👤</span><h2>chown &amp; chgrp</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Change owner</span>
+chown user file.txt
+chown user:group file.txt
+chown :group file.txt         <span class="cmt"># group only</span>
+chown -R user:group dir/      <span class="cmt"># recursive</span>
+
+<span class="cmt"># Change group</span>
+chgrp group file.txt
+chgrp -R group dir/</code></pre></div></div>
+<div class="section" id="reference"><div class="section-header"><span class="icon">📋</span><h2>Reference Table</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Octal  Permissions   Common Use</span>
+<span class="num">777</span>     rwxrwxrwx     <span class="cmt">full access (avoid!)</span>
+<span class="num">755</span>     rwxr-xr-x     <span class="cmt">executables, directories</span>
+<span class="num">750</span>     rwxr-x---     <span class="cmt">programs (no other)</span>
+<span class="num">700</span>     rwx------     <span class="cmt">private directory</span>
+<span class="num">644</span>     rw-r--r--     <span class="cmt">regular files</span>
+<span class="num">640</span>     rw-r-----     <span class="cmt">config files</span>
+<span class="num">600</span>     rw-------     <span class="cmt">private files, SSH keys</span>
+<span class="num">400</span>     r--------     <span class="cmt">read-only private</span></code></pre></div></div>
+<div class="section" id="examples"><div class="section-header"><span class="icon">💡</span><h2>Examples</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Make script executable</span>
+chmod +x deploy.sh
+
+<span class="cmt"># Secure SSH keys</span>
+chmod <span class="num">600</span> ~/.ssh/id_ed25519
+chmod <span class="num">644</span> ~/.ssh/id_ed25519.pub
+chmod <span class="num">700</span> ~/.ssh/
+
+<span class="cmt"># Web server files</span>
+find /var/www -type f -exec chmod <span class="num">644</span> {} +
+find /var/www -type d -exec chmod <span class="num">755</span> {} +
+
+<span class="cmt"># View numeric permissions</span>
+stat -c <span class="str">"%a %n"</span> *</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Chmod Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

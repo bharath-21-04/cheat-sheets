@@ -1,58 +1,141 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MongoDB Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ MongoDB</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>MongoDB Cheatsheet</h1>
-  <p class="subtitle">CRUD operations, aggregation pipeline, indexes, schema design &amp; Mongoose</p>
-  <span class="tag tag-db">Database / NoSQL</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>MongoDB Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ MongoDB</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>MongoDB Cheatsheet</h1><p class="subtitle">CRUD, queries, aggregation, indexes &amp; mongosh commands</p><span class="tag tag-db">Database</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#connect">Connection</a>
+    <a href="#crud">CRUD</a>
+    <a href="#query">Query Operators</a>
+    <a href="#update">Update Operators</a>
+    <a href="#aggregation">Aggregation</a>
+    <a href="#indexes">Indexes</a>
+    <a href="#admin">Administration</a>
+</div></div>
+<div class="section" id="connect"><div class="section-header"><span class="icon">🔗</span><h2>Connection</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># mongosh (Mongo Shell)</span>
+mongosh
+mongosh <span class="str">"mongodb://localhost:27017/mydb"</span>
+mongosh <span class="str">"mongodb+srv://user:pass@cluster.mongodb.net/mydb"</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Basic commands</span>
+show dbs                      <span class="cmt"># list databases</span>
+use mydb                      <span class="cmt"># switch/create database</span>
+show collections              <span class="cmt"># list collections</span>
+db.stats()                    <span class="cmt"># database stats</span>
+db.dropDatabase()             <span class="cmt"># delete database</span></code></pre></div></div>
+<div class="section" id="crud"><div class="section-header"><span class="icon">📝</span><h2>CRUD Operations</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># INSERT</span>
+db.users.<span class="fn">insertOne</span>({ <span class="kw">name</span>: <span class="str">"Alice"</span>, <span class="kw">age</span>: <span class="num">25</span> })
+db.users.<span class="fn">insertMany</span>([
+  { <span class="kw">name</span>: <span class="str">"Bob"</span>, <span class="kw">age</span>: <span class="num">30</span> },
+  { <span class="kw">name</span>: <span class="str">"Carol"</span>, <span class="kw">age</span>: <span class="num">28</span> }
+])
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive MongoDB content.</div>
-</div>
+<span class="cmt"># FIND (Read)</span>
+db.users.<span class="fn">find</span>()                          <span class="cmt"># all docs</span>
+db.users.<span class="fn">find</span>({ <span class="kw">age</span>: <span class="num">25</span> })               <span class="cmt"># filter</span>
+db.users.<span class="fn">findOne</span>({ <span class="kw">name</span>: <span class="str">"Alice"</span> })      <span class="cmt"># first match</span>
+db.users.<span class="fn">find</span>({}, { <span class="kw">name</span>: <span class="num">1</span>, <span class="kw">_id</span>: <span class="num">0</span> })  <span class="cmt"># projection</span>
+db.users.<span class="fn">find</span>().<span class="fn">sort</span>({ <span class="kw">age</span>: -<span class="num">1</span> })        <span class="cmt"># sort desc</span>
+db.users.<span class="fn">find</span>().<span class="fn">limit</span>(<span class="num">5</span>).<span class="fn">skip</span>(<span class="num">10</span>)       <span class="cmt"># pagination</span>
+db.users.<span class="fn">countDocuments</span>({ <span class="kw">age</span>: { $gt: <span class="num">25</span> } })
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// MongoDB basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># UPDATE</span>
+db.users.<span class="fn">updateOne</span>(
+  { <span class="kw">name</span>: <span class="str">"Alice"</span> },
+  { $set: { <span class="kw">age</span>: <span class="num">26</span> } }
+)
+db.users.<span class="fn">updateMany</span>(
+  { <span class="kw">age</span>: { $lt: <span class="num">18</span> } },
+  { $set: { <span class="kw">status</span>: <span class="str">"minor"</span> } }
+)
+db.users.<span class="fn">replaceOne</span>({ <span class="kw">name</span>:<span class="str">"Alice"</span> }, { <span class="kw">name</span>:<span class="str">"Alice"</span>, <span class="kw">age</span>:<span class="num">27</span> })
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// MongoDB patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># DELETE</span>
+db.users.<span class="fn">deleteOne</span>({ <span class="kw">name</span>: <span class="str">"Bob"</span> })
+db.users.<span class="fn">deleteMany</span>({ <span class="kw">age</span>: { $lt: <span class="num">18</span> } })
+db.users.<span class="fn">drop</span>()                          <span class="cmt"># drop collection</span></code></pre></div></div>
+<div class="section" id="query"><div class="section-header"><span class="icon">🔍</span><h2>Query Operators</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Comparison</span>
+$eq    $ne    $gt    $gte    $lt    $lte
+$in    $nin
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>MongoDB Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+db.users.<span class="fn">find</span>({ <span class="kw">age</span>: { $gte: <span class="num">18</span>, $lte: <span class="num">65</span> } })
+db.users.<span class="fn">find</span>({ <span class="kw">status</span>: { $in: [<span class="str">"active"</span>, <span class="str">"pending"</span>] } })
+
+<span class="cmt"># Logical</span>
+$and   $or   $not   $nor
+
+db.users.<span class="fn">find</span>({ $or: [{ <span class="kw">age</span>: <span class="num">25</span> }, { <span class="kw">name</span>: <span class="str">"Bob"</span> }] })
+
+<span class="cmt"># Element</span>
+$exists    $type
+
+<span class="cmt"># Array</span>
+$all   $elemMatch   $size
+
+<span class="cmt"># Regex</span>
+db.users.<span class="fn">find</span>({ <span class="kw">name</span>: /^A/i })</code></pre></div></div>
+<div class="section" id="update"><div class="section-header"><span class="icon">✏️</span><h2>Update Operators</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Field</span>
+$set        <span class="cmt"># set field value</span>
+$unset      <span class="cmt"># remove field</span>
+$inc        <span class="cmt"># increment</span>
+$mul        <span class="cmt"># multiply</span>
+$rename     <span class="cmt"># rename field</span>
+$min  $max  <span class="cmt"># update if less/greater</span>
+
+<span class="cmt"># Array</span>
+$push       <span class="cmt"># add to array</span>
+$pull       <span class="cmt"># remove from array</span>
+$addToSet   <span class="cmt"># add if unique</span>
+$pop        <span class="cmt"># remove first/last</span>
+
+<span class="cmt"># Example</span>
+db.users.<span class="fn">updateOne</span>(
+  { <span class="kw">name</span>: <span class="str">"Alice"</span> },
+  { $inc: { <span class="kw">age</span>: <span class="num">1</span> }, $push: { <span class="kw">tags</span>: <span class="str">"vip"</span> } }
+)</code></pre></div></div>
+<div class="section" id="aggregation"><div class="section-header"><span class="icon">📊</span><h2>Aggregation Pipeline</h2></div><div class="code-wrapper"><pre><code>db.orders.<span class="fn">aggregate</span>([
+  { $match: { <span class="kw">status</span>: <span class="str">"completed"</span> } },
+  { $group: {
+      <span class="kw">_id</span>: <span class="str">"$category"</span>,
+      <span class="kw">total</span>: { $sum: <span class="str">"$amount"</span> },
+      <span class="kw">count</span>: { $sum: <span class="num">1</span> },
+      <span class="kw">avg</span>: { $avg: <span class="str">"$amount"</span> }
+  }},
+  { $sort: { <span class="kw">total</span>: -<span class="num">1</span> } },
+  { $limit: <span class="num">10</span> }
+])
+
+<span class="cmt"># Common stages</span>
+$match      <span class="cmt"># filter documents</span>
+$group      <span class="cmt"># group &amp; aggregate</span>
+$sort       <span class="cmt"># sort results</span>
+$project    <span class="cmt"># reshape / select fields</span>
+$limit      <span class="cmt"># limit results</span>
+$skip       <span class="cmt"># skip results</span>
+$unwind     <span class="cmt"># deconstruct array</span>
+$lookup     <span class="cmt"># join collections</span></code></pre></div></div>
+<div class="section" id="indexes"><div class="section-header"><span class="icon">⚡</span><h2>Indexes</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Create</span>
+db.users.<span class="fn">createIndex</span>({ <span class="kw">email</span>: <span class="num">1</span> })             <span class="cmt"># ascending</span>
+db.users.<span class="fn">createIndex</span>({ <span class="kw">email</span>: <span class="num">1</span> }, { unique: <span class="kw">true</span> })
+db.users.<span class="fn">createIndex</span>({ <span class="kw">name</span>: <span class="num">1</span>, <span class="kw">age</span>: -<span class="num">1</span> })   <span class="cmt"># compound</span>
+db.users.<span class="fn">createIndex</span>({ <span class="kw">bio</span>: <span class="str">"text"</span> })           <span class="cmt"># text index</span>
+
+<span class="cmt"># List &amp; drop</span>
+db.users.<span class="fn">getIndexes</span>()
+db.users.<span class="fn">dropIndex</span>(<span class="str">"email_1"</span>)
+
+<span class="cmt"># Explain query</span>
+db.users.<span class="fn">find</span>({ <span class="kw">email</span>: <span class="str">"a@b.com"</span> }).<span class="fn">explain</span>(<span class="str">"executionStats"</span>)</code></pre></div></div>
+<div class="section" id="admin"><div class="section-header"><span class="icon">🔧</span><h2>Administration</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Export / Import</span>
+mongodump --db mydb --out /backup/
+mongorestore --db mydb /backup/mydb/
+mongoexport --db mydb --collection users --out users.json
+mongoimport --db mydb --collection users --file users.json
+
+<span class="cmt"># Users</span>
+db.<span class="fn">createUser</span>({ user:<span class="str">"admin"</span>, pwd:<span class="str">"pass"</span>, roles:[<span class="str">"readWrite"</span>] })
+
+<span class="cmt"># Replication status</span>
+rs.status()</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>MongoDB Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

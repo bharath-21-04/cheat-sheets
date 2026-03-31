@@ -1,58 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Grep Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Grep Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head>
 <body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Grep</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Grep</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
 <div class="container">
-<div class="hero">
-  <h1>Grep Cheatsheet</h1>
-  <p class="subtitle">Pattern matching, regex, flags, recursive search, context &amp; common options</p>
-  <span class="tag tag-concept">Linux / Command</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<div class="hero"><h1>Grep Cheatsheet</h1><p class="subtitle">Pattern matching, regex, recursive search &amp; common options</p><span class="tag tag-concept">Linux / Command</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#regex">Regex Patterns</a>
+    <a href="#options">Options</a>
+    <a href="#recursive">Recursive Search</a>
+    <a href="#context">Context Lines</a>
+    <a href="#advanced">Advanced</a>
+    <a href="#examples">Examples</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">🔍</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Search in file</span>
+grep <span class="str">"pattern"</span> file.txt
+grep <span class="str">"error"</span> /var/log/syslog
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Grep content.</div>
-</div>
+<span class="cmt"># Case insensitive</span>
+grep -i <span class="str">"error"</span> file.txt
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Grep basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Invert match (lines NOT matching)</span>
+grep -v <span class="str">"debug"</span> file.txt
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Grep patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Count matches</span>
+grep -c <span class="str">"error"</span> file.txt
 
+<span class="cmt"># Show line numbers</span>
+grep -n <span class="str">"error"</span> file.txt
+
+<span class="cmt"># Show only matching part</span>
+grep -o <span class="str">"[0-9]\+"</span> file.txt
+
+<span class="cmt"># Whole word match</span>
+grep -w <span class="str">"error"</span> file.txt
+
+<span class="cmt"># Multiple patterns</span>
+grep -e <span class="str">"error"</span> -e <span class="str">"warn"</span> file.txt
+grep <span class="str">"error\|warn"</span> file.txt</code></pre></div></div>
+<div class="section" id="regex"><div class="section-header"><span class="icon">📐</span><h2>Regex Patterns</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Basic regex (default)</span>
+.          <span class="cmt"># any character</span>
+*          <span class="cmt"># zero or more of previous</span>
+^          <span class="cmt"># start of line</span>
+$          <span class="cmt"># end of line</span>
+[abc]      <span class="cmt"># character class</span>
+[^abc]     <span class="cmt"># negated class</span>
+[a-z]      <span class="cmt"># range</span>
+
+<span class="cmt"># Extended regex (-E or egrep)</span>
+grep -E <span class="str">"pattern"</span> file.txt
+
++          <span class="cmt"># one or more</span>
+?          <span class="cmt"># zero or one</span>
+{n}        <span class="cmt"># exactly n</span>
+{n,m}      <span class="cmt"># n to m times</span>
+(a|b)      <span class="cmt"># alternation</span>
+()         <span class="cmt"># grouping</span>
+
+<span class="cmt"># Character classes</span>
+\d  or [0-9]       <span class="cmt"># digit</span>
+\w  or [a-zA-Z_]   <span class="cmt"># word char</span>
+\s  or [ \t]       <span class="cmt"># whitespace</span>
+\b                  <span class="cmt"># word boundary</span></code></pre></div></div>
+<div class="section" id="options"><div class="section-header"><span class="icon">⚙️</span><h2>Options</h2></div><div class="code-wrapper"><pre><code>-i    <span class="cmt"># case insensitive</span>
+-v    <span class="cmt"># invert match</span>
+-c    <span class="cmt"># count</span>
+-n    <span class="cmt"># line numbers</span>
+-l    <span class="cmt"># files with matches only</span>
+-L    <span class="cmt"># files without matches</span>
+-o    <span class="cmt"># only matching part</span>
+-w    <span class="cmt"># whole word</span>
+-x    <span class="cmt"># whole line</span>
+-m N  <span class="cmt"># stop after N matches</span>
+-q    <span class="cmt"># quiet (exit status only)</span>
+-E    <span class="cmt"># extended regex</span>
+-P    <span class="cmt"># Perl regex (PCRE)</span>
+-F    <span class="cmt"># fixed string (no regex)</span>
+-r    <span class="cmt"># recursive</span>
+-R    <span class="cmt"># recursive + follow symlinks</span>
+-h    <span class="cmt"># suppress filename</span>
+-H    <span class="cmt"># always show filename</span></code></pre></div></div>
+<div class="section" id="recursive"><div class="section-header"><span class="icon">📂</span><h2>Recursive Search</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Search all files recursively</span>
+grep -r <span class="str">"TODO"</span> .
+grep -rn <span class="str">"TODO"</span> src/
+
+<span class="cmt"># Include/exclude files</span>
+grep -r --include=<span class="str">"*.py"</span> <span class="str">"import"</span> .
+grep -r --exclude=<span class="str">"*.log"</span> <span class="str">"error"</span> .
+grep -r --exclude-dir=node_modules <span class="str">"TODO"</span> .
+grep -r --exclude-dir={node_modules,.git} <span class="str">"TODO"</span> .
+
+<span class="cmt"># List matching files only</span>
+grep -rl <span class="str">"TODO"</span> src/</code></pre></div></div>
+<div class="section" id="context"><div class="section-header"><span class="icon">📄</span><h2>Context Lines</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Lines after match</span>
+grep -A <span class="num">3</span> <span class="str">"error"</span> file.txt
+
+<span class="cmt"># Lines before match</span>
+grep -B <span class="num">3</span> <span class="str">"error"</span> file.txt
+
+<span class="cmt"># Lines before &amp; after</span>
+grep -C <span class="num">3</span> <span class="str">"error"</span> file.txt</code></pre></div></div>
+<div class="section" id="advanced"><div class="section-header"><span class="icon">🚀</span><h2>Advanced</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Perl regex (advanced patterns)</span>
+grep -P <span class="str">"\d{3}-\d{4}"</span> file.txt    <span class="cmt"># phone numbers</span>
+grep -P <span class="str">"(?&lt;=@)\w+"</span> file.txt      <span class="cmt"># domain after @</span>
+
+<span class="cmt"># Binary files</span>
+grep -a <span class="str">"pattern"</span> binary_file     <span class="cmt"># treat as text</span>
+grep -I <span class="str">"pattern"</span> *               <span class="cmt"># skip binaries</span>
+
+<span class="cmt"># With find</span>
+find . -name <span class="str">"*.py"</span> -exec grep -l <span class="str">"TODO"</span> {} +
+
+<span class="cmt"># Colorize output</span>
+grep --color=always <span class="str">"pattern"</span> file.txt</code></pre></div></div>
+<div class="section" id="examples"><div class="section-header"><span class="icon">💡</span><h2>Common Examples</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># IP addresses</span>
+grep -oE <span class="str">"[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"</span> log.txt
+
+<span class="cmt"># Email addresses</span>
+grep -oE <span class="str">"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+"</span> file.txt
+
+<span class="cmt"># Empty lines</span>
+grep -c <span class="str">"^$"</span> file.txt
+
+<span class="cmt"># Lines starting with #</span>
+grep <span class="str">"^#"</span> config.txt
+
+<span class="cmt"># Log errors in last 100 lines</span>
+tail -<span class="num">100</span> app.log | grep -i <span class="str">"error\|fail\|critical"</span>
+
+<span class="cmt"># Count unique IPs</span>
+grep -oE <span class="str">"[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"</span> access.log | sort -u | wc -l</code></pre></div></div>
 </div>
 <button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
 <footer>Grep Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script>
+</body></html>

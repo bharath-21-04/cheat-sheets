@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Git Cheatsheet</title>
   <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 </head>
 <body>
 <nav>
@@ -15,40 +14,171 @@
 <div class="container">
 <div class="hero">
   <h1>Git Cheatsheet</h1>
-  <p class="subtitle">Branches, commits, merge, rebase, stash, reset, log, remote &amp; workflows</p>
-  <span class="tag tag-concept">Linux / VCS</span>
+  <p class="subtitle">Branches, commits, merge, rebase, stash, reset, log &amp; remote workflows</p>
+  <span class="tag tag-concept">Version Control</span>
   <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
   <div class="search-count" id="searchCount"></div>
 </div>
-
 <div class="toc"><div class="toc-title">Contents</div>
   <div class="toc-grid">
-    <a href="#overview">Overview</a>
+    <a href="#setup">Setup</a>
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
+    <a href="#branching">Branching</a>
+    <a href="#merging">Merge &amp; Rebase</a>
+    <a href="#stash">Stash</a>
+    <a href="#log">Log &amp; History</a>
+    <a href="#remote">Remote</a>
+    <a href="#undo">Undo &amp; Reset</a>
+    <a href="#tags">Tags</a>
+    <a href="#advanced">Advanced</a>
   </div>
 </div>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Git content.</div>
+<div class="section" id="setup">
+  <div class="section-header"><span class="icon">⚙️</span><h2>Setup &amp; Config</h2></div>
+  <div class="code-wrapper"><pre><code>git config --global user.name <span class="str">"Name"</span>
+git config --global user.email <span class="str">"you@mail.com"</span>
+git config --global init.defaultBranch main
+git config --global core.editor <span class="str">"vim"</span>
+
+git init                        <span class="cmt"># new repo</span>
+git clone &lt;url&gt;                 <span class="cmt"># clone</span>
+git clone --depth <span class="num">1</span> &lt;url&gt;       <span class="cmt"># shallow</span></code></pre></div>
 </div>
 
 <div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Git basics coming soon...</span></code></pre></div>
+  <div class="section-header"><span class="icon">📝</span><h2>Basic Commands</h2></div>
+  <div class="code-wrapper"><pre><code>git status
+git add file.txt                <span class="cmt"># stage</span>
+git add .                       <span class="cmt"># stage all</span>
+git add -p                      <span class="cmt"># interactive staging</span>
+
+git commit -m <span class="str">"msg"</span>
+git commit -am <span class="str">"msg"</span>           <span class="cmt"># add+commit tracked</span>
+git commit --amend              <span class="cmt"># edit last commit</span>
+
+git diff                        <span class="cmt"># unstaged</span>
+git diff --staged               <span class="cmt"># staged</span>
+git diff branch1..branch2</code></pre></div>
 </div>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Git patterns coming soon...</span></code></pre></div>
+<div class="section" id="branching">
+  <div class="section-header"><span class="icon">🌿</span><h2>Branching</h2></div>
+  <div class="code-wrapper"><pre><code>git branch                      <span class="cmt"># list local</span>
+git branch -a                   <span class="cmt"># all</span>
+git checkout -b feature         <span class="cmt"># create+switch</span>
+git switch -c feature           <span class="cmt"># modern</span>
+git branch -d feature           <span class="cmt"># safe delete</span>
+git branch -D feature           <span class="cmt"># force delete</span>
+git push origin --delete feat   <span class="cmt"># delete remote</span>
+git branch -m old new           <span class="cmt"># rename</span></code></pre></div>
+</div>
+
+<div class="section" id="merging">
+  <div class="section-header"><span class="icon">🔀</span><h2>Merge &amp; Rebase</h2></div>
+  <div class="code-wrapper"><pre><code>git merge feature               <span class="cmt"># merge</span>
+git merge --no-ff feature       <span class="cmt"># always merge commit</span>
+git merge --squash feature      <span class="cmt"># squash</span>
+
+git rebase main                 <span class="cmt"># rebase onto main</span>
+git rebase -i HEAD~<span class="num">3</span>            <span class="cmt"># interactive</span>
+
+<span class="cmt"># Resolve conflicts</span>
+git add resolved.txt
+git rebase --continue
+git rebase --abort
+
+git cherry-pick &lt;hash&gt;          <span class="cmt"># apply one commit</span></code></pre></div>
+</div>
+
+<div class="section" id="stash">
+  <div class="section-header"><span class="icon">📦</span><h2>Stash</h2></div>
+  <div class="code-wrapper"><pre><code>git stash                       <span class="cmt"># save WIP</span>
+git stash push -m <span class="str">"msg"</span>
+git stash -u                    <span class="cmt"># include untracked</span>
+git stash list
+git stash pop                   <span class="cmt"># apply+remove</span>
+git stash apply stash@{<span class="num">2</span>}
+git stash drop stash@{<span class="num">0</span>}
+git stash clear</code></pre></div>
+</div>
+
+<div class="section" id="log">
+  <div class="section-header"><span class="icon">📊</span><h2>Log &amp; History</h2></div>
+  <div class="code-wrapper"><pre><code>git log --oneline
+git log --graph --oneline --all
+git log -n <span class="num">5</span>
+git log --author=<span class="str">"Alice"</span>
+git log --since=<span class="str">"2024-01-01"</span>
+git log -- file.txt
+git log --grep=<span class="str">"fix"</span>
+git log -S <span class="str">"funcName"</span>           <span class="cmt"># code search</span>
+git blame file.txt
+git show &lt;hash&gt;</code></pre></div>
+</div>
+
+<div class="section" id="remote">
+  <div class="section-header"><span class="icon">🌐</span><h2>Remote</h2></div>
+  <div class="code-wrapper"><pre><code>git remote -v
+git remote add origin &lt;url&gt;
+git push origin main
+git push -u origin feature
+git push --force-with-lease
+git pull
+git pull --rebase
+git fetch --prune</code></pre></div>
+</div>
+
+<div class="section" id="undo">
+  <div class="section-header"><span class="icon">⏪</span><h2>Undo &amp; Reset</h2></div>
+  <div class="code-wrapper"><pre><code>git restore file.txt            <span class="cmt"># discard changes</span>
+git restore --staged file.txt   <span class="cmt"># unstage</span>
+
+git reset HEAD~<span class="num">1</span>                <span class="cmt"># undo commit, keep changes</span>
+git reset --soft HEAD~<span class="num">1</span>         <span class="cmt"># keep staged</span>
+git reset --hard HEAD~<span class="num">1</span>         <span class="cmt"># discard all</span>
+git reset --hard origin/main
+
+git revert &lt;hash&gt;               <span class="cmt"># safe undo</span>
+git reflog                      <span class="cmt"># recover lost</span></code></pre></div>
+</div>
+
+<div class="section" id="tags">
+  <div class="section-header"><span class="icon">🏷️</span><h2>Tags</h2></div>
+  <div class="code-wrapper"><pre><code>git tag v1.0.0
+git tag -a v1.0.0 -m <span class="str">"Rel"</span>
+git tag -l <span class="str">"v1.*"</span>
+git push origin v1.0.0
+git push origin --tags
+git tag -d v1.0.0</code></pre></div>
+</div>
+
+<div class="section" id="advanced">
+  <div class="section-header"><span class="icon">🚀</span><h2>Advanced</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Worktree</span>
+git worktree add ../fix fix-branch
+git worktree list
+
+<span class="cmt"># Bisect (find bug)</span>
+git bisect start
+git bisect bad
+git bisect good v1.0.0
+git bisect reset
+
+<span class="cmt"># Submodules</span>
+git submodule add &lt;url&gt; path/
+git submodule update --init --recursive
+
+<span class="cmt"># Clean</span>
+git clean -fd
+git clean -fdn                  <span class="cmt"># dry run</span></code></pre></div>
 </div>
 
 </div>
 <button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
 <footer>Git Cheatsheet &middot; 2026</footer>
 <script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
+document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});
 const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
 const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
 </script>

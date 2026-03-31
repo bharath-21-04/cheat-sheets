@@ -1,58 +1,101 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Emacs Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Emacs</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Emacs Cheatsheet</h1>
-  <p class="subtitle">Buffers, windows, keybindings, modes, org-mode, packages &amp; configuration</p>
-  <span class="tag tag-fw">Toolkit / Editor</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Emacs Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Emacs</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Emacs Cheatsheet</h1><p class="subtitle">Key bindings, buffers, windows, search, editing &amp; packages</p><span class="tag tag-concept">Editor</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#files">Files &amp; Buffers</a>
+    <a href="#edit">Editing</a>
+    <a href="#nav">Navigation</a>
+    <a href="#search">Search &amp; Replace</a>
+    <a href="#windows">Windows</a>
+    <a href="#help">Help &amp; Packages</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">📝</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Notation: C- = Ctrl, M- = Meta(Alt/Esc)</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Emacs content.</div>
-</div>
+C-x C-c     <span class="cmt"># quit Emacs</span>
+C-g         <span class="cmt"># cancel current command</span>
+C-x C-s     <span class="cmt"># save file</span>
+C-x C-f     <span class="cmt"># open file</span>
+C-x C-w     <span class="cmt"># save as</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Emacs basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Undo / Redo</span>
+C-/         <span class="cmt"># undo</span>
+C-g C-/     <span class="cmt"># redo</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Emacs patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Command</span>
+M-x         <span class="cmt"># execute command by name</span>
+M-x shell   <span class="cmt"># open shell</span></code></pre></div></div>
+<div class="section" id="files"><div class="section-header"><span class="icon">📁</span><h2>Files &amp; Buffers</h2></div><div class="code-wrapper"><pre><code>C-x C-f     <span class="cmt"># find (open) file</span>
+C-x C-s     <span class="cmt"># save</span>
+C-x C-w     <span class="cmt"># save as</span>
+C-x k       <span class="cmt"># kill buffer</span>
+C-x b       <span class="cmt"># switch buffer</span>
+C-x C-b     <span class="cmt"># list buffers</span>
+C-x i       <span class="cmt"># insert file contents</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Emacs Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Recent files</span>
+M-x recentf-open-files</code></pre></div></div>
+<div class="section" id="edit"><div class="section-header"><span class="icon">✏️</span><h2>Editing</h2></div><div class="code-wrapper"><pre><code>C-d         <span class="cmt"># delete char forward</span>
+M-d         <span class="cmt"># delete word forward</span>
+C-k         <span class="cmt"># kill to end of line</span>
+M-k         <span class="cmt"># kill to end of sentence</span>
+C-w         <span class="cmt"># kill (cut) region</span>
+M-w         <span class="cmt"># copy region</span>
+C-y         <span class="cmt"># yank (paste)</span>
+M-y         <span class="cmt"># cycle through kill ring</span>
+
+C-SPC       <span class="cmt"># set mark (start selection)</span>
+C-x h       <span class="cmt"># select all</span>
+
+C-t         <span class="cmt"># transpose chars</span>
+M-u         <span class="cmt"># uppercase word</span>
+M-l         <span class="cmt"># lowercase word</span>
+M-c         <span class="cmt"># capitalize word</span>
+C-x C-u     <span class="cmt"># uppercase region</span>
+C-x C-l     <span class="cmt"># lowercase region</span>
+Tab         <span class="cmt"># indent</span></code></pre></div></div>
+<div class="section" id="nav"><div class="section-header"><span class="icon">🧭</span><h2>Navigation</h2></div><div class="code-wrapper"><pre><code>C-f / C-b   <span class="cmt"># forward / backward char</span>
+M-f / M-b   <span class="cmt"># forward / backward word</span>
+C-a / C-e   <span class="cmt"># beginning / end of line</span>
+M-a / M-e   <span class="cmt"># beginning / end of sentence</span>
+C-n / C-p   <span class="cmt"># next / previous line</span>
+C-v / M-v   <span class="cmt"># page down / up</span>
+M-&lt; / M-&gt;   <span class="cmt"># beginning / end of buffer</span>
+M-g g       <span class="cmt"># go to line number</span>
+C-l         <span class="cmt"># center cursor on screen</span></code></pre></div></div>
+<div class="section" id="search"><div class="section-header"><span class="icon">🔍</span><h2>Search &amp; Replace</h2></div><div class="code-wrapper"><pre><code>C-s         <span class="cmt"># incremental search forward</span>
+C-r         <span class="cmt"># incremental search backward</span>
+C-s C-s     <span class="cmt"># repeat last search</span>
+M-x replace-string      <span class="cmt"># replace</span>
+M-%         <span class="cmt"># query replace</span>
+  y         <span class="cmt"># replace this</span>
+  n         <span class="cmt"># skip</span>
+  !         <span class="cmt"># replace all remaining</span>
+C-M-s       <span class="cmt"># regex search forward</span>
+C-M-%       <span class="cmt"># regex query replace</span></code></pre></div></div>
+<div class="section" id="windows"><div class="section-header"><span class="icon">🪟</span><h2>Windows &amp; Frames</h2></div><div class="code-wrapper"><pre><code>C-x <span class="num">2</span>       <span class="cmt"># split horizontal</span>
+C-x <span class="num">3</span>       <span class="cmt"># split vertical</span>
+C-x o       <span class="cmt"># switch window</span>
+C-x <span class="num">0</span>       <span class="cmt"># close current window</span>
+C-x <span class="num">1</span>       <span class="cmt"># close all other windows</span>
+C-x ^       <span class="cmt"># enlarge window</span>
+C-x {       <span class="cmt"># shrink horizontally</span>
+C-x }       <span class="cmt"># enlarge horizontally</span></code></pre></div></div>
+<div class="section" id="help"><div class="section-header"><span class="icon">❓</span><h2>Help &amp; Packages</h2></div><div class="code-wrapper"><pre><code>C-h t       <span class="cmt"># tutorial</span>
+C-h k       <span class="cmt"># describe key</span>
+C-h f       <span class="cmt"># describe function</span>
+C-h v       <span class="cmt"># describe variable</span>
+C-h a       <span class="cmt"># search commands</span>
+C-h m       <span class="cmt"># describe mode</span>
+
+<span class="cmt"># Package management</span>
+M-x package-install
+M-x package-list-packages
+
+<span class="cmt"># Popular packages</span>
+<span class="cmt"># magit, org-mode, company, helm, ivy</span>
+<span class="cmt"># projectile, flycheck, lsp-mode</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Emacs Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

@@ -1,58 +1,130 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Neo4j Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Neo4j</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Neo4j Cheatsheet</h1>
-  <p class="subtitle">Cypher queries, nodes, relationships, patterns, indexes &amp; graph algorithms</p>
-  <span class="tag tag-db">Database / Graph</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Neo4j Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Neo4j</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Neo4j Cheatsheet</h1><p class="subtitle">Cypher queries — nodes, relationships, patterns &amp; graph operations</p><span class="tag tag-db">Database</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#create">Create</a>
+    <a href="#match">Match &amp; Read</a>
+    <a href="#update">Update</a>
+    <a href="#delete">Delete</a>
+    <a href="#patterns">Patterns</a>
+    <a href="#functions">Functions</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">🔗</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Cypher query language</span>
+<span class="cmt">// Nodes: (n:Label {prop: value})</span>
+<span class="cmt">// Relationships: -[:TYPE]-&gt;</span>
+<span class="cmt">// Patterns: (a)-[:KNOWS]-&gt;(b)</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Neo4j content.</div>
-</div>
+<span class="cmt">// Show all</span>
+<span class="kw">MATCH</span> (n) <span class="kw">RETURN</span> n <span class="kw">LIMIT</span> <span class="num">25</span>;
+<span class="kw">CALL</span> db.labels();
+<span class="kw">CALL</span> db.relationshipTypes();</code></pre></div></div>
+<div class="section" id="create"><div class="section-header"><span class="icon">➕</span><h2>Create Nodes &amp; Relationships</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Create node</span>
+<span class="kw">CREATE</span> (p:<span class="tp">Person</span> {name: <span class="str">"Alice"</span>, age: <span class="num">30</span>})
+<span class="kw">RETURN</span> p;
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Neo4j basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">// Create multiple</span>
+<span class="kw">CREATE</span> (a:<span class="tp">Person</span> {name: <span class="str">"Alice"</span>}),
+       (b:<span class="tp">Person</span> {name: <span class="str">"Bob"</span>}),
+       (a)-[:<span class="tp">KNOWS</span> {since: <span class="num">2020</span>}]-&gt;(b);
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Neo4j patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">// Create relationship between existing</span>
+<span class="kw">MATCH</span> (a:<span class="tp">Person</span> {name:<span class="str">"Alice"</span>}), (b:<span class="tp">Person</span> {name:<span class="str">"Bob"</span>})
+<span class="kw">CREATE</span> (a)-[:<span class="tp">FRIENDS_WITH</span>]-&gt;(b);
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Neo4j Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt">// MERGE (create if not exists)</span>
+<span class="kw">MERGE</span> (p:<span class="tp">Person</span> {name: <span class="str">"Alice"</span>})
+<span class="kw">ON CREATE SET</span> p.created = timestamp()
+<span class="kw">ON MATCH SET</span> p.lastSeen = timestamp();</code></pre></div></div>
+<div class="section" id="match"><div class="section-header"><span class="icon">🔍</span><h2>Match &amp; Read</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Find by label</span>
+<span class="kw">MATCH</span> (p:<span class="tp">Person</span>) <span class="kw">RETURN</span> p;
+
+<span class="cmt">// Find by property</span>
+<span class="kw">MATCH</span> (p:<span class="tp">Person</span> {name: <span class="str">"Alice"</span>}) <span class="kw">RETURN</span> p;
+
+<span class="cmt">// WHERE clause</span>
+<span class="kw">MATCH</span> (p:<span class="tp">Person</span>) <span class="kw">WHERE</span> p.age &gt; <span class="num">25</span> <span class="kw">RETURN</span> p.name, p.age;
+
+<span class="cmt">// Follow relationships</span>
+<span class="kw">MATCH</span> (a:<span class="tp">Person</span>)-[:<span class="tp">KNOWS</span>]-&gt;(b:<span class="tp">Person</span>)
+<span class="kw">RETURN</span> a.name, b.name;
+
+<span class="cmt">// Variable-length paths</span>
+<span class="kw">MATCH</span> (a)-[*<span class="num">1</span>..<span class="num">3</span>]-&gt;(b) <span class="kw">RETURN</span> a, b;
+
+<span class="cmt">// Shortest path</span>
+<span class="kw">MATCH</span> p = shortestPath((a)-[*]-(b))
+<span class="kw">WHERE</span> a.name = <span class="str">"Alice"</span> <span class="kw">AND</span> b.name = <span class="str">"Eve"</span>
+<span class="kw">RETURN</span> p;
+
+<span class="cmt">// Ordering &amp; limiting</span>
+<span class="kw">MATCH</span> (p:<span class="tp">Person</span>) <span class="kw">RETURN</span> p <span class="kw">ORDER BY</span> p.age <span class="kw">DESC LIMIT</span> <span class="num">10</span>;
+<span class="kw">MATCH</span> (p:<span class="tp">Person</span>) <span class="kw">RETURN</span> <span class="fn">count</span>(p);</code></pre></div></div>
+<div class="section" id="update"><div class="section-header"><span class="icon">✏️</span><h2>Update</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Set properties</span>
+<span class="kw">MATCH</span> (p:<span class="tp">Person</span> {name: <span class="str">"Alice"</span>})
+<span class="kw">SET</span> p.age = <span class="num">31</span>, p.city = <span class="str">"Portland"</span>;
+
+<span class="cmt">// Add label</span>
+<span class="kw">MATCH</span> (p:<span class="tp">Person</span> {name: <span class="str">"Alice"</span>})
+<span class="kw">SET</span> p:<span class="tp">Employee</span>;
+
+<span class="cmt">// Remove property</span>
+<span class="kw">MATCH</span> (p:<span class="tp">Person</span> {name: <span class="str">"Alice"</span>})
+<span class="kw">REMOVE</span> p.age;
+
+<span class="cmt">// Remove label</span>
+<span class="kw">MATCH</span> (p:<span class="tp">Employee</span> {name: <span class="str">"Alice"</span>})
+<span class="kw">REMOVE</span> p:<span class="tp">Employee</span>;</code></pre></div></div>
+<div class="section" id="delete"><div class="section-header"><span class="icon">🗑️</span><h2>Delete</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Delete node (must have no relationships)</span>
+<span class="kw">MATCH</span> (p:<span class="tp">Person</span> {name: <span class="str">"Bob"</span>})
+<span class="kw">DELETE</span> p;
+
+<span class="cmt">// Delete node + relationships</span>
+<span class="kw">MATCH</span> (p:<span class="tp">Person</span> {name: <span class="str">"Bob"</span>})
+<span class="kw">DETACH DELETE</span> p;
+
+<span class="cmt">// Delete relationship</span>
+<span class="kw">MATCH</span> (a)-[r:<span class="tp">KNOWS</span>]-&gt;(b)
+<span class="kw">DELETE</span> r;
+
+<span class="cmt">// Delete all</span>
+<span class="kw">MATCH</span> (n) <span class="kw">DETACH DELETE</span> n;</code></pre></div></div>
+<div class="section" id="patterns"><div class="section-header"><span class="icon">🕸️</span><h2>Pattern Matching</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Undirected</span>
+(a)--(b)
+
+<span class="cmt">// Directed</span>
+(a)--&gt;(b)   (a)&lt;--(b)
+
+<span class="cmt">// With type</span>
+(a)-[:KNOWS]-&gt;(b)
+
+<span class="cmt">// With properties</span>
+(a)-[:KNOWS {since: <span class="num">2020</span>}]-&gt;(b)
+
+<span class="cmt">// Multiple hops</span>
+(a)-[:KNOWS]-&gt;(b)-[:KNOWS]-&gt;(c)
+
+<span class="cmt">// Variable length</span>
+(a)-[*<span class="num">2</span>]-&gt;(b)      <span class="cmt">// exactly 2 hops</span>
+(a)-[*<span class="num">1</span>..<span class="num">5</span>]-&gt;(b)    <span class="cmt">// 1 to 5 hops</span>
+(a)-[*]-&gt;(b)        <span class="cmt">// any number of hops</span></code></pre></div></div>
+<div class="section" id="functions"><div class="section-header"><span class="icon">🔧</span><h2>Functions &amp; Aggregations</h2></div><div class="code-wrapper"><pre><code><span class="cmt">// Aggregation</span>
+<span class="fn">count</span>(n)   <span class="fn">sum</span>(n.val)   <span class="fn">avg</span>(n.val)
+<span class="fn">min</span>(n.val)   <span class="fn">max</span>(n.val)
+<span class="fn">collect</span>(n.name)          <span class="cmt">// collect into list</span>
+
+<span class="cmt">// String</span>
+<span class="fn">toString</span>(n)   <span class="fn">toUpper</span>(s)   <span class="fn">toLower</span>(s)
+<span class="fn">trim</span>(s)   <span class="fn">replace</span>(s, old, new)
+<span class="fn">substring</span>(s, start, len)
+
+<span class="cmt">// List</span>
+<span class="fn">size</span>(list)   <span class="fn">head</span>(list)   <span class="fn">tail</span>(list)
+<span class="fn">range</span>(<span class="num">1</span>, <span class="num">10</span>)
+
+<span class="cmt">// Path</span>
+<span class="fn">length</span>(path)   <span class="fn">nodes</span>(path)   <span class="fn">relationships</span>(path)</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Neo4j Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

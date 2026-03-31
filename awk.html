@@ -1,58 +1,108 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Awk Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Awk</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Awk Cheatsheet</h1>
-  <p class="subtitle">Patterns, actions, fields, built-in variables, functions &amp; text processing</p>
-  <span class="tag tag-concept">Linux / Command</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Awk Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Awk</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Awk Cheatsheet</h1><p class="subtitle">Text processing, field extraction, patterns &amp; built-in variables</p><span class="tag tag-concept">Linux / Command</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#fields">Fields</a>
+    <a href="#patterns">Patterns</a>
+    <a href="#variables">Variables</a>
+    <a href="#actions">Actions</a>
+    <a href="#functions">Functions</a>
+    <a href="#examples">Examples</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">📝</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Basic syntax</span>
+awk <span class="str">'pattern { action }'</span> file.txt
+awk <span class="str">'{ print }'</span> file.txt          <span class="cmt"># print all lines</span>
+awk <span class="str">'{ print $0 }'</span> file.txt       <span class="cmt"># same, $0 = whole line</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Awk content.</div>
-</div>
+<span class="cmt"># Custom field separator</span>
+awk -F<span class="str">":"</span> <span class="str">'{ print $1 }'</span> /etc/passwd
+awk -F<span class="str">","</span> <span class="str">'{ print $1, $3 }'</span> data.csv
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Awk basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># From pipe</span>
+echo <span class="str">"hello world"</span> | awk <span class="str">'{ print $2 }'</span>
+ps aux | awk <span class="str">'{ print $2, $11 }'</span></code></pre></div></div>
+<div class="section" id="fields"><div class="section-header"><span class="icon">📊</span><h2>Fields &amp; Columns</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># $1, $2, ... = fields; $0 = whole line</span>
+awk <span class="str">'{ print $1 }'</span> file.txt       <span class="cmt"># 1st field</span>
+awk <span class="str">'{ print $NF }'</span> file.txt      <span class="cmt"># last field</span>
+awk <span class="str">'{ print $(NF-1) }'</span> file.txt  <span class="cmt"># 2nd to last</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Awk patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Custom output separator</span>
+awk -F<span class="str">":"</span> -v OFS=<span class="str">","</span> <span class="str">'{ print $1, $3 }'</span> /etc/passwd
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Awk Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Reformat fields</span>
+awk <span class="str">'{ print $2, $1 }'</span> file.txt  <span class="cmt"># swap columns</span>
+
+<span class="cmt"># Print range of fields</span>
+awk <span class="str">'{ for(i=2;i&lt;=NF;i++) printf "%s ", $i; print "" }'</span> file.txt</code></pre></div></div>
+<div class="section" id="patterns"><div class="section-header"><span class="icon">🔍</span><h2>Patterns &amp; Conditions</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Pattern matching</span>
+awk <span class="str">'/error/'</span> file.txt            <span class="cmt"># lines containing "error"</span>
+awk <span class="str">'!/error/'</span> file.txt           <span class="cmt"># NOT containing</span>
+awk <span class="str">'/^#/'</span> file.txt               <span class="cmt"># starting with #</span>
+
+<span class="cmt"># Conditions</span>
+awk <span class="str">'$3 > 100'</span> data.txt          <span class="cmt"># 3rd field > 100</span>
+awk <span class="str">'$1 == "admin"'</span> data.txt     <span class="cmt"># exact match</span>
+awk <span class="str">'NR &gt; 1'</span> data.txt             <span class="cmt"># skip header</span>
+awk <span class="str">'NR==5,NR==10'</span> file.txt      <span class="cmt"># lines 5-10</span>
+awk <span class="str">'NF &gt; 0'</span> file.txt             <span class="cmt"># non-empty lines</span>
+
+<span class="cmt"># BEGIN / END</span>
+awk <span class="str">'BEGIN { print "Header" } { print } END { print "Done" }'</span> file.txt</code></pre></div></div>
+<div class="section" id="variables"><div class="section-header"><span class="icon">📋</span><h2>Built-in Variables</h2></div><div class="code-wrapper"><pre><code>NR    <span class="cmt"># current line number (total)</span>
+FNR   <span class="cmt"># line number in current file</span>
+NF    <span class="cmt"># number of fields</span>
+FS    <span class="cmt"># field separator (default: space)</span>
+OFS   <span class="cmt"># output field separator</span>
+RS    <span class="cmt"># record separator (default: newline)</span>
+ORS   <span class="cmt"># output record separator</span>
+FILENAME <span class="cmt"># current filename</span>
+
+<span class="cmt"># Set in code</span>
+awk <span class="str">'BEGIN { FS=":" ; OFS="," } { print $1,$3 }'</span> /etc/passwd</code></pre></div></div>
+<div class="section" id="actions"><div class="section-header"><span class="icon">⚡</span><h2>Actions &amp; Control</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Arithmetic</span>
+awk <span class="str">'{ sum += $1 } END { print sum }'</span> nums.txt
+awk <span class="str">'{ sum += $3; n++ } END { print sum/n }'</span> data.txt
+
+<span class="cmt"># Conditional</span>
+awk <span class="str">'{ if ($3 > 50) print $1, "high"; else print $1, "low" }'</span> data.txt
+
+<span class="cmt"># Loop</span>
+awk <span class="str">'{ for(i=1; i&lt;=NF; i++) print $i }'</span> file.txt
+
+<span class="cmt"># Printf</span>
+awk <span class="str">'{ printf "%-10s %5d\n", $1, $2 }'</span> data.txt
+
+<span class="cmt"># Arrays</span>
+awk <span class="str">'{ count[$1]++ } END { for(k in count) print k, count[k] }'</span> log.txt</code></pre></div></div>
+<div class="section" id="functions"><div class="section-header"><span class="icon">🔧</span><h2>String Functions</h2></div><div class="code-wrapper"><pre><code>length(s)        <span class="cmt"># string length</span>
+substr(s,start,len) <span class="cmt"># substring</span>
+index(s,t)       <span class="cmt"># position of t in s</span>
+split(s,a,sep)   <span class="cmt"># split string into array</span>
+gsub(r,s)        <span class="cmt"># global replace (regex)</span>
+sub(r,s)         <span class="cmt"># replace first match</span>
+match(s,r)       <span class="cmt"># regex match</span>
+tolower(s)       <span class="cmt"># lowercase</span>
+toupper(s)       <span class="cmt"># uppercase</span>
+sprintf(fmt,...) <span class="cmt"># formatted string</span>
+
+<span class="cmt"># Example</span>
+awk <span class="str">'{ gsub(/error/, "ERROR"); print }'</span> log.txt</code></pre></div></div>
+<div class="section" id="examples"><div class="section-header"><span class="icon">💡</span><h2>Common Examples</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Sum column</span>
+awk <span class="str">'{ s+=$1 } END { print s }'</span> nums.txt
+
+<span class="cmt"># Unique values</span>
+awk <span class="str">'!seen[$0]++'</span> file.txt
+
+<span class="cmt"># CSV to TSV</span>
+awk -F<span class="str">","</span> -v OFS=<span class="str">"\t"</span> <span class="str">'{$1=$1; print}'</span> data.csv
+
+<span class="cmt"># Top processes by memory</span>
+ps aux | awk <span class="str">'NR>1 { print $4, $11 }'</span> | sort -rn | head
+
+<span class="cmt"># Word frequency</span>
+awk <span class="str">'{ for(i=1;i&lt;=NF;i++) w[$i]++ } END { for(k in w) print w[k],k }'</span> file.txt | sort -rn</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Awk Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

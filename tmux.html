@@ -1,58 +1,140 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tmux Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Tmux Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head>
 <body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Tmux</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Tmux</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
 <div class="container">
-<div class="hero">
-  <h1>Tmux Cheatsheet</h1>
-  <p class="subtitle">Sessions, windows, panes, keybindings, copy mode &amp; configuration</p>
-  <span class="tag tag-concept">Linux / Command</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<div class="hero"><h1>Tmux Cheatsheet</h1><p class="subtitle">Sessions, windows, panes &amp; key bindings for terminal multiplexing</p><span class="tag tag-concept">Linux / Tool</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#sessions">Sessions</a>
+    <a href="#windows">Windows</a>
+    <a href="#panes">Panes</a>
+    <a href="#keys">Key Bindings</a>
+    <a href="#copy">Copy Mode</a>
+    <a href="#config">Configuration</a>
+    <a href="#advanced">Advanced</a>
+</div></div>
+<div class="section" id="sessions"><div class="section-header"><span class="icon">📺</span><h2>Sessions</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Create</span>
+tmux                            <span class="cmt"># new session</span>
+tmux new -s mysession           <span class="cmt"># named session</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Detach &amp; attach</span>
+<span class="cmt"># Ctrl+b  d                     # detach</span>
+tmux ls                         <span class="cmt"># list sessions</span>
+tmux attach -t mysession        <span class="cmt"># reattach</span>
+tmux a                          <span class="cmt"># attach last</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Tmux content.</div>
-</div>
+<span class="cmt"># Kill</span>
+tmux kill-session -t mysession
+tmux kill-server                <span class="cmt"># kill all</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Tmux basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Rename</span>
+tmux rename-session -t old new
+<span class="cmt"># Ctrl+b  $                     # rename current</span></code></pre></div></div>
+<div class="section" id="windows"><div class="section-header"><span class="icon">🪟</span><h2>Windows (Tabs)</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Prefix = Ctrl+b (default)</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Tmux patterns coming soon...</span></code></pre></div>
-</div>
+Ctrl+b  c       <span class="cmt"># new window</span>
+Ctrl+b  ,       <span class="cmt"># rename window</span>
+Ctrl+b  w       <span class="cmt"># list windows</span>
+Ctrl+b  n       <span class="cmt"># next window</span>
+Ctrl+b  p       <span class="cmt"># previous window</span>
+Ctrl+b  <span class="num">0-9</span>     <span class="cmt"># go to window N</span>
+Ctrl+b  &amp;       <span class="cmt"># kill window</span>
+Ctrl+b  l       <span class="cmt"># last active window</span></code></pre></div></div>
+<div class="section" id="panes"><div class="section-header"><span class="icon">🔲</span><h2>Panes (Splits)</h2></div><div class="code-wrapper"><pre><code>Ctrl+b  %       <span class="cmt"># split vertical</span>
+Ctrl+b  <span class="str">"</span>       <span class="cmt"># split horizontal</span>
+Ctrl+b  ←↑→↓   <span class="cmt"># navigate panes</span>
+Ctrl+b  o       <span class="cmt"># next pane</span>
+Ctrl+b  x       <span class="cmt"># kill pane</span>
+Ctrl+b  z       <span class="cmt"># toggle zoom (fullscreen pane)</span>
+Ctrl+b  {       <span class="cmt"># swap with previous</span>
+Ctrl+b  }       <span class="cmt"># swap with next</span>
+Ctrl+b  Space   <span class="cmt"># cycle layouts</span>
+Ctrl+b  q       <span class="cmt"># show pane numbers</span>
 
+<span class="cmt"># Resize panes</span>
+Ctrl+b  Ctrl+←↑→↓  <span class="cmt"># resize by 1</span>
+Ctrl+b  Alt+←↑→↓   <span class="cmt"># resize by 5</span></code></pre></div></div>
+<div class="section" id="keys"><div class="section-header"><span class="icon">⌨️</span><h2>Key Bindings Summary</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># All start with Ctrl+b (prefix)</span>
+
+<span class="cmt"># Sessions</span>
+d       <span class="cmt"># detach</span>
+$       <span class="cmt"># rename session</span>
+s       <span class="cmt"># choose session</span>
+
+<span class="cmt"># Windows</span>
+c       <span class="cmt"># create</span>      &amp;   <span class="cmt"># kill</span>
+n/p     <span class="cmt"># next/prev</span>   ,   <span class="cmt"># rename</span>
+
+<span class="cmt"># Panes</span>
+%       <span class="cmt"># vsplit</span>      <span class="str">"</span>   <span class="cmt"># hsplit</span>
+x       <span class="cmt"># kill</span>        z   <span class="cmt"># zoom</span>
+
+<span class="cmt"># Other</span>
+?       <span class="cmt"># list keys</span>
+:       <span class="cmt"># command prompt</span>
+t       <span class="cmt"># show clock</span>
+[       <span class="cmt"># copy mode</span></code></pre></div></div>
+<div class="section" id="copy"><div class="section-header"><span class="icon">📋</span><h2>Copy Mode</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Enter copy mode</span>
+Ctrl+b  [
+
+<span class="cmt"># Navigation (vi mode)</span>
+h j k l     <span class="cmt"># move</span>
+Ctrl+u/d    <span class="cmt"># page up/down</span>
+/           <span class="cmt"># search forward</span>
+?           <span class="cmt"># search backward</span>
+
+<span class="cmt"># Select &amp; copy</span>
+Space       <span class="cmt"># start selection</span>
+Enter       <span class="cmt"># copy &amp; exit</span>
+Ctrl+b  ]   <span class="cmt"># paste</span></code></pre></div></div>
+<div class="section" id="config"><div class="section-header"><span class="icon">⚙️</span><h2>Configuration (~/.tmux.conf)</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Change prefix to Ctrl+a</span>
+<span class="kw">unbind</span> C-b
+<span class="kw">set</span> -g prefix C-a
+<span class="kw">bind</span> C-a send-prefix
+
+<span class="cmt"># Mouse support</span>
+<span class="kw">set</span> -g mouse on
+
+<span class="cmt"># Start numbering at 1</span>
+<span class="kw">set</span> -g base-index <span class="num">1</span>
+<span class="kw">setw</span> -g pane-base-index <span class="num">1</span>
+
+<span class="cmt"># Vi mode</span>
+<span class="kw">setw</span> -g mode-keys vi
+
+<span class="cmt"># Better splits</span>
+<span class="kw">bind</span> | split-window -h
+<span class="kw">bind</span> - split-window -v
+
+<span class="cmt"># Reload config</span>
+<span class="kw">bind</span> r source-file ~/.tmux.conf \; display <span class="str">"Reloaded!"</span>
+
+<span class="cmt"># 256 colors</span>
+<span class="kw">set</span> -g default-terminal <span class="str">"screen-256color"</span></code></pre></div></div>
+<div class="section" id="advanced"><div class="section-header"><span class="icon">🚀</span><h2>Advanced</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Send command to all panes</span>
+:setw synchronize-panes on
+
+<span class="cmt"># Move pane to new window</span>
+Ctrl+b  !
+
+<span class="cmt"># Join pane from another window</span>
+:join-pane -s <span class="num">2</span>
+
+<span class="cmt"># Save/restore sessions (tmux-resurrect plugin)</span>
+Ctrl+b  Ctrl+s    <span class="cmt"># save</span>
+Ctrl+b  Ctrl+r    <span class="cmt"># restore</span>
+
+<span class="cmt"># Scripted setup</span>
+tmux new -d -s dev
+tmux send-keys -t dev <span class="str">"vim ."</span> Enter
+tmux split-window -t dev -h
+tmux send-keys -t dev <span class="str">"npm run dev"</span> Enter
+tmux attach -t dev</code></pre></div></div>
 </div>
 <button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
 <footer>Tmux Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script>
+</body></html>
