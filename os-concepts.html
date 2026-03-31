@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OS Concepts Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ OS Concepts</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+
+<div class="container">
+
+<div class="hero">
+  <h1>Operating System Concepts</h1>
+  <p class="subtitle">Processes, threads, memory, scheduling, deadlocks, file systems &amp; networking fundamentals</p>
+  <span class="badge">Core CS + Interview</span>
+</div>
+
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#process">Processes</a>
+    <a href="#threads">Threads</a>
+    <a href="#process-vs-thread">Process vs Thread</a>
+    <a href="#scheduling">CPU Scheduling</a>
+    <a href="#sync">Synchronization</a>
+    <a href="#deadlock">Deadlocks</a>
+    <a href="#memory">Memory Management</a>
+    <a href="#virtual-memory">Virtual Memory</a>
+    <a href="#page-replacement">Page Replacement</a>
+    <a href="#filesystem">File Systems</a>
+    <a href="#io">I/O &amp; Storage</a>
+    <a href="#networking">Networking Basics</a>
+    <a href="#linux">Linux Essentials</a>
+  </div>
+</div>
+
+<!-- ===== PROCESSES ===== -->
+<div class="section" id="process">
+  <div class="section-header"><span class="icon">⚙️</span><h2>Processes</h2></div>
+  <p>A <strong>process</strong> is a running instance of a program. It has its own memory space, file descriptors, and resources.</p>
+
+  <h3>Process States</h3>
+  <div class="diagram-box">                  ┌─────────┐
+      create ──→ │   New   │
+                  └────┬────┘
+                       ↓
+                  ┌─────────┐    schedule     ┌─────────────┐
+                  │  Ready  │ ──────────────→ │   Running   │
+                  └────┬────┘ ←────────────── └──────┬──────┘
+                       ↑     preempt / yield          │
+                       │                              ↓
+                       │                        ┌──────────┐
+                       └─── I/O complete ────── │  Waiting  │
+                                                └──────────┘
+                                                      │
+                  The process terminates from          ↓
+                  Running state ──────────────→  ┌────────────┐
+                                                 │ Terminated │
+                                                 └────────────┘</div>
+
+  <h3>Process Control Block (PCB)</h3>
+  <p>OS maintains a PCB for each process containing:</p>
+  <ul>
+    <li><strong>PID</strong>: Unique process identifier</li>
+    <li><strong>State</strong>: Current process state (new, ready, running, waiting, terminated)</li>
+    <li><strong>Program Counter</strong>: Address of next instruction</li>
+    <li><strong>CPU Registers</strong>: Saved register values during context switch</li>
+    <li><strong>Memory info</strong>: Page tables, segment tables</li>
+    <li><strong>Open files</strong>: File descriptor table</li>
+    <li><strong>Priority</strong>: Scheduling priority</li>
+  </ul>
+
+  <h3>Inter-Process Communication (IPC)</h3>
+  <table>
+    <tr><th>Method</th><th>Description</th><th>Use Case</th></tr>
+    <tr><td><strong>Pipe</strong></td><td>Unidirectional byte stream between parent/child</td><td>Shell pipes: <code>ls | grep</code></td></tr>
+    <tr><td><strong>Named Pipe (FIFO)</strong></td><td>Pipe with a name in filesystem, unrelated processes</td><td>Simple IPC between processes</td></tr>
+    <tr><td><strong>Message Queue</strong></td><td>Structured messages via kernel-managed queue</td><td>Decoupled communication</td></tr>
+    <tr><td><strong>Shared Memory</strong></td><td>Multiple processes access same memory region</td><td>High-speed data sharing (fastest)</td></tr>
+    <tr><td><strong>Socket</strong></td><td>Network or local communication endpoint</td><td>Client-server, network apps</td></tr>
+    <tr><td><strong>Signal</strong></td><td>Async notification (SIGTERM, SIGKILL, etc.)</td><td>Process control (kill, stop)</td></tr>
+  </table>
+</div>
+
+<!-- ===== THREADS ===== -->
+<div class="section" id="threads">
+  <div class="section-header"><span class="icon">🧵</span><h2>Threads</h2></div>
+  <p>A <strong>thread</strong> is a lightweight execution unit within a process. Threads in the same process share memory and resources.</p>
+
+  <h3>What Threads Share vs Own</h3>
+  <div class="compare-grid">
+    <div>
+      <h4>Shared (per process)</h4>
+      <ul>
+        <li>Code section (text)</li>
+        <li>Heap memory</li>
+        <li>Global variables</li>
+        <li>File descriptors</li>
+        <li>Signal handlers</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Own (per thread)</h4>
+      <ul>
+        <li>Thread ID</li>
+        <li>Stack (local variables)</li>
+        <li>Program counter</li>
+        <li>CPU registers</li>
+        <li>Thread-local storage</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Threading Models</h3>
+  <table>
+    <tr><th>Model</th><th>Description</th><th>Example</th></tr>
+    <tr><td><strong>1:1 (Kernel threads)</strong></td><td>Each user thread maps to one kernel thread</td><td>Linux pthreads, Java threads</td></tr>
+    <tr><td><strong>N:1 (User threads)</strong></td><td>Many user threads → one kernel thread</td><td>Green threads (early Java)</td></tr>
+    <tr><td><strong>M:N (Hybrid)</strong></td><td>M user threads → N kernel threads</td><td>Go goroutines, Erlang processes</td></tr>
+  </table>
+</div>
+
+<!-- ===== PROCESS VS THREAD ===== -->
+<div class="section" id="process-vs-thread">
+  <div class="section-header"><span class="icon">⚖️</span><h2>Process vs Thread</h2></div>
+  <table>
+    <tr><th>Aspect</th><th>Process</th><th>Thread</th></tr>
+    <tr><td>Memory</td><td>Separate address space</td><td>Shared address space</td></tr>
+    <tr><td>Creation cost</td><td>Expensive (fork)</td><td>Cheap</td></tr>
+    <tr><td>Context switch</td><td>Slow (TLB flush, page tables)</td><td>Fast (shared memory)</td></tr>
+    <tr><td>Communication</td><td>IPC (pipes, sockets, shared mem)</td><td>Direct memory access</td></tr>
+    <tr><td>Crash impact</td><td>Isolated — one crash doesn't affect others</td><td>One crash can kill entire process</td></tr>
+    <tr><td>Security</td><td>Strong isolation</td><td>Weak — any thread can corrupt shared data</td></tr>
+  </table>
+
+  <div class="note tip">
+    <strong>💡 When to use which?</strong>
+    <ul>
+      <li><strong>Processes</strong>: Need isolation, security, fault tolerance (e.g., Chrome tabs, microservices)</li>
+      <li><strong>Threads</strong>: Need shared state, high performance, responsive UI (e.g., web servers, UI threads)</li>
+      <li><strong>Async/Event loop</strong>: I/O-bound work without true parallelism (Node.js, Python asyncio)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== CPU SCHEDULING ===== -->
+<div class="section" id="scheduling">
+  <div class="section-header"><span class="icon">📅</span><h2>CPU Scheduling</h2></div>
+  <p>The OS schedule determines which process/thread runs on the CPU and for how long.</p>
+
+  <h3>Key Metrics</h3>
+  <ul>
+    <li><strong>Throughput</strong>: Processes completed per unit time</li>
+    <li><strong>Turnaround time</strong>: Total time from submission to completion</li>
+    <li><strong>Waiting time</strong>: Time spent in the ready queue</li>
+    <li><strong>Response time</strong>: Time from submission to first response</li>
+  </ul>
+
+  <h3>Scheduling Algorithms</h3>
+  <table>
+    <tr><th>Algorithm</th><th>Preemptive?</th><th>How It Works</th><th>Pros / Cons</th></tr>
+    <tr><td><strong>FCFS</strong></td><td>No</td><td>First Come, First Served</td><td>Simple. Convoy effect (short jobs wait behind long ones).</td></tr>
+    <tr><td><strong>SJF</strong></td><td>No</td><td>Shortest Job First</td><td>Optimal avg waiting time. Hard to predict burst time. Starvation possible.</td></tr>
+    <tr><td><strong>SRTF</strong></td><td>Yes</td><td>Shortest Remaining Time First</td><td>Preemptive SJF. Better response. Still prone to starvation.</td></tr>
+    <tr><td><strong>Round Robin</strong></td><td>Yes</td><td>Each process gets a time quantum (e.g., 10ms)</td><td>Fair, good response. Performance depends on quantum size.</td></tr>
+    <tr><td><strong>Priority</strong></td><td>Both</td><td>Higher priority runs first</td><td>Important tasks first. Starvation → fix with aging.</td></tr>
+    <tr><td><strong>Multilevel Queue</strong></td><td>Yes</td><td>Separate queues for different priority classes</td><td>Flexible. Used in real systems (foreground vs background).</td></tr>
+    <tr><td><strong>CFS (Linux)</strong></td><td>Yes</td><td>Completely Fair Scheduler — red-black tree, virtual runtime</td><td>Fair, O(log n) scheduling. Default in modern Linux.</td></tr>
+  </table>
+</div>
+
+<!-- ===== SYNCHRONIZATION ===== -->
+<div class="section" id="sync">
+  <div class="section-header"><span class="icon">🔒</span><h2>Synchronization</h2></div>
+  <p>When multiple threads/processes access shared resources, we need synchronization to prevent <strong>race conditions</strong>.</p>
+
+  <h3>Critical Section Problem</h3>
+  <p>A <strong>critical section</strong> is code that accesses shared resources. Requirements for a correct solution:</p>
+  <ul>
+    <li><strong>Mutual Exclusion</strong>: Only one thread in the critical section at a time</li>
+    <li><strong>Progress</strong>: If no thread is in the CS, one waiting thread must be allowed in</li>
+    <li><strong>Bounded Waiting</strong>: No thread waits forever (no starvation)</li>
+  </ul>
+
+  <h3>Synchronization Primitives</h3>
+  <table>
+    <tr><th>Primitive</th><th>Description</th><th>Use Case</th></tr>
+    <tr><td><strong>Mutex (Lock)</strong></td><td>Binary lock — only the owner can unlock</td><td>Protecting shared data (one writer at a time)</td></tr>
+    <tr><td><strong>Semaphore</strong></td><td>Counter-based — allows N concurrent accessors</td><td>Connection pool, rate limiting</td></tr>
+    <tr><td><strong>Condition Variable</strong></td><td>Wait until a condition is true (used with mutex)</td><td>Producer-consumer pattern</td></tr>
+    <tr><td><strong>Read-Write Lock</strong></td><td>Multiple readers OR one writer</td><td>Read-heavy workloads (caches, config)</td></tr>
+    <tr><td><strong>Spinlock</strong></td><td>Busy-wait loop instead of sleeping</td><td>Very short critical sections (kernel)</td></tr>
+    <tr><td><strong>Atomic operations</strong></td><td>Hardware-level indivisible operations (CAS)</td><td>Lock-free data structures, counters</td></tr>
+  </table>
+
+  <h3>Classic Problems</h3>
+  <ul>
+    <li><strong>Producer-Consumer</strong>: Bounded buffer with semaphores — producer waits if full, consumer waits if empty</li>
+    <li><strong>Readers-Writers</strong>: Multiple readers can read simultaneously; writers need exclusive access</li>
+    <li><strong>Dining Philosophers</strong>: 5 philosophers, 5 forks — avoid deadlock with resource ordering or semaphores</li>
+  </ul>
+</div>
+
+<!-- ===== DEADLOCKS ===== -->
+<div class="section" id="deadlock">
+  <div class="section-header"><span class="icon">💀</span><h2>Deadlocks</h2></div>
+  <p>A <strong>deadlock</strong> occurs when two or more processes are waiting for each other to release resources, and none can proceed.</p>
+
+  <h3>Four Necessary Conditions (Coffman)</h3>
+  <p>All four must hold simultaneously for deadlock:</p>
+  <ol>
+    <li><strong>Mutual Exclusion</strong>: Resource held exclusively by one process</li>
+    <li><strong>Hold and Wait</strong>: Process holds resource while waiting for another</li>
+    <li><strong>No Preemption</strong>: Resources can't be forcibly taken away</li>
+    <li><strong>Circular Wait</strong>: Circular chain of processes each waiting for the next's resource</li>
+  </ol>
+
+  <h3>Handling Deadlocks</h3>
+  <table>
+    <tr><th>Strategy</th><th>How</th><th>Trade-off</th></tr>
+    <tr><td><strong>Prevention</strong></td><td>Break one of the four conditions (e.g., ordered resource acquisition)</td><td>Restricts system, may reduce concurrency</td></tr>
+    <tr><td><strong>Avoidance</strong></td><td>Banker's algorithm — check if granting resource is safe</td><td>Requires advance knowledge of max needs</td></tr>
+    <tr><td><strong>Detection &amp; Recovery</strong></td><td>Build wait-for graph, detect cycles, kill a process</td><td>Overhead of detection; may lose work</td></tr>
+    <tr><td><strong>Ignore (Ostrich)</strong></td><td>Assume deadlocks are rare, reboot if it happens</td><td>Used in most real systems (Linux, Windows)</td></tr>
+  </table>
+</div>
+
+<!-- ===== MEMORY MANAGEMENT ===== -->
+<div class="section" id="memory">
+  <div class="section-header"><span class="icon">🧠</span><h2>Memory Management</h2></div>
+
+  <h3>Memory Layout of a Process</h3>
+  <div class="diagram-box">High Address ─────────────────────────────
+  │           Stack             │  ← grows downward (local vars, return addr)
+  │            ↓                │
+  │         (free space)        │
+  │            ↑                │
+  │           Heap              │  ← grows upward (malloc, new)
+  │──────────────────────────── │
+  │    Uninitialized Data (BSS) │  ← global vars = 0
+  │   Initialized Data (.data)  │  ← global vars with values
+  │       Text (Code)           │  ← compiled machine code (read-only)
+Low Address  ─────────────────────────────</div>
+
+  <h3>Memory Allocation</h3>
+  <table>
+    <tr><th>Type</th><th>Where</th><th>Lifetime</th><th>Speed</th></tr>
+    <tr><td>Stack</td><td>Stack segment</td><td>Function scope (auto)</td><td>Very fast (pointer bump)</td></tr>
+    <tr><td>Heap</td><td>Heap segment</td><td>Until explicitly freed</td><td>Slower (malloc/free overhead)</td></tr>
+    <tr><td>Static/Global</td><td>Data/BSS segment</td><td>Entire program lifetime</td><td>Allocated at load time</td></tr>
+  </table>
+
+  <h3>Fragmentation</h3>
+  <ul>
+    <li><strong>External fragmentation</strong>: Free memory scattered in small blocks — total is enough but no single block fits. Fix: compaction, paging.</li>
+    <li><strong>Internal fragmentation</strong>: Allocated block is larger than needed — wasted space inside. Fix: smaller allocation units.</li>
+  </ul>
+</div>
+
+<!-- ===== VIRTUAL MEMORY ===== -->
+<div class="section" id="virtual-memory">
+  <div class="section-header"><span class="icon">💾</span><h2>Virtual Memory</h2></div>
+  <p>Each process gets its own <strong>virtual address space</strong> mapped to physical memory via <strong>page tables</strong>.</p>
+
+  <h3>How It Works</h3>
+  <ul>
+    <li>Virtual address space divided into fixed-size <strong>pages</strong> (typically 4 KB)</li>
+    <li>Physical memory divided into <strong>frames</strong> (same size as pages)</li>
+    <li><strong>Page table</strong> maps virtual pages → physical frames</li>
+    <li><strong>TLB (Translation Lookaside Buffer)</strong>: CPU cache for recent page table entries — speeds up translation</li>
+  </ul>
+
+  <h3>Page Fault</h3>
+  <p>When a process accesses a page not in physical memory:</p>
+  <ol>
+    <li>CPU generates a <strong>page fault</strong> interrupt</li>
+    <li>OS checks if the access is valid (segfault if not)</li>
+    <li>OS finds a free frame (or evicts a page using replacement algorithm)</li>
+    <li>OS reads the page from disk into the frame</li>
+    <li>OS updates the page table and restarts the instruction</li>
+  </ol>
+
+  <h3>Benefits</h3>
+  <ul>
+    <li><strong>Isolation</strong>: Each process has its own address space — can't corrupt other processes</li>
+    <li><strong>Larger than physical</strong>: Programs can use more memory than physically available (swap to disk)</li>
+    <li><strong>Shared memory</strong>: Multiple processes can map the same physical frame (shared libraries)</li>
+    <li><strong>Lazy loading</strong>: Pages loaded only when first accessed (demand paging)</li>
+  </ul>
+</div>
+
+<!-- ===== PAGE REPLACEMENT ===== -->
+<div class="section" id="page-replacement">
+  <div class="section-header"><span class="icon">🔄</span><h2>Page Replacement Algorithms</h2></div>
+  <p>When physical memory is full and a new page is needed, which page do we evict?</p>
+
+  <table>
+    <tr><th>Algorithm</th><th>How It Works</th><th>Pros / Cons</th></tr>
+    <tr><td><strong>FIFO</strong></td><td>Evict the oldest page</td><td>Simple. Belady's anomaly (more frames can cause more faults).</td></tr>
+    <tr><td><strong>Optimal (OPT)</strong></td><td>Evict page not used for longest time in future</td><td>Best possible. Impossible in practice (requires future knowledge).</td></tr>
+    <tr><td><strong>LRU</strong></td><td>Evict least recently used page</td><td>Close to optimal. Expensive to implement perfectly.</td></tr>
+    <tr><td><strong>Clock (Second Chance)</strong></td><td>FIFO with reference bit — give each page a second chance</td><td>Good approximation of LRU. Used in real systems.</td></tr>
+    <tr><td><strong>LFU</strong></td><td>Evict least frequently used page</td><td>Works well for stable access patterns.</td></tr>
+  </table>
+
+  <div class="note">
+    <strong>🔑 Thrashing</strong>: When a process spends more time swapping pages than executing. Happens when working set exceeds available frames. Fix: increase memory, reduce multiprogramming, use better page replacement.
+  </div>
+</div>
+
+<!-- ===== FILE SYSTEMS ===== -->
+<div class="section" id="filesystem">
+  <div class="section-header"><span class="icon">📂</span><h2>File Systems</h2></div>
+
+  <h3>Common File Systems</h3>
+  <table>
+    <tr><th>FS</th><th>OS</th><th>Max File</th><th>Features</th></tr>
+    <tr><td>ext4</td><td>Linux</td><td>16 TB</td><td>Journaling, extents, default Linux FS</td></tr>
+    <tr><td>XFS</td><td>Linux</td><td>8 EB</td><td>High performance, parallel I/O</td></tr>
+    <tr><td>NTFS</td><td>Windows</td><td>16 EB</td><td>ACLs, compression, encryption</td></tr>
+    <tr><td>APFS</td><td>macOS</td><td>8 EB</td><td>Copy-on-write, snapshots, encryption</td></tr>
+    <tr><td>ZFS</td><td>Multi</td><td>16 EB</td><td>Data integrity, snapshots, RAID built-in</td></tr>
+  </table>
+
+  <h3>Key Concepts</h3>
+  <ul>
+    <li><strong>inode</strong>: Metadata structure — stores permissions, timestamps, block pointers (not the filename)</li>
+    <li><strong>Directory</strong>: Maps filenames → inode numbers</li>
+    <li><strong>Hard link</strong>: Multiple filenames pointing to same inode (same FS only)</li>
+    <li><strong>Soft link (symlink)</strong>: Pointer to a pathname (can cross FS, can break)</li>
+    <li><strong>Journaling</strong>: Write changes to a log first, then apply — survives crashes</li>
+  </ul>
+</div>
+
+<!-- ===== I/O & STORAGE ===== -->
+<div class="section" id="io">
+  <div class="section-header"><span class="icon">💿</span><h2>I/O &amp; Storage</h2></div>
+
+  <h3>I/O Models</h3>
+  <table>
+    <tr><th>Model</th><th>Description</th><th>Used By</th></tr>
+    <tr><td><strong>Blocking I/O</strong></td><td>Thread waits until I/O completes</td><td>Traditional (one thread per connection)</td></tr>
+    <tr><td><strong>Non-blocking I/O</strong></td><td>Returns immediately if not ready, poll again</td><td>Busy-wait loop</td></tr>
+    <tr><td><strong>I/O Multiplexing</strong></td><td><code>select()</code>/<code>poll()</code>/<code>epoll()</code> — wait on multiple FDs</td><td>Nginx, Node.js, Redis</td></tr>
+    <tr><td><strong>Async I/O</strong></td><td>Kernel notifies when I/O is done</td><td>io_uring (Linux), IOCP (Windows)</td></tr>
+  </table>
+
+  <h3>Storage Comparison</h3>
+  <table>
+    <tr><th>Type</th><th>Speed</th><th>Cost</th><th>Use Case</th></tr>
+    <tr><td>RAM</td><td>~100 ns</td><td>$$$</td><td>Active data, caches</td></tr>
+    <tr><td>NVMe SSD</td><td>~10 μs</td><td>$$</td><td>Databases, OS</td></tr>
+    <tr><td>SATA SSD</td><td>~50 μs</td><td>$$</td><td>General storage</td></tr>
+    <tr><td>HDD</td><td>~2 ms</td><td>$</td><td>Archives, backups</td></tr>
+  </table>
+</div>
+
+<!-- ===== NETWORKING BASICS ===== -->
+<div class="section" id="networking">
+  <div class="section-header"><span class="icon">🌐</span><h2>Networking Basics</h2></div>
+
+  <h3>OSI Model (7 Layers)</h3>
+  <table>
+    <tr><th>#</th><th>Layer</th><th>Protocol</th><th>What It Does</th></tr>
+    <tr><td>7</td><td>Application</td><td>HTTP, DNS, FTP, SMTP</td><td>User-facing protocols</td></tr>
+    <tr><td>6</td><td>Presentation</td><td>SSL/TLS, JPEG</td><td>Encryption, encoding, compression</td></tr>
+    <tr><td>5</td><td>Session</td><td>NetBIOS, RPC</td><td>Session management</td></tr>
+    <tr><td>4</td><td>Transport</td><td>TCP, UDP</td><td>Reliable delivery, ports</td></tr>
+    <tr><td>3</td><td>Network</td><td>IP, ICMP</td><td>Routing, IP addressing</td></tr>
+    <tr><td>2</td><td>Data Link</td><td>Ethernet, Wi-Fi</td><td>MAC addresses, frames</td></tr>
+    <tr><td>1</td><td>Physical</td><td>Cables, radio</td><td>Bits on the wire</td></tr>
+  </table>
+
+  <h3>TCP vs UDP</h3>
+  <table>
+    <tr><th>Feature</th><th>TCP</th><th>UDP</th></tr>
+    <tr><td>Connection</td><td>Connection-oriented (3-way handshake)</td><td>Connectionless</td></tr>
+    <tr><td>Reliability</td><td>Guaranteed delivery, ordering, retransmit</td><td>No guarantees (fire-and-forget)</td></tr>
+    <tr><td>Speed</td><td>Slower (overhead)</td><td>Faster (minimal overhead)</td></tr>
+    <tr><td>Use case</td><td>Web (HTTP), email, file transfer</td><td>Video streaming, gaming, DNS</td></tr>
+  </table>
+
+  <h3>DNS Resolution Flow</h3>
+  <div class="diagram-box">Browser → Local DNS Cache → OS DNS Cache → Recursive Resolver
+  → Root Server (.com) → TLD Server (google.com) → Authoritative Server
+  → Returns IP → Browser connects via TCP</div>
+
+  <h3>HTTP/HTTPS</h3>
+  <ul>
+    <li><strong>HTTP/1.1</strong>: One request per connection (keep-alive helps), head-of-line blocking</li>
+    <li><strong>HTTP/2</strong>: Multiplexing (multiple requests on one connection), header compression, server push</li>
+    <li><strong>HTTP/3</strong>: QUIC (UDP-based), faster connection setup, no head-of-line blocking</li>
+    <li><strong>HTTPS</strong>: HTTP + TLS. Encrypts data in transit. Certificate-based trust.</li>
+  </ul>
+</div>
+
+<!-- ===== LINUX ESSENTIALS ===== -->
+<div class="section" id="linux">
+  <div class="section-header"><span class="icon">🐧</span><h2>Linux Essentials</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Process management</span>
+ps aux                    <span class="cmt"># list all processes</span>
+top / htop                <span class="cmt"># interactive process viewer</span>
+kill -9 &lt;pid&gt;             <span class="cmt"># force kill process</span>
+kill -15 &lt;pid&gt;            <span class="cmt"># graceful termination (SIGTERM)</span>
+nohup ./app &amp;             <span class="cmt"># run in background, survives logout</span>
+jobs / fg / bg             <span class="cmt"># job control</span>
+
+<span class="cmt"># Memory &amp; Disk</span>
+free -h                   <span class="cmt"># memory usage</span>
+df -h                     <span class="cmt"># disk space</span>
+du -sh /path              <span class="cmt"># directory size</span>
+lsof -i :8080             <span class="cmt"># what's using port 8080</span>
+
+<span class="cmt"># File permissions</span>
+chmod 755 file            <span class="cmt"># rwxr-xr-x</span>
+chown user:group file     <span class="cmt"># change ownership</span>
+<span class="cmt"># r=4 w=2 x=1 → owner|group|other</span>
+
+<span class="cmt"># Networking</span>
+netstat -tlnp             <span class="cmt"># listening ports</span>
+ss -tlnp                  <span class="cmt"># modern netstat</span>
+curl -v https://api.com   <span class="cmt"># HTTP request with headers</span>
+dig google.com            <span class="cmt"># DNS lookup</span>
+traceroute google.com     <span class="cmt"># network path</span>
+
+<span class="cmt"># Useful combos</span>
+grep -r "pattern" /path   <span class="cmt"># recursive search</span>
+find / -name "*.log" -mtime -1  <span class="cmt"># files modified in last day</span>
+tail -f /var/log/app.log  <span class="cmt"># follow log in real-time</span>
+awk '{print $1}' file     <span class="cmt"># print first column</span>
+wc -l file                <span class="cmt"># count lines</span></code></pre></div>
+</div>
+
+</div><!-- /container -->
+
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>OS Concepts Cheatsheet · 2026</footer>
+
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'Copy';
+  btn.onclick = () => {
+    const code = w.querySelector('code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  };
+  w.appendChild(btn);
+});
+const backBtn = document.querySelector('.back-top');
+window.addEventListener('scroll', () => backBtn.classList.toggle('visible', window.scrollY > 400));
+</script>
+</body>
+</html>

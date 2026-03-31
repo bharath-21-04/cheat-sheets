@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PostgreSQL Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ PostgreSQL</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+
+<div class="container">
+
+<div class="hero">
+  <h1>PostgreSQL Cheatsheet</h1>
+  <p class="subtitle">Schemas, queries, joins, indexes, transactions, window functions, JSON, performance tuning &amp; more</p>
+  <span class="badge">Database / SQL</span>
+</div>
+
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#basics">Database Basics</a>
+    <a href="#ddl">DDL — Schema</a>
+    <a href="#dml">DML — CRUD</a>
+    <a href="#joins">Joins</a>
+    <a href="#aggregate">Aggregation</a>
+    <a href="#window">Window Functions</a>
+    <a href="#cte">CTEs &amp; Subqueries</a>
+    <a href="#indexes">Indexes</a>
+    <a href="#transactions">Transactions</a>
+    <a href="#json">JSON Operations</a>
+    <a href="#views">Views &amp; Materialized Views</a>
+    <a href="#functions">Functions &amp; Procedures</a>
+    <a href="#performance">Performance Tuning</a>
+    <a href="#admin">Administration</a>
+  </div>
+</div>
+
+<!-- ===== BASICS ===== -->
+<div class="section" id="basics">
+  <div class="section-header"><span class="icon">🐘</span><h2>Database Basics</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">-- Connect</span>
+psql -h localhost -U postgres -d mydb
+
+<span class="cmt">-- Create / Drop database</span>
+<span class="kw">CREATE DATABASE</span> mydb;
+<span class="kw">DROP DATABASE</span> mydb;
+
+<span class="cmt">-- List databases &amp; tables (psql shortcuts)</span>
+\l                  <span class="cmt">-- list databases</span>
+\c mydb             <span class="cmt">-- connect to database</span>
+\dt                 <span class="cmt">-- list tables</span>
+\d users            <span class="cmt">-- describe table structure</span>
+\di                 <span class="cmt">-- list indexes</span>
+\df                 <span class="cmt">-- list functions</span>
+\du                 <span class="cmt">-- list roles/users</span>
+\timing             <span class="cmt">-- toggle query timing</span></code></pre></div>
+</div>
+
+<!-- ===== DDL ===== -->
+<div class="section" id="ddl">
+  <div class="section-header"><span class="icon">🏗️</span><h2>DDL — Schema Definition</h2></div>
+
+  <h3>Create Table</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">CREATE TABLE</span> users (
+    id          <span class="tp">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+    email       <span class="tp">VARCHAR(255)</span> <span class="kw">UNIQUE NOT NULL</span>,
+    name        <span class="tp">VARCHAR(100)</span> <span class="kw">NOT NULL</span>,
+    age         <span class="tp">INT</span> <span class="kw">CHECK</span> (age >= <span class="num">0</span> <span class="kw">AND</span> age <= <span class="num">150</span>),
+    role        <span class="tp">VARCHAR(20)</span> <span class="kw">DEFAULT</span> <span class="str">'user'</span>,
+    created_at  <span class="tp">TIMESTAMPTZ</span> <span class="kw">DEFAULT NOW</span>()
+);
+
+<span class="kw">CREATE TABLE</span> orders (
+    id          <span class="tp">SERIAL</span> <span class="kw">PRIMARY KEY</span>,
+    user_id     <span class="tp">INT</span> <span class="kw">REFERENCES</span> users(id) <span class="kw">ON DELETE CASCADE</span>,
+    total       <span class="tp">DECIMAL(10,2)</span> <span class="kw">NOT NULL</span>,
+    status      <span class="tp">VARCHAR(20)</span> <span class="kw">DEFAULT</span> <span class="str">'pending'</span>,
+    ordered_at  <span class="tp">TIMESTAMPTZ</span> <span class="kw">DEFAULT NOW</span>()
+);</code></pre></div>
+
+  <h3>Alter Table</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">ALTER TABLE</span> users <span class="kw">ADD COLUMN</span> phone <span class="tp">VARCHAR(20)</span>;
+<span class="kw">ALTER TABLE</span> users <span class="kw">DROP COLUMN</span> phone;
+<span class="kw">ALTER TABLE</span> users <span class="kw">ALTER COLUMN</span> name <span class="kw">SET NOT NULL</span>;
+<span class="kw">ALTER TABLE</span> users <span class="kw">RENAME COLUMN</span> name <span class="kw">TO</span> full_name;
+<span class="kw">ALTER TABLE</span> users <span class="kw">ADD CONSTRAINT</span> unique_email <span class="kw">UNIQUE</span>(email);</code></pre></div>
+
+  <h3>Common Data Types</h3>
+  <table>
+    <tr><th>Type</th><th>Description</th><th>Example</th></tr>
+    <tr><td><code>SERIAL / BIGSERIAL</code></td><td>Auto-increment integer</td><td>Primary keys</td></tr>
+    <tr><td><code>UUID</code></td><td>Universally unique identifier</td><td><code>gen_random_uuid()</code></td></tr>
+    <tr><td><code>VARCHAR(n)</code></td><td>Variable-length string up to n chars</td><td>Names, emails</td></tr>
+    <tr><td><code>TEXT</code></td><td>Unlimited-length string</td><td>Descriptions, content</td></tr>
+    <tr><td><code>INT / BIGINT</code></td><td>32-bit / 64-bit integer</td><td>Counts, foreign keys</td></tr>
+    <tr><td><code>DECIMAL(p,s)</code></td><td>Exact numeric with precision</td><td>Money, prices</td></tr>
+    <tr><td><code>BOOLEAN</code></td><td>true / false</td><td>Flags</td></tr>
+    <tr><td><code>TIMESTAMPTZ</code></td><td>Timestamp with timezone</td><td>Always use this over TIMESTAMP</td></tr>
+    <tr><td><code>JSONB</code></td><td>Binary JSON (indexable, faster)</td><td>Flexible schema data</td></tr>
+    <tr><td><code>ARRAY</code></td><td>Array of any type</td><td><code>INT[], TEXT[]</code></td></tr>
+  </table>
+</div>
+
+<!-- ===== DML ===== -->
+<div class="section" id="dml">
+  <div class="section-header"><span class="icon">✏️</span><h2>DML — CRUD Operations</h2></div>
+
+  <div class="code-wrapper"><pre><code><span class="cmt">-- INSERT</span>
+<span class="kw">INSERT INTO</span> users (email, name, age) <span class="kw">VALUES</span>
+    (<span class="str">'alice@example.com'</span>, <span class="str">'Alice'</span>, <span class="num">30</span>),
+    (<span class="str">'bob@example.com'</span>, <span class="str">'Bob'</span>, <span class="num">25</span>);
+
+<span class="cmt">-- INSERT with conflict handling (upsert)</span>
+<span class="kw">INSERT INTO</span> users (email, name)
+<span class="kw">VALUES</span> (<span class="str">'alice@example.com'</span>, <span class="str">'Alice Updated'</span>)
+<span class="kw">ON CONFLICT</span> (email) <span class="kw">DO UPDATE SET</span> name = <span class="kw">EXCLUDED</span>.name;
+
+<span class="cmt">-- SELECT</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> age > <span class="num">25</span> <span class="kw">ORDER BY</span> name <span class="kw">LIMIT</span> <span class="num">10</span>;
+<span class="kw">SELECT DISTINCT</span> role <span class="kw">FROM</span> users;
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> name <span class="kw">ILIKE</span> <span class="str">'%alice%'</span>;  <span class="cmt">-- case-insensitive</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> role <span class="kw">IN</span> (<span class="str">'admin'</span>, <span class="str">'moderator'</span>);
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> created_at <span class="kw">BETWEEN</span> <span class="str">'2024-01-01'</span> <span class="kw">AND</span> <span class="str">'2024-12-31'</span>;
+
+<span class="cmt">-- UPDATE</span>
+<span class="kw">UPDATE</span> users <span class="kw">SET</span> role = <span class="str">'admin'</span> <span class="kw">WHERE</span> email = <span class="str">'alice@example.com'</span>;
+
+<span class="cmt">-- DELETE</span>
+<span class="kw">DELETE FROM</span> users <span class="kw">WHERE</span> age < <span class="num">18</span>;
+<span class="kw">TRUNCATE TABLE</span> users <span class="kw">RESTART IDENTITY CASCADE</span>;  <span class="cmt">-- fast delete all</span>
+
+<span class="cmt">-- RETURNING (get affected rows)</span>
+<span class="kw">INSERT INTO</span> users (email, name) <span class="kw">VALUES</span> (<span class="str">'c@d.com'</span>, <span class="str">'C'</span>) <span class="kw">RETURNING</span> id, email;
+<span class="kw">DELETE FROM</span> users <span class="kw">WHERE</span> id = <span class="num">5</span> <span class="kw">RETURNING</span> *;</code></pre></div>
+</div>
+
+<!-- ===== JOINS ===== -->
+<div class="section" id="joins">
+  <div class="section-header"><span class="icon">🔗</span><h2>Joins</h2></div>
+
+  <div class="diagram-box">   INNER JOIN        LEFT JOIN         RIGHT JOIN        FULL OUTER JOIN
+    ┌───┬───┐        ┌───┬───┐        ┌───┬───┐         ┌───┬───┐
+    │ A │▓▓▓│        │▓▓▓│▓▓▓│        │   │▓▓▓│         │▓▓▓│▓▓▓│
+    │   │▓▓▓│ B      │▓▓▓│▓▓▓│ B      │   │▓▓▓│ B       │▓▓▓│▓▓▓│ B
+    │   │▓▓▓│        │▓▓▓│▓▓▓│        │   │▓▓▓│         │▓▓▓│▓▓▓│
+    └───┴───┘        └───┴───┘        └───┴───┘         └───┴───┘
+   Only matching    All A + matching   Matching + All B   All A + All B</div>
+
+  <div class="code-wrapper"><pre><code><span class="cmt">-- INNER JOIN (only matching rows)</span>
+<span class="kw">SELECT</span> u.name, o.total
+<span class="kw">FROM</span> users u
+<span class="kw">INNER JOIN</span> orders o <span class="kw">ON</span> u.id = o.user_id;
+
+<span class="cmt">-- LEFT JOIN (all users, even without orders)</span>
+<span class="kw">SELECT</span> u.name, <span class="fn">COALESCE</span>(<span class="fn">SUM</span>(o.total), <span class="num">0</span>) <span class="kw">AS</span> total_spent
+<span class="kw">FROM</span> users u
+<span class="kw">LEFT JOIN</span> orders o <span class="kw">ON</span> u.id = o.user_id
+<span class="kw">GROUP BY</span> u.name;
+
+<span class="cmt">-- CROSS JOIN (every combination — cartesian product)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> colors <span class="kw">CROSS JOIN</span> sizes;
+
+<span class="cmt">-- SELF JOIN (employees and their managers)</span>
+<span class="kw">SELECT</span> e.name <span class="kw">AS</span> employee, m.name <span class="kw">AS</span> manager
+<span class="kw">FROM</span> employees e
+<span class="kw">LEFT JOIN</span> employees m <span class="kw">ON</span> e.manager_id = m.id;
+
+<span class="cmt">-- LATERAL JOIN (correlated subquery for each row)</span>
+<span class="kw">SELECT</span> u.name, latest.total
+<span class="kw">FROM</span> users u
+<span class="kw">LEFT JOIN LATERAL</span> (
+    <span class="kw">SELECT</span> total <span class="kw">FROM</span> orders <span class="kw">WHERE</span> user_id = u.id
+    <span class="kw">ORDER BY</span> ordered_at <span class="kw">DESC LIMIT</span> <span class="num">1</span>
+) latest <span class="kw">ON TRUE</span>;</code></pre></div>
+</div>
+
+<!-- ===== AGGREGATION ===== -->
+<div class="section" id="aggregate">
+  <div class="section-header"><span class="icon">📊</span><h2>Aggregation</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">-- Basic aggregates</span>
+<span class="kw">SELECT</span>
+    <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total_users,
+    <span class="fn">COUNT</span>(<span class="kw">DISTINCT</span> role) <span class="kw">AS</span> unique_roles,
+    <span class="fn">AVG</span>(age) <span class="kw">AS</span> avg_age,
+    <span class="fn">MIN</span>(age) <span class="kw">AS</span> youngest,
+    <span class="fn">MAX</span>(age) <span class="kw">AS</span> oldest,
+    <span class="fn">SUM</span>(age) <span class="kw">AS</span> age_sum
+<span class="kw">FROM</span> users;
+
+<span class="cmt">-- GROUP BY with HAVING</span>
+<span class="kw">SELECT</span> role, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> cnt
+<span class="kw">FROM</span> users
+<span class="kw">GROUP BY</span> role
+<span class="kw">HAVING COUNT</span>(*) > <span class="num">5</span>
+<span class="kw">ORDER BY</span> cnt <span class="kw">DESC</span>;
+
+<span class="cmt">-- GROUPING SETS (multiple groupings in one query)</span>
+<span class="kw">SELECT</span> role, status, <span class="fn">COUNT</span>(*)
+<span class="kw">FROM</span> users
+<span class="kw">GROUP BY GROUPING SETS</span> ((role), (status), ());
+
+<span class="cmt">-- String aggregation</span>
+<span class="kw">SELECT</span> role, <span class="fn">STRING_AGG</span>(name, <span class="str">', '</span> <span class="kw">ORDER BY</span> name) <span class="kw">AS</span> members
+<span class="kw">FROM</span> users <span class="kw">GROUP BY</span> role;
+
+<span class="cmt">-- Array aggregation</span>
+<span class="kw">SELECT</span> role, <span class="fn">ARRAY_AGG</span>(name) <span class="kw">AS</span> member_list
+<span class="kw">FROM</span> users <span class="kw">GROUP BY</span> role;</code></pre></div>
+</div>
+
+<!-- ===== WINDOW FUNCTIONS ===== -->
+<div class="section" id="window">
+  <div class="section-header"><span class="icon">🪟</span><h2>Window Functions</h2></div>
+  <p>Window functions perform calculations across a set of rows related to the current row — <strong>without collapsing rows</strong> like GROUP BY.</p>
+
+  <div class="code-wrapper"><pre><code><span class="cmt">-- ROW_NUMBER, RANK, DENSE_RANK</span>
+<span class="kw">SELECT</span> name, role, age,
+    <span class="fn">ROW_NUMBER</span>() <span class="kw">OVER</span> (<span class="kw">PARTITION BY</span> role <span class="kw">ORDER BY</span> age <span class="kw">DESC</span>) <span class="kw">AS</span> row_num,
+    <span class="fn">RANK</span>()       <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> age <span class="kw">DESC</span>) <span class="kw">AS</span> rnk,
+    <span class="fn">DENSE_RANK</span>() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> age <span class="kw">DESC</span>) <span class="kw">AS</span> dense_rnk
+<span class="kw">FROM</span> users;
+
+<span class="cmt">-- LAG / LEAD (previous/next row value)</span>
+<span class="kw">SELECT</span> ordered_at, total,
+    total - <span class="fn">LAG</span>(total) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> ordered_at) <span class="kw">AS</span> change
+<span class="kw">FROM</span> orders;
+
+<span class="cmt">-- Running total</span>
+<span class="kw">SELECT</span> ordered_at, total,
+    <span class="fn">SUM</span>(total) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> ordered_at) <span class="kw">AS</span> running_total
+<span class="kw">FROM</span> orders;
+
+<span class="cmt">-- NTILE (divide into N buckets)</span>
+<span class="kw">SELECT</span> name, age,
+    <span class="fn">NTILE</span>(<span class="num">4</span>) <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> age) <span class="kw">AS</span> quartile
+<span class="kw">FROM</span> users;
+
+<span class="cmt">-- Percent rank &amp; percentile</span>
+<span class="kw">SELECT</span> name, age,
+    <span class="fn">PERCENT_RANK</span>() <span class="kw">OVER</span> (<span class="kw">ORDER BY</span> age) <span class="kw">AS</span> pct_rank
+<span class="kw">FROM</span> users;</code></pre></div>
+
+  <div class="note tip">
+    <strong>💡 RANK vs DENSE_RANK vs ROW_NUMBER</strong>
+    <ul>
+      <li><code>ROW_NUMBER</code>: Always unique (1, 2, 3, 4, 5)</li>
+      <li><code>RANK</code>: Ties get same rank, gaps after (1, 2, 2, 4, 5)</li>
+      <li><code>DENSE_RANK</code>: Ties get same rank, no gaps (1, 2, 2, 3, 4)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== CTEs ===== -->
+<div class="section" id="cte">
+  <div class="section-header"><span class="icon">🔁</span><h2>CTEs &amp; Subqueries</h2></div>
+
+  <div class="code-wrapper"><pre><code><span class="cmt">-- Common Table Expression (WITH clause)</span>
+<span class="kw">WITH</span> active_users <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> * <span class="kw">FROM</span> users <span class="kw">WHERE</span> role != <span class="str">'inactive'</span>
+),
+user_orders <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> user_id, <span class="fn">SUM</span>(total) <span class="kw">AS</span> total_spent
+    <span class="kw">FROM</span> orders <span class="kw">GROUP BY</span> user_id
+)
+<span class="kw">SELECT</span> a.name, <span class="fn">COALESCE</span>(uo.total_spent, <span class="num">0</span>) <span class="kw">AS</span> spent
+<span class="kw">FROM</span> active_users a
+<span class="kw">LEFT JOIN</span> user_orders uo <span class="kw">ON</span> a.id = uo.user_id;
+
+<span class="cmt">-- Recursive CTE (org hierarchy)</span>
+<span class="kw">WITH RECURSIVE</span> org_tree <span class="kw">AS</span> (
+    <span class="cmt">-- Base case: top-level managers</span>
+    <span class="kw">SELECT</span> id, name, manager_id, <span class="num">1</span> <span class="kw">AS</span> depth
+    <span class="kw">FROM</span> employees <span class="kw">WHERE</span> manager_id <span class="kw">IS NULL</span>
+
+    <span class="kw">UNION ALL</span>
+
+    <span class="cmt">-- Recursive case: find subordinates</span>
+    <span class="kw">SELECT</span> e.id, e.name, e.manager_id, t.depth + <span class="num">1</span>
+    <span class="kw">FROM</span> employees e
+    <span class="kw">JOIN</span> org_tree t <span class="kw">ON</span> e.manager_id = t.id
+)
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> org_tree <span class="kw">ORDER BY</span> depth, name;
+
+<span class="cmt">-- Subquery in WHERE</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users
+<span class="kw">WHERE</span> id <span class="kw">IN</span> (<span class="kw">SELECT</span> user_id <span class="kw">FROM</span> orders <span class="kw">WHERE</span> total > <span class="num">100</span>);
+
+<span class="cmt">-- EXISTS (more efficient than IN for large sets)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> users u
+<span class="kw">WHERE EXISTS</span> (
+    <span class="kw">SELECT</span> <span class="num">1</span> <span class="kw">FROM</span> orders o <span class="kw">WHERE</span> o.user_id = u.id <span class="kw">AND</span> o.total > <span class="num">100</span>
+);</code></pre></div>
+</div>
+
+<!-- ===== INDEXES ===== -->
+<div class="section" id="indexes">
+  <div class="section-header"><span class="icon">⚡</span><h2>Indexes</h2></div>
+  <p>Indexes speed up reads but slow down writes. Choose wisely based on query patterns.</p>
+
+  <div class="code-wrapper"><pre><code><span class="cmt">-- B-tree (default, most common)</span>
+<span class="kw">CREATE INDEX</span> idx_users_email <span class="kw">ON</span> users(email);
+
+<span class="cmt">-- Unique index</span>
+<span class="kw">CREATE UNIQUE INDEX</span> idx_users_email_unique <span class="kw">ON</span> users(email);
+
+<span class="cmt">-- Composite index (multi-column)</span>
+<span class="kw">CREATE INDEX</span> idx_orders_user_date <span class="kw">ON</span> orders(user_id, ordered_at <span class="kw">DESC</span>);
+
+<span class="cmt">-- Partial index (only index subset of rows)</span>
+<span class="kw">CREATE INDEX</span> idx_active_users <span class="kw">ON</span> users(email) <span class="kw">WHERE</span> role = <span class="str">'active'</span>;
+
+<span class="cmt">-- GIN index (for JSONB, arrays, full-text search)</span>
+<span class="kw">CREATE INDEX</span> idx_users_metadata <span class="kw">ON</span> users <span class="kw">USING GIN</span>(metadata);
+
+<span class="cmt">-- GiST index (for geometric, range, full-text)</span>
+<span class="kw">CREATE INDEX</span> idx_locations_geo <span class="kw">ON</span> locations <span class="kw">USING GIST</span>(coordinates);
+
+<span class="cmt">-- Expression index</span>
+<span class="kw">CREATE INDEX</span> idx_users_lower_email <span class="kw">ON</span> users(<span class="fn">LOWER</span>(email));
+
+<span class="cmt">-- Concurrent index creation (non-blocking)</span>
+<span class="kw">CREATE INDEX CONCURRENTLY</span> idx_name <span class="kw">ON</span> users(name);
+
+<span class="cmt">-- Drop index</span>
+<span class="kw">DROP INDEX</span> idx_users_email;</code></pre></div>
+
+  <table>
+    <tr><th>Index Type</th><th>Best For</th><th>Example</th></tr>
+    <tr><td><strong>B-tree</strong></td><td>=, <, >, BETWEEN, LIKE 'abc%'</td><td>Most columns</td></tr>
+    <tr><td><strong>Hash</strong></td><td>Equality (=) only</td><td>Exact lookups</td></tr>
+    <tr><td><strong>GIN</strong></td><td>JSONB, arrays, full-text, tsvector</td><td><code>metadata @> '{"a":1}'</code></td></tr>
+    <tr><td><strong>GiST</strong></td><td>Geometry, ranges, nearest-neighbor</td><td>PostGIS, range queries</td></tr>
+    <tr><td><strong>BRIN</strong></td><td>Very large, naturally ordered tables</td><td>Time-series data (created_at)</td></tr>
+  </table>
+</div>
+
+<!-- ===== TRANSACTIONS ===== -->
+<div class="section" id="transactions">
+  <div class="section-header"><span class="icon">🔐</span><h2>Transactions</h2></div>
+
+  <h3>ACID Properties</h3>
+  <ul>
+    <li><strong>Atomicity</strong>: All-or-nothing — either all statements succeed or none</li>
+    <li><strong>Consistency</strong>: Database moves from one valid state to another</li>
+    <li><strong>Isolation</strong>: Concurrent transactions don't interfere with each other</li>
+    <li><strong>Durability</strong>: Once committed, data survives crashes</li>
+  </ul>
+
+  <div class="code-wrapper"><pre><code><span class="kw">BEGIN</span>;  <span class="cmt">-- or START TRANSACTION</span>
+
+<span class="kw">UPDATE</span> accounts <span class="kw">SET</span> balance = balance - <span class="num">100</span> <span class="kw">WHERE</span> id = <span class="num">1</span>;
+<span class="kw">UPDATE</span> accounts <span class="kw">SET</span> balance = balance + <span class="num">100</span> <span class="kw">WHERE</span> id = <span class="num">2</span>;
+
+<span class="cmt">-- If everything is OK:</span>
+<span class="kw">COMMIT</span>;
+
+<span class="cmt">-- If something went wrong:</span>
+<span class="kw">ROLLBACK</span>;
+
+<span class="cmt">-- Savepoints (partial rollback)</span>
+<span class="kw">BEGIN</span>;
+<span class="kw">INSERT INTO</span> users (...) <span class="kw">VALUES</span> (...);
+<span class="kw">SAVEPOINT</span> sp1;
+<span class="kw">INSERT INTO</span> orders (...) <span class="kw">VALUES</span> (...);  <span class="cmt">-- this might fail</span>
+<span class="kw">ROLLBACK TO</span> sp1;  <span class="cmt">-- undo only the order insert</span>
+<span class="kw">COMMIT</span>;  <span class="cmt">-- user insert is still committed</span></code></pre></div>
+
+  <h3>Isolation Levels</h3>
+  <table>
+    <tr><th>Level</th><th>Dirty Read</th><th>Non-Repeatable Read</th><th>Phantom Read</th><th>Use Case</th></tr>
+    <tr><td><strong>Read Uncommitted</strong></td><td>✅ Possible</td><td>✅ Possible</td><td>✅ Possible</td><td>Almost never used in Postgres</td></tr>
+    <tr><td><strong>Read Committed</strong></td><td>❌ No</td><td>✅ Possible</td><td>✅ Possible</td><td><strong>Default in PostgreSQL</strong></td></tr>
+    <tr><td><strong>Repeatable Read</strong></td><td>❌ No</td><td>❌ No</td><td>❌ No*</td><td>Financial reports, analytics</td></tr>
+    <tr><td><strong>Serializable</strong></td><td>❌ No</td><td>❌ No</td><td>❌ No</td><td>Strictest — as if sequential</td></tr>
+  </table>
+  <p><small>* PostgreSQL's Repeatable Read is based on MVCC snapshots and prevents phantom reads too.</small></p>
+</div>
+
+<!-- ===== JSON ===== -->
+<div class="section" id="json">
+  <div class="section-header"><span class="icon">📋</span><h2>JSON Operations</h2></div>
+  <p>Use <code>JSONB</code> over <code>JSON</code> — it's binary, faster, and indexable.</p>
+
+  <div class="code-wrapper"><pre><code><span class="cmt">-- Create table with JSONB</span>
+<span class="kw">CREATE TABLE</span> events (
+    id    <span class="tp">SERIAL PRIMARY KEY</span>,
+    data  <span class="tp">JSONB</span> <span class="kw">NOT NULL</span>
+);
+
+<span class="cmt">-- Insert JSON</span>
+<span class="kw">INSERT INTO</span> events (data) <span class="kw">VALUES</span>
+    (<span class="str">'{"type": "click", "page": "/home", "user_id": 42}'</span>::jsonb);
+
+<span class="cmt">-- Access JSON fields</span>
+<span class="kw">SELECT</span>
+    data-><span class="str">'type'</span>          <span class="kw">AS</span> type_json,    <span class="cmt">-- returns JSONB: "click"</span>
+    data->><span class="str">'type'</span>         <span class="kw">AS</span> type_text,    <span class="cmt">-- returns TEXT: click</span>
+    data-><span class="str">'user'</span>-><span class="str">'name'</span>  <span class="kw">AS</span> nested_json,  <span class="cmt">-- nested access</span>
+    data#>><span class="str">'{user,name}'</span>  <span class="kw">AS</span> nested_path   <span class="cmt">-- path access as text</span>
+<span class="kw">FROM</span> events;
+
+<span class="cmt">-- Filter by JSON field</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> events <span class="kw">WHERE</span> data->><span class="str">'type'</span> = <span class="str">'click'</span>;
+
+<span class="cmt">-- Containment operator (uses GIN index!)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> events <span class="kw">WHERE</span> data @> <span class="str">'{"type": "click"}'</span>::jsonb;
+
+<span class="cmt">-- Update JSON fields</span>
+<span class="kw">UPDATE</span> events <span class="kw">SET</span> data = data || <span class="str">'{"processed": true}'</span>::jsonb;
+<span class="kw">UPDATE</span> events <span class="kw">SET</span> data = data - <span class="str">'temporary_field'</span>;  <span class="cmt">-- remove key</span>
+<span class="kw">UPDATE</span> events <span class="kw">SET</span> data = <span class="fn">jsonb_set</span>(data, <span class="str">'{page}'</span>, <span class="str">'"/"'</span>);
+
+<span class="cmt">-- Aggregate to JSON</span>
+<span class="kw">SELECT</span> <span class="fn">jsonb_agg</span>(<span class="fn">jsonb_build_object</span>(<span class="str">'name'</span>, name, <span class="str">'age'</span>, age))
+<span class="kw">FROM</span> users;</code></pre></div>
+</div>
+
+<!-- ===== VIEWS ===== -->
+<div class="section" id="views">
+  <div class="section-header"><span class="icon">👁️</span><h2>Views &amp; Materialized Views</h2></div>
+
+  <div class="code-wrapper"><pre><code><span class="cmt">-- Regular view (virtual — query runs every time)</span>
+<span class="kw">CREATE VIEW</span> active_users <span class="kw">AS</span>
+    <span class="kw">SELECT</span> id, name, email <span class="kw">FROM</span> users <span class="kw">WHERE</span> role = <span class="str">'active'</span>;
+
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> active_users;  <span class="cmt">-- uses the view</span>
+
+<span class="cmt">-- Materialized view (cached — must refresh manually)</span>
+<span class="kw">CREATE MATERIALIZED VIEW</span> user_stats <span class="kw">AS</span>
+    <span class="kw">SELECT</span> u.id, u.name,
+        <span class="fn">COUNT</span>(o.id) <span class="kw">AS</span> order_count,
+        <span class="fn">COALESCE</span>(<span class="fn">SUM</span>(o.total), <span class="num">0</span>) <span class="kw">AS</span> total_spent
+    <span class="kw">FROM</span> users u
+    <span class="kw">LEFT JOIN</span> orders o <span class="kw">ON</span> u.id = o.user_id
+    <span class="kw">GROUP BY</span> u.id;
+
+<span class="cmt">-- Refresh materialized view</span>
+<span class="kw">REFRESH MATERIALIZED VIEW CONCURRENTLY</span> user_stats;
+<span class="cmt">-- CONCURRENTLY requires a UNIQUE index on the view</span></code></pre></div>
+
+  <div class="compare-grid">
+    <div>
+      <h4>Regular View</h4>
+      <ul>
+        <li>Always fresh data</li>
+        <li>Query runs each time</li>
+        <li>No storage cost</li>
+        <li>Can be slow for complex queries</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Materialized View</h4>
+      <ul>
+        <li>Cached / snapshot data</li>
+        <li>Must REFRESH manually</li>
+        <li>Uses disk storage</li>
+        <li>Instant reads — great for dashboards</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ===== FUNCTIONS ===== -->
+<div class="section" id="functions">
+  <div class="section-header"><span class="icon">🔧</span><h2>Functions &amp; Procedures</h2></div>
+
+  <div class="code-wrapper"><pre><code><span class="cmt">-- Function (returns a value)</span>
+<span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">get_user_total</span>(uid <span class="tp">INT</span>)
+<span class="kw">RETURNS</span> <span class="tp">DECIMAL</span> <span class="kw">AS</span> $$
+<span class="kw">BEGIN</span>
+    <span class="kw">RETURN</span> (
+        <span class="kw">SELECT COALESCE</span>(<span class="fn">SUM</span>(total), <span class="num">0</span>)
+        <span class="kw">FROM</span> orders <span class="kw">WHERE</span> user_id = uid
+    );
+<span class="kw">END</span>;
+$$ <span class="kw">LANGUAGE</span> plpgsql;
+
+<span class="cmt">-- Use it</span>
+<span class="kw">SELECT</span> name, <span class="fn">get_user_total</span>(id) <span class="kw">FROM</span> users;
+
+<span class="cmt">-- Procedure (no return value, can manage transactions)</span>
+<span class="kw">CREATE OR REPLACE PROCEDURE</span> <span class="fn">transfer_funds</span>(
+    from_id <span class="tp">INT</span>, to_id <span class="tp">INT</span>, amount <span class="tp">DECIMAL</span>
+) <span class="kw">AS</span> $$
+<span class="kw">BEGIN</span>
+    <span class="kw">UPDATE</span> accounts <span class="kw">SET</span> balance = balance - amount <span class="kw">WHERE</span> id = from_id;
+    <span class="kw">UPDATE</span> accounts <span class="kw">SET</span> balance = balance + amount <span class="kw">WHERE</span> id = to_id;
+    <span class="kw">COMMIT</span>;
+<span class="kw">END</span>;
+$$ <span class="kw">LANGUAGE</span> plpgsql;
+
+<span class="cmt">-- Call procedure</span>
+<span class="kw">CALL</span> <span class="fn">transfer_funds</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">50.00</span>);</code></pre></div>
+</div>
+
+<!-- ===== PERFORMANCE ===== -->
+<div class="section" id="performance">
+  <div class="section-header"><span class="icon">🚀</span><h2>Performance Tuning</h2></div>
+
+  <h3>EXPLAIN ANALYZE</h3>
+  <div class="code-wrapper"><pre><code><span class="cmt">-- Show query plan with actual execution time</span>
+<span class="kw">EXPLAIN ANALYZE</span>
+<span class="kw">SELECT</span> u.name, <span class="fn">COUNT</span>(o.id)
+<span class="kw">FROM</span> users u
+<span class="kw">JOIN</span> orders o <span class="kw">ON</span> u.id = o.user_id
+<span class="kw">GROUP BY</span> u.name;
+
+<span class="cmt">-- Key things to look for:</span>
+<span class="cmt">-- Seq Scan → consider adding an index</span>
+<span class="cmt">-- Nested Loop with high rows → may need different join strategy</span>
+<span class="cmt">-- Sort → add index for ORDER BY columns</span>
+<span class="cmt">-- actual time vs planned time discrepancy → stale stats</span>
+
+<span class="cmt">-- Update statistics</span>
+<span class="kw">ANALYZE</span> users;
+<span class="kw">ANALYZE</span>;  <span class="cmt">-- whole database</span></code></pre></div>
+
+  <h3>Performance Tips</h3>
+  <ul>
+    <li><strong>Index columns</strong> used in WHERE, JOIN, ORDER BY, GROUP BY</li>
+    <li><strong>Use partial indexes</strong> for frequently filtered subsets</li>
+    <li><strong>Avoid <code>SELECT *</code></strong> — only fetch columns you need</li>
+    <li><strong>Use EXISTS over IN</strong> for large subquery results</li>
+    <li><strong>LIMIT early</strong> — paginate with <code>LIMIT/OFFSET</code> or keyset pagination</li>
+    <li><strong>Connection pooling</strong> — use PgBouncer to avoid connection overhead</li>
+    <li><strong>Vacuum</strong> — <code>VACUUM ANALYZE</code> to reclaim space and update stats</li>
+    <li><strong>Batch inserts</strong> — use <code>COPY</code> for bulk loading instead of many INSERTs</li>
+  </ul>
+</div>
+
+<!-- ===== ADMIN ===== -->
+<div class="section" id="admin">
+  <div class="section-header"><span class="icon">🛠️</span><h2>Administration</h2></div>
+
+  <div class="code-wrapper"><pre><code><span class="cmt">-- Database size</span>
+<span class="kw">SELECT</span> <span class="fn">pg_size_pretty</span>(<span class="fn">pg_database_size</span>(<span class="str">'mydb'</span>));
+
+<span class="cmt">-- Table sizes</span>
+<span class="kw">SELECT</span> tablename,
+    <span class="fn">pg_size_pretty</span>(<span class="fn">pg_total_relation_size</span>(tablename::regclass)) <span class="kw">AS</span> total_size
+<span class="kw">FROM</span> pg_tables
+<span class="kw">WHERE</span> schemaname = <span class="str">'public'</span>
+<span class="kw">ORDER BY</span> <span class="fn">pg_total_relation_size</span>(tablename::regclass) <span class="kw">DESC</span>;
+
+<span class="cmt">-- Active queries</span>
+<span class="kw">SELECT</span> pid, query, state, <span class="fn">now</span>() - query_start <span class="kw">AS</span> duration
+<span class="kw">FROM</span> pg_stat_activity
+<span class="kw">WHERE</span> state != <span class="str">'idle'</span> <span class="kw">ORDER BY</span> duration <span class="kw">DESC</span>;
+
+<span class="cmt">-- Kill a slow query</span>
+<span class="kw">SELECT</span> <span class="fn">pg_terminate_backend</span>(pid);
+
+<span class="cmt">-- Backup &amp; Restore</span>
+<span class="cmt">-- pg_dump -U postgres -d mydb -F c -f backup.dump</span>
+<span class="cmt">-- pg_restore -U postgres -d mydb backup.dump</span>
+
+<span class="cmt">-- Roles &amp; Permissions</span>
+<span class="kw">CREATE ROLE</span> readonly <span class="kw">LOGIN PASSWORD</span> <span class="str">'secret'</span>;
+<span class="kw">GRANT</span> <span class="kw">SELECT</span> <span class="kw">ON ALL TABLES IN SCHEMA</span> public <span class="kw">TO</span> readonly;
+<span class="kw">ALTER DEFAULT PRIVILEGES IN SCHEMA</span> public <span class="kw">GRANT SELECT ON TABLES TO</span> readonly;</code></pre></div>
+</div>
+
+</div><!-- /container -->
+
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>PostgreSQL Cheatsheet · 2026</footer>
+
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'Copy';
+  btn.onclick = () => {
+    const code = w.querySelector('code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  };
+  w.appendChild(btn);
+});
+const backBtn = document.querySelector('.back-top');
+window.addEventListener('scroll', () => backBtn.classList.toggle('visible', window.scrollY > 400));
+</script>
+</body>
+</html>

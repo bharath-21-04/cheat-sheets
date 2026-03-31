@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NoSQL Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ NoSQL</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+
+<div class="container">
+
+<div class="hero">
+  <h1>NoSQL Cheatsheet</h1>
+  <p class="subtitle">MongoDB, Redis, DynamoDB — CRUD, data modeling, indexing, caching patterns &amp; when to use what</p>
+  <span class="badge">Database / NoSQL</span>
+</div>
+
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#overview">NoSQL Overview</a>
+    <a href="#types">NoSQL Types</a>
+    <a href="#sql-vs-nosql">SQL vs NoSQL</a>
+    <a href="#mongo-basics">MongoDB Basics</a>
+    <a href="#mongo-crud">MongoDB CRUD</a>
+    <a href="#mongo-query">MongoDB Queries</a>
+    <a href="#mongo-aggregation">MongoDB Aggregation</a>
+    <a href="#mongo-indexes">MongoDB Indexes</a>
+    <a href="#mongo-schema">MongoDB Schema Design</a>
+    <a href="#redis-basics">Redis Basics</a>
+    <a href="#redis-types">Redis Data Types</a>
+    <a href="#redis-patterns">Redis Patterns</a>
+    <a href="#dynamo">DynamoDB</a>
+    <a href="#choosing">Choosing the Right DB</a>
+  </div>
+</div>
+
+<!-- ===== OVERVIEW ===== -->
+<div class="section" id="overview">
+  <div class="section-header"><span class="icon">📦</span><h2>NoSQL Overview</h2></div>
+  <p><strong>NoSQL</strong> (Not Only SQL) databases are designed for specific data models and have flexible schemas. They excel at scalability, performance, and handling unstructured or semi-structured data.</p>
+
+  <h3>When to Use NoSQL</h3>
+  <ul>
+    <li><strong>Flexible schema</strong>: Data structure changes frequently</li>
+    <li><strong>Horizontal scaling</strong>: Need to scale across many servers</li>
+    <li><strong>High throughput</strong>: Millions of reads/writes per second</li>
+    <li><strong>Specific access patterns</strong>: Key-value lookups, time-series, graphs</li>
+    <li><strong>Denormalized data</strong>: Embedding related data to avoid JOINs</li>
+  </ul>
+</div>
+
+<!-- ===== TYPES ===== -->
+<div class="section" id="types">
+  <div class="section-header"><span class="icon">🗂️</span><h2>NoSQL Types</h2></div>
+  <table>
+    <tr><th>Type</th><th>Description</th><th>Examples</th><th>Best For</th></tr>
+    <tr><td><strong>Document</strong></td><td>JSON/BSON documents with nested structures</td><td>MongoDB, CouchDB, Firestore</td><td>Content management, catalogs, user profiles</td></tr>
+    <tr><td><strong>Key-Value</strong></td><td>Simple key → value pairs, extremely fast</td><td>Redis, DynamoDB, etcd</td><td>Caching, sessions, config, rate limiting</td></tr>
+    <tr><td><strong>Column-Family</strong></td><td>Data stored in column families, wide rows</td><td>Cassandra, HBase, ScyllaDB</td><td>Time-series, IoT, analytics at scale</td></tr>
+    <tr><td><strong>Graph</strong></td><td>Nodes + edges with properties</td><td>Neo4j, Amazon Neptune</td><td>Social networks, recommendations, fraud detection</td></tr>
+    <tr><td><strong>Search Engine</strong></td><td>Full-text search with inverted indexes</td><td>Elasticsearch, Solr</td><td>Log analysis, search, autocomplete</td></tr>
+  </table>
+</div>
+
+<!-- ===== SQL VS NOSQL ===== -->
+<div class="section" id="sql-vs-nosql">
+  <div class="section-header"><span class="icon">⚖️</span><h2>SQL vs NoSQL</h2></div>
+  <table>
+    <tr><th>Aspect</th><th>SQL (PostgreSQL, MySQL)</th><th>NoSQL (MongoDB, Redis)</th></tr>
+    <tr><td>Schema</td><td>Fixed schema, migrations needed</td><td>Flexible / schema-less</td></tr>
+    <tr><td>Query Language</td><td>SQL (standardized)</td><td>Database-specific APIs</td></tr>
+    <tr><td>Relationships</td><td>JOINs — normalized data</td><td>Embedded / denormalized data</td></tr>
+    <tr><td>Scaling</td><td>Vertical (scale up)</td><td>Horizontal (scale out / sharding)</td></tr>
+    <tr><td>Transactions</td><td>Strong ACID</td><td>Varies (eventual to strong consistency)</td></tr>
+    <tr><td>Data Model</td><td>Tables with rows &amp; columns</td><td>Documents, key-value, columns, graphs</td></tr>
+    <tr><td>Best For</td><td>Complex queries, relationships, reporting</td><td>High scale, flexible data, specific access patterns</td></tr>
+  </table>
+
+  <div class="note tip">
+    <strong>💡 Not either/or!</strong> Many modern systems use <strong>polyglot persistence</strong> — SQL for transactions, Redis for caching, Elasticsearch for search, MongoDB for flexible documents.
+  </div>
+</div>
+
+<!-- ===== MONGODB BASICS ===== -->
+<div class="section" id="mongo-basics">
+  <div class="section-header"><span class="icon">🍃</span><h2>MongoDB Basics</h2></div>
+  <p>MongoDB stores data as <strong>BSON documents</strong> (binary JSON) in <strong>collections</strong> (≈ tables).</p>
+
+  <h3>Terminology Mapping</h3>
+  <table>
+    <tr><th>SQL</th><th>MongoDB</th></tr>
+    <tr><td>Database</td><td>Database</td></tr>
+    <tr><td>Table</td><td>Collection</td></tr>
+    <tr><td>Row</td><td>Document</td></tr>
+    <tr><td>Column</td><td>Field</td></tr>
+    <tr><td>Primary Key</td><td><code>_id</code> (auto-generated ObjectId)</td></tr>
+    <tr><td>JOIN</td><td><code>$lookup</code> (aggregation) or embed</td></tr>
+    <tr><td>Index</td><td>Index</td></tr>
+  </table>
+
+  <div class="code-wrapper"><pre><code><span class="cmt">// Connect via mongosh</span>
+mongosh <span class="str">"mongodb://localhost:27017/mydb"</span>
+
+<span class="cmt">// Basic shell commands</span>
+show dbs                     <span class="cmt">// list databases</span>
+use mydb                     <span class="cmt">// switch database</span>
+show collections             <span class="cmt">// list collections</span>
+db.users.stats()             <span class="cmt">// collection statistics</span>
+db.dropDatabase()            <span class="cmt">// drop current database</span></code></pre></div>
+</div>
+
+<!-- ===== MONGODB CRUD ===== -->
+<div class="section" id="mongo-crud">
+  <div class="section-header"><span class="icon">✏️</span><h2>MongoDB CRUD</h2></div>
+
+  <div class="code-wrapper"><pre><code><span class="cmt">// ── INSERT ──</span>
+db.users.<span class="fn">insertOne</span>({
+    name: <span class="str">"Alice"</span>,
+    email: <span class="str">"alice@example.com"</span>,
+    age: <span class="num">30</span>,
+    tags: [<span class="str">"admin"</span>, <span class="str">"developer"</span>],
+    address: { city: <span class="str">"NYC"</span>, zip: <span class="str">"10001"</span> }
+});
+
+db.users.<span class="fn">insertMany</span>([
+    { name: <span class="str">"Bob"</span>, age: <span class="num">25</span> },
+    { name: <span class="str">"Charlie"</span>, age: <span class="num">35</span> }
+]);
+
+<span class="cmt">// ── READ ──</span>
+db.users.<span class="fn">find</span>({});                          <span class="cmt">// all documents</span>
+db.users.<span class="fn">findOne</span>({ email: <span class="str">"alice@example.com"</span> });
+db.users.<span class="fn">find</span>({ age: { $gte: <span class="num">25</span> } });       <span class="cmt">// age >= 25</span>
+db.users.<span class="fn">find</span>({}, { name: <span class="num">1</span>, email: <span class="num">1</span> });   <span class="cmt">// projection (only name &amp; email)</span>
+db.users.<span class="fn">find</span>({}).sort({ age: <span class="num">-1</span> }).limit(<span class="num">10</span>);
+
+<span class="cmt">// ── UPDATE ──</span>
+db.users.<span class="fn">updateOne</span>(
+    { email: <span class="str">"alice@example.com"</span> },
+    { $set: { age: <span class="num">31</span>, role: <span class="str">"admin"</span> } }
+);
+
+db.users.<span class="fn">updateMany</span>(
+    { age: { $lt: <span class="num">18</span> } },
+    { $set: { status: <span class="str">"minor"</span> } }
+);
+
+<span class="cmt">// Upsert (insert if not found)</span>
+db.users.<span class="fn">updateOne</span>(
+    { email: <span class="str">"new@user.com"</span> },
+    { $set: { name: <span class="str">"New User"</span> } },
+    { upsert: <span class="kw">true</span> }
+);
+
+<span class="cmt">// ── DELETE ──</span>
+db.users.<span class="fn">deleteOne</span>({ email: <span class="str">"bob@example.com"</span> });
+db.users.<span class="fn">deleteMany</span>({ age: { $lt: <span class="num">18</span> } });
+db.users.<span class="fn">drop</span>();  <span class="cmt">// delete entire collection</span></code></pre></div>
+</div>
+
+<!-- ===== MONGODB QUERIES ===== -->
+<div class="section" id="mongo-query">
+  <div class="section-header"><span class="icon">🔍</span><h2>MongoDB Query Operators</h2></div>
+
+  <h3>Comparison Operators</h3>
+  <table>
+    <tr><th>Operator</th><th>Description</th><th>Example</th></tr>
+    <tr><td><code>$eq</code></td><td>Equal</td><td><code>{ age: { $eq: 25 } }</code></td></tr>
+    <tr><td><code>$ne</code></td><td>Not equal</td><td><code>{ status: { $ne: "inactive" } }</code></td></tr>
+    <tr><td><code>$gt / $gte</code></td><td>Greater than / >=</td><td><code>{ age: { $gte: 18 } }</code></td></tr>
+    <tr><td><code>$lt / $lte</code></td><td>Less than / <=</td><td><code>{ price: { $lt: 100 } }</code></td></tr>
+    <tr><td><code>$in</code></td><td>In array</td><td><code>{ role: { $in: ["admin", "mod"] } }</code></td></tr>
+    <tr><td><code>$nin</code></td><td>Not in array</td><td><code>{ role: { $nin: ["banned"] } }</code></td></tr>
+  </table>
+
+  <h3>Logical Operators</h3>
+  <div class="code-wrapper"><pre><code><span class="cmt">// AND (implicit)</span>
+db.users.<span class="fn">find</span>({ age: { $gte: <span class="num">18</span> }, role: <span class="str">"admin"</span> });
+
+<span class="cmt">// OR</span>
+db.users.<span class="fn">find</span>({ $or: [{ age: { $lt: <span class="num">18</span> } }, { role: <span class="str">"minor"</span> }] });
+
+<span class="cmt">// NOT</span>
+db.users.<span class="fn">find</span>({ age: { $not: { $lt: <span class="num">18</span> } } });
+
+<span class="cmt">// Array queries</span>
+db.users.<span class="fn">find</span>({ tags: <span class="str">"admin"</span> });                    <span class="cmt">// has "admin" in array</span>
+db.users.<span class="fn">find</span>({ tags: { $all: [<span class="str">"admin"</span>, <span class="str">"dev"</span>] } }); <span class="cmt">// has both</span>
+db.users.<span class="fn">find</span>({ tags: { $size: <span class="num">3</span> } });                <span class="cmt">// array length = 3</span>
+db.users.<span class="fn">find</span>({ <span class="str">"tags.0"</span>: <span class="str">"admin"</span> });                 <span class="cmt">// first element</span>
+
+<span class="cmt">// Nested document query</span>
+db.users.<span class="fn">find</span>({ <span class="str">"address.city"</span>: <span class="str">"NYC"</span> });
+
+<span class="cmt">// Exists</span>
+db.users.<span class="fn">find</span>({ phone: { $exists: <span class="kw">true</span> } });
+
+<span class="cmt">// Regex</span>
+db.users.<span class="fn">find</span>({ name: { $regex: /^ali/i } });</code></pre></div>
+</div>
+
+<!-- ===== MONGODB AGGREGATION ===== -->
+<div class="section" id="mongo-aggregation">
+  <div class="section-header"><span class="icon">📊</span><h2>MongoDB Aggregation Pipeline</h2></div>
+  <p>The aggregation pipeline processes documents through a sequence of stages — similar to Unix pipes.</p>
+
+  <div class="code-wrapper"><pre><code>db.orders.<span class="fn">aggregate</span>([
+    <span class="cmt">// Stage 1: Filter</span>
+    { $match: { status: <span class="str">"completed"</span> } },
+
+    <span class="cmt">// Stage 2: Group by user and calculate stats</span>
+    { $group: {
+        _id: <span class="str">"$user_id"</span>,
+        totalSpent: { $sum: <span class="str">"$total"</span> },
+        orderCount: { $sum: <span class="num">1</span> },
+        avgOrder:   { $avg: <span class="str">"$total"</span> }
+    }},
+
+    <span class="cmt">// Stage 3: Sort by total spent descending</span>
+    { $sort: { totalSpent: <span class="num">-1</span> } },
+
+    <span class="cmt">// Stage 4: Limit to top 10</span>
+    { $limit: <span class="num">10</span> },
+
+    <span class="cmt">// Stage 5: Join with users collection</span>
+    { $lookup: {
+        from: <span class="str">"users"</span>,
+        localField: <span class="str">"_id"</span>,
+        foreignField: <span class="str">"_id"</span>,
+        as: <span class="str">"user"</span>
+    }},
+
+    <span class="cmt">// Stage 6: Reshape output</span>
+    { $project: {
+        userName: { $arrayElemAt: [<span class="str">"$user.name"</span>, <span class="num">0</span>] },
+        totalSpent: <span class="num">1</span>,
+        orderCount: <span class="num">1</span>,
+        avgOrder: { $round: [<span class="str">"$avgOrder"</span>, <span class="num">2</span>] }
+    }}
+]);</code></pre></div>
+
+  <h3>Common Stages</h3>
+  <table>
+    <tr><th>Stage</th><th>Purpose</th></tr>
+    <tr><td><code>$match</code></td><td>Filter documents (like WHERE)</td></tr>
+    <tr><td><code>$group</code></td><td>Group by field, apply accumulators ($sum, $avg, $min, $max, $push)</td></tr>
+    <tr><td><code>$sort</code></td><td>Sort documents</td></tr>
+    <tr><td><code>$project</code></td><td>Reshape: include/exclude/compute fields</td></tr>
+    <tr><td><code>$lookup</code></td><td>Left outer join with another collection</td></tr>
+    <tr><td><code>$unwind</code></td><td>Deconstruct array field → one doc per element</td></tr>
+    <tr><td><code>$limit / $skip</code></td><td>Pagination</td></tr>
+    <tr><td><code>$addFields</code></td><td>Add computed fields</td></tr>
+    <tr><td><code>$facet</code></td><td>Run multiple pipelines in parallel on same input</td></tr>
+  </table>
+</div>
+
+<!-- ===== MONGODB INDEXES ===== -->
+<div class="section" id="mongo-indexes">
+  <div class="section-header"><span class="icon">⚡</span><h2>MongoDB Indexes</h2></div>
+
+  <div class="code-wrapper"><pre><code><span class="cmt">// Single field index</span>
+db.users.<span class="fn">createIndex</span>({ email: <span class="num">1</span> });              <span class="cmt">// ascending</span>
+db.users.<span class="fn">createIndex</span>({ email: <span class="num">1</span> }, { unique: <span class="kw">true</span> });
+
+<span class="cmt">// Compound index</span>
+db.orders.<span class="fn">createIndex</span>({ user_id: <span class="num">1</span>, created_at: <span class="num">-1</span> });
+
+<span class="cmt">// Text index (full-text search)</span>
+db.articles.<span class="fn">createIndex</span>({ title: <span class="str">"text"</span>, body: <span class="str">"text"</span> });
+db.articles.<span class="fn">find</span>({ $text: { $search: <span class="str">"mongodb nosql"</span> } });
+
+<span class="cmt">// TTL index (auto-delete after expiry)</span>
+db.sessions.<span class="fn">createIndex</span>({ createdAt: <span class="num">1</span> }, { expireAfterSeconds: <span class="num">3600</span> });
+
+<span class="cmt">// Partial index</span>
+db.users.<span class="fn">createIndex</span>(
+    { email: <span class="num">1</span> },
+    { partialFilterExpression: { status: <span class="str">"active"</span> } }
+);
+
+<span class="cmt">// View indexes</span>
+db.users.<span class="fn">getIndexes</span>();
+
+<span class="cmt">// Explain query (check if index is used)</span>
+db.users.<span class="fn">find</span>({ email: <span class="str">"a@b.com"</span> }).explain(<span class="str">"executionStats"</span>);</code></pre></div>
+</div>
+
+<!-- ===== MONGODB SCHEMA DESIGN ===== -->
+<div class="section" id="mongo-schema">
+  <div class="section-header"><span class="icon">🏗️</span><h2>MongoDB Schema Design</h2></div>
+
+  <h3>Embed vs Reference</h3>
+  <div class="compare-grid">
+    <div>
+      <h4>Embed (Denormalize)</h4>
+      <ul>
+        <li>Data accessed together</li>
+        <li>One-to-few relationship</li>
+        <li>Data doesn't change often</li>
+        <li>Single read — no joins needed</li>
+        <li>Document size &lt; 16 MB limit</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Reference (Normalize)</h4>
+      <ul>
+        <li>Data accessed independently</li>
+        <li>One-to-many / many-to-many</li>
+        <li>Data changes frequently</li>
+        <li>Avoids duplication</li>
+        <li>Needs <code>$lookup</code> for joins</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="code-wrapper"><pre><code><span class="cmt">// ── Embedded pattern (blog post with comments) ──</span>
+{
+    _id: ObjectId(<span class="str">"..."</span>),
+    title: <span class="str">"MongoDB Guide"</span>,
+    author: <span class="str">"Alice"</span>,
+    comments: [
+        { user: <span class="str">"Bob"</span>, text: <span class="str">"Great post!"</span>, date: ISODate(<span class="str">"2024-01-15"</span>) },
+        { user: <span class="str">"Charlie"</span>, text: <span class="str">"Very helpful"</span>, date: ISODate(<span class="str">"2024-01-16"</span>) }
+    ]
+}
+
+<span class="cmt">// ── Referenced pattern (users and orders) ──</span>
+<span class="cmt">// users collection</span>
+{ _id: ObjectId(<span class="str">"u1"</span>), name: <span class="str">"Alice"</span>, email: <span class="str">"alice@ex.com"</span> }
+
+<span class="cmt">// orders collection</span>
+{ _id: ObjectId(<span class="str">"o1"</span>), user_id: ObjectId(<span class="str">"u1"</span>), total: <span class="num">99.99</span> }</code></pre></div>
+
+  <h3>Design Patterns</h3>
+  <table>
+    <tr><th>Pattern</th><th>Description</th><th>Use Case</th></tr>
+    <tr><td><strong>Bucket</strong></td><td>Group related data into buckets (e.g., by time)</td><td>IoT data, time-series</td></tr>
+    <tr><td><strong>Computed</strong></td><td>Pre-compute aggregations on write</td><td>Dashboards, leaderboards</td></tr>
+    <tr><td><strong>Subset</strong></td><td>Store frequent fields in main doc, rest in separate</td><td>Product listings (summary + details)</td></tr>
+    <tr><td><strong>Polymorphic</strong></td><td>Different doc structures in same collection</td><td>Mixed content types</td></tr>
+  </table>
+</div>
+
+<!-- ===== REDIS BASICS ===== -->
+<div class="section" id="redis-basics">
+  <div class="section-header"><span class="icon">🔴</span><h2>Redis Basics</h2></div>
+  <p><strong>Redis</strong> is an in-memory key-value data store. It's used for caching, sessions, real-time analytics, queues, pub/sub, and more. Extremely fast — supports ~100k+ ops/sec.</p>
+
+  <div class="code-wrapper"><pre><code><span class="cmt"># Connect</span>
+redis-cli -h localhost -p <span class="num">6379</span>
+
+<span class="cmt"># Basic string operations</span>
+<span class="kw">SET</span> user:1:name <span class="str">"Alice"</span>
+<span class="kw">GET</span> user:1:name                  <span class="cmt"># → "Alice"</span>
+<span class="kw">SET</span> session:abc123 <span class="str">"data"</span> <span class="kw">EX</span> <span class="num">3600</span>   <span class="cmt"># expires in 1 hour</span>
+<span class="kw">TTL</span> session:abc123               <span class="cmt"># seconds remaining</span>
+<span class="kw">DEL</span> user:1:name                  <span class="cmt"># delete key</span>
+<span class="kw">EXISTS</span> user:1:name               <span class="cmt"># 1 if exists, 0 if not</span>
+
+<span class="cmt"># Atomic increment (perfect for counters)</span>
+<span class="kw">INCR</span> page:views                  <span class="cmt"># increment by 1</span>
+<span class="kw">INCRBY</span> page:views <span class="num">10</span>             <span class="cmt"># increment by 10</span>
+
+<span class="cmt"># Multiple operations</span>
+<span class="kw">MSET</span> k1 <span class="str">"v1"</span> k2 <span class="str">"v2"</span> k3 <span class="str">"v3"</span>
+<span class="kw">MGET</span> k1 k2 k3
+
+<span class="cmt"># Key patterns</span>
+<span class="kw">KEYS</span> user:*                      <span class="cmt"># find matching keys (DON'T use in production!)</span>
+<span class="kw">SCAN</span> <span class="num">0</span> MATCH user:* COUNT <span class="num">100</span>    <span class="cmt"># safe cursor-based iteration</span></code></pre></div>
+</div>
+
+<!-- ===== REDIS DATA TYPES ===== -->
+<div class="section" id="redis-types">
+  <div class="section-header"><span class="icon">📊</span><h2>Redis Data Types</h2></div>
+
+  <div class="code-wrapper"><pre><code><span class="cmt"># ── HASH (like a mini document) ──</span>
+<span class="kw">HSET</span> user:<span class="num">1</span> name <span class="str">"Alice"</span> age <span class="num">30</span> email <span class="str">"alice@ex.com"</span>
+<span class="kw">HGET</span> user:<span class="num">1</span> name                  <span class="cmt"># → "Alice"</span>
+<span class="kw">HGETALL</span> user:<span class="num">1</span>                    <span class="cmt"># → all fields &amp; values</span>
+<span class="kw">HINCRBY</span> user:<span class="num">1</span> age <span class="num">1</span>              <span class="cmt"># → 31</span>
+
+<span class="cmt"># ── LIST (ordered, duplicates allowed) ──</span>
+<span class="kw">LPUSH</span> queue:tasks <span class="str">"task1"</span> <span class="str">"task2"</span>  <span class="cmt"># push left</span>
+<span class="kw">RPUSH</span> queue:tasks <span class="str">"task3"</span>          <span class="cmt"># push right</span>
+<span class="kw">LPOP</span>  queue:tasks                   <span class="cmt"># pop from left</span>
+<span class="kw">RPOP</span>  queue:tasks                   <span class="cmt"># pop from right</span>
+<span class="kw">LRANGE</span> queue:tasks <span class="num">0</span> <span class="num">-1</span>             <span class="cmt"># all elements</span>
+<span class="kw">LLEN</span> queue:tasks                    <span class="cmt"># length</span>
+
+<span class="cmt"># ── SET (unique, unordered) ──</span>
+<span class="kw">SADD</span> tags:article:<span class="num">1</span> <span class="str">"redis"</span> <span class="str">"nosql"</span> <span class="str">"database"</span>
+<span class="kw">SMEMBERS</span> tags:article:<span class="num">1</span>             <span class="cmt"># all members</span>
+<span class="kw">SISMEMBER</span> tags:article:<span class="num">1</span> <span class="str">"redis"</span>   <span class="cmt"># 1 if member, 0 if not</span>
+<span class="kw">SINTER</span> tags:article:<span class="num">1</span> tags:article:<span class="num">2</span>  <span class="cmt"># intersection</span>
+
+<span class="cmt"># ── SORTED SET (unique, scored &amp; ordered) ──</span>
+<span class="kw">ZADD</span> leaderboard <span class="num">100</span> <span class="str">"Alice"</span> <span class="num">85</span> <span class="str">"Bob"</span> <span class="num">92</span> <span class="str">"Charlie"</span>
+<span class="kw">ZRANGE</span> leaderboard <span class="num">0</span> <span class="num">-1</span> WITHSCORES   <span class="cmt"># ascending</span>
+<span class="kw">ZREVRANGE</span> leaderboard <span class="num">0</span> <span class="num">2</span>             <span class="cmt"># top 3 descending</span>
+<span class="kw">ZRANK</span> leaderboard <span class="str">"Alice"</span>               <span class="cmt"># rank (0-based)</span>
+<span class="kw">ZINCRBY</span> leaderboard <span class="num">5</span> <span class="str">"Alice"</span>         <span class="cmt"># increment score</span></code></pre></div>
+
+  <table>
+    <tr><th>Type</th><th>Use Case</th></tr>
+    <tr><td><strong>String</strong></td><td>Caching, counters, session tokens</td></tr>
+    <tr><td><strong>Hash</strong></td><td>User profiles, object storage</td></tr>
+    <tr><td><strong>List</strong></td><td>Message queues, activity feeds, recent items</td></tr>
+    <tr><td><strong>Set</strong></td><td>Tags, unique visitors, social connections</td></tr>
+    <tr><td><strong>Sorted Set</strong></td><td>Leaderboards, priority queues, rate limiters</td></tr>
+    <tr><td><strong>Stream</strong></td><td>Event sourcing, log processing</td></tr>
+  </table>
+</div>
+
+<!-- ===== REDIS PATTERNS ===== -->
+<div class="section" id="redis-patterns">
+  <div class="section-header"><span class="icon">🧩</span><h2>Redis Patterns</h2></div>
+
+  <h3>Cache-Aside (Lazy Loading)</h3>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Pseudocode: check cache first, then DB</span>
+<span class="kw">def</span> <span class="fn">get_user</span>(user_id):
+    <span class="cmt"># 1. Check cache</span>
+    cached = redis.<span class="fn">get</span>(<span class="str">f"user:</span>{user_id}<span class="str">"</span>)
+    <span class="kw">if</span> cached:
+        <span class="kw">return</span> json.loads(cached)
+
+    <span class="cmt"># 2. Cache miss → fetch from DB</span>
+    user = db.<span class="fn">query</span>(<span class="str">"SELECT * FROM users WHERE id = %s"</span>, user_id)
+
+    <span class="cmt"># 3. Store in cache with TTL</span>
+    redis.<span class="fn">setex</span>(<span class="str">f"user:</span>{user_id}<span class="str">"</span>, <span class="num">3600</span>, json.dumps(user))
+    <span class="kw">return</span> user</code></pre></div>
+
+  <h3>Pub/Sub</h3>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Publisher</span>
+<span class="kw">PUBLISH</span> notifications <span class="str">"New order received!"</span>
+
+<span class="cmt"># Subscriber (in another terminal)</span>
+<span class="kw">SUBSCRIBE</span> notifications
+<span class="cmt"># Blocks and receives messages in real-time</span></code></pre></div>
+
+  <h3>Rate Limiting (Sliding Window)</h3>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Using sorted set for sliding window rate limiter</span>
+<span class="kw">def</span> <span class="fn">is_rate_limited</span>(user_id, limit=<span class="num">100</span>, window=<span class="num">60</span>):
+    key = <span class="str">f"ratelimit:</span>{user_id}<span class="str">"</span>
+    now = time.time()
+
+    pipe = redis.pipeline()
+    pipe.zremrangebyscore(key, <span class="num">0</span>, now - window)  <span class="cmt"># remove old entries</span>
+    pipe.zadd(key, {str(now): now})                <span class="cmt"># add current request</span>
+    pipe.zcard(key)                                 <span class="cmt"># count requests</span>
+    pipe.expire(key, window)                        <span class="cmt"># set TTL</span>
+    _, _, count, _ = pipe.execute()
+
+    <span class="kw">return</span> count > limit</code></pre></div>
+
+  <h3>Persistence Options</h3>
+  <table>
+    <tr><th>Option</th><th>How</th><th>Trade-off</th></tr>
+    <tr><td><strong>RDB</strong></td><td>Point-in-time snapshots at intervals</td><td>Fast recovery, may lose recent data</td></tr>
+    <tr><td><strong>AOF</strong></td><td>Append every write operation to log</td><td>More durable, larger file, slower recovery</td></tr>
+    <tr><td><strong>RDB + AOF</strong></td><td>Both combined</td><td>Best durability, recommended for production</td></tr>
+  </table>
+</div>
+
+<!-- ===== DYNAMODB ===== -->
+<div class="section" id="dynamo">
+  <div class="section-header"><span class="icon">⚡</span><h2>DynamoDB</h2></div>
+  <p>AWS managed NoSQL key-value and document database. Designed for single-digit millisecond latency at any scale.</p>
+
+  <h3>Core Concepts</h3>
+  <table>
+    <tr><th>Concept</th><th>Description</th></tr>
+    <tr><td><strong>Table</strong></td><td>Collection of items (similar to a SQL table)</td></tr>
+    <tr><td><strong>Item</strong></td><td>A single record (like a row)</td></tr>
+    <tr><td><strong>Partition Key (PK)</strong></td><td>Primary key — determines which partition stores the item</td></tr>
+    <tr><td><strong>Sort Key (SK)</strong></td><td>Optional — allows multiple items per partition key (range queries)</td></tr>
+    <tr><td><strong>GSI</strong></td><td>Global Secondary Index — different PK/SK for alternative access</td></tr>
+    <tr><td><strong>LSI</strong></td><td>Local Secondary Index — same PK, different SK</td></tr>
+  </table>
+
+  <h3>Access Patterns</h3>
+  <div class="code-wrapper"><pre><code><span class="cmt"># DynamoDB is access-pattern-driven!</span>
+<span class="cmt"># Design your table around HOW you'll query it</span>
+
+<span class="cmt"># Example: E-commerce orders</span>
+<span class="cmt"># PK: USER#alice    SK: ORDER#2024-01-15#001</span>
+<span class="cmt"># PK: USER#alice    SK: PROFILE</span>
+<span class="cmt"># PK: USER#alice    SK: ADDRESS#home</span>
+
+<span class="cmt"># Single-table design: multiple entity types in one table</span>
+<span class="cmt"># Enables fetching related data in a single query</span>
+
+<span class="cmt"># Query: Get all orders for a user</span>
+table.<span class="fn">query</span>(
+    KeyConditionExpression=<span class="str">"PK = :pk AND begins_with(SK, :prefix)"</span>,
+    ExpressionAttributeValues={
+        <span class="str">":pk"</span>: <span class="str">"USER#alice"</span>,
+        <span class="str">":prefix"</span>: <span class="str">"ORDER#"</span>
+    }
+)</code></pre></div>
+
+  <div class="note tip">
+    <strong>💡 DynamoDB Design Rules</strong>
+    <ul>
+      <li><strong>Know your access patterns first</strong> — design the schema around queries</li>
+      <li><strong>Single-table design</strong> — store multiple entity types in one table</li>
+      <li><strong>Avoid scans</strong> — queries must use PK, with optional SK conditions</li>
+      <li><strong>Use GSIs</strong> for alternative query patterns</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== CHOOSING ===== -->
+<div class="section" id="choosing">
+  <div class="section-header"><span class="icon">🎯</span><h2>Choosing the Right Database</h2></div>
+  <table>
+    <tr><th>Requirement</th><th>Best Choice</th><th>Why</th></tr>
+    <tr><td>Complex queries, relationships</td><td><strong>PostgreSQL</strong></td><td>Rich SQL, JOINs, ACID</td></tr>
+    <tr><td>Flexible documents, rapid iteration</td><td><strong>MongoDB</strong></td><td>Schema-less, easy to start</td></tr>
+    <tr><td>Caching, sessions, real-time</td><td><strong>Redis</strong></td><td>In-memory speed, rich data types</td></tr>
+    <tr><td>Massive scale, simple key access</td><td><strong>DynamoDB</strong></td><td>Managed, auto-scaling, predictable</td></tr>
+    <tr><td>Time-series, high write throughput</td><td><strong>Cassandra</strong></td><td>Distributed writes, linear scaling</td></tr>
+    <tr><td>Full-text search, analytics</td><td><strong>Elasticsearch</strong></td><td>Inverted indexes, aggregation</td></tr>
+    <tr><td>Social graphs, relationships</td><td><strong>Neo4j</strong></td><td>Native graph traversal</td></tr>
+  </table>
+
+  <div class="note tip">
+    <strong>💡 Interview Tip</strong>: In system design interviews, justify your database choice:
+    <ul>
+      <li>"I'd use PostgreSQL for the core transactional data because we need ACID…"</li>
+      <li>"…with Redis in front for caching hot queries to reduce latency…"</li>
+      <li>"…and Elasticsearch for the search feature since we need full-text search with fuzzy matching."</li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>NoSQL Cheatsheet · 2026</footer>
+
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'Copy';
+  btn.onclick = () => {
+    const code = w.querySelector('code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  };
+  w.appendChild(btn);
+});
+const backBtn = document.querySelector('.back-top');
+window.addEventListener('scroll', () => backBtn.classList.toggle('visible', window.scrollY > 400));
+</script>
+</body>
+</html>

@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Algorithms &amp; Sorting Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ Algorithms</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+
+<div class="container">
+
+<div class="hero">
+  <h1>Algorithms &amp; Sorting</h1>
+  <p class="subtitle">Sorting, searching, graph algorithms, DP patterns &amp; complexity analysis — explained with code</p>
+  <span class="badge">Interview + Core CS</span>
+</div>
+
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#complexity">Time &amp; Space Complexity</a>
+    <a href="#bubble">Bubble Sort</a>
+    <a href="#selection">Selection Sort</a>
+    <a href="#insertion">Insertion Sort</a>
+    <a href="#merge">Merge Sort</a>
+    <a href="#quick">Quick Sort</a>
+    <a href="#heap">Heap Sort</a>
+    <a href="#counting">Counting &amp; Radix Sort</a>
+    <a href="#sorting-compare">Sorting Comparison</a>
+    <a href="#binary-search">Binary Search</a>
+    <a href="#two-pointer">Two Pointers</a>
+    <a href="#sliding">Sliding Window</a>
+    <a href="#bfs-dfs">BFS &amp; DFS</a>
+    <a href="#dijkstra">Dijkstra &amp; Shortest Path</a>
+    <a href="#topo">Topological Sort</a>
+    <a href="#union-find">Union-Find</a>
+    <a href="#dp">Dynamic Programming</a>
+    <a href="#greedy">Greedy Algorithms</a>
+    <a href="#backtracking">Backtracking</a>
+    <a href="#bit">Bit Manipulation</a>
+  </div>
+</div>
+
+<!-- ===== COMPLEXITY ===== -->
+<div class="section" id="complexity">
+  <div class="section-header"><span class="icon">📊</span><h2>Time &amp; Space Complexity</h2></div>
+  <p>Big-O describes the <strong>upper bound</strong> of growth rate. Focus on the dominant term and ignore constants.</p>
+
+  <table>
+    <tr><th>Notation</th><th>Name</th><th>Example</th></tr>
+    <tr><td><code>O(1)</code></td><td>Constant</td><td>Hash table lookup, array index access</td></tr>
+    <tr><td><code>O(log n)</code></td><td>Logarithmic</td><td>Binary search, balanced BST lookup</td></tr>
+    <tr><td><code>O(n)</code></td><td>Linear</td><td>Single loop, linear search</td></tr>
+    <tr><td><code>O(n log n)</code></td><td>Linearithmic</td><td>Merge sort, heap sort, Tim sort</td></tr>
+    <tr><td><code>O(n²)</code></td><td>Quadratic</td><td>Bubble sort, nested loops</td></tr>
+    <tr><td><code>O(2ⁿ)</code></td><td>Exponential</td><td>Recursive fibonacci, subset generation</td></tr>
+    <tr><td><code>O(n!)</code></td><td>Factorial</td><td>Permutations, brute force TSP</td></tr>
+  </table>
+
+  <div class="note tip">
+    <strong>💡 Rules of Thumb</strong>
+    <ul>
+      <li>Drop constants: O(2n) → O(n)</li>
+      <li>Drop lower-order terms: O(n² + n) → O(n²)</li>
+      <li>Sequential loops → add: O(n + m)</li>
+      <li>Nested loops → multiply: O(n × m)</li>
+      <li>Recursive calls → draw the recursion tree</li>
+      <li>Hash map/set operations are O(1) average</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== BUBBLE SORT ===== -->
+<div class="section" id="bubble">
+  <div class="section-header"><span class="icon">🫧</span><h2>Bubble Sort</h2></div>
+  <p>Repeatedly swaps <strong>adjacent elements</strong> if they are in the wrong order. Simple but slow. Stable sort.</p>
+  <p><strong>Time:</strong> O(n²) worst/avg, O(n) best (already sorted) · <strong>Space:</strong> O(1)</p>
+  <div class="code-wrapper"><pre><code><span class="kw">def</span> <span class="fn">bubble_sort</span>(arr):
+    n = <span class="fn">len</span>(arr)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+        swapped = <span class="kw">False</span>
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(n - <span class="num">1</span> - i):  <span class="cmt"># last i elements already sorted</span>
+            <span class="kw">if</span> arr[j] > arr[j + <span class="num">1</span>]:
+                arr[j], arr[j + <span class="num">1</span>] = arr[j + <span class="num">1</span>], arr[j]
+                swapped = <span class="kw">True</span>
+        <span class="kw">if not</span> swapped:            <span class="cmt"># optimization: stop if no swaps</span>
+            <span class="kw">break</span>
+    <span class="kw">return</span> arr
+
+<span class="cmt"># [5, 3, 8, 1] → [3, 5, 1, 8] → [3, 1, 5, 8] → [1, 3, 5, 8]</span></code></pre></div>
+</div>
+
+<!-- ===== SELECTION SORT ===== -->
+<div class="section" id="selection">
+  <div class="section-header"><span class="icon">👆</span><h2>Selection Sort</h2></div>
+  <p>Find the <strong>minimum element</strong> in unsorted portion and swap it to the front. Not stable.</p>
+  <p><strong>Time:</strong> O(n²) all cases · <strong>Space:</strong> O(1)</p>
+  <div class="code-wrapper"><pre><code><span class="kw">def</span> <span class="fn">selection_sort</span>(arr):
+    n = <span class="fn">len</span>(arr)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):
+        min_idx = i
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(i + <span class="num">1</span>, n):
+            <span class="kw">if</span> arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]  <span class="cmt"># swap minimum to front</span>
+    <span class="kw">return</span> arr</code></pre></div>
+</div>
+
+<!-- ===== INSERTION SORT ===== -->
+<div class="section" id="insertion">
+  <div class="section-header"><span class="icon">📥</span><h2>Insertion Sort</h2></div>
+  <p>Build sorted array by <strong>inserting one element at a time</strong> into its correct position. Best for small/nearly-sorted arrays. Stable.</p>
+  <p><strong>Time:</strong> O(n²) worst, O(n) best · <strong>Space:</strong> O(1)</p>
+  <div class="code-wrapper"><pre><code><span class="kw">def</span> <span class="fn">insertion_sort</span>(arr):
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="fn">len</span>(arr)):
+        key = arr[i]
+        j = i - <span class="num">1</span>
+        <span class="kw">while</span> j >= <span class="num">0</span> <span class="kw">and</span> arr[j] > key:
+            arr[j + <span class="num">1</span>] = arr[j]       <span class="cmt"># shift elements right</span>
+            j -= <span class="num">1</span>
+        arr[j + <span class="num">1</span>] = key              <span class="cmt"># insert at correct position</span>
+    <span class="kw">return</span> arr
+
+<span class="cmt"># Why it's fast for nearly-sorted: inner while loop barely runs</span></code></pre></div>
+</div>
+
+<!-- ===== MERGE SORT ===== -->
+<div class="section" id="merge">
+  <div class="section-header"><span class="icon">🔀</span><h2>Merge Sort</h2></div>
+  <p><strong>Divide-and-conquer</strong>: split array in half, sort each half, merge them back. Guaranteed O(n log n). Stable.</p>
+  <p><strong>Time:</strong> O(n log n) all cases · <strong>Space:</strong> O(n)</p>
+  <div class="code-wrapper"><pre><code><span class="kw">def</span> <span class="fn">merge_sort</span>(arr):
+    <span class="kw">if</span> <span class="fn">len</span>(arr) <= <span class="num">1</span>:
+        <span class="kw">return</span> arr
+
+    mid = <span class="fn">len</span>(arr) // <span class="num">2</span>
+    left = <span class="fn">merge_sort</span>(arr[:mid])
+    right = <span class="fn">merge_sort</span>(arr[mid:])
+    <span class="kw">return</span> <span class="fn">merge</span>(left, right)
+
+<span class="kw">def</span> <span class="fn">merge</span>(left, right):
+    result = []
+    i = j = <span class="num">0</span>
+    <span class="kw">while</span> i < <span class="fn">len</span>(left) <span class="kw">and</span> j < <span class="fn">len</span>(right):
+        <span class="kw">if</span> left[i] <= right[j]:  <span class="cmt"># <= makes it stable</span>
+            result.<span class="fn">append</span>(left[i])
+            i += <span class="num">1</span>
+        <span class="kw">else</span>:
+            result.<span class="fn">append</span>(right[j])
+            j += <span class="num">1</span>
+    result.<span class="fn">extend</span>(left[i:])
+    result.<span class="fn">extend</span>(right[j:])
+    <span class="kw">return</span> result
+
+<span class="cmt"># Recursion tree depth: log n levels, each level does O(n) work → O(n log n)</span></code></pre></div>
+</div>
+
+<!-- ===== QUICK SORT ===== -->
+<div class="section" id="quick">
+  <div class="section-header"><span class="icon">⚡</span><h2>Quick Sort</h2></div>
+  <p>Pick a <strong>pivot</strong>, partition array into elements &lt; pivot and &gt; pivot, recurse on each side. In-place. Not stable.</p>
+  <p><strong>Time:</strong> O(n log n) avg, O(n²) worst (bad pivot) · <strong>Space:</strong> O(log n) stack</p>
+  <div class="code-wrapper"><pre><code><span class="kw">def</span> <span class="fn">quick_sort</span>(arr, low=<span class="num">0</span>, high=<span class="kw">None</span>):
+    <span class="kw">if</span> high <span class="kw">is None</span>:
+        high = <span class="fn">len</span>(arr) - <span class="num">1</span>
+    <span class="kw">if</span> low < high:
+        pi = <span class="fn">partition</span>(arr, low, high)
+        <span class="fn">quick_sort</span>(arr, low, pi - <span class="num">1</span>)
+        <span class="fn">quick_sort</span>(arr, pi + <span class="num">1</span>, high)
+    <span class="kw">return</span> arr
+
+<span class="kw">def</span> <span class="fn">partition</span>(arr, low, high):
+    pivot = arr[high]          <span class="cmt"># choose last element as pivot</span>
+    i = low - <span class="num">1</span>                <span class="cmt"># index of smaller element boundary</span>
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(low, high):
+        <span class="kw">if</span> arr[j] <= pivot:
+            i += <span class="num">1</span>
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + <span class="num">1</span>], arr[high] = arr[high], arr[i + <span class="num">1</span>]
+    <span class="kw">return</span> i + <span class="num">1</span>
+
+<span class="cmt"># Tip: randomize pivot choice to avoid O(n²) on sorted input</span>
+<span class="kw">import</span> random
+<span class="kw">def</span> <span class="fn">partition_random</span>(arr, low, high):
+    rand = random.<span class="fn">randint</span>(low, high)
+    arr[rand], arr[high] = arr[high], arr[rand]
+    <span class="kw">return</span> <span class="fn">partition</span>(arr, low, high)</code></pre></div>
+</div>
+
+<!-- ===== HEAP SORT ===== -->
+<div class="section" id="heap">
+  <div class="section-header"><span class="icon">🏔️</span><h2>Heap Sort</h2></div>
+  <p>Build a <strong>max-heap</strong>, then repeatedly extract the max to sort. In-place, not stable.</p>
+  <p><strong>Time:</strong> O(n log n) all cases · <strong>Space:</strong> O(1)</p>
+  <div class="code-wrapper"><pre><code><span class="kw">def</span> <span class="fn">heap_sort</span>(arr):
+    n = <span class="fn">len</span>(arr)
+
+    <span class="cmt"># Build max heap (start from last non-leaf node)</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n // <span class="num">2</span> - <span class="num">1</span>, -<span class="num">1</span>, -<span class="num">1</span>):
+        <span class="fn">heapify</span>(arr, n, i)
+
+    <span class="cmt"># Extract elements one by one</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n - <span class="num">1</span>, <span class="num">0</span>, -<span class="num">1</span>):
+        arr[<span class="num">0</span>], arr[i] = arr[i], arr[<span class="num">0</span>]  <span class="cmt"># move max to end</span>
+        <span class="fn">heapify</span>(arr, i, <span class="num">0</span>)               <span class="cmt"># heapify reduced heap</span>
+
+<span class="kw">def</span> <span class="fn">heapify</span>(arr, n, i):
+    largest = i
+    left = <span class="num">2</span> * i + <span class="num">1</span>
+    right = <span class="num">2</span> * i + <span class="num">2</span>
+
+    <span class="kw">if</span> left < n <span class="kw">and</span> arr[left] > arr[largest]:
+        largest = left
+    <span class="kw">if</span> right < n <span class="kw">and</span> arr[right] > arr[largest]:
+        largest = right
+
+    <span class="kw">if</span> largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]
+        <span class="fn">heapify</span>(arr, n, largest)  <span class="cmt"># recursively fix subtree</span></code></pre></div>
+</div>
+
+<!-- ===== COUNTING & RADIX ===== -->
+<div class="section" id="counting">
+  <div class="section-header"><span class="icon">🔢</span><h2>Counting &amp; Radix Sort</h2></div>
+  <p><strong>Non-comparison sorts</strong> that can beat O(n log n) when values are bounded.</p>
+
+  <h3>Counting Sort — O(n + k)</h3>
+  <p>Count occurrences of each value. Works when range <code>k</code> is small.</p>
+  <div class="code-wrapper"><pre><code><span class="kw">def</span> <span class="fn">counting_sort</span>(arr):
+    <span class="kw">if not</span> arr: <span class="kw">return</span> arr
+    max_val = <span class="fn">max</span>(arr)
+    count = [<span class="num">0</span>] * (max_val + <span class="num">1</span>)
+
+    <span class="kw">for</span> x <span class="kw">in</span> arr:
+        count[x] += <span class="num">1</span>
+
+    result = []
+    <span class="kw">for</span> i, c <span class="kw">in</span> <span class="fn">enumerate</span>(count):
+        result.<span class="fn">extend</span>([i] * c)
+    <span class="kw">return</span> result</code></pre></div>
+
+  <h3>Radix Sort — O(d × (n + k))</h3>
+  <p>Sort digit by digit from least significant to most significant using counting sort as a subroutine.</p>
+  <div class="code-wrapper"><pre><code><span class="kw">def</span> <span class="fn">radix_sort</span>(arr):
+    <span class="kw">if not</span> arr: <span class="kw">return</span> arr
+    max_val = <span class="fn">max</span>(arr)
+    exp = <span class="num">1</span>
+    <span class="kw">while</span> max_val // exp > <span class="num">0</span>:
+        <span class="fn">counting_sort_by_digit</span>(arr, exp)
+        exp *= <span class="num">10</span>
+    <span class="kw">return</span> arr
+
+<span class="kw">def</span> <span class="fn">counting_sort_by_digit</span>(arr, exp):
+    n = <span class="fn">len</span>(arr)
+    output = [<span class="num">0</span>] * n
+    count = [<span class="num">0</span>] * <span class="num">10</span>
+
+    <span class="kw">for</span> x <span class="kw">in</span> arr:
+        idx = (x // exp) % <span class="num">10</span>
+        count[idx] += <span class="num">1</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">10</span>):
+        count[i] += count[i - <span class="num">1</span>]
+    <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">reversed</span>(arr):
+        idx = (x // exp) % <span class="num">10</span>
+        output[count[idx] - <span class="num">1</span>] = x
+        count[idx] -= <span class="num">1</span>
+    arr[:] = output</code></pre></div>
+</div>
+
+<!-- ===== SORTING COMPARISON ===== -->
+<div class="section" id="sorting-compare">
+  <div class="section-header"><span class="icon">⚖️</span><h2>Sorting Comparison</h2></div>
+  <table>
+    <tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Space</th><th>Stable?</th></tr>
+    <tr><td>Bubble Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>✅</td></tr>
+    <tr><td>Selection Sort</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>❌</td></tr>
+    <tr><td>Insertion Sort</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>O(1)</td><td>✅</td></tr>
+    <tr><td>Merge Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n)</td><td>✅</td></tr>
+    <tr><td>Quick Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>O(log n)</td><td>❌</td></tr>
+    <tr><td>Heap Sort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>O(1)</td><td>❌</td></tr>
+    <tr><td>Counting Sort</td><td>O(n+k)</td><td>O(n+k)</td><td>O(n+k)</td><td>O(k)</td><td>✅</td></tr>
+    <tr><td>Radix Sort</td><td>O(d·n)</td><td>O(d·n)</td><td>O(d·n)</td><td>O(n+k)</td><td>✅</td></tr>
+  </table>
+  <div class="note tip">
+    <strong>💡 When to Use What</strong>
+    <ul>
+      <li><strong>Small arrays (n &lt; 20)</strong>: Insertion sort (low overhead)</li>
+      <li><strong>Nearly sorted</strong>: Insertion sort — O(n) best case</li>
+      <li><strong>General purpose</strong>: Quick sort (fastest in practice) or Merge sort (stable, guaranteed)</li>
+      <li><strong>External sorting (disk)</strong>: Merge sort (sequential access pattern)</li>
+      <li><strong>Integers in known range</strong>: Counting/Radix sort</li>
+      <li><strong>Python built-in</strong>: <code>sorted()</code> uses Timsort (hybrid merge + insertion, O(n log n), stable)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===== BINARY SEARCH ===== -->
+<div class="section" id="binary-search">
+  <div class="section-header"><span class="icon">🔍</span><h2>Binary Search</h2></div>
+  <p><strong>Prerequisite:</strong> Sorted array. Halves the search space each step. O(log n).</p>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Standard binary search</span>
+<span class="kw">def</span> <span class="fn">binary_search</span>(arr, target):
+    lo, hi = <span class="num">0</span>, <span class="fn">len</span>(arr) - <span class="num">1</span>
+    <span class="kw">while</span> lo <= hi:
+        mid = (lo + hi) // <span class="num">2</span>
+        <span class="kw">if</span> arr[mid] == target:
+            <span class="kw">return</span> mid
+        <span class="kw">elif</span> arr[mid] < target:
+            lo = mid + <span class="num">1</span>
+        <span class="kw">else</span>:
+            hi = mid - <span class="num">1</span>
+    <span class="kw">return</span> -<span class="num">1</span>
+
+<span class="cmt"># Find leftmost (first occurrence)</span>
+<span class="kw">def</span> <span class="fn">bisect_left</span>(arr, target):
+    lo, hi = <span class="num">0</span>, <span class="fn">len</span>(arr)
+    <span class="kw">while</span> lo < hi:
+        mid = (lo + hi) // <span class="num">2</span>
+        <span class="kw">if</span> arr[mid] < target:
+            lo = mid + <span class="num">1</span>
+        <span class="kw">else</span>:
+            hi = mid
+    <span class="kw">return</span> lo
+
+<span class="cmt"># Find rightmost (insertion point after target)</span>
+<span class="kw">def</span> <span class="fn">bisect_right</span>(arr, target):
+    lo, hi = <span class="num">0</span>, <span class="fn">len</span>(arr)
+    <span class="kw">while</span> lo < hi:
+        mid = (lo + hi) // <span class="num">2</span>
+        <span class="kw">if</span> arr[mid] <= target:
+            lo = mid + <span class="num">1</span>
+        <span class="kw">else</span>:
+            hi = mid
+    <span class="kw">return</span> lo
+
+<span class="cmt"># Search on answer (monotonic function)</span>
+<span class="kw">def</span> <span class="fn">min_capacity</span>(weights, days):
+    lo, hi = <span class="fn">max</span>(weights), <span class="fn">sum</span>(weights)
+    <span class="kw">while</span> lo < hi:
+        mid = (lo + hi) // <span class="num">2</span>
+        <span class="kw">if</span> <span class="fn">can_ship</span>(weights, days, mid):
+            hi = mid
+        <span class="kw">else</span>:
+            lo = mid + <span class="num">1</span>
+    <span class="kw">return</span> lo</code></pre></div>
+</div>
+
+<!-- ===== TWO POINTERS ===== -->
+<div class="section" id="two-pointer">
+  <div class="section-header"><span class="icon">👉👈</span><h2>Two Pointers</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Two Sum (sorted array)</span>
+<span class="kw">def</span> <span class="fn">two_sum_sorted</span>(arr, target):
+    l, r = <span class="num">0</span>, <span class="fn">len</span>(arr) - <span class="num">1</span>
+    <span class="kw">while</span> l < r:
+        s = arr[l] + arr[r]
+        <span class="kw">if</span> s == target:    <span class="kw">return</span> [l, r]
+        <span class="kw">elif</span> s < target:   l += <span class="num">1</span>
+        <span class="kw">else</span>:              r -= <span class="num">1</span>
+
+<span class="cmt"># Container With Most Water</span>
+<span class="kw">def</span> <span class="fn">max_area</span>(height):
+    l, r = <span class="num">0</span>, <span class="fn">len</span>(height) - <span class="num">1</span>
+    best = <span class="num">0</span>
+    <span class="kw">while</span> l < r:
+        area = <span class="fn">min</span>(height[l], height[r]) * (r - l)
+        best = <span class="fn">max</span>(best, area)
+        <span class="kw">if</span> height[l] < height[r]:
+            l += <span class="num">1</span>
+        <span class="kw">else</span>:
+            r -= <span class="num">1</span>
+    <span class="kw">return</span> best
+
+<span class="cmt"># 3Sum → sort + two pointers</span>
+<span class="kw">def</span> <span class="fn">three_sum</span>(nums):
+    nums.<span class="fn">sort</span>()
+    result = []
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(nums) - <span class="num">2</span>):
+        <span class="kw">if</span> i > <span class="num">0</span> <span class="kw">and</span> nums[i] == nums[i - <span class="num">1</span>]: <span class="kw">continue</span>  <span class="cmt"># skip duplicates</span>
+        l, r = i + <span class="num">1</span>, <span class="fn">len</span>(nums) - <span class="num">1</span>
+        <span class="kw">while</span> l < r:
+            s = nums[i] + nums[l] + nums[r]
+            <span class="kw">if</span> s == <span class="num">0</span>:
+                result.<span class="fn">append</span>([nums[i], nums[l], nums[r]])
+                <span class="kw">while</span> l < r <span class="kw">and</span> nums[l] == nums[l + <span class="num">1</span>]: l += <span class="num">1</span>
+                l += <span class="num">1</span>; r -= <span class="num">1</span>
+            <span class="kw">elif</span> s < <span class="num">0</span>: l += <span class="num">1</span>
+            <span class="kw">else</span>: r -= <span class="num">1</span>
+    <span class="kw">return</span> result</code></pre></div>
+</div>
+
+<!-- ===== SLIDING WINDOW ===== -->
+<div class="section" id="sliding">
+  <div class="section-header"><span class="icon">🪟</span><h2>Sliding Window</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Max sum of subarray of size k (fixed window)</span>
+<span class="kw">def</span> <span class="fn">max_sum_k</span>(arr, k):
+    window = <span class="fn">sum</span>(arr[:k])
+    best = window
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(k, <span class="fn">len</span>(arr)):
+        window += arr[i] - arr[i - k]  <span class="cmt"># slide: add right, remove left</span>
+        best = <span class="fn">max</span>(best, window)
+    <span class="kw">return</span> best
+
+<span class="cmt"># Longest substring without repeating characters (variable window)</span>
+<span class="kw">def</span> <span class="fn">length_of_longest</span>(s):
+    seen = {}
+    l = best = <span class="num">0</span>
+    <span class="kw">for</span> r, ch <span class="kw">in</span> <span class="fn">enumerate</span>(s):
+        <span class="kw">if</span> ch <span class="kw">in</span> seen <span class="kw">and</span> seen[ch] >= l:
+            l = seen[ch] + <span class="num">1</span>          <span class="cmt"># shrink window</span>
+        seen[ch] = r
+        best = <span class="fn">max</span>(best, r - l + <span class="num">1</span>)
+    <span class="kw">return</span> best
+
+<span class="cmt"># Minimum window substring</span>
+<span class="kw">from</span> collections <span class="kw">import</span> Counter
+<span class="kw">def</span> <span class="fn">min_window</span>(s, t):
+    need = Counter(t)
+    missing = <span class="fn">len</span>(t)
+    l = start = <span class="num">0</span>
+    best = <span class="fn">len</span>(s) + <span class="num">1</span>
+    <span class="kw">for</span> r, ch <span class="kw">in</span> <span class="fn">enumerate</span>(s):
+        <span class="kw">if</span> need[ch] > <span class="num">0</span>: missing -= <span class="num">1</span>
+        need[ch] -= <span class="num">1</span>
+        <span class="kw">while</span> missing == <span class="num">0</span>:              <span class="cmt"># all chars found → shrink</span>
+            <span class="kw">if</span> r - l + <span class="num">1</span> < best:
+                best = r - l + <span class="num">1</span>
+                start = l
+            need[s[l]] += <span class="num">1</span>
+            <span class="kw">if</span> need[s[l]] > <span class="num">0</span>: missing += <span class="num">1</span>
+            l += <span class="num">1</span>
+    <span class="kw">return</span> s[start:start + best] <span class="kw">if</span> best <= <span class="fn">len</span>(s) <span class="kw">else</span> <span class="str">""</span></code></pre></div>
+</div>
+
+<!-- ===== BFS & DFS ===== -->
+<div class="section" id="bfs-dfs">
+  <div class="section-header"><span class="icon">🌳</span><h2>BFS &amp; DFS</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="cmt"># BFS — Level-order, shortest path in unweighted graph</span>
+<span class="kw">def</span> <span class="fn">bfs</span>(graph, start):
+    visited = {start}
+    queue = deque([start])
+    <span class="kw">while</span> queue:
+        node = queue.<span class="fn">popleft</span>()
+        <span class="fn">print</span>(node)
+        <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+            <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
+                visited.<span class="fn">add</span>(neighbor)
+                queue.<span class="fn">append</span>(neighbor)
+
+<span class="cmt"># DFS — Recursive</span>
+<span class="kw">def</span> <span class="fn">dfs</span>(graph, node, visited=<span class="kw">None</span>):
+    <span class="kw">if</span> visited <span class="kw">is None</span>: visited = <span class="fn">set</span>()
+    visited.<span class="fn">add</span>(node)
+    <span class="fn">print</span>(node)
+    <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+        <span class="kw">if</span> neighbor <span class="kw">not in</span> visited:
+            <span class="fn">dfs</span>(graph, neighbor, visited)
+
+<span class="cmt"># DFS — Iterative (stack)</span>
+<span class="kw">def</span> <span class="fn">dfs_iterative</span>(graph, start):
+    visited = <span class="fn">set</span>()
+    stack = [start]
+    <span class="kw">while</span> stack:
+        node = stack.<span class="fn">pop</span>()
+        <span class="kw">if</span> node <span class="kw">in</span> visited: <span class="kw">continue</span>
+        visited.<span class="fn">add</span>(node)
+        <span class="fn">print</span>(node)
+        <span class="kw">for</span> neighbor <span class="kw">in</span> graph[node]:
+            stack.<span class="fn">append</span>(neighbor)
+
+<span class="cmt"># Number of Islands (BFS on grid)</span>
+<span class="kw">def</span> <span class="fn">num_islands</span>(grid):
+    rows, cols = <span class="fn">len</span>(grid), <span class="fn">len</span>(grid[<span class="num">0</span>])
+    count = <span class="num">0</span>
+    <span class="kw">for</span> r <span class="kw">in</span> <span class="fn">range</span>(rows):
+        <span class="kw">for</span> c <span class="kw">in</span> <span class="fn">range</span>(cols):
+            <span class="kw">if</span> grid[r][c] == <span class="str">"1"</span>:
+                count += <span class="num">1</span>
+                queue = deque([(r, c)])
+                grid[r][c] = <span class="str">"0"</span>
+                <span class="kw">while</span> queue:
+                    cr, cc = queue.<span class="fn">popleft</span>()
+                    <span class="kw">for</span> dr, dc <span class="kw">in</span> [(<span class="num">1</span>,<span class="num">0</span>),(-<span class="num">1</span>,<span class="num">0</span>),(<span class="num">0</span>,<span class="num">1</span>),(<span class="num">0</span>,-<span class="num">1</span>)]:
+                        nr, nc = cr+dr, cc+dc
+                        <span class="kw">if</span> <span class="num">0</span> <= nr < rows <span class="kw">and</span> <span class="num">0</span> <= nc < cols <span class="kw">and</span> grid[nr][nc] == <span class="str">"1"</span>:
+                            grid[nr][nc] = <span class="str">"0"</span>
+                            queue.<span class="fn">append</span>((nr, nc))
+    <span class="kw">return</span> count</code></pre></div>
+</div>
+
+<!-- ===== DIJKSTRA ===== -->
+<div class="section" id="dijkstra">
+  <div class="section-header"><span class="icon">🗺️</span><h2>Dijkstra &amp; Shortest Path</h2></div>
+  <p>Find shortest paths in a <strong>weighted graph with non-negative edges</strong>. Uses a min-heap.</p>
+  <p><strong>Time:</strong> O((V + E) log V) · <strong>Space:</strong> O(V)</p>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> heapq
+
+<span class="kw">def</span> <span class="fn">dijkstra</span>(graph, start):
+    <span class="cmt"># graph: { node: [(cost, neighbor), ...] }</span>
+    dist = {start: <span class="num">0</span>}
+    heap = [(<span class="num">0</span>, start)]
+
+    <span class="kw">while</span> heap:
+        d, u = heapq.<span class="fn">heappop</span>(heap)
+        <span class="kw">if</span> d > dist.<span class="fn">get</span>(u, <span class="fn">float</span>(<span class="str">'inf'</span>)):
+            <span class="kw">continue</span>                  <span class="cmt"># skip stale entries</span>
+        <span class="kw">for</span> cost, v <span class="kw">in</span> graph[u]:
+            new_dist = d + cost
+            <span class="kw">if</span> new_dist < dist.<span class="fn">get</span>(v, <span class="fn">float</span>(<span class="str">'inf'</span>)):
+                dist[v] = new_dist
+                heapq.<span class="fn">heappush</span>(heap, (new_dist, v))
+    <span class="kw">return</span> dist
+
+<span class="cmt"># Bellman-Ford: handles negative edges, detects negative cycles — O(V × E)</span>
+<span class="kw">def</span> <span class="fn">bellman_ford</span>(edges, n, start):
+    dist = [<span class="fn">float</span>(<span class="str">'inf'</span>)] * n
+    dist[start] = <span class="num">0</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n - <span class="num">1</span>):
+        <span class="kw">for</span> u, v, w <span class="kw">in</span> edges:
+            <span class="kw">if</span> dist[u] + w < dist[v]:
+                dist[v] = dist[u] + w
+    <span class="cmt"># Check for negative cycle</span>
+    <span class="kw">for</span> u, v, w <span class="kw">in</span> edges:
+        <span class="kw">if</span> dist[u] + w < dist[v]:
+            <span class="kw">return None</span>  <span class="cmt"># negative cycle exists</span>
+    <span class="kw">return</span> dist</code></pre></div>
+</div>
+
+<!-- ===== TOPOLOGICAL SORT ===== -->
+<div class="section" id="topo">
+  <div class="section-header"><span class="icon">📋</span><h2>Topological Sort</h2></div>
+  <p>Linear ordering of vertices in a <strong>DAG</strong> where for every edge u→v, u comes before v. Used for dependency resolution, build systems, course scheduling.</p>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Kahn's Algorithm (BFS-based, also detects cycles)</span>
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">topo_sort_bfs</span>(graph, n):
+    <span class="cmt"># graph: adjacency list, n: number of nodes</span>
+    in_degree = [<span class="num">0</span>] * n
+    <span class="kw">for</span> u <span class="kw">in</span> graph:
+        <span class="kw">for</span> v <span class="kw">in</span> graph[u]:
+            in_degree[v] += <span class="num">1</span>
+
+    queue = deque(i <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n) <span class="kw">if</span> in_degree[i] == <span class="num">0</span>)
+    order = []
+
+    <span class="kw">while</span> queue:
+        u = queue.<span class="fn">popleft</span>()
+        order.<span class="fn">append</span>(u)
+        <span class="kw">for</span> v <span class="kw">in</span> graph.<span class="fn">get</span>(u, []):
+            in_degree[v] -= <span class="num">1</span>
+            <span class="kw">if</span> in_degree[v] == <span class="num">0</span>:
+                queue.<span class="fn">append</span>(v)
+
+    <span class="kw">if</span> <span class="fn">len</span>(order) != n:
+        <span class="kw">return None</span>  <span class="cmt"># cycle detected!</span>
+    <span class="kw">return</span> order</code></pre></div>
+</div>
+
+<!-- ===== UNION-FIND ===== -->
+<div class="section" id="union-find">
+  <div class="section-header"><span class="icon">🔗</span><h2>Union-Find (Disjoint Set)</h2></div>
+  <p>Tracks connected components. <strong>Path compression + union by rank</strong> gives nearly O(1) per operation.</p>
+  <div class="code-wrapper"><pre><code><span class="kw">class</span> <span class="tp">UnionFind</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, n):
+        self.parent = <span class="fn">list</span>(<span class="fn">range</span>(n))
+        self.rank = [<span class="num">0</span>] * n
+        self.components = n
+
+    <span class="kw">def</span> <span class="fn">find</span>(self, x):
+        <span class="kw">if</span> self.parent[x] != x:
+            self.parent[x] = self.<span class="fn">find</span>(self.parent[x])  <span class="cmt"># path compression</span>
+        <span class="kw">return</span> self.parent[x]
+
+    <span class="kw">def</span> <span class="fn">union</span>(self, x, y):
+        px, py = self.<span class="fn">find</span>(x), self.<span class="fn">find</span>(y)
+        <span class="kw">if</span> px == py: <span class="kw">return False</span>
+        <span class="kw">if</span> self.rank[px] < self.rank[py]:
+            px, py = py, px
+        self.parent[py] = px     <span class="cmt"># union by rank</span>
+        <span class="kw">if</span> self.rank[px] == self.rank[py]:
+            self.rank[px] += <span class="num">1</span>
+        self.components -= <span class="num">1</span>
+        <span class="kw">return True</span>
+
+    <span class="kw">def</span> <span class="fn">connected</span>(self, x, y):
+        <span class="kw">return</span> self.<span class="fn">find</span>(x) == self.<span class="fn">find</span>(y)
+
+<span class="cmt"># Use case: Kruskal's MST, connected components, cycle detection</span></code></pre></div>
+</div>
+
+<!-- ===== DYNAMIC PROGRAMMING ===== -->
+<div class="section" id="dp">
+  <div class="section-header"><span class="icon">🧠</span><h2>Dynamic Programming</h2></div>
+  <p>Break a problem into <strong>overlapping subproblems</strong> with <strong>optimal substructure</strong>. Cache results.</p>
+
+  <h3>Framework</h3>
+  <div class="note tip">
+    <strong>💡 5 Steps to Solve Any DP Problem</strong>
+    <ul>
+      <li><strong>1. Define state</strong> — What does dp[i] (or dp[i][j]) represent?</li>
+      <li><strong>2. Recurrence</strong> — How does dp[i] relate to smaller subproblems?</li>
+      <li><strong>3. Base case</strong> — What are the trivial cases?</li>
+      <li><strong>4. Order</strong> — In what order should you fill dp?</li>
+      <li><strong>5. Answer</strong> — Where is the final answer? dp[n]? max(dp)?</li>
+    </ul>
+  </div>
+
+  <h3>Classic Problems</h3>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Fibonacci (bottom-up, O(n) time, O(1) space)</span>
+<span class="kw">def</span> <span class="fn">fib</span>(n):
+    a, b = <span class="num">0</span>, <span class="num">1</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n):
+        a, b = b, a + b
+    <span class="kw">return</span> a
+
+<span class="cmt"># Climbing Stairs: dp[i] = dp[i-1] + dp[i-2]</span>
+<span class="kw">def</span> <span class="fn">climb_stairs</span>(n):
+    a, b = <span class="num">1</span>, <span class="num">1</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n - <span class="num">1</span>):
+        a, b = b, a + b
+    <span class="kw">return</span> b
+
+<span class="cmt"># 0/1 Knapsack</span>
+<span class="kw">def</span> <span class="fn">knapsack</span>(weights, values, capacity):
+    n = <span class="fn">len</span>(weights)
+    dp = [[<span class="num">0</span>] * (capacity + <span class="num">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n + <span class="num">1</span>)]
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, n + <span class="num">1</span>):
+        <span class="kw">for</span> w <span class="kw">in</span> <span class="fn">range</span>(capacity + <span class="num">1</span>):
+            dp[i][w] = dp[i-<span class="num">1</span>][w]                           <span class="cmt"># skip item</span>
+            <span class="kw">if</span> weights[i-<span class="num">1</span>] <= w:
+                dp[i][w] = <span class="fn">max</span>(dp[i][w], dp[i-<span class="num">1</span>][w - weights[i-<span class="num">1</span>]] + values[i-<span class="num">1</span>])
+    <span class="kw">return</span> dp[n][capacity]
+
+<span class="cmt"># Longest Common Subsequence</span>
+<span class="kw">def</span> <span class="fn">lcs</span>(s1, s2):
+    m, n = <span class="fn">len</span>(s1), <span class="fn">len</span>(s2)
+    dp = [[<span class="num">0</span>] * (n + <span class="num">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(m + <span class="num">1</span>)]
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, m + <span class="num">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, n + <span class="num">1</span>):
+            <span class="kw">if</span> s1[i-<span class="num">1</span>] == s2[j-<span class="num">1</span>]:
+                dp[i][j] = dp[i-<span class="num">1</span>][j-<span class="num">1</span>] + <span class="num">1</span>
+            <span class="kw">else</span>:
+                dp[i][j] = <span class="fn">max</span>(dp[i-<span class="num">1</span>][j], dp[i][j-<span class="num">1</span>])
+    <span class="kw">return</span> dp[m][n]
+
+<span class="cmt"># Coin Change (minimum coins)</span>
+<span class="kw">def</span> <span class="fn">coin_change</span>(coins, amount):
+    dp = [<span class="fn">float</span>(<span class="str">'inf'</span>)] * (amount + <span class="num">1</span>)
+    dp[<span class="num">0</span>] = <span class="num">0</span>
+    <span class="kw">for</span> coin <span class="kw">in</span> coins:
+        <span class="kw">for</span> a <span class="kw">in</span> <span class="fn">range</span>(coin, amount + <span class="num">1</span>):
+            dp[a] = <span class="fn">min</span>(dp[a], dp[a - coin] + <span class="num">1</span>)
+    <span class="kw">return</span> dp[amount] <span class="kw">if</span> dp[amount] != <span class="fn">float</span>(<span class="str">'inf'</span>) <span class="kw">else</span> -<span class="num">1</span>
+
+<span class="cmt"># Longest Increasing Subsequence — O(n log n)</span>
+<span class="kw">from</span> bisect <span class="kw">import</span> bisect_left
+<span class="kw">def</span> <span class="fn">lis</span>(nums):
+    tails = []
+    <span class="kw">for</span> x <span class="kw">in</span> nums:
+        pos = <span class="fn">bisect_left</span>(tails, x)
+        <span class="kw">if</span> pos == <span class="fn">len</span>(tails):
+            tails.<span class="fn">append</span>(x)
+        <span class="kw">else</span>:
+            tails[pos] = x
+    <span class="kw">return</span> <span class="fn">len</span>(tails)</code></pre></div>
+</div>
+
+<!-- ===== GREEDY ===== -->
+<div class="section" id="greedy">
+  <div class="section-header"><span class="icon">🏃</span><h2>Greedy Algorithms</h2></div>
+  <p>Make the <strong>locally optimal choice</strong> at each step. Works when greedy choice leads to global optimum.</p>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Activity Selection (max non-overlapping intervals)</span>
+<span class="kw">def</span> <span class="fn">activity_selection</span>(intervals):
+    intervals.<span class="fn">sort</span>(key=<span class="kw">lambda</span> x: x[<span class="num">1</span>])  <span class="cmt"># sort by end time</span>
+    result = [intervals[<span class="num">0</span>]]
+    <span class="kw">for</span> start, end <span class="kw">in</span> intervals[<span class="num">1</span>:]:
+        <span class="kw">if</span> start >= result[-<span class="num">1</span>][<span class="num">1</span>]:         <span class="cmt"># no overlap</span>
+            result.<span class="fn">append</span>((start, end))
+    <span class="kw">return</span> result
+
+<span class="cmt"># Jump Game (can you reach the end?)</span>
+<span class="kw">def</span> <span class="fn">can_jump</span>(nums):
+    farthest = <span class="num">0</span>
+    <span class="kw">for</span> i, jump <span class="kw">in</span> <span class="fn">enumerate</span>(nums):
+        <span class="kw">if</span> i > farthest: <span class="kw">return False</span>
+        farthest = <span class="fn">max</span>(farthest, i + jump)
+    <span class="kw">return True</span>
+
+<span class="cmt"># Huffman Encoding (use heap for optimal prefix codes)</span>
+<span class="kw">import</span> heapq
+<span class="kw">def</span> <span class="fn">huffman</span>(freq):
+    heap = [[f, [ch, <span class="str">""</span>]] <span class="kw">for</span> ch, f <span class="kw">in</span> freq.<span class="fn">items</span>()]
+    heapq.<span class="fn">heapify</span>(heap)
+    <span class="kw">while</span> <span class="fn">len</span>(heap) > <span class="num">1</span>:
+        lo = heapq.<span class="fn">heappop</span>(heap)
+        hi = heapq.<span class="fn">heappop</span>(heap)
+        <span class="kw">for</span> pair <span class="kw">in</span> lo[<span class="num">1</span>:]: pair[<span class="num">1</span>] = <span class="str">'0'</span> + pair[<span class="num">1</span>]
+        <span class="kw">for</span> pair <span class="kw">in</span> hi[<span class="num">1</span>:]: pair[<span class="num">1</span>] = <span class="str">'1'</span> + pair[<span class="num">1</span>]
+        heapq.<span class="fn">heappush</span>(heap, [lo[<span class="num">0</span>] + hi[<span class="num">0</span>]] + lo[<span class="num">1</span>:] + hi[<span class="num">1</span>:])
+    <span class="kw">return</span> heap[<span class="num">0</span>][<span class="num">1</span>:]</code></pre></div>
+</div>
+
+<!-- ===== BACKTRACKING ===== -->
+<div class="section" id="backtracking">
+  <div class="section-header"><span class="icon">🔄</span><h2>Backtracking</h2></div>
+  <p>Explore all possible solutions by building candidates and <strong>abandoning paths that can't lead to a solution</strong>.</p>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Subsets (power set)</span>
+<span class="kw">def</span> <span class="fn">subsets</span>(nums):
+    result = []
+    <span class="kw">def</span> <span class="fn">backtrack</span>(start, current):
+        result.<span class="fn">append</span>(current[:])
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(start, <span class="fn">len</span>(nums)):
+            current.<span class="fn">append</span>(nums[i])
+            <span class="fn">backtrack</span>(i + <span class="num">1</span>, current)
+            current.<span class="fn">pop</span>()              <span class="cmt"># undo choice (backtrack)</span>
+    <span class="fn">backtrack</span>(<span class="num">0</span>, [])
+    <span class="kw">return</span> result
+
+<span class="cmt"># Permutations</span>
+<span class="kw">def</span> <span class="fn">permutations</span>(nums):
+    result = []
+    <span class="kw">def</span> <span class="fn">backtrack</span>(current, remaining):
+        <span class="kw">if not</span> remaining:
+            result.<span class="fn">append</span>(current[:])
+            <span class="kw">return</span>
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(remaining)):
+            current.<span class="fn">append</span>(remaining[i])
+            <span class="fn">backtrack</span>(current, remaining[:i] + remaining[i+<span class="num">1</span>:])
+            current.<span class="fn">pop</span>()
+    <span class="fn">backtrack</span>([], nums)
+    <span class="kw">return</span> result
+
+<span class="cmt"># N-Queens</span>
+<span class="kw">def</span> <span class="fn">solve_n_queens</span>(n):
+    result = []
+    <span class="kw">def</span> <span class="fn">backtrack</span>(row, cols, diag1, diag2, board):
+        <span class="kw">if</span> row == n:
+            result.<span class="fn">append</span>([<span class="str">""</span>.<span class="fn">join</span>(r) <span class="kw">for</span> r <span class="kw">in</span> board])
+            <span class="kw">return</span>
+        <span class="kw">for</span> col <span class="kw">in</span> <span class="fn">range</span>(n):
+            <span class="kw">if</span> col <span class="kw">in</span> cols <span class="kw">or</span> (row-col) <span class="kw">in</span> diag1 <span class="kw">or</span> (row+col) <span class="kw">in</span> diag2:
+                <span class="kw">continue</span>
+            board[row][col] = <span class="str">"Q"</span>
+            <span class="fn">backtrack</span>(row+<span class="num">1</span>, cols|{col}, diag1|{row-col}, diag2|{row+col}, board)
+            board[row][col] = <span class="str">"."</span>
+    <span class="fn">backtrack</span>(<span class="num">0</span>, <span class="fn">set</span>(), <span class="fn">set</span>(), <span class="fn">set</span>(), [[<span class="str">"."</span>]*n <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(n)])
+    <span class="kw">return</span> result</code></pre></div>
+</div>
+
+<!-- ===== BIT MANIPULATION ===== -->
+<div class="section" id="bit">
+  <div class="section-header"><span class="icon">🔢</span><h2>Bit Manipulation</h2></div>
+  <table>
+    <tr><th>Operation</th><th>Code</th><th>What it does</th></tr>
+    <tr><td>AND</td><td><code>a & b</code></td><td>Both bits 1</td></tr>
+    <tr><td>OR</td><td><code>a | b</code></td><td>Either bit 1</td></tr>
+    <tr><td>XOR</td><td><code>a ^ b</code></td><td>Bits differ</td></tr>
+    <tr><td>NOT</td><td><code>~a</code></td><td>Flip all bits</td></tr>
+    <tr><td>Left shift</td><td><code>a << n</code></td><td>Multiply by 2ⁿ</td></tr>
+    <tr><td>Right shift</td><td><code>a >> n</code></td><td>Divide by 2ⁿ</td></tr>
+    <tr><td>Check bit</td><td><code>(a >> i) & 1</code></td><td>Is i-th bit set?</td></tr>
+    <tr><td>Set bit</td><td><code>a | (1 << i)</code></td><td>Turn on i-th bit</td></tr>
+    <tr><td>Clear bit</td><td><code>a & ~(1 << i)</code></td><td>Turn off i-th bit</td></tr>
+    <tr><td>Toggle bit</td><td><code>a ^ (1 << i)</code></td><td>Flip i-th bit</td></tr>
+    <tr><td>Lowest set bit</td><td><code>a & (-a)</code></td><td>Isolate rightmost 1</td></tr>
+    <tr><td>Clear lowest</td><td><code>a & (a-1)</code></td><td>Turn off rightmost 1</td></tr>
+    <tr><td>Power of 2?</td><td><code>a & (a-1) == 0</code></td><td>Only one bit set</td></tr>
+    <tr><td>Count bits</td><td><code>bin(a).count('1')</code></td><td>Number of 1-bits</td></tr>
+  </table>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Single Number: every element appears twice except one → XOR all</span>
+<span class="kw">def</span> <span class="fn">single_number</span>(nums):
+    result = <span class="num">0</span>
+    <span class="kw">for</span> n <span class="kw">in</span> nums:
+        result ^= n    <span class="cmt"># x ^ x = 0, x ^ 0 = x</span>
+    <span class="kw">return</span> result</code></pre></div>
+</div>
+
+</div><!-- /container -->
+
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>Algorithms &amp; Sorting Cheatsheet · 2026</footer>
+
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'Copy';
+  btn.onclick = () => {
+    const code = w.querySelector('code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  };
+  w.appendChild(btn);
+});
+const backBtn = document.querySelector('.back-top');
+window.addEventListener('scroll', () => backBtn.classList.toggle('visible', window.scrollY > 400));
+</script>
+</body>
+</html>
