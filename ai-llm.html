@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI & LLM Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ AI &amp; LLM</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+<div class="container">
+<div class="hero">
+  <h1>AI &amp; LLM Cheatsheet</h1>
+  <p class="subtitle">Prompt engineering, token optimization, reducing hallucination, RAG, embeddings, API usage &amp; evaluation</p>
+  <span class="badge">AI / Practical Guide</span>
+  <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Filter sections…" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<div class="toc"><h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#prompt">Prompt Engineering</a>
+    <a href="#tokens">Token Optimization</a>
+    <a href="#hallucination">Reducing Hallucination</a>
+    <a href="#rag">RAG (Retrieval-Augmented)</a>
+    <a href="#embeddings">Embeddings &amp; Vector DBs</a>
+    <a href="#openai">OpenAI API</a>
+    <a href="#anthropic">Anthropic API</a>
+    <a href="#finetuning">Fine-Tuning</a>
+    <a href="#agents">AI Agents &amp; Tools</a>
+    <a href="#evaluation">Evaluation &amp; Metrics</a>
+    <a href="#safety">Safety &amp; Guardrails</a>
+    <a href="#models">Model Comparison</a>
+  </div>
+</div>
+
+<!-- PROMPT ENGINEERING -->
+<div class="section" id="prompt">
+  <div class="section-header"><span class="icon">✍️</span><h2>Prompt Engineering</h2></div>
+  <div class="note tip">
+    <strong>💡 Core Techniques</strong>
+    <ul>
+      <li><strong>Zero-shot</strong>: Direct instruction with no examples</li>
+      <li><strong>Few-shot</strong>: Provide 2-5 examples before the task</li>
+      <li><strong>Chain-of-Thought (CoT)</strong>: "Think step by step" — improves reasoning</li>
+      <li><strong>Self-Consistency</strong>: Generate multiple CoT paths, take majority vote</li>
+      <li><strong>Tree of Thoughts</strong>: Explore multiple reasoning branches, evaluate each</li>
+      <li><strong>ReAct</strong>: Reasoning + Acting — model explains thought, then calls tools</li>
+    </ul>
+  </div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># System prompt template (structured)</span>
+system_prompt = <span class="str">"""
+You are an expert {role}.
+
+## Rules
+- Always respond in {format}
+- Cite sources when making claims
+- If unsure, say "I don't know"
+
+## Output Format
+{output_schema}
+"""</span>
+
+<span class="cmt"># Few-shot example</span>
+messages = [
+    {<span class="str">"role"</span>: <span class="str">"system"</span>, <span class="str">"content"</span>: <span class="str">"Classify sentiment as positive, negative, or neutral."</span>},
+    {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"The food was amazing!"</span>},
+    {<span class="str">"role"</span>: <span class="str">"assistant"</span>, <span class="str">"content"</span>: <span class="str">"positive"</span>},
+    {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Terrible service, never coming back."</span>},
+    {<span class="str">"role"</span>: <span class="str">"assistant"</span>, <span class="str">"content"</span>: <span class="str">"negative"</span>},
+    {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"The meeting is at 3pm."</span>},  <span class="cmt"># actual query</span>
+]
+
+<span class="cmt"># Chain-of-Thought prompt</span>
+prompt = <span class="str">"""Solve the following problem step by step.
+Show your reasoning before giving the final answer.
+
+Q: If a train travels 120km in 2 hours,
+   then slows to 40km/h for 3 hours,
+   what is the average speed for the whole journey?
+
+Think step by step:"""</span></code></pre></div>
+  <div class="note tip">
+    <strong>🎯 Prompt Patterns</strong>
+    <ul>
+      <li><strong>Persona</strong>: "You are a senior Python developer reviewing code"</li>
+      <li><strong>Constraints</strong>: "Respond in JSON only", "Max 100 words"</li>
+      <li><strong>Delimiters</strong>: Use ```, ---, or XML tags to separate sections</li>
+      <li><strong>Step numbering</strong>: "Step 1: … Step 2: …" forces structured thinking</li>
+      <li><strong>Negative examples</strong>: "Do NOT include explanations" or "Never hallucinate data"</li>
+    </ul>
+  </div>
+</div>
+
+<!-- TOKEN OPTIMIZATION -->
+<div class="section" id="tokens">
+  <div class="section-header"><span class="icon">🪙</span><h2>Token Optimization</h2></div>
+  <div class="note tip">
+    <strong>💡 Strategies to Reduce Token Usage</strong>
+    <ul>
+      <li><strong>Be concise</strong>: Remove filler words, use terse instructions</li>
+      <li><strong>Structured output</strong>: JSON/YAML is more token-efficient than prose</li>
+      <li><strong>Summarize context</strong>: Compress long documents before injecting</li>
+      <li><strong>Caching</strong>: Reuse system prompts (prompt caching in API)</li>
+      <li><strong>Truncation</strong>: Only include relevant parts of documents</li>
+      <li><strong>Tiktoken</strong>: Count tokens before sending to avoid overflows</li>
+    </ul>
+  </div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> tiktoken
+
+<span class="cmt"># Count tokens (OpenAI models)</span>
+enc = tiktoken.encoding_for_model(<span class="str">"gpt-4"</span>)
+tokens = enc.encode(<span class="str">"Hello, world!"</span>)
+<span class="fn">print</span>(<span class="fn">len</span>(tokens))  <span class="cmt"># 4</span>
+
+<span class="cmt"># Estimate cost</span>
+input_tokens = <span class="fn">len</span>(enc.encode(prompt))
+cost = input_tokens / <span class="num">1_000_000</span> * <span class="num">2.50</span>  <span class="cmt"># GPT-4o: $2.50/1M input</span>
+
+<span class="cmt"># Token-efficient formatting</span>
+<span class="cmt"># ❌ Verbose: "Please classify the following text into one of these categories"</span>
+<span class="cmt"># ✅ Concise: "Classify → [positive|negative|neutral]"</span>
+
+<span class="cmt"># Compress context with summarization</span>
+summary_prompt = <span class="str">f"Summarize in &lt;200 words:\n{long_document}"</span>
+summary = call_llm(summary_prompt)
+final_prompt = <span class="str">f"Based on this context:\n{summary}\n\nAnswer: {question}"</span></code></pre></div>
+</div>
+
+<!-- HALLUCINATION -->
+<div class="section" id="hallucination">
+  <div class="section-header"><span class="icon">🛡️</span><h2>Reducing Hallucination</h2></div>
+  <div class="note warning">
+    <strong>⚠️ Hallucination Causes</strong>: Training data gaps, over-confident generation, ambiguous prompts, long context distraction.
+  </div>
+  <div class="note tip">
+    <strong>Mitigation Strategies</strong>
+    <ul>
+      <li><strong>Ground in context</strong>: Provide source documents, use RAG</li>
+      <li><strong>Instruction</strong>: "Only use information from the provided context. If unsure, say 'I don't know'"</li>
+      <li><strong>Lower temperature</strong>: 0.0–0.3 for factual tasks</li>
+      <li><strong>Structured output</strong>: Force JSON schema — constrains free-form generation</li>
+      <li><strong>Citation</strong>: "Quote the exact passage supporting your answer"</li>
+      <li><strong>Self-verification</strong>: "After answering, verify each claim against the context"</li>
+      <li><strong>Multi-turn verification</strong>: Ask model to critique its own response</li>
+      <li><strong>Constrained decoding</strong>: Use logit_bias, response_format, tool_use</li>
+    </ul>
+  </div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Anti-hallucination system prompt</span>
+system = <span class="str">"""You are a precise research assistant.
+
+RULES:
+1. Only answer using the CONTEXT provided below
+2. If the context doesn't contain the answer, say "Not found in context"
+3. Quote relevant passages with [Source: section_name]
+4. Never invent facts, dates, or statistics
+5. Express uncertainty with confidence levels: [HIGH/MEDIUM/LOW]
+
+CONTEXT:
+{retrieved_documents}
+"""</span>
+
+<span class="cmt"># Structured output with schema enforcement</span>
+response = client.chat.completions.create(
+    model=<span class="str">"gpt-4o"</span>,
+    messages=messages,
+    temperature=<span class="num">0.1</span>,           <span class="cmt"># low for factuality</span>
+    response_format={
+        <span class="str">"type"</span>: <span class="str">"json_schema"</span>,
+        <span class="str">"json_schema"</span>: {
+            <span class="str">"name"</span>: <span class="str">"answer"</span>,
+            <span class="str">"schema"</span>: {
+                <span class="str">"type"</span>: <span class="str">"object"</span>,
+                <span class="str">"properties"</span>: {
+                    <span class="str">"answer"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>},
+                    <span class="str">"confidence"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>, <span class="str">"enum"</span>: [<span class="str">"HIGH"</span>,<span class="str">"MEDIUM"</span>,<span class="str">"LOW"</span>]},
+                    <span class="str">"sources"</span>: {<span class="str">"type"</span>: <span class="str">"array"</span>, <span class="str">"items"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>}}
+                },
+                <span class="str">"required"</span>: [<span class="str">"answer"</span>, <span class="str">"confidence"</span>, <span class="str">"sources"</span>]
+            }
+        }
+    }
+)</code></pre></div>
+</div>
+
+<!-- RAG -->
+<div class="section" id="rag">
+  <div class="section-header"><span class="icon">📚</span><h2>RAG (Retrieval-Augmented Generation)</h2></div>
+  <div class="note tip">
+    <strong>RAG Pipeline</strong>
+    <ol>
+      <li><strong>Index</strong>: Chunk documents → embed → store in vector DB</li>
+      <li><strong>Retrieve</strong>: Embed query → find top-K similar chunks</li>
+      <li><strong>Augment</strong>: Inject retrieved chunks into prompt context</li>
+      <li><strong>Generate</strong>: LLM answers grounded in retrieved context</li>
+    </ol>
+  </div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> langchain.text_splitter <span class="kw">import</span> RecursiveCharacterTextSplitter
+<span class="kw">from</span> langchain_openai <span class="kw">import</span> OpenAIEmbeddings
+<span class="kw">from</span> langchain_community.vectorstores <span class="kw">import</span> Chroma
+
+<span class="cmt"># 1. Chunk documents</span>
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=<span class="num">512</span>,
+    chunk_overlap=<span class="num">50</span>,
+    separators=[<span class="str">"\n\n"</span>, <span class="str">"\n"</span>, <span class="str">". "</span>, <span class="str">" "</span>]
+)
+chunks = splitter.split_documents(docs)
+
+<span class="cmt"># 2. Embed &amp; store</span>
+embeddings = OpenAIEmbeddings(model=<span class="str">"text-embedding-3-small"</span>)
+vectorstore = Chroma.from_documents(chunks, embeddings)
+
+<span class="cmt"># 3. Retrieve</span>
+retriever = vectorstore.as_retriever(search_kwargs={<span class="str">"k"</span>: <span class="num">5</span>})
+docs = retriever.invoke(<span class="str">"What is the return policy?"</span>)
+
+<span class="cmt"># 4. Generate with context</span>
+context = <span class="str">"\n\n"</span>.join([d.page_content <span class="kw">for</span> d <span class="kw">in</span> docs])
+prompt = <span class="str">f"""Answer using ONLY the context below.
+
+Context:
+{context}
+
+Question: {question}
+Answer:"""</span></code></pre></div>
+  <div class="note tip">
+    <strong>Advanced RAG Strategies</strong>
+    <ul>
+      <li><strong>Hybrid search</strong>: Combine vector similarity + BM25 keyword search</li>
+      <li><strong>Re-ranking</strong>: Use a cross-encoder to re-rank retrieved chunks</li>
+      <li><strong>Parent-child chunking</strong>: Retrieve small chunks, expand to parent for context</li>
+      <li><strong>Query decomposition</strong>: Break complex queries into sub-questions</li>
+      <li><strong>Metadata filtering</strong>: Filter by date, source, category before similarity search</li>
+    </ul>
+  </div>
+</div>
+
+<!-- EMBEDDINGS -->
+<div class="section" id="embeddings">
+  <div class="section-header"><span class="icon">🧬</span><h2>Embeddings &amp; Vector Databases</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+client = OpenAI()
+
+<span class="cmt"># Generate embeddings</span>
+response = client.embeddings.create(
+    model=<span class="str">"text-embedding-3-small"</span>,  <span class="cmt"># 1536 dims, cheap</span>
+    input=[<span class="str">"Hello world"</span>, <span class="str">"Goodbye moon"</span>]
+)
+vec = response.data[<span class="num">0</span>].embedding  <span class="cmt"># list of floats</span>
+
+<span class="cmt"># Cosine similarity</span>
+<span class="kw">def</span> <span class="fn">cosine_sim</span>(a, b):
+    a, b = np.array(a), np.array(b)
+    <span class="kw">return</span> np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))</code></pre></div>
+  <div class="note tip">
+    <strong>Vector DB Options</strong>
+    <ul>
+      <li><strong>Chroma</strong>: Lightweight, local, great for prototyping</li>
+      <li><strong>Pinecone</strong>: Managed, scalable, serverless tier available</li>
+      <li><strong>Weaviate</strong>: Open-source, hybrid search built-in</li>
+      <li><strong>Qdrant</strong>: Rust-based, fast, filtering support</li>
+      <li><strong>pgvector</strong>: PostgreSQL extension, familiar SQL interface</li>
+      <li><strong>FAISS</strong>: Facebook's library, local, no server needed</li>
+    </ul>
+  </div>
+</div>
+
+<!-- OPENAI API -->
+<div class="section" id="openai">
+  <div class="section-header"><span class="icon">🤖</span><h2>OpenAI API</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+
+client = OpenAI()  <span class="cmt"># reads OPENAI_API_KEY from env</span>
+
+<span class="cmt"># Chat completion</span>
+response = client.chat.completions.create(
+    model=<span class="str">"gpt-4o"</span>,
+    messages=[
+        {<span class="str">"role"</span>: <span class="str">"system"</span>, <span class="str">"content"</span>: <span class="str">"You are a helpful assistant."</span>},
+        {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Explain async/await in Python"</span>}
+    ],
+    temperature=<span class="num">0.7</span>,
+    max_tokens=<span class="num">500</span>,
+    top_p=<span class="num">0.9</span>,
+)
+answer = response.choices[<span class="num">0</span>].message.content
+
+<span class="cmt"># Streaming</span>
+stream = client.chat.completions.create(
+    model=<span class="str">"gpt-4o"</span>,
+    messages=messages,
+    stream=<span class="kw">True</span>
+)
+<span class="kw">for</span> chunk <span class="kw">in</span> stream:
+    <span class="kw">if</span> chunk.choices[<span class="num">0</span>].delta.content:
+        <span class="fn">print</span>(chunk.choices[<span class="num">0</span>].delta.content, end=<span class="str">""</span>)
+
+<span class="cmt"># Tool / Function calling</span>
+tools = [{
+    <span class="str">"type"</span>: <span class="str">"function"</span>,
+    <span class="str">"function"</span>: {
+        <span class="str">"name"</span>: <span class="str">"get_weather"</span>,
+        <span class="str">"description"</span>: <span class="str">"Get current weather for a city"</span>,
+        <span class="str">"parameters"</span>: {
+            <span class="str">"type"</span>: <span class="str">"object"</span>,
+            <span class="str">"properties"</span>: {
+                <span class="str">"city"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>, <span class="str">"description"</span>: <span class="str">"City name"</span>}
+            },
+            <span class="str">"required"</span>: [<span class="str">"city"</span>]
+        }
+    }
+}]
+response = client.chat.completions.create(
+    model=<span class="str">"gpt-4o"</span>, messages=messages, tools=tools
+)</code></pre></div>
+</div>
+
+<!-- ANTHROPIC API -->
+<div class="section" id="anthropic">
+  <div class="section-header"><span class="icon">🧠</span><h2>Anthropic API</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> anthropic <span class="kw">import</span> Anthropic
+
+client = Anthropic()  <span class="cmt"># reads ANTHROPIC_API_KEY</span>
+
+<span class="cmt"># Chat</span>
+message = client.messages.create(
+    model=<span class="str">"claude-sonnet-4-20250514"</span>,
+    max_tokens=<span class="num">1024</span>,
+    system=<span class="str">"You are a precise coding assistant."</span>,
+    messages=[
+        {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Write a Python fibonacci function"</span>}
+    ]
+)
+<span class="fn">print</span>(message.content[<span class="num">0</span>].text)
+
+<span class="cmt"># Streaming</span>
+<span class="kw">with</span> client.messages.stream(
+    model=<span class="str">"claude-sonnet-4-20250514"</span>,
+    max_tokens=<span class="num">1024</span>,
+    messages=messages
+) <span class="kw">as</span> stream:
+    <span class="kw">for</span> text <span class="kw">in</span> stream.text_stream:
+        <span class="fn">print</span>(text, end=<span class="str">""</span>)
+
+<span class="cmt"># Tool use</span>
+response = client.messages.create(
+    model=<span class="str">"claude-sonnet-4-20250514"</span>,
+    max_tokens=<span class="num">1024</span>,
+    tools=[{
+        <span class="str">"name"</span>: <span class="str">"get_weather"</span>,
+        <span class="str">"description"</span>: <span class="str">"Get weather for a location"</span>,
+        <span class="str">"input_schema"</span>: {
+            <span class="str">"type"</span>: <span class="str">"object"</span>,
+            <span class="str">"properties"</span>: {<span class="str">"city"</span>: {<span class="str">"type"</span>: <span class="str">"string"</span>}},
+            <span class="str">"required"</span>: [<span class="str">"city"</span>]
+        }
+    }],
+    messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Weather in Tokyo?"</span>}]
+)</code></pre></div>
+</div>
+
+<!-- FINE-TUNING -->
+<div class="section" id="finetuning">
+  <div class="section-header"><span class="icon">🔬</span><h2>Fine-Tuning</h2></div>
+  <div class="note tip">
+    <strong>When to Fine-Tune vs Prompt Engineer</strong>
+    <ul>
+      <li><strong>Prompt engineering first</strong>: Always try few-shot + RAG before fine-tuning</li>
+      <li><strong>Fine-tune when</strong>: Consistent format/style needed, domain-specific jargon, latency/token reduction, specific behavior hard to prompt</li>
+      <li><strong>Don't fine-tune for</strong>: Adding new knowledge (use RAG), temporary needs, small datasets (&lt;50 examples)</li>
+    </ul>
+  </div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># OpenAI fine-tuning (JSONL format)</span>
+<span class="cmt"># training_data.jsonl — one JSON per line</span>
+{<span class="str">"messages"</span>: [{<span class="str">"role"</span>:<span class="str">"system"</span>,<span class="str">"content"</span>:<span class="str">"..."</span>},{<span class="str">"role"</span>:<span class="str">"user"</span>,<span class="str">"content"</span>:<span class="str">"..."</span>},{<span class="str">"role"</span>:<span class="str">"assistant"</span>,<span class="str">"content"</span>:<span class="str">"..."</span>}]}
+
+<span class="cmt"># Upload &amp; create fine-tuning job</span>
+file = client.files.create(file=<span class="fn">open</span>(<span class="str">"data.jsonl"</span>, <span class="str">"rb"</span>), purpose=<span class="str">"fine-tune"</span>)
+job = client.fine_tuning.jobs.create(
+    training_file=file.id,
+    model=<span class="str">"gpt-4o-mini-2024-07-18"</span>,
+    hyperparameters={<span class="str">"n_epochs"</span>: <span class="num">3</span>}
+)
+
+<span class="cmt"># Use fine-tuned model</span>
+response = client.chat.completions.create(
+    model=<span class="str">"ft:gpt-4o-mini:my-org::abc123"</span>,
+    messages=messages
+)</code></pre></div>
+</div>
+
+<!-- AGENTS -->
+<div class="section" id="agents">
+  <div class="section-header"><span class="icon">🤝</span><h2>AI Agents &amp; Tool Use</h2></div>
+  <div class="note tip">
+    <strong>Agent Architectures</strong>
+    <ul>
+      <li><strong>ReAct</strong>: Thought → Action → Observation loop</li>
+      <li><strong>Plan-and-Execute</strong>: Create full plan, execute steps, revise</li>
+      <li><strong>Multi-agent</strong>: Specialized agents collaborate (researcher, coder, reviewer)</li>
+      <li><strong>Reflection</strong>: Agent reviews its own output and iterates</li>
+    </ul>
+  </div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># LangGraph agent example</span>
+<span class="kw">from</span> langgraph.prebuilt <span class="kw">import</span> create_react_agent
+<span class="kw">from</span> langchain_openai <span class="kw">import</span> ChatOpenAI
+<span class="kw">from</span> langchain_core.tools <span class="kw">import</span> tool
+
+<span class="kw">@tool</span>
+<span class="kw">def</span> <span class="fn">search_docs</span>(query: <span class="tp">str</span>) -> <span class="tp">str</span>:
+    <span class="str">"""Search internal documentation."""</span>
+    <span class="cmt"># your retrieval logic</span>
+    <span class="kw">return</span> results
+
+<span class="kw">@tool</span>
+<span class="kw">def</span> <span class="fn">run_sql</span>(query: <span class="tp">str</span>) -> <span class="tp">str</span>:
+    <span class="str">"""Execute a read-only SQL query."""</span>
+    <span class="kw">return</span> db.execute(query)
+
+llm = ChatOpenAI(model=<span class="str">"gpt-4o"</span>)
+agent = create_react_agent(llm, tools=[search_docs, run_sql])
+
+result = agent.invoke({
+    <span class="str">"messages"</span>: [{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"How many users signed up last week?"</span>}]
+})</code></pre></div>
+</div>
+
+<!-- EVALUATION -->
+<div class="section" id="evaluation">
+  <div class="section-header"><span class="icon">📏</span><h2>Evaluation &amp; Metrics</h2></div>
+  <div class="note tip">
+    <strong>Key Metrics</strong>
+    <ul>
+      <li><strong>Accuracy / F1</strong>: For classification tasks</li>
+      <li><strong>BLEU / ROUGE</strong>: Text similarity (reference-based)</li>
+      <li><strong>BERTScore</strong>: Semantic similarity using embeddings</li>
+      <li><strong>Faithfulness</strong>: Does the answer match the provided context? (RAG)</li>
+      <li><strong>Relevance</strong>: Is the retrieved context relevant to the question?</li>
+      <li><strong>Hallucination rate</strong>: % of claims not supported by context</li>
+      <li><strong>LLM-as-Judge</strong>: Use a stronger model to evaluate outputs</li>
+    </ul>
+  </div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># LLM-as-Judge evaluation</span>
+eval_prompt = <span class="str">"""Rate the following answer on a scale of 1-5.
+
+Criteria:
+- Accuracy: Is the information correct?
+- Completeness: Does it fully answer the question?
+- Conciseness: Is it appropriately brief?
+
+Question: {question}
+Answer: {answer}
+Reference: {reference}
+
+Output JSON: {"accuracy": int, "completeness": int, "conciseness": int, "explanation": str}
+"""</span>
+
+<span class="cmt"># RAGAS evaluation framework</span>
+<span class="kw">from</span> ragas <span class="kw">import</span> evaluate
+<span class="kw">from</span> ragas.metrics <span class="kw">import</span> faithfulness, answer_relevancy, context_precision
+
+result = evaluate(
+    dataset=eval_dataset,
+    metrics=[faithfulness, answer_relevancy, context_precision]
+)
+<span class="fn">print</span>(result)  <span class="cmt"># {'faithfulness': 0.92, 'answer_relevancy': 0.87, ...}</span></code></pre></div>
+</div>
+
+<!-- SAFETY -->
+<div class="section" id="safety">
+  <div class="section-header"><span class="icon">🔒</span><h2>Safety &amp; Guardrails</h2></div>
+  <div class="note warning">
+    <strong>Common Attack Vectors</strong>
+    <ul>
+      <li><strong>Prompt injection</strong>: User embeds "Ignore previous instructions…"</li>
+      <li><strong>Jailbreaking</strong>: Role-play scenarios to bypass safety</li>
+      <li><strong>Data extraction</strong>: Trying to extract system prompts or training data</li>
+      <li><strong>Indirect injection</strong>: Malicious instructions in retrieved documents</li>
+    </ul>
+  </div>
+  <div class="note tip">
+    <strong>Defenses</strong>
+    <ul>
+      <li>Separate system and user content with clear delimiters</li>
+      <li>Input validation and content filtering before LLM</li>
+      <li>Output filtering: check for PII, harmful content, off-topic</li>
+      <li>Use Guardrails frameworks: NeMo Guardrails, Guardrails AI</li>
+      <li>Rate limiting and abuse detection</li>
+      <li>Monitor and log all interactions</li>
+    </ul>
+  </div>
+</div>
+
+<!-- MODEL COMPARISON -->
+<div class="section" id="models">
+  <div class="section-header"><span class="icon">⚖️</span><h2>Model Comparison (2024-2025)</h2></div>
+  <div class="note tip">
+    <strong>Popular Models At-a-Glance</strong>
+    <table style="width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 0.85rem;">
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <th style="text-align:left; padding: 4px 8px;">Model</th>
+        <th style="text-align:left; padding: 4px 8px;">Context</th>
+        <th style="text-align:left; padding: 4px 8px;">Strengths</th>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;"><strong>GPT-4o</strong></td>
+        <td style="padding: 4px 8px;">128K</td>
+        <td style="padding: 4px 8px;">Best all-round, multimodal, tools</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;"><strong>Claude Opus 4</strong></td>
+        <td style="padding: 4px 8px;">200K</td>
+        <td style="padding: 4px 8px;">Long context, coding, analysis</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;"><strong>Claude Sonnet 4</strong></td>
+        <td style="padding: 4px 8px;">200K</td>
+        <td style="padding: 4px 8px;">Great balance of speed/quality</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;"><strong>Gemini 2.5 Pro</strong></td>
+        <td style="padding: 4px 8px;">1M+</td>
+        <td style="padding: 4px 8px;">Massive context, multimodal</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;"><strong>Llama 3.1 405B</strong></td>
+        <td style="padding: 4px 8px;">128K</td>
+        <td style="padding: 4px 8px;">Open-source, self-hostable</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;"><strong>Mistral Large</strong></td>
+        <td style="padding: 4px 8px;">128K</td>
+        <td style="padding: 4px 8px;">European, multilingual, fast</td>
+      </tr>
+      <tr>
+        <td style="padding: 4px 8px;"><strong>DeepSeek V3</strong></td>
+        <td style="padding: 4px 8px;">128K</td>
+        <td style="padding: 4px 8px;">Cost-effective, strong reasoning</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+</div>
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>AI &amp; LLM Cheatsheet · 2026</footer>
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
+const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
+const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
+</script>
+</body>
+</html>

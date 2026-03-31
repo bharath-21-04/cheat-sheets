@@ -17,11 +17,13 @@
     <div class="hero">
       <h1>Developer Cheatsheets</h1>
       <p class="subtitle">Quick reference guides for development, interviews &amp; system design — hosted for instant access anywhere</p>
-      <span class="badge">📚 11 Cheatsheets</span>
+      <span class="badge">📚 22 Cheatsheets</span>
+      <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Filter cheatsheets…" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
+      <div class="search-count" id="searchCount"></div>
     </div>
 
-    <!-- ── Languages & Frameworks ── -->
-    <div class="index-section-title">Languages &amp; Frameworks</div>
+    <!-- ── Languages ── -->
+    <div class="index-section-title">Languages</div>
     <div class="index-grid">
       <a href="typescript-dev.html" class="index-card">
         <div class="card-icon">🔷</div>
@@ -34,13 +36,6 @@
         <div class="card-icon">🐹</div>
         <h2>Go</h2>
         <p>Goroutines, channels, interfaces, structs, error handling, concurrency, and modules.</p>
-        <span class="card-tag tag-dev">Development</span>
-      </a>
-
-      <a href="java-springboot-dev.html" class="index-card">
-        <div class="card-icon">☕</div>
-        <h2>Java + Spring Boot</h2>
-        <p>REST APIs, JPA, Security, dependency injection, annotations, testing, and configuration.</p>
         <span class="card-tag tag-dev">Development</span>
       </a>
 
@@ -58,11 +53,118 @@
         <span class="card-tag tag-dev">Development</span>
       </a>
 
+      <a href="ruby.html" class="index-card">
+        <div class="card-icon">💎</div>
+        <h2>Ruby</h2>
+        <p>Strings, arrays, hashes, blocks, OOP, modules, enumerable, file I/O, error handling, and Rails essentials.</p>
+        <span class="card-tag tag-dev">Development</span>
+      </a>
+
+      <a href="rust.html" class="index-card">
+        <div class="card-icon">🦀</div>
+        <h2>Rust</h2>
+        <p>Ownership, borrowing, lifetimes, structs, enums, traits, pattern matching, concurrency, and Cargo.</p>
+        <span class="card-tag tag-dev">Development</span>
+      </a>
+
+      <a href="swift.html" class="index-card">
+        <div class="card-icon">🐦</div>
+        <h2>Swift</h2>
+        <p>Optionals, collections, closures, protocols, async/await, actors, error handling, and SwiftUI basics.</p>
+        <span class="card-tag tag-dev">Development</span>
+      </a>
+    </div>
+
+    <!-- ── Java Ecosystem ── -->
+    <div class="index-section-title">Java Ecosystem</div>
+    <div class="index-grid">
+      <a href="java-springboot-dev.html" class="index-card">
+        <div class="card-icon">☕</div>
+        <h2>Java + Spring Boot</h2>
+        <p>REST APIs, JPA, Security, dependency injection, annotations, testing, and configuration.</p>
+        <span class="card-tag tag-dev">Development</span>
+      </a>
+
+      <a href="java-collections.html" class="index-card">
+        <div class="card-icon">📦</div>
+        <h2>Java Collections</h2>
+        <p>List, Set, Map, Queue, Stack, Streams API, String methods, Arrays, Optional, and java.time.</p>
+        <span class="card-tag tag-dev">Development</span>
+      </a>
+    </div>
+
+    <!-- ── Backend Frameworks ── -->
+    <div class="index-section-title">Backend Frameworks</div>
+    <div class="index-grid">
+      <a href="fastapi-uv.html" class="index-card">
+        <div class="card-icon">⚡</div>
+        <h2>FastAPI + UV Python</h2>
+        <p>UV package manager, venv, FastAPI routes, Pydantic, auth, SQLAlchemy, WebSockets, and Docker deployment.</p>
+        <span class="card-tag tag-framework">Framework</span>
+      </a>
+
+      <a href="go-gin.html" class="index-card">
+        <div class="card-icon">🍸</div>
+        <h2>Go Gin</h2>
+        <p>Routing, middleware, request binding, JWT auth, GORM database, validation, testing, and deployment.</p>
+        <span class="card-tag tag-framework">Framework</span>
+      </a>
+
+      <a href="python-frameworks.html" class="index-card">
+        <div class="card-icon">🐍</div>
+        <h2>Django &amp; Flask</h2>
+        <p>Models, ORM, views, forms, auth, Django REST Framework, Blueprints, SQLAlchemy, and testing.</p>
+        <span class="card-tag tag-framework">Framework</span>
+      </a>
+
+      <a href="ts-backend.html" class="index-card">
+        <div class="card-icon">🔷</div>
+        <h2>TS Backend Frameworks</h2>
+        <p>Express, Hono, Elysia, NestJS, tRPC, oRPC, Bun — routes, middleware, and type-safe APIs.</p>
+        <span class="card-tag tag-framework">Framework</span>
+      </a>
+    </div>
+
+    <!-- ── Frontend & CSS ── -->
+    <div class="index-section-title">Frontend &amp; CSS</div>
+    <div class="index-grid">
+      <a href="frontend-frameworks.html" class="index-card">
+        <div class="card-icon">⚛️</div>
+        <h2>React, Vue, Nuxt, Svelte</h2>
+        <p>React hooks &amp; patterns, Vue 3 Composition API, Nuxt 3, Svelte 5 runes, routing, and state management.</p>
+        <span class="card-tag tag-framework">Framework</span>
+      </a>
+
       <a href="css-cheatsheet.html" class="index-card">
         <div class="card-icon">🎨</div>
         <h2>CSS</h2>
         <p>Selectors, box model, flexbox, grid, animations, responsive design, and everyday patterns.</p>
         <span class="card-tag tag-dev">Development</span>
+      </a>
+    </div>
+
+    <!-- ── Databases & ORMs ── -->
+    <div class="index-section-title">Databases &amp; ORMs</div>
+    <div class="index-grid">
+      <a href="postgresql.html" class="index-card">
+        <div class="card-icon">🐘</div>
+        <h2>PostgreSQL</h2>
+        <p>Schema design, joins, indexes, transactions, window functions, JSON, CTEs, and performance tuning.</p>
+        <span class="card-tag tag-database">Database</span>
+      </a>
+
+      <a href="nosql.html" class="index-card">
+        <div class="card-icon">🔴</div>
+        <h2>NoSQL</h2>
+        <p>MongoDB CRUD &amp; aggregation, Redis data types &amp; caching patterns, DynamoDB, and when to use what.</p>
+        <span class="card-tag tag-database">Database</span>
+      </a>
+
+      <a href="drizzle-prisma.html" class="index-card">
+        <div class="card-icon">🔮</div>
+        <h2>Drizzle &amp; Prisma</h2>
+        <p>Schema definition, CRUD queries, relations, migrations, Drizzle Studio, Prisma Client, and comparison.</p>
+        <span class="card-tag tag-framework">Framework</span>
       </a>
     </div>
 
@@ -91,26 +193,24 @@
       </a>
     </div>
 
-    <!-- ── Databases ── -->
-    <div class="index-section-title">Databases</div>
+    <!-- ── AI & Tools ── -->
+    <div class="index-section-title">AI &amp; Tools</div>
     <div class="index-grid">
-      <a href="postgresql.html" class="index-card">
-        <div class="card-icon">🐘</div>
-        <h2>PostgreSQL</h2>
-        <p>Schema design, joins, indexes, transactions, window functions, JSON, CTEs, and performance tuning.</p>
-        <span class="card-tag tag-database">Database</span>
-      </a>
-
-      <a href="nosql.html" class="index-card">
-        <div class="card-icon">🔴</div>
-        <h2>NoSQL</h2>
-        <p>MongoDB CRUD &amp; aggregation, Redis data types &amp; caching patterns, DynamoDB, and when to use what.</p>
-        <span class="card-tag tag-database">Database</span>
+      <a href="ai-llm.html" class="index-card">
+        <div class="card-icon">🤖</div>
+        <h2>AI &amp; LLM</h2>
+        <p>Prompt engineering, token optimization, reducing hallucination, RAG, embeddings, API usage, and evaluation.</p>
+        <span class="card-tag tag-ai">AI</span>
       </a>
     </div>
   </div>
 
   <footer>Built for quick reference · 2026</footer>
+  <script>
+  const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');
+  si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const cards=document.querySelectorAll('.index-card');const titles=document.querySelectorAll('.index-section-title');let v=0;cards.forEach(c=>{if(!q){c.classList.remove('search-hidden');v++}else if(c.textContent.toLowerCase().includes(q)){c.classList.remove('search-hidden');v++}else{c.classList.add('search-hidden')}});titles.forEach(t=>{const grid=t.nextElementSibling;if(!grid)return;const visible=grid.querySelectorAll('.index-card:not(.search-hidden)');if(q&&visible.length===0){t.classList.add('search-hidden')}else{t.classList.remove('search-hidden')}});sct.textContent=q?v+' cheatsheet'+(v!==1?'s':'')+' found':'';});
+  sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
+  </script>
 
 </body>
 </html>

@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drizzle & Prisma ORM Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ Drizzle &amp; Prisma</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+<div class="container">
+<div class="hero">
+  <h1>Drizzle &amp; Prisma ORM Cheatsheet</h1>
+  <p class="subtitle">Schema definition, queries, relations, migrations &amp; patterns for both TypeScript ORMs</p>
+  <span class="badge">Framework / Database</span>
+  <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Filter sections…" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<div class="toc"><h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#drizzle-setup">Drizzle: Setup</a>
+    <a href="#drizzle-schema">Drizzle: Schema</a>
+    <a href="#drizzle-queries">Drizzle: Queries</a>
+    <a href="#drizzle-relations">Drizzle: Relations</a>
+    <a href="#drizzle-migrations">Drizzle: Migrations</a>
+    <a href="#prisma-setup">Prisma: Setup</a>
+    <a href="#prisma-schema">Prisma: Schema</a>
+    <a href="#prisma-queries">Prisma: CRUD Queries</a>
+    <a href="#prisma-relations">Prisma: Relations</a>
+    <a href="#prisma-migrations">Prisma: Migrations</a>
+    <a href="#comparison">Comparison</a>
+  </div>
+</div>
+
+<!-- DRIZZLE SETUP -->
+<div class="section" id="drizzle-setup">
+  <div class="section-header"><span class="icon">⚙️</span><h2>Drizzle: Setup</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Install (PostgreSQL example)</span>
+npm i drizzle-orm postgres
+npm i -D drizzle-kit
+
+<span class="cmt"># drizzle.config.ts</span>
+<span class="kw">import</span> { defineConfig } <span class="kw">from</span> <span class="str">"drizzle-kit"</span>;
+
+<span class="kw">export default</span> defineConfig({
+  schema: <span class="str">"./src/db/schema.ts"</span>,
+  out: <span class="str">"./drizzle"</span>,
+  dialect: <span class="str">"postgresql"</span>,
+  dbCredentials: {
+    url: process.env.DATABASE_URL!,
+  },
+});
+
+<span class="cmt">// src/db/index.ts</span>
+<span class="kw">import</span> { drizzle } <span class="kw">from</span> <span class="str">"drizzle-orm/postgres-js"</span>;
+<span class="kw">import</span> postgres <span class="kw">from</span> <span class="str">"postgres"</span>;
+<span class="kw">import</span> * <span class="kw">as</span> schema <span class="kw">from</span> <span class="str">"./schema"</span>;
+
+<span class="kw">const</span> client = postgres(process.env.DATABASE_URL!);
+<span class="kw">export const</span> db = drizzle(client, { schema });</code></pre></div>
+</div>
+
+<!-- DRIZZLE SCHEMA -->
+<div class="section" id="drizzle-schema">
+  <div class="section-header"><span class="icon">📐</span><h2>Drizzle: Schema Definition</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> {
+  pgTable, serial, text, varchar, integer,
+  boolean, timestamp, uuid, jsonb, pgEnum
+} <span class="kw">from</span> <span class="str">"drizzle-orm/pg-core"</span>;
+
+<span class="cmt">// Enum</span>
+<span class="kw">export const</span> roleEnum = pgEnum(<span class="str">"role"</span>, [<span class="str">"admin"</span>, <span class="str">"user"</span>, <span class="str">"moderator"</span>]);
+
+<span class="cmt">// Users table</span>
+<span class="kw">export const</span> users = pgTable(<span class="str">"users"</span>, {
+  id: serial(<span class="str">"id"</span>).primaryKey(),
+  name: varchar(<span class="str">"name"</span>, { length: <span class="num">256</span> }).notNull(),
+  email: text(<span class="str">"email"</span>).notNull().unique(),
+  role: roleEnum(<span class="str">"role"</span>).default(<span class="str">"user"</span>),
+  isActive: boolean(<span class="str">"is_active"</span>).default(<span class="kw">true</span>),
+  metadata: jsonb(<span class="str">"metadata"</span>),
+  createdAt: timestamp(<span class="str">"created_at"</span>).defaultNow(),
+});
+
+<span class="cmt">// Posts table (with FK)</span>
+<span class="kw">export const</span> posts = pgTable(<span class="str">"posts"</span>, {
+  id: uuid(<span class="str">"id"</span>).defaultRandom().primaryKey(),
+  title: varchar(<span class="str">"title"</span>, { length: <span class="num">512</span> }).notNull(),
+  content: text(<span class="str">"content"</span>),
+  authorId: integer(<span class="str">"author_id"</span>).references(() => users.id),
+  published: boolean(<span class="str">"published"</span>).default(<span class="kw">false</span>),
+  createdAt: timestamp(<span class="str">"created_at"</span>).defaultNow(),
+});
+
+<span class="cmt">// Types (auto-inferred)</span>
+<span class="kw">type</span> <span class="tp">User</span> = <span class="kw">typeof</span> users.$inferSelect;
+<span class="kw">type</span> <span class="tp">NewUser</span> = <span class="kw">typeof</span> users.$inferInsert;</code></pre></div>
+</div>
+
+<!-- DRIZZLE QUERIES -->
+<div class="section" id="drizzle-queries">
+  <div class="section-header"><span class="icon">🔍</span><h2>Drizzle: Queries (CRUD)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> { eq, and, or, gt, lt, like, inArray, sql, desc, asc, count } <span class="kw">from</span> <span class="str">"drizzle-orm"</span>;
+
+<span class="cmt">// ── SELECT ──</span>
+<span class="kw">const</span> allUsers = <span class="kw">await</span> db.select().from(users);
+
+<span class="kw">const</span> filtered = <span class="kw">await</span> db
+  .select({ id: users.id, name: users.name })
+  .from(users)
+  .where(and(
+    eq(users.role, <span class="str">"admin"</span>),
+    gt(users.createdAt, <span class="kw">new</span> Date(<span class="str">"2024-01-01"</span>))
+  ))
+  .orderBy(desc(users.createdAt))
+  .limit(<span class="num">10</span>)
+  .offset(<span class="num">0</span>);
+
+<span class="cmt">// ── INSERT ──</span>
+<span class="kw">const</span> [user] = <span class="kw">await</span> db
+  .insert(users)
+  .values({ name: <span class="str">"Alice"</span>, email: <span class="str">"alice@example.com"</span> })
+  .returning();
+
+<span class="cmt">// Bulk insert</span>
+<span class="kw">await</span> db.insert(users).values([
+  { name: <span class="str">"Bob"</span>, email: <span class="str">"bob@ex.com"</span> },
+  { name: <span class="str">"Charlie"</span>, email: <span class="str">"charlie@ex.com"</span> },
+]);
+
+<span class="cmt">// ── UPDATE ──</span>
+<span class="kw">await</span> db
+  .update(users)
+  .set({ name: <span class="str">"Alice Updated"</span>, isActive: <span class="kw">false</span> })
+  .where(eq(users.id, <span class="num">1</span>));
+
+<span class="cmt">// ── DELETE ──</span>
+<span class="kw">await</span> db.delete(users).where(eq(users.id, <span class="num">1</span>));
+
+<span class="cmt">// ── Aggregate ──</span>
+<span class="kw">const</span> [result] = <span class="kw">await</span> db
+  .select({ total: count() })
+  .from(users)
+  .where(eq(users.isActive, <span class="kw">true</span>));
+
+<span class="cmt">// ── Raw SQL ──</span>
+<span class="kw">const</span> raw = <span class="kw">await</span> db.execute(sql<span class="str">`SELECT NOW()`</span>);
+
+<span class="cmt">// ── Relational query (query API) ──</span>
+<span class="kw">const</span> usersWithPosts = <span class="kw">await</span> db.query.users.findMany({
+  with: { posts: <span class="kw">true</span> },
+  where: eq(users.isActive, <span class="kw">true</span>),
+  limit: <span class="num">10</span>,
+});</code></pre></div>
+</div>
+
+<!-- DRIZZLE RELATIONS -->
+<div class="section" id="drizzle-relations">
+  <div class="section-header"><span class="icon">🔗</span><h2>Drizzle: Relations</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> { relations } <span class="kw">from</span> <span class="str">"drizzle-orm"</span>;
+
+<span class="kw">export const</span> usersRelations = relations(users, ({ many }) => ({
+  posts: many(posts),
+}));
+
+<span class="kw">export const</span> postsRelations = relations(posts, ({ one }) => ({
+  author: one(users, {
+    fields: [posts.authorId],
+    references: [users.id],
+  }),
+}));
+
+<span class="cmt">// Many-to-many (join table)</span>
+<span class="kw">export const</span> postTags = pgTable(<span class="str">"post_tags"</span>, {
+  postId: uuid(<span class="str">"post_id"</span>).references(() => posts.id),
+  tagId: integer(<span class="str">"tag_id"</span>).references(() => tags.id),
+});
+
+<span class="kw">export const</span> postsToTagsRelations = relations(postTags, ({ one }) => ({
+  post: one(posts, { fields: [postTags.postId], references: [posts.id] }),
+  tag: one(tags, { fields: [postTags.tagId], references: [tags.id] }),
+}));</code></pre></div>
+</div>
+
+<!-- DRIZZLE MIGRATIONS -->
+<div class="section" id="drizzle-migrations">
+  <div class="section-header"><span class="icon">🚀</span><h2>Drizzle: Migrations</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Generate migration from schema changes</span>
+npx drizzle-kit generate
+
+<span class="cmt"># Push schema directly (dev only, no migration files)</span>
+npx drizzle-kit push
+
+<span class="cmt"># Open Drizzle Studio (DB browser)</span>
+npx drizzle-kit studio
+
+<span class="cmt"># Run migrations programmatically</span>
+<span class="kw">import</span> { migrate } <span class="kw">from</span> <span class="str">"drizzle-orm/postgres-js/migrator"</span>;
+<span class="kw">await</span> migrate(db, { migrationsFolder: <span class="str">"./drizzle"</span> });</code></pre></div>
+</div>
+
+<!-- PRISMA SETUP -->
+<div class="section" id="prisma-setup">
+  <div class="section-header"><span class="icon">💎</span><h2>Prisma: Setup</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Install</span>
+npm i prisma @prisma/client
+npx prisma init
+
+<span class="cmt"># This creates:</span>
+<span class="cmt">#   prisma/schema.prisma</span>
+<span class="cmt">#   .env (DATABASE_URL)</span>
+
+<span class="cmt">// src/db.ts</span>
+<span class="kw">import</span> { PrismaClient } <span class="kw">from</span> <span class="str">"@prisma/client"</span>;
+
+<span class="kw">const</span> globalForPrisma = globalThis <span class="kw">as</span> <span class="kw">unknown</span> <span class="kw">as</span> {
+  prisma: PrismaClient | <span class="kw">undefined</span>;
+};
+
+<span class="kw">export const</span> prisma =
+  globalForPrisma.prisma ?? <span class="kw">new</span> PrismaClient();
+
+<span class="kw">if</span> (process.env.NODE_ENV !== <span class="str">"production"</span>)
+  globalForPrisma.prisma = prisma;</code></pre></div>
+</div>
+
+<!-- PRISMA SCHEMA -->
+<div class="section" id="prisma-schema">
+  <div class="section-header"><span class="icon">📐</span><h2>Prisma: Schema (schema.prisma)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// prisma/schema.prisma</span>
+generator client {
+  provider = <span class="str">"prisma-client-js"</span>
+}
+
+datasource db {
+  provider = <span class="str">"postgresql"</span>
+  url      = env(<span class="str">"DATABASE_URL"</span>)
+}
+
+<span class="kw">enum</span> <span class="tp">Role</span> {
+  ADMIN
+  USER
+  MODERATOR
+}
+
+<span class="kw">model</span> <span class="tp">User</span> {
+  id        <span class="tp">Int</span>      @id @default(autoincrement())
+  name      <span class="tp">String</span>   @db.VarChar(<span class="num">256</span>)
+  email     <span class="tp">String</span>   @unique
+  role      <span class="tp">Role</span>     @default(USER)
+  isActive  <span class="tp">Boolean</span>  @default(<span class="kw">true</span>)  @map(<span class="str">"is_active"</span>)
+  metadata  <span class="tp">Json</span>?
+  posts     <span class="tp">Post</span>[]
+  createdAt <span class="tp">DateTime</span> @default(now()) @map(<span class="str">"created_at"</span>)
+
+  @@map(<span class="str">"users"</span>)
+}
+
+<span class="kw">model</span> <span class="tp">Post</span> {
+  id        <span class="tp">String</span>   @id @default(uuid())
+  title     <span class="tp">String</span>   @db.VarChar(<span class="num">512</span>)
+  content   <span class="tp">String</span>?
+  published <span class="tp">Boolean</span>  @default(<span class="kw">false</span>)
+  author    <span class="tp">User</span>     @relation(fields: [authorId], references: [id])
+  authorId  <span class="tp">Int</span>      @map(<span class="str">"author_id"</span>)
+  tags      <span class="tp">Tag</span>[]
+  createdAt <span class="tp">DateTime</span> @default(now()) @map(<span class="str">"created_at"</span>)
+
+  @@index([authorId])
+  @@map(<span class="str">"posts"</span>)
+}
+
+<span class="kw">model</span> <span class="tp">Tag</span> {
+  id    <span class="tp">Int</span>    @id @default(autoincrement())
+  name  <span class="tp">String</span> @unique
+  posts <span class="tp">Post</span>[]
+
+  @@map(<span class="str">"tags"</span>)
+}</code></pre></div>
+</div>
+
+<!-- PRISMA QUERIES -->
+<div class="section" id="prisma-queries">
+  <div class="section-header"><span class="icon">🔍</span><h2>Prisma: CRUD Queries</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// ── CREATE ──</span>
+<span class="kw">const</span> user = <span class="kw">await</span> prisma.user.create({
+  data: { name: <span class="str">"Alice"</span>, email: <span class="str">"alice@example.com"</span> },
+});
+
+<span class="cmt">// Create with relation</span>
+<span class="kw">const</span> userWithPost = <span class="kw">await</span> prisma.user.create({
+  data: {
+    name: <span class="str">"Bob"</span>,
+    email: <span class="str">"bob@example.com"</span>,
+    posts: { create: { title: <span class="str">"First Post"</span>, content: <span class="str">"Hello!"</span> } },
+  },
+  include: { posts: <span class="kw">true</span> },
+});
+
+<span class="cmt">// Bulk create</span>
+<span class="kw">await</span> prisma.user.createMany({
+  data: [
+    { name: <span class="str">"Charlie"</span>, email: <span class="str">"c@ex.com"</span> },
+    { name: <span class="str">"Diana"</span>, email: <span class="str">"d@ex.com"</span> },
+  ],
+  skipDuplicates: <span class="kw">true</span>,
+});
+
+<span class="cmt">// ── READ ──</span>
+<span class="kw">const</span> all = <span class="kw">await</span> prisma.user.findMany();
+
+<span class="kw">const</span> filtered = <span class="kw">await</span> prisma.user.findMany({
+  where: {
+    AND: [
+      { role: <span class="str">"ADMIN"</span> },
+      { createdAt: { gte: <span class="kw">new</span> Date(<span class="str">"2024-01-01"</span>) } },
+    ],
+  },
+  select: { id: <span class="kw">true</span>, name: <span class="kw">true</span>, email: <span class="kw">true</span> },
+  orderBy: { createdAt: <span class="str">"desc"</span> },
+  take: <span class="num">10</span>,
+  skip: <span class="num">0</span>,
+});
+
+<span class="kw">const</span> unique = <span class="kw">await</span> prisma.user.findUnique({
+  where: { email: <span class="str">"alice@example.com"</span> },
+});
+
+<span class="kw">const</span> first = <span class="kw">await</span> prisma.user.findFirst({
+  where: { name: { contains: <span class="str">"Ali"</span>, mode: <span class="str">"insensitive"</span> } },
+});
+
+<span class="cmt">// ── UPDATE ──</span>
+<span class="kw">await</span> prisma.user.update({
+  where: { id: <span class="num">1</span> },
+  data: { name: <span class="str">"Alice Updated"</span> },
+});
+
+<span class="cmt">// Upsert</span>
+<span class="kw">await</span> prisma.user.upsert({
+  where: { email: <span class="str">"alice@example.com"</span> },
+  create: { name: <span class="str">"Alice"</span>, email: <span class="str">"alice@example.com"</span> },
+  update: { name: <span class="str">"Alice Updated"</span> },
+});
+
+<span class="cmt">// ── DELETE ──</span>
+<span class="kw">await</span> prisma.user.delete({ where: { id: <span class="num">1</span> } });
+<span class="kw">await</span> prisma.user.deleteMany({ where: { isActive: <span class="kw">false</span> } });
+
+<span class="cmt">// ── AGGREGATE ──</span>
+<span class="kw">const</span> stats = <span class="kw">await</span> prisma.user.aggregate({
+  _count: <span class="kw">true</span>,
+  where: { isActive: <span class="kw">true</span> },
+});
+
+<span class="cmt">// Group by</span>
+<span class="kw">const</span> byRole = <span class="kw">await</span> prisma.user.groupBy({
+  by: [<span class="str">"role"</span>],
+  _count: { _all: <span class="kw">true</span> },
+});</code></pre></div>
+</div>
+
+<!-- PRISMA RELATIONS -->
+<div class="section" id="prisma-relations">
+  <div class="section-header"><span class="icon">🔗</span><h2>Prisma: Relations &amp; Includes</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Include related data (eager loading)</span>
+<span class="kw">const</span> usersWithPosts = <span class="kw">await</span> prisma.user.findMany({
+  include: {
+    posts: {
+      where: { published: <span class="kw">true</span> },
+      orderBy: { createdAt: <span class="str">"desc"</span> },
+      take: <span class="num">5</span>,
+      include: { tags: <span class="kw">true</span> },  <span class="cmt">// nested include</span>
+    },
+  },
+});
+
+<span class="cmt">// Select specific fields (instead of include)</span>
+<span class="kw">const</span> lean = <span class="kw">await</span> prisma.user.findMany({
+  select: {
+    name: <span class="kw">true</span>,
+    posts: { select: { title: <span class="kw">true</span> } },
+  },
+});
+
+<span class="cmt">// Relation filters</span>
+<span class="kw">const</span> usersWithPublished = <span class="kw">await</span> prisma.user.findMany({
+  where: {
+    posts: { some: { published: <span class="kw">true</span> } },  <span class="cmt">// has at least one published post</span>
+  },
+});
+
+<span class="cmt">// Transactions</span>
+<span class="kw">const</span> [user, post] = <span class="kw">await</span> prisma.$transaction([
+  prisma.user.create({ data: { name: <span class="str">"Tx User"</span>, email: <span class="str">"tx@ex.com"</span> } }),
+  prisma.post.create({ data: { title: <span class="str">"Tx Post"</span>, authorId: <span class="num">1</span> } }),
+]);</code></pre></div>
+</div>
+
+<!-- PRISMA MIGRATIONS -->
+<div class="section" id="prisma-migrations">
+  <div class="section-header"><span class="icon">🚀</span><h2>Prisma: Migrations</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Generate migration from schema changes</span>
+npx prisma migrate dev --name init
+
+<span class="cmt"># Apply migrations in production</span>
+npx prisma migrate deploy
+
+<span class="cmt"># Reset database (dangerous!)</span>
+npx prisma migrate reset
+
+<span class="cmt"># Push schema without migrations (prototyping)</span>
+npx prisma db push
+
+<span class="cmt"># Generate Prisma Client</span>
+npx prisma generate
+
+<span class="cmt"># Open Prisma Studio (GUI)</span>
+npx prisma studio
+
+<span class="cmt"># Introspect existing database</span>
+npx prisma db pull</code></pre></div>
+</div>
+
+<!-- COMPARISON -->
+<div class="section" id="comparison">
+  <div class="section-header"><span class="icon">⚖️</span><h2>Drizzle vs Prisma Comparison</h2></div>
+  <div class="note tip">
+    <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <th style="text-align:left; padding: 6px 8px;">Feature</th>
+        <th style="text-align:left; padding: 6px 8px;">Drizzle</th>
+        <th style="text-align:left; padding: 6px 8px;">Prisma</th>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;">Approach</td>
+        <td style="padding: 4px 8px;">SQL-like, thin wrapper</td>
+        <td style="padding: 4px 8px;">Own query language, abstraction</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;">Schema</td>
+        <td style="padding: 4px 8px;">TypeScript code</td>
+        <td style="padding: 4px 8px;">.prisma DSL</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;">Type Safety</td>
+        <td style="padding: 4px 8px;">Excellent (inferred)</td>
+        <td style="padding: 4px 8px;">Excellent (generated)</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;">Bundle Size</td>
+        <td style="padding: 4px 8px;">~50KB (tiny)</td>
+        <td style="padding: 4px 8px;">~2MB+ (engine binary)</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;">Serverless</td>
+        <td style="padding: 4px 8px;">Excellent (no engine)</td>
+        <td style="padding: 4px 8px;">Needs Accelerate / edge runtime</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;">Raw SQL</td>
+        <td style="padding: 4px 8px;">First-class support</td>
+        <td style="padding: 4px 8px;">$queryRaw / $executeRaw</td>
+      </tr>
+      <tr>
+        <td style="padding: 4px 8px;">Learning Curve</td>
+        <td style="padding: 4px 8px;">Low (if you know SQL)</td>
+        <td style="padding: 4px 8px;">Low (intuitive API)</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+</div>
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>Drizzle &amp; Prisma ORM Cheatsheet · 2026</footer>
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
+const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
+const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
+</script>
+</body>
+</html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Swift Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ Swift</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+<div class="container">
+<div class="hero">
+  <h1>Swift Cheatsheet</h1>
+  <p class="subtitle">Types, optionals, closures, protocols, structs vs classes, concurrency &amp; SwiftUI basics</p>
+  <span class="badge">Language</span>
+  <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Filter sections…" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<div class="toc"><h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#basics">Basics &amp; Types</a>
+    <a href="#optionals">Optionals</a>
+    <a href="#collections">Collections</a>
+    <a href="#control">Control Flow</a>
+    <a href="#functions">Functions &amp; Closures</a>
+    <a href="#oop">Structs, Classes &amp; Enums</a>
+    <a href="#protocols">Protocols &amp; Extensions</a>
+    <a href="#error">Error Handling</a>
+    <a href="#concurrency">Concurrency</a>
+    <a href="#swiftui">SwiftUI Basics</a>
+  </div>
+</div>
+
+<div class="section" id="basics">
+  <div class="section-header"><span class="icon">🍎</span><h2>Basics &amp; Types</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Variables &amp; constants</span>
+<span class="kw">var</span> name = <span class="str">"Alice"</span>       <span class="cmt">// mutable</span>
+<span class="kw">let</span> age = <span class="num">30</span>              <span class="cmt">// immutable (prefer let)</span>
+
+<span class="cmt">// Type annotations</span>
+<span class="kw">let</span> x: <span class="tp">Int</span> = <span class="num">42</span>
+<span class="kw">let</span> pi: <span class="tp">Double</span> = <span class="num">3.14</span>
+<span class="kw">let</span> flag: <span class="tp">Bool</span> = <span class="kw">true</span>
+<span class="kw">let</span> ch: <span class="tp">Character</span> = <span class="str">"A"</span>
+
+<span class="cmt">// String interpolation</span>
+<span class="kw">let</span> msg = <span class="str">"Hello \(name), you are \(age)"</span>
+
+<span class="cmt">// Multi-line strings</span>
+<span class="kw">let</span> text = <span class="str">"""
+    This is a
+    multi-line string
+    """</span>
+
+<span class="cmt">// Type conversion</span>
+<span class="kw">let</span> intVal = <span class="tp">Int</span>(<span class="str">"42"</span>)        <span class="cmt">// Optional Int?</span>
+<span class="kw">let</span> dblVal = <span class="tp">Double</span>(age)      <span class="cmt">// 30.0</span>
+<span class="kw">let</span> strVal = <span class="tp">String</span>(age)      <span class="cmt">// "30"</span>
+
+<span class="cmt">// Tuples</span>
+<span class="kw">let</span> point = (x: <span class="num">10</span>, y: <span class="num">20</span>)
+point.x   <span class="cmt">// 10</span>
+<span class="kw">let</span> (a, b) = point  <span class="cmt">// destructure</span></code></pre></div>
+</div>
+
+<div class="section" id="optionals">
+  <div class="section-header"><span class="icon">❓</span><h2>Optionals</h2></div>
+  <p>Swift's optionals handle the absence of a value safely — <strong>no null pointer exceptions</strong>.</p>
+  <div class="code-wrapper"><pre><code><span class="kw">var</span> email: <span class="tp">String</span>? = <span class="kw">nil</span>   <span class="cmt">// optional String</span>
+email = <span class="str">"alice@example.com"</span>
+
+<span class="cmt">// Optional binding (safe unwrap)</span>
+<span class="kw">if let</span> e = email {
+    print(<span class="str">"Email: \(e)"</span>)
+}
+
+<span class="cmt">// guard let (early exit)</span>
+<span class="kw">guard let</span> e = email <span class="kw">else</span> {
+    print(<span class="str">"No email"</span>)
+    <span class="kw">return</span>
+}
+<span class="cmt">// e is available here</span>
+
+<span class="cmt">// Nil coalescing</span>
+<span class="kw">let</span> display = email ?? <span class="str">"No email"</span>
+
+<span class="cmt">// Optional chaining</span>
+<span class="kw">let</span> count = email?.count  <span class="cmt">// Int? — nil if email is nil</span>
+
+<span class="cmt">// Force unwrap (avoid if possible)</span>
+<span class="kw">let</span> forced = email!  <span class="cmt">// crashes if nil</span></code></pre></div>
+</div>
+
+<div class="section" id="collections">
+  <div class="section-header"><span class="icon">📦</span><h2>Collections</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Array</span>
+<span class="kw">var</span> nums: [<span class="tp">Int</span>] = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+nums.append(<span class="num">4</span>)
+nums.insert(<span class="num">0</span>, at: <span class="num">0</span>)
+nums.remove(at: <span class="num">0</span>)
+nums.contains(<span class="num">3</span>)         <span class="cmt">// true</span>
+nums.sorted()              <span class="cmt">// returns new sorted array</span>
+nums.filter { $0 > <span class="num">2</span> }     <span class="cmt">// [3, 4]</span>
+nums.map { $0 * <span class="num">2</span> }        <span class="cmt">// [2, 4, 6, 8]</span>
+nums.reduce(<span class="num">0</span>, +)          <span class="cmt">// 10</span>
+nums.compactMap { <span class="tp">Int</span>($0) } <span class="cmt">// filter nil from optionals</span>
+nums.flatMap { [$0, $0*<span class="num">2</span>] }
+
+<span class="cmt">// Dictionary</span>
+<span class="kw">var</span> scores: [<span class="tp">String</span>: <span class="tp">Int</span>] = [<span class="str">"Alice"</span>: <span class="num">95</span>, <span class="str">"Bob"</span>: <span class="num">87</span>]
+scores[<span class="str">"Alice"</span>]             <span class="cmt">// Optional Int?</span>
+scores[<span class="str">"Charlie"</span>] = <span class="num">92</span>     <span class="cmt">// add/update</span>
+scores.keys / scores.values
+<span class="kw">for</span> (name, score) <span class="kw">in</span> scores { ... }
+
+<span class="cmt">// Set</span>
+<span class="kw">var</span> tags: <span class="tp">Set</span>&lt;<span class="tp">String</span>&gt; = [<span class="str">"swift"</span>, <span class="str">"ios"</span>]
+tags.insert(<span class="str">"macos"</span>)
+tags.contains(<span class="str">"swift"</span>)
+tags.intersection(otherSet)
+tags.union(otherSet)</code></pre></div>
+</div>
+
+<div class="section" id="control">
+  <div class="section-header"><span class="icon">🔀</span><h2>Control Flow</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// if/else</span>
+<span class="kw">if</span> age >= <span class="num">18</span> {
+    print(<span class="str">"adult"</span>)
+} <span class="kw">else if</span> age >= <span class="num">13</span> {
+    print(<span class="str">"teen"</span>)
+} <span class="kw">else</span> {
+    print(<span class="str">"child"</span>)
+}
+
+<span class="cmt">// switch (exhaustive, no fall-through)</span>
+<span class="kw">switch</span> role {
+<span class="kw">case</span> <span class="str">"admin"</span>:
+    print(<span class="str">"full access"</span>)
+<span class="kw">case</span> <span class="str">"user"</span>, <span class="str">"member"</span>:  <span class="cmt">// multiple values</span>
+    print(<span class="str">"limited"</span>)
+<span class="kw">case let</span> r <span class="kw">where</span> r.hasPrefix(<span class="str">"super"</span>):
+    print(<span class="str">"super role: \(r)"</span>)
+<span class="kw">default</span>:
+    print(<span class="str">"guest"</span>)
+}
+
+<span class="cmt">// for-in</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="num">0</span>..&lt;<span class="num">5</span> { }      <span class="cmt">// 0,1,2,3,4</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="num">1</span>...<span class="num">5</span> { }      <span class="cmt">// 1,2,3,4,5</span>
+<span class="kw">for</span> (i, val) <span class="kw">in</span> arr.enumerated() { }
+<span class="kw">for</span> _ <span class="kw">in</span> <span class="num">0</span>..&lt;<span class="num">3</span> { }      <span class="cmt">// ignore counter</span>
+
+<span class="cmt">// while</span>
+<span class="kw">while</span> x &lt; <span class="num">10</span> { x += <span class="num">1</span> }
+<span class="kw">repeat</span> { x += <span class="num">1</span> } <span class="kw">while</span> x &lt; <span class="num">10</span>  <span class="cmt">// do-while</span></code></pre></div>
+</div>
+
+<div class="section" id="functions">
+  <div class="section-header"><span class="icon">🔧</span><h2>Functions &amp; Closures</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Function with labels</span>
+<span class="kw">func</span> <span class="fn">greet</span>(person name: <span class="tp">String</span>, from city: <span class="tp">String</span> = <span class="str">"Unknown"</span>) -> <span class="tp">String</span> {
+    <span class="kw">return</span> <span class="str">"Hello \(name) from \(city)"</span>
+}
+greet(person: <span class="str">"Alice"</span>, from: <span class="str">"NYC"</span>)
+
+<span class="cmt">// Multiple return (tuple)</span>
+<span class="kw">func</span> <span class="fn">minMax</span>(_ arr: [<span class="tp">Int</span>]) -> (min: <span class="tp">Int</span>, max: <span class="tp">Int</span>) {
+    <span class="kw">return</span> (arr.min()!, arr.max()!)
+}
+
+<span class="cmt">// Closures</span>
+<span class="kw">let</span> add = { (a: <span class="tp">Int</span>, b: <span class="tp">Int</span>) -> <span class="tp">Int</span> <span class="kw">in</span>
+    <span class="kw">return</span> a + b
+}
+
+<span class="cmt">// Shorthand closure syntax</span>
+nums.sorted { $0 &lt; $1 }
+nums.sorted(by: &lt;)
+
+<span class="cmt">// Trailing closure</span>
+nums.filter { $0 > <span class="num">3</span> }
+    .map { $0 * <span class="num">2</span> }
+    .forEach { print($0) }
+
+<span class="cmt">// @escaping (closure outlives function)</span>
+<span class="kw">func</span> <span class="fn">fetch</span>(completion: <span class="kw">@escaping</span> (<span class="tp">String</span>) -> <span class="tp">Void</span>) { }</code></pre></div>
+</div>
+
+<div class="section" id="oop">
+  <div class="section-header"><span class="icon">🏗️</span><h2>Structs, Classes &amp; Enums</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Struct (value type — copied)</span>
+<span class="kw">struct</span> <span class="tp">Point</span> {
+    <span class="kw">var</span> x: <span class="tp">Double</span>
+    <span class="kw">var</span> y: <span class="tp">Double</span>
+
+    <span class="kw">func</span> <span class="fn">distance</span>(to other: <span class="tp">Point</span>) -> <span class="tp">Double</span> {
+        sqrt(pow(x - other.x, <span class="num">2</span>) + pow(y - other.y, <span class="num">2</span>))
+    }
+
+    <span class="kw">mutating func</span> <span class="fn">translate</span>(dx: <span class="tp">Double</span>, dy: <span class="tp">Double</span>) {
+        x += dx; y += dy
+    }
+}
+
+<span class="cmt">// Class (reference type — shared)</span>
+<span class="kw">class</span> <span class="tp">Vehicle</span> {
+    <span class="kw">var</span> speed: <span class="tp">Double</span> = <span class="num">0</span>
+    <span class="kw">init</span>(speed: <span class="tp">Double</span>) { <span class="kw">self</span>.speed = speed }
+    <span class="kw">deinit</span> { print(<span class="str">"deallocated"</span>) }
+}
+
+<span class="kw">class</span> <span class="tp">Car</span>: <span class="tp">Vehicle</span> {
+    <span class="kw">var</span> brand: <span class="tp">String</span>
+    <span class="kw">init</span>(brand: <span class="tp">String</span>, speed: <span class="tp">Double</span>) {
+        <span class="kw">self</span>.brand = brand
+        <span class="kw">super</span>.init(speed: speed)
+    }
+}
+
+<span class="cmt">// Enum with associated values</span>
+<span class="kw">enum</span> <span class="tp">Result</span>&lt;<span class="tp">T</span>&gt; {
+    <span class="kw">case</span> success(<span class="tp">T</span>)
+    <span class="kw">case</span> failure(<span class="tp">String</span>)
+}
+
+<span class="kw">enum</span> <span class="tp">Direction</span>: <span class="tp">String</span>, <span class="tp">CaseIterable</span> {
+    <span class="kw">case</span> north, south, east, west
+}</code></pre></div>
+  <div class="note tip">
+    <strong>💡 Struct vs Class</strong>: Prefer structs. Use classes only when you need reference semantics, inheritance, or deinit.
+  </div>
+</div>
+
+<div class="section" id="protocols">
+  <div class="section-header"><span class="icon">📐</span><h2>Protocols &amp; Extensions</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Protocol (like interface/trait)</span>
+<span class="kw">protocol</span> <span class="tp">Drawable</span> {
+    <span class="kw">func</span> <span class="fn">draw</span>()
+    <span class="kw">var</span> area: <span class="tp">Double</span> { <span class="kw">get</span> }
+}
+
+<span class="kw">struct</span> <span class="tp">Circle</span>: <span class="tp">Drawable</span> {
+    <span class="kw">var</span> radius: <span class="tp">Double</span>
+    <span class="kw">var</span> area: <span class="tp">Double</span> { .pi * radius * radius }
+    <span class="kw">func</span> <span class="fn">draw</span>() { print(<span class="str">"Drawing circle r=\(radius)"</span>) }
+}
+
+<span class="cmt">// Extension (add functionality to existing types)</span>
+<span class="kw">extension</span> <span class="tp">String</span> {
+    <span class="kw">var</span> isEmail: <span class="tp">Bool</span> {
+        contains(<span class="str">"@"</span>) &amp;&amp; contains(<span class="str">"."</span>)
+    }
+}
+<span class="str">"a@b.com"</span>.isEmail  <span class="cmt">// true</span>
+
+<span class="cmt">// Protocol extension (default implementation)</span>
+<span class="kw">extension</span> <span class="tp">Drawable</span> {
+    <span class="kw">func</span> <span class="fn">description</span>() -> <span class="tp">String</span> { <span class="str">"Area: \(area)"</span> }
+}</code></pre></div>
+</div>
+
+<div class="section" id="error">
+  <div class="section-header"><span class="icon">⚠️</span><h2>Error Handling</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">enum</span> <span class="tp">AppError</span>: <span class="tp">Error</span> {
+    <span class="kw">case</span> notFound
+    <span class="kw">case</span> unauthorized(<span class="tp">String</span>)
+    <span class="kw">case</span> serverError(code: <span class="tp">Int</span>)
+}
+
+<span class="kw">func</span> <span class="fn">fetchUser</span>(id: <span class="tp">Int</span>) <span class="kw">throws</span> -> <span class="tp">User</span> {
+    <span class="kw">guard</span> id > <span class="num">0</span> <span class="kw">else</span> { <span class="kw">throw</span> AppError.notFound }
+    <span class="kw">return</span> User(name: <span class="str">"Alice"</span>)
+}
+
+<span class="cmt">// do-try-catch</span>
+<span class="kw">do</span> {
+    <span class="kw">let</span> user = <span class="kw">try</span> fetchUser(id: <span class="num">1</span>)
+} <span class="kw">catch</span> AppError.notFound {
+    print(<span class="str">"Not found"</span>)
+} <span class="kw">catch</span> {
+    print(<span class="str">"Error: \(error)"</span>)
+}
+
+<span class="cmt">// try? (returns optional), try! (force)</span>
+<span class="kw">let</span> user = <span class="kw">try?</span> fetchUser(id: <span class="num">1</span>)  <span class="cmt">// User?</span></code></pre></div>
+</div>
+
+<div class="section" id="concurrency">
+  <div class="section-header"><span class="icon">⚡</span><h2>Concurrency (async/await)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Async function</span>
+<span class="kw">func</span> <span class="fn">fetchData</span>(url: <span class="tp">URL</span>) <span class="kw">async throws</span> -> <span class="tp">Data</span> {
+    <span class="kw">let</span> (data, _) = <span class="kw">try await</span> URLSession.shared.data(from: url)
+    <span class="kw">return</span> data
+}
+
+<span class="cmt">// Call async function</span>
+Task {
+    <span class="kw">let</span> data = <span class="kw">try await</span> fetchData(url: myURL)
+}
+
+<span class="cmt">// Structured concurrency</span>
+<span class="kw">async let</span> users = fetchUsers()
+<span class="kw">async let</span> posts = fetchPosts()
+<span class="kw">let</span> (u, p) = <span class="kw">try await</span> (users, posts)  <span class="cmt">// parallel</span>
+
+<span class="cmt">// Actor (thread-safe shared state)</span>
+<span class="kw">actor</span> <span class="tp">Counter</span> {
+    <span class="kw">private var</span> count = <span class="num">0</span>
+    <span class="kw">func</span> <span class="fn">increment</span>() { count += <span class="num">1</span> }
+    <span class="kw">func</span> <span class="fn">getCount</span>() -> <span class="tp">Int</span> { count }
+}</code></pre></div>
+</div>
+
+<div class="section" id="swiftui">
+  <div class="section-header"><span class="icon">📱</span><h2>SwiftUI Basics</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> SwiftUI
+
+<span class="kw">struct</span> <span class="tp">ContentView</span>: <span class="tp">View</span> {
+    @State <span class="kw">private var</span> count = <span class="num">0</span>
+    @State <span class="kw">private var</span> name = <span class="str">""</span>
+
+    <span class="kw">var</span> body: <span class="kw">some</span> <span class="tp">View</span> {
+        VStack(spacing: <span class="num">20</span>) {
+            Text(<span class="str">"Count: \(count)"</span>)
+                .font(.title)
+                .foregroundColor(.blue)
+
+            Button(<span class="str">"Increment"</span>) { count += <span class="num">1</span> }
+                .buttonStyle(.borderedProminent)
+
+            TextField(<span class="str">"Enter name"</span>, text: $name)
+                .textFieldStyle(.roundedBorder)
+
+            List {
+                ForEach(items) { item <span class="kw">in</span>
+                    Text(item.name)
+                }
+            }
+        }
+        .padding()
+        .onAppear { loadData() }
+    }
+}
+
+<span class="cmt">// Property wrappers</span>
+<span class="cmt">// @State — local mutable state</span>
+<span class="cmt">// @Binding — two-way binding to parent</span>
+<span class="cmt">// @ObservedObject — external observable</span>
+<span class="cmt">// @EnvironmentObject — shared app state</span>
+<span class="cmt">// @Published — auto-notify on change</span></code></pre></div>
+</div>
+
+</div>
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>Swift Cheatsheet · 2026</footer>
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
+const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
+const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
+</script>
+</body>
+</html>

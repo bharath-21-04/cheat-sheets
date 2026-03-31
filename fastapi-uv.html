@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FastAPI &amp; UV Python Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ FastAPI &amp; UV</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+<div class="container">
+<div class="hero">
+  <h1>FastAPI &amp; UV Python</h1>
+  <p class="subtitle">REST APIs, validation, auth, middleware, SQLAlchemy, background tasks, testing &amp; UV package manager</p>
+  <span class="badge">Framework</span>
+  <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Filter sections…" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<div class="toc"><h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#uv">UV — Python Package Manager</a>
+    <a href="#setup">FastAPI Setup</a>
+    <a href="#routes">Routes &amp; Methods</a>
+    <a href="#pydantic">Pydantic Models</a>
+    <a href="#query">Query &amp; Path Params</a>
+    <a href="#deps">Dependency Injection</a>
+    <a href="#auth">Authentication</a>
+    <a href="#middleware">Middleware &amp; CORS</a>
+    <a href="#db">Database (SQLAlchemy)</a>
+    <a href="#background">Background Tasks</a>
+    <a href="#websocket">WebSockets</a>
+    <a href="#testing">Testing</a>
+    <a href="#deploy">Deployment</a>
+  </div>
+</div>
+
+<!-- UV -->
+<div class="section" id="uv">
+  <div class="section-header"><span class="icon">⚡</span><h2>UV — Python Package Manager</h2></div>
+  <p><strong>uv</strong> is an extremely fast Python package manager and project manager written in Rust. It replaces pip, pip-tools, virtualenv, pyenv, and more.</p>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Install uv</span>
+curl -LsSf https://astral.sh/uv/install.sh | sh
+<span class="cmt"># or</span>
+brew install uv
+
+<span class="cmt"># ── Project Management ──</span>
+uv init myproject              <span class="cmt"># create new project with pyproject.toml</span>
+uv init myproject --lib        <span class="cmt"># library project</span>
+cd myproject
+
+<span class="cmt"># ── Virtual Environment ──</span>
+uv venv                        <span class="cmt"># create .venv (auto-detected Python)</span>
+uv venv --python <span class="num">3.12</span>          <span class="cmt"># with specific Python version</span>
+uv venv myenv                  <span class="cmt"># custom name</span>
+source .venv/bin/activate       <span class="cmt"># activate (macOS/Linux)</span>
+<span class="cmt"># .venv\Scripts\activate        # Windows</span>
+
+<span class="cmt"># ── Install Python versions ──</span>
+uv python install <span class="num">3.12</span>         <span class="cmt"># install Python 3.12</span>
+uv python list                  <span class="cmt"># list available versions</span>
+uv python pin <span class="num">3.12</span>             <span class="cmt"># pin version for project</span>
+
+<span class="cmt"># ── Package Management ──</span>
+uv add fastapi                  <span class="cmt"># add dependency (updates pyproject.toml)</span>
+uv add "fastapi[standard]"      <span class="cmt"># with extras</span>
+uv add --dev pytest ruff        <span class="cmt"># dev dependencies</span>
+uv remove requests              <span class="cmt"># remove dependency</span>
+uv sync                         <span class="cmt"># install all deps from lock file</span>
+uv lock                         <span class="cmt"># generate/update lock file</span>
+
+<span class="cmt"># ── Run commands ──</span>
+uv run python app.py            <span class="cmt"># run in project venv</span>
+uv run fastapi dev              <span class="cmt"># run FastAPI dev server</span>
+uv run pytest                   <span class="cmt"># run tests</span>
+uv run ruff check .             <span class="cmt"># linting</span>
+
+<span class="cmt"># ── pip-compatible mode ──</span>
+uv pip install fastapi          <span class="cmt"># like pip but 10-100x faster</span>
+uv pip install -r requirements.txt
+uv pip compile requirements.in -o requirements.txt  <span class="cmt"># lock deps</span>
+
+<span class="cmt"># ── One-shot script execution ──</span>
+uv run --with requests python script.py  <span class="cmt"># temp install + run</span>
+uvx ruff check .                          <span class="cmt"># run tool without installing</span></code></pre></div>
+
+  <h3>pyproject.toml (UV project)</h3>
+  <div class="code-wrapper"><pre><code>[project]
+name = <span class="str">"myapi"</span>
+version = <span class="str">"0.1.0"</span>
+requires-python = <span class="str">">= 3.12"</span>
+dependencies = [
+    <span class="str">"fastapi[standard]>=0.115"</span>,
+    <span class="str">"sqlalchemy>=2.0"</span>,
+    <span class="str">"pydantic>=2.0"</span>,
+    <span class="str">"alembic>=1.13"</span>,
+]
+
+[dependency-groups]
+dev = [
+    <span class="str">"pytest>=8.0"</span>,
+    <span class="str">"httpx>=0.27"</span>,
+    <span class="str">"ruff>=0.8"</span>,
+]
+
+[tool.ruff]
+line-length = <span class="num">88</span>
+target-version = <span class="str">"py312"</span></code></pre></div>
+</div>
+
+<!-- SETUP -->
+<div class="section" id="setup">
+  <div class="section-header"><span class="icon">🚀</span><h2>FastAPI Setup</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Install</span>
+uv add "fastapi[standard]"
+
+<span class="cmt"># app/main.py</span>
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+
+app = FastAPI(
+    title=<span class="str">"My API"</span>,
+    version=<span class="str">"1.0.0"</span>,
+    docs_url=<span class="str">"/docs"</span>,       <span class="cmt"># Swagger UI</span>
+    redoc_url=<span class="str">"/redoc"</span>,     <span class="cmt"># ReDoc</span>
+)
+
+<span class="kw">@app</span>.get(<span class="str">"/"</span>)
+<span class="kw">async def</span> <span class="fn">root</span>():
+    <span class="kw">return</span> {<span class="str">"message"</span>: <span class="str">"Hello World"</span>}
+
+<span class="cmt"># Run</span>
+<span class="cmt"># uv run fastapi dev            # dev mode (auto-reload)</span>
+<span class="cmt"># uv run fastapi run            # production</span>
+<span class="cmt"># uv run uvicorn app.main:app --reload --port 8000</span></code></pre></div>
+</div>
+
+<!-- ROUTES -->
+<div class="section" id="routes">
+  <div class="section-header"><span class="icon">🛣️</span><h2>Routes &amp; HTTP Methods</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, HTTPException, status
+<span class="kw">from</span> fastapi.responses <span class="kw">import</span> JSONResponse
+
+<span class="kw">@app</span>.get(<span class="str">"/users"</span>)
+<span class="kw">async def</span> <span class="fn">list_users</span>():
+    <span class="kw">return</span> users
+
+<span class="kw">@app</span>.post(<span class="str">"/users"</span>, status_code=status.HTTP_201_CREATED)
+<span class="kw">async def</span> <span class="fn">create_user</span>(user: UserCreate):
+    <span class="kw">return</span> user
+
+<span class="kw">@app</span>.put(<span class="str">"/users/{user_id}"</span>)
+<span class="kw">async def</span> <span class="fn">update_user</span>(user_id: <span class="tp">int</span>, user: UserUpdate):
+    <span class="kw">return</span> {<span class="str">"id"</span>: user_id, **user.model_dump()}
+
+<span class="kw">@app</span>.delete(<span class="str">"/users/{user_id}"</span>, status_code=<span class="num">204</span>)
+<span class="kw">async def</span> <span class="fn">delete_user</span>(user_id: <span class="tp">int</span>):
+    <span class="kw">return</span> <span class="kw">None</span>
+
+<span class="cmt"># Error handling</span>
+<span class="kw">@app</span>.get(<span class="str">"/users/{user_id}"</span>)
+<span class="kw">async def</span> <span class="fn">get_user</span>(user_id: <span class="tp">int</span>):
+    <span class="kw">if</span> user_id <span class="kw">not in</span> db:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="num">404</span>, detail=<span class="str">"User not found"</span>)
+    <span class="kw">return</span> db[user_id]
+
+<span class="cmt"># Router (split into files)</span>
+<span class="kw">from</span> fastapi <span class="kw">import</span> APIRouter
+router = APIRouter(prefix=<span class="str">"/api/v1"</span>, tags=[<span class="str">"users"</span>])
+
+<span class="kw">@router</span>.get(<span class="str">"/users"</span>)
+<span class="kw">async def</span> <span class="fn">get_users</span>(): ...
+
+<span class="cmt"># In main.py:</span>
+app.include_router(router)</code></pre></div>
+</div>
+
+<!-- PYDANTIC -->
+<div class="section" id="pydantic">
+  <div class="section-header"><span class="icon">✅</span><h2>Pydantic Models</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field, EmailStr, field_validator
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+<span class="kw">from</span> typing <span class="kw">import</span> Optional
+
+<span class="kw">class</span> <span class="tp">UserCreate</span>(BaseModel):
+    name: <span class="tp">str</span> = Field(..., min_length=<span class="num">1</span>, max_length=<span class="num">100</span>)
+    email: EmailStr
+    age: <span class="tp">int</span> = Field(..., ge=<span class="num">0</span>, le=<span class="num">150</span>)
+    role: <span class="tp">str</span> = <span class="str">"user"</span>
+    tags: <span class="tp">list</span>[<span class="tp">str</span>] = []
+
+    <span class="kw">@field_validator</span>(<span class="str">"name"</span>)
+    <span class="kw">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">name_must_not_be_empty</span>(cls, v):
+        <span class="kw">if not</span> v.strip():
+            <span class="kw">raise</span> ValueError(<span class="str">"Name cannot be empty"</span>)
+        <span class="kw">return</span> v.strip()
+
+<span class="kw">class</span> <span class="tp">UserResponse</span>(BaseModel):
+    id: <span class="tp">int</span>
+    name: <span class="tp">str</span>
+    email: <span class="tp">str</span>
+    created_at: datetime
+
+    model_config = {<span class="str">"from_attributes"</span>: <span class="kw">True</span>}  <span class="cmt"># read from ORM models</span>
+
+<span class="kw">class</span> <span class="tp">UserUpdate</span>(BaseModel):
+    name: Optional[<span class="tp">str</span>] = <span class="kw">None</span>
+    email: Optional[EmailStr] = <span class="kw">None</span>
+    age: Optional[<span class="tp">int</span>] = <span class="kw">None</span>
+
+<span class="cmt"># Response model</span>
+<span class="kw">@app</span>.get(<span class="str">"/users"</span>, response_model=<span class="tp">list</span>[UserResponse])
+<span class="kw">async def</span> <span class="fn">list_users</span>(): ...</code></pre></div>
+</div>
+
+<!-- QUERY PARAMS -->
+<div class="section" id="query">
+  <div class="section-header"><span class="icon">🔍</span><h2>Query &amp; Path Parameters</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> fastapi <span class="kw">import</span> Query, Path
+<span class="kw">from</span> enum <span class="kw">import</span> Enum
+
+<span class="cmt"># Path parameters</span>
+<span class="kw">@app</span>.get(<span class="str">"/users/{user_id}"</span>)
+<span class="kw">async def</span> <span class="fn">get_user</span>(user_id: <span class="tp">int</span> = Path(..., gt=<span class="num">0</span>, description=<span class="str">"User ID"</span>)):
+    ...
+
+<span class="cmt"># Query parameters with validation</span>
+<span class="kw">@app</span>.get(<span class="str">"/users"</span>)
+<span class="kw">async def</span> <span class="fn">list_users</span>(
+    skip: <span class="tp">int</span> = Query(<span class="num">0</span>, ge=<span class="num">0</span>),
+    limit: <span class="tp">int</span> = Query(<span class="num">10</span>, ge=<span class="num">1</span>, le=<span class="num">100</span>),
+    search: <span class="tp">str</span> | <span class="kw">None</span> = <span class="kw">None</span>,
+    sort_by: <span class="tp">str</span> = Query(<span class="str">"created_at"</span>, pattern=<span class="str">"^(name|email|created_at)$"</span>),
+    roles: <span class="tp">list</span>[<span class="tp">str</span>] = Query([]),  <span class="cmt"># ?roles=admin&amp;roles=user</span>
+):
+    ...
+
+<span class="cmt"># Enum for fixed choices</span>
+<span class="kw">class</span> <span class="tp">SortOrder</span>(Enum):
+    asc = <span class="str">"asc"</span>
+    desc = <span class="str">"desc"</span>
+
+<span class="kw">@app</span>.get(<span class="str">"/items"</span>)
+<span class="kw">async def</span> <span class="fn">list_items</span>(order: SortOrder = SortOrder.asc): ...</code></pre></div>
+</div>
+
+<!-- DEPS -->
+<div class="section" id="deps">
+  <div class="section-header"><span class="icon">💉</span><h2>Dependency Injection</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> fastapi <span class="kw">import</span> Depends
+
+<span class="cmt"># Simple dependency</span>
+<span class="kw">async def</span> <span class="fn">get_db</span>():
+    db = SessionLocal()
+    <span class="kw">try</span>:
+        <span class="kw">yield</span> db
+    <span class="kw">finally</span>:
+        db.close()
+
+<span class="kw">@app</span>.get(<span class="str">"/users"</span>)
+<span class="kw">async def</span> <span class="fn">list_users</span>(db: Session = Depends(get_db)):
+    <span class="kw">return</span> db.query(User).all()
+
+<span class="cmt"># Dependency with parameters</span>
+<span class="kw">def</span> <span class="fn">pagination</span>(skip: <span class="tp">int</span> = <span class="num">0</span>, limit: <span class="tp">int</span> = <span class="num">20</span>):
+    <span class="kw">return</span> {<span class="str">"skip"</span>: skip, <span class="str">"limit"</span>: limit}
+
+<span class="kw">@app</span>.get(<span class="str">"/items"</span>)
+<span class="kw">async def</span> <span class="fn">list_items</span>(pagination: <span class="tp">dict</span> = Depends(pagination)):
+    ...</code></pre></div>
+</div>
+
+<!-- AUTH -->
+<div class="section" id="auth">
+  <div class="section-header"><span class="icon">🔐</span><h2>Authentication (JWT)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> fastapi.security <span class="kw">import</span> OAuth2PasswordBearer, OAuth2PasswordRequestForm
+<span class="kw">from</span> jose <span class="kw">import</span> jwt
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta
+
+SECRET_KEY = <span class="str">"your-secret-key"</span>
+ALGORITHM = <span class="str">"HS256"</span>
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=<span class="str">"token"</span>)
+
+<span class="kw">def</span> <span class="fn">create_token</span>(data: <span class="tp">dict</span>, expires: timedelta = timedelta(hours=<span class="num">1</span>)):
+    payload = {**data, <span class="str">"exp"</span>: datetime.utcnow() + expires}
+    <span class="kw">return</span> jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+<span class="kw">async def</span> <span class="fn">get_current_user</span>(token: <span class="tp">str</span> = Depends(oauth2_scheme)):
+    <span class="kw">try</span>:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        user_id = payload.get(<span class="str">"sub"</span>)
+    <span class="kw">except</span>:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="num">401</span>, detail=<span class="str">"Invalid token"</span>)
+    <span class="kw">return</span> get_user(user_id)
+
+<span class="kw">@app</span>.get(<span class="str">"/me"</span>)
+<span class="kw">async def</span> <span class="fn">read_me</span>(user = Depends(get_current_user)):
+    <span class="kw">return</span> user</code></pre></div>
+</div>
+
+<!-- MIDDLEWARE -->
+<div class="section" id="middleware">
+  <div class="section-header"><span class="icon">🔗</span><h2>Middleware &amp; CORS</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> fastapi.middleware.cors <span class="kw">import</span> CORSMiddleware
+<span class="kw">import</span> time
+
+<span class="cmt"># CORS</span>
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[<span class="str">"http://localhost:3000"</span>],
+    allow_credentials=<span class="kw">True</span>,
+    allow_methods=[<span class="str">"*"</span>],
+    allow_headers=[<span class="str">"*"</span>],
+)
+
+<span class="cmt"># Custom middleware</span>
+<span class="kw">@app</span>.middleware(<span class="str">"http"</span>)
+<span class="kw">async def</span> <span class="fn">add_timing</span>(request, call_next):
+    start = time.perf_counter()
+    response = <span class="kw">await</span> call_next(request)
+    duration = time.perf_counter() - start
+    response.headers[<span class="str">"X-Process-Time"</span>] = <span class="tp">str</span>(duration)
+    <span class="kw">return</span> response</code></pre></div>
+</div>
+
+<!-- DB -->
+<div class="section" id="db">
+  <div class="section-header"><span class="icon">🗄️</span><h2>Database (SQLAlchemy)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># database.py</span>
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> sqlalchemy.orm <span class="kw">import</span> sessionmaker, DeclarativeBase
+
+DATABASE_URL = <span class="str">"postgresql://user:pass@localhost/mydb"</span>
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(bind=engine)
+
+<span class="kw">class</span> <span class="tp">Base</span>(DeclarativeBase): <span class="kw">pass</span>
+
+<span class="cmt"># models.py</span>
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> Column, Integer, String, DateTime, ForeignKey
+<span class="kw">from</span> sqlalchemy.orm <span class="kw">import</span> relationship, Mapped, mapped_column
+
+<span class="kw">class</span> <span class="tp">User</span>(Base):
+    __tablename__ = <span class="str">"users"</span>
+    id: Mapped[<span class="tp">int</span>] = mapped_column(primary_key=<span class="kw">True</span>)
+    name: Mapped[<span class="tp">str</span>] = mapped_column(String(<span class="num">100</span>))
+    email: Mapped[<span class="tp">str</span>] = mapped_column(String(<span class="num">255</span>), unique=<span class="kw">True</span>)
+    posts: Mapped[<span class="tp">list</span>[<span class="str">"Post"</span>]] = relationship(back_populates=<span class="str">"author"</span>)
+
+<span class="cmt"># CRUD operations</span>
+<span class="kw">def</span> <span class="fn">get_users</span>(db: Session, skip=<span class="num">0</span>, limit=<span class="num">20</span>):
+    <span class="kw">return</span> db.query(User).offset(skip).limit(limit).all()
+
+<span class="kw">def</span> <span class="fn">create_user</span>(db: Session, user: UserCreate):
+    db_user = User(**user.model_dump())
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    <span class="kw">return</span> db_user</code></pre></div>
+</div>
+
+<!-- BACKGROUND -->
+<div class="section" id="background">
+  <div class="section-header"><span class="icon">⏳</span><h2>Background Tasks</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> fastapi <span class="kw">import</span> BackgroundTasks
+
+<span class="kw">def</span> <span class="fn">send_email</span>(to: <span class="tp">str</span>, subject: <span class="tp">str</span>):
+    <span class="cmt"># slow operation</span>
+    time.sleep(<span class="num">3</span>)
+    print(<span class="str">f"Email sent to {to}"</span>)
+
+<span class="kw">@app</span>.post(<span class="str">"/users"</span>)
+<span class="kw">async def</span> <span class="fn">create_user</span>(user: UserCreate, bg: BackgroundTasks):
+    <span class="cmt"># ... create user</span>
+    bg.add_task(send_email, user.email, <span class="str">"Welcome!"</span>)
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"created"</span>}</code></pre></div>
+</div>
+
+<!-- WEBSOCKET -->
+<div class="section" id="websocket">
+  <div class="section-header"><span class="icon">🔌</span><h2>WebSockets</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> fastapi <span class="kw">import</span> WebSocket
+
+<span class="kw">@app</span>.websocket(<span class="str">"/ws"</span>)
+<span class="kw">async def</span> <span class="fn">websocket_endpoint</span>(ws: WebSocket):
+    <span class="kw">await</span> ws.accept()
+    <span class="kw">try</span>:
+        <span class="kw">while True</span>:
+            data = <span class="kw">await</span> ws.receive_text()
+            <span class="kw">await</span> ws.send_text(<span class="str">f"Echo: {data}"</span>)
+    <span class="kw">except</span>:
+        <span class="kw">await</span> ws.close()</code></pre></div>
+</div>
+
+<!-- TESTING -->
+<div class="section" id="testing">
+  <div class="section-header"><span class="icon">🧪</span><h2>Testing</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># uv add --dev httpx pytest</span>
+<span class="kw">from</span> fastapi.testclient <span class="kw">import</span> TestClient
+<span class="kw">from</span> httpx <span class="kw">import</span> AsyncClient, ASGITransport
+<span class="kw">import</span> pytest
+
+<span class="cmt"># Sync testing</span>
+client = TestClient(app)
+
+<span class="kw">def</span> <span class="fn">test_read_root</span>():
+    response = client.get(<span class="str">"/"</span>)
+    <span class="kw">assert</span> response.status_code == <span class="num">200</span>
+    <span class="kw">assert</span> response.json() == {<span class="str">"message"</span>: <span class="str">"Hello World"</span>}
+
+<span class="kw">def</span> <span class="fn">test_create_user</span>():
+    response = client.post(<span class="str">"/users"</span>, json={
+        <span class="str">"name"</span>: <span class="str">"Alice"</span>, <span class="str">"email"</span>: <span class="str">"a@b.com"</span>, <span class="str">"age"</span>: <span class="num">30</span>
+    })
+    <span class="kw">assert</span> response.status_code == <span class="num">201</span>
+
+<span class="cmt"># Async testing</span>
+<span class="kw">@pytest</span>.mark.anyio
+<span class="kw">async def</span> <span class="fn">test_async</span>():
+    transport = ASGITransport(app=app)
+    <span class="kw">async with</span> AsyncClient(transport=transport, base_url=<span class="str">"http://test"</span>) <span class="kw">as</span> ac:
+        resp = <span class="kw">await</span> ac.get(<span class="str">"/"</span>)
+        <span class="kw">assert</span> resp.status_code == <span class="num">200</span></code></pre></div>
+</div>
+
+<!-- DEPLOY -->
+<div class="section" id="deploy">
+  <div class="section-header"><span class="icon">🚀</span><h2>Deployment</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Dockerfile (with uv)</span>
+FROM python:<span class="num">3.12</span>-slim
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+WORKDIR /app
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev
+COPY . .
+CMD [<span class="str">"uv"</span>, <span class="str">"run"</span>, <span class="str">"fastapi"</span>, <span class="str">"run"</span>, <span class="str">"--host"</span>, <span class="str">"0.0.0.0"</span>]
+
+<span class="cmt"># Production with gunicorn</span>
+uv add gunicorn
+gunicorn app.main:app -w <span class="num">4</span> -k uvicorn.workers.UvicornWorker</code></pre></div>
+</div>
+
+</div>
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>FastAPI &amp; UV Cheatsheet · 2026</footer>
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
+const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
+const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
+</script>
+</body>
+</html>

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ruby Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ Ruby</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+<div class="container">
+<div class="hero">
+  <h1>Ruby Cheatsheet</h1>
+  <p class="subtitle">Variables, data types, collections, blocks, OOP, modules, gems &amp; Rails essentials</p>
+  <span class="badge">Language</span>
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Filter sections…" autocomplete="off" />
+    <button class="search-clear" id="searchClear">&times;</button>
+  </div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#basics">Basics &amp; Types</a>
+    <a href="#strings">Strings</a>
+    <a href="#arrays">Arrays</a>
+    <a href="#hashes">Hashes</a>
+    <a href="#control">Control Flow</a>
+    <a href="#methods">Methods &amp; Blocks</a>
+    <a href="#oop">OOP</a>
+    <a href="#modules">Modules &amp; Mixins</a>
+    <a href="#enumerable">Enumerable</a>
+    <a href="#fileio">File I/O</a>
+    <a href="#error">Error Handling</a>
+    <a href="#gems">Gems &amp; Bundler</a>
+    <a href="#rails">Rails Essentials</a>
+  </div>
+</div>
+
+<!-- BASICS -->
+<div class="section" id="basics">
+  <div class="section-header"><span class="icon">💎</span><h2>Basics &amp; Types</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Variables</span>
+name = <span class="str">"Alice"</span>        <span class="cmt"># local</span>
+@name = <span class="str">"Alice"</span>       <span class="cmt"># instance variable</span>
+@@count = <span class="num">0</span>           <span class="cmt"># class variable</span>
+$debug = <span class="kw">true</span>         <span class="cmt"># global variable</span>
+NAME = <span class="str">"constant"</span>     <span class="cmt"># constant</span>
+
+<span class="cmt"># Data types</span>
+age = <span class="num">25</span>              <span class="cmt"># Integer</span>
+pi = <span class="num">3.14</span>             <span class="cmt"># Float</span>
+name = <span class="str">"Alice"</span>        <span class="cmt"># String</span>
+sym = <span class="str">:active</span>         <span class="cmt"># Symbol (immutable, fast comparisons)</span>
+flag = <span class="kw">true</span>           <span class="cmt"># Boolean (TrueClass/FalseClass)</span>
+nothing = <span class="kw">nil</span>         <span class="cmt"># NilClass</span>
+arr = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]      <span class="cmt"># Array</span>
+hash = { <span class="str">a:</span> <span class="num">1</span> }      <span class="cmt"># Hash</span>
+range = (<span class="num">1</span>..<span class="num">10</span>)       <span class="cmt"># Range</span>
+
+<span class="cmt"># String interpolation &amp; conversion</span>
+<span class="str">"Hello #{name}, age #{age}"</span>
+age.to_s       <span class="cmt"># to string</span>
+<span class="str">"42"</span>.to_i      <span class="cmt"># to integer</span>
+<span class="str">"3.14"</span>.to_f    <span class="cmt"># to float</span>
+name.to_sym    <span class="cmt"># to symbol</span>
+
+<span class="cmt"># Type checking</span>
+name.is_a?(String)   <span class="cmt"># => true</span>
+name.<span class="kw">class</span>            <span class="cmt"># => String</span>
+name.respond_to?(:upcase)  <span class="cmt"># duck typing</span></code></pre></div>
+</div>
+
+<!-- STRINGS -->
+<div class="section" id="strings">
+  <div class="section-header"><span class="icon">📝</span><h2>Strings</h2></div>
+  <div class="code-wrapper"><pre><code>s = <span class="str">"Hello, World!"</span>
+
+<span class="cmt"># Common methods</span>
+s.length              <span class="cmt"># => 13</span>
+s.upcase              <span class="cmt"># => "HELLO, WORLD!"</span>
+s.downcase            <span class="cmt"># => "hello, world!"</span>
+s.capitalize          <span class="cmt"># => "Hello, world!"</span>
+s.reverse             <span class="cmt"># => "!dlroW ,olleH"</span>
+s.strip               <span class="cmt"># trim whitespace</span>
+s.include?(<span class="str">"World"</span>)   <span class="cmt"># => true</span>
+s.gsub(<span class="str">"World"</span>, <span class="str">"Ruby"</span>)  <span class="cmt"># => "Hello, Ruby!"</span>
+s.split(<span class="str">", "</span>)          <span class="cmt"># => ["Hello", "World!"]</span>
+s.chars               <span class="cmt"># => ["H","e","l","l","o",...]</span>
+s[<span class="num">0</span>..<span class="num">4</span>]               <span class="cmt"># => "Hello" (slicing)</span>
+s.freeze              <span class="cmt"># make immutable</span>
+
+<span class="cmt"># Heredoc</span>
+text = &lt;&lt;~HEREDOC
+  This is a
+  multi-line string
+HEREDOC</code></pre></div>
+</div>
+
+<!-- ARRAYS -->
+<div class="section" id="arrays">
+  <div class="section-header"><span class="icon">📦</span><h2>Arrays</h2></div>
+  <div class="code-wrapper"><pre><code>arr = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+
+<span class="cmt"># Access</span>
+arr[<span class="num">0</span>]            <span class="cmt"># => 1</span>
+arr[-<span class="num">1</span>]           <span class="cmt"># => 5 (last)</span>
+arr[<span class="num">1</span>..<span class="num">3</span>]          <span class="cmt"># => [2, 3, 4]</span>
+arr.first(<span class="num">2</span>)       <span class="cmt"># => [1, 2]</span>
+arr.last            <span class="cmt"># => 5</span>
+
+<span class="cmt"># Modify</span>
+arr.push(<span class="num">6</span>)        <span class="cmt"># or arr << 6</span>
+arr.pop             <span class="cmt"># remove last</span>
+arr.unshift(<span class="num">0</span>)     <span class="cmt"># add to front</span>
+arr.shift           <span class="cmt"># remove first</span>
+arr.insert(<span class="num">2</span>, <span class="num">99</span>)  <span class="cmt"># insert at index</span>
+arr.delete(<span class="num">3</span>)      <span class="cmt"># delete value</span>
+arr.flatten         <span class="cmt"># flatten nested arrays</span>
+arr.compact         <span class="cmt"># remove nils</span>
+arr.uniq            <span class="cmt"># remove duplicates</span>
+arr.sort            <span class="cmt"># sort ascending</span>
+arr.reverse         <span class="cmt"># reverse</span>
+
+<span class="cmt"># Iterate &amp; Transform</span>
+arr.each { |x| puts x }
+arr.map { |x| x * <span class="num">2</span> }       <span class="cmt"># => [2,4,6,8,10]</span>
+arr.select { |x| x > <span class="num">3</span> }     <span class="cmt"># => [4, 5]</span>
+arr.reject { |x| x > <span class="num">3</span> }     <span class="cmt"># => [1, 2, 3]</span>
+arr.reduce(<span class="num">0</span>) { |sum, x| sum + x }  <span class="cmt"># => 15</span>
+arr.any? { |x| x > <span class="num">4</span> }       <span class="cmt"># => true</span>
+arr.all? { |x| x > <span class="num">0</span> }       <span class="cmt"># => true</span>
+arr.min / arr.max / arr.sum</code></pre></div>
+</div>
+
+<!-- HASHES -->
+<div class="section" id="hashes">
+  <div class="section-header"><span class="icon">🗂️</span><h2>Hashes</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Symbol keys (modern syntax)</span>
+user = { name: <span class="str">"Alice"</span>, age: <span class="num">30</span>, role: <span class="str">"admin"</span> }
+
+<span class="cmt"># Access</span>
+user[<span class="str">:name</span>]                   <span class="cmt"># => "Alice"</span>
+user.fetch(<span class="str">:name</span>, <span class="str">"default"</span>)  <span class="cmt"># with default</span>
+user.keys / user.values        <span class="cmt"># arrays of keys/values</span>
+user.key?(<span class="str">:age</span>)                <span class="cmt"># => true</span>
+user.value?(<span class="str">"Alice"</span>)           <span class="cmt"># => true</span>
+
+<span class="cmt"># Modify</span>
+user[<span class="str">:email</span>] = <span class="str">"a@b.com"</span>     <span class="cmt"># add/update</span>
+user.delete(<span class="str">:role</span>)             <span class="cmt"># remove key</span>
+user.merge({ city: <span class="str">"NYC"</span> })    <span class="cmt"># merge hashes</span>
+
+<span class="cmt"># Iterate</span>
+user.each { |k, v| puts <span class="str">"#{k}: #{v}"</span> }
+user.map { |k, v| [k, v.to_s] }.to_h
+user.select { |k, v| v.is_a?(String) }
+
+<span class="cmt"># Default values</span>
+counts = Hash.new(<span class="num">0</span>)
+counts[<span class="str">:missing</span>]  <span class="cmt"># => 0 (instead of nil)</span></code></pre></div>
+</div>
+
+<!-- CONTROL FLOW -->
+<div class="section" id="control">
+  <div class="section-header"><span class="icon">🔀</span><h2>Control Flow</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># if / elsif / else</span>
+<span class="kw">if</span> age >= <span class="num">18</span>
+  puts <span class="str">"adult"</span>
+<span class="kw">elsif</span> age >= <span class="num">13</span>
+  puts <span class="str">"teen"</span>
+<span class="kw">else</span>
+  puts <span class="str">"child"</span>
+<span class="kw">end</span>
+
+<span class="cmt"># Inline / ternary</span>
+puts <span class="str">"adult"</span> <span class="kw">if</span> age >= <span class="num">18</span>
+status = age >= <span class="num">18</span> ? <span class="str">"adult"</span> : <span class="str">"minor"</span>
+
+<span class="cmt"># unless (opposite of if)</span>
+puts <span class="str">"allowed"</span> <span class="kw">unless</span> banned
+
+<span class="cmt"># case / when</span>
+<span class="kw">case</span> role
+<span class="kw">when</span> <span class="str">"admin"</span>  <span class="kw">then</span> puts <span class="str">"full access"</span>
+<span class="kw">when</span> <span class="str">"user"</span>   <span class="kw">then</span> puts <span class="str">"limited"</span>
+<span class="kw">else</span>            puts <span class="str">"guest"</span>
+<span class="kw">end</span>
+
+<span class="cmt"># Loops</span>
+<span class="num">5</span>.times { |i| puts i }
+(<span class="num">1</span>..<span class="num">5</span>).each { |i| puts i }
+<span class="kw">while</span> x < <span class="num">10</span>; x += <span class="num">1</span>; <span class="kw">end</span>
+<span class="kw">until</span> x >= <span class="num">10</span>; x += <span class="num">1</span>; <span class="kw">end</span>
+<span class="kw">loop</span> { <span class="kw">break</span> <span class="kw">if</span> done }
+<span class="kw">next</span>    <span class="cmt"># skip iteration (like continue)</span>
+<span class="kw">break</span>   <span class="cmt"># exit loop</span></code></pre></div>
+</div>
+
+<!-- METHODS & BLOCKS -->
+<div class="section" id="methods">
+  <div class="section-header"><span class="icon">🔧</span><h2>Methods &amp; Blocks</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Method definition</span>
+<span class="kw">def</span> <span class="fn">greet</span>(name, greeting = <span class="str">"Hello"</span>)
+  <span class="str">"#{greeting}, #{name}!"</span>
+<span class="kw">end</span>
+greet(<span class="str">"Alice"</span>)           <span class="cmt"># => "Hello, Alice!"</span>
+
+<span class="cmt"># Splat args</span>
+<span class="kw">def</span> <span class="fn">sum</span>(*nums)
+  nums.reduce(<span class="num">0</span>, :+)
+<span class="kw">end</span>
+
+<span class="cmt"># Keyword args</span>
+<span class="kw">def</span> <span class="fn">create_user</span>(name:, age:, role: <span class="str">"user"</span>)
+  { name: name, age: age, role: role }
+<span class="kw">end</span>
+create_user(name: <span class="str">"Alice"</span>, age: <span class="num">30</span>)
+
+<span class="cmt"># Blocks, Procs, Lambdas</span>
+[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>].each { |x| puts x }      <span class="cmt"># block (inline)</span>
+[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>].each <span class="kw">do</span> |x|              <span class="cmt"># block (multi-line)</span>
+  puts x
+<span class="kw">end</span>
+
+square = <span class="kw">Proc</span>.new { |x| x ** <span class="num">2</span> }
+square.call(<span class="num">5</span>)                      <span class="cmt"># => 25</span>
+
+multiply = ->(a, b) { a * b }       <span class="cmt"># lambda</span>
+multiply.call(<span class="num">3</span>, <span class="num">4</span>)                 <span class="cmt"># => 12</span>
+
+<span class="cmt"># yield to block</span>
+<span class="kw">def</span> <span class="fn">wrap</span>
+  puts <span class="str">"before"</span>
+  <span class="kw">yield</span>
+  puts <span class="str">"after"</span>
+<span class="kw">end</span>
+wrap { puts <span class="str">"inside"</span> }</code></pre></div>
+</div>
+
+<!-- OOP -->
+<div class="section" id="oop">
+  <div class="section-header"><span class="icon">🏗️</span><h2>OOP</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">class</span> <span class="tp">Animal</span>
+  attr_accessor <span class="str">:name</span>, <span class="str">:sound</span>   <span class="cmt"># getter + setter</span>
+  attr_reader <span class="str">:species</span>           <span class="cmt"># getter only</span>
+
+  <span class="kw">def</span> <span class="fn">initialize</span>(name, species)
+    @name = name
+    @species = species
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">speak</span>
+    <span class="str">"#{@name} says #{@sound}"</span>
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">to_s</span>
+    <span class="str">"#{@name} (#{@species})"</span>
+  <span class="kw">end</span>
+
+  <span class="cmt"># Class method</span>
+  <span class="kw">def</span> <span class="kw">self</span>.<span class="fn">info</span>
+    <span class="str">"I am the Animal class"</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="cmt"># Inheritance</span>
+<span class="kw">class</span> <span class="tp">Dog</span> < <span class="tp">Animal</span>
+  <span class="kw">def</span> <span class="fn">initialize</span>(name)
+    <span class="kw">super</span>(name, <span class="str">"Canine"</span>)
+    @sound = <span class="str">"Woof!"</span>
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+rex = Dog.new(<span class="str">"Rex"</span>)
+rex.speak  <span class="cmt"># => "Rex says Woof!"</span></code></pre></div>
+</div>
+
+<!-- MODULES -->
+<div class="section" id="modules">
+  <div class="section-header"><span class="icon">📦</span><h2>Modules &amp; Mixins</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Module as namespace</span>
+<span class="kw">module</span> <span class="tp">Utils</span>
+  <span class="kw">def</span> <span class="kw">self</span>.<span class="fn">format_date</span>(date)
+    date.strftime(<span class="str">"%Y-%m-%d"</span>)
+  <span class="kw">end</span>
+<span class="kw">end</span>
+Utils.format_date(Time.now)
+
+<span class="cmt"># Module as mixin (shared behavior)</span>
+<span class="kw">module</span> <span class="tp">Printable</span>
+  <span class="kw">def</span> <span class="fn">print_info</span>
+    puts to_s
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="kw">class</span> <span class="tp">User</span>
+  <span class="kw">include</span> Printable   <span class="cmt"># instance methods</span>
+  <span class="cmt"># extend Printable  # class methods</span>
+<span class="kw">end</span></code></pre></div>
+</div>
+
+<!-- ENUMERABLE -->
+<div class="section" id="enumerable">
+  <div class="section-header"><span class="icon">🔄</span><h2>Enumerable</h2></div>
+  <div class="code-wrapper"><pre><code>nums = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>, <span class="num">9</span>, <span class="num">2</span>, <span class="num">6</span>]
+
+nums.map { |x| x * <span class="num">2</span> }            <span class="cmt"># [6,2,8,2,10,18,4,12]</span>
+nums.select(&amp;:even?)               <span class="cmt"># [4, 2, 6]</span>
+nums.reject(&amp;:odd?)                <span class="cmt"># [4, 2, 6]</span>
+nums.reduce(:+)                    <span class="cmt"># 31</span>
+nums.sort                          <span class="cmt"># [1,1,2,3,4,5,6,9]</span>
+nums.sort_by { |x| -x }           <span class="cmt"># descending</span>
+nums.group_by(&amp;:even?)             <span class="cmt"># {false=>[3,1,1,5,9], true=>[4,2,6]}</span>
+nums.count { |x| x > <span class="num">3</span> }          <span class="cmt"># 4</span>
+nums.flat_map { |x| [x, x*<span class="num">2</span>] }    <span class="cmt"># flatten mapped arrays</span>
+nums.each_with_index { |x, i| }    <span class="cmt"># with index</span>
+nums.each_slice(<span class="num">3</span>).to_a            <span class="cmt"># chunk into groups</span>
+nums.zip([<span class="str">"a"</span>,<span class="str">"b"</span>,<span class="str">"c"</span>])            <span class="cmt"># pair elements</span>
+nums.tally                          <span class="cmt"># {3=>1,1=>2,4=>1,...}</span>
+nums.min_by { |x| x }
+nums.max_by { |x| x }
+nums.find { |x| x > <span class="num">4</span> }            <span class="cmt"># first match</span></code></pre></div>
+</div>
+
+<!-- FILE I/O -->
+<div class="section" id="fileio">
+  <div class="section-header"><span class="icon">📁</span><h2>File I/O</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Read entire file</span>
+content = File.read(<span class="str">"data.txt"</span>)
+lines = File.readlines(<span class="str">"data.txt"</span>, chomp: <span class="kw">true</span>)
+
+<span class="cmt"># Write file</span>
+File.write(<span class="str">"out.txt"</span>, <span class="str">"Hello\nWorld"</span>)
+
+<span class="cmt"># Append</span>
+File.open(<span class="str">"log.txt"</span>, <span class="str">"a"</span>) { |f| f.puts <span class="str">"new line"</span> }
+
+<span class="cmt"># Read line by line (memory efficient)</span>
+File.foreach(<span class="str">"big.txt"</span>) { |line| puts line }
+
+<span class="cmt"># JSON</span>
+<span class="kw">require</span> <span class="str">'json'</span>
+data = JSON.parse(File.read(<span class="str">"data.json"</span>))
+File.write(<span class="str">"out.json"</span>, JSON.pretty_generate(data))</code></pre></div>
+</div>
+
+<!-- ERROR HANDLING -->
+<div class="section" id="error">
+  <div class="section-header"><span class="icon">⚠️</span><h2>Error Handling</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">begin</span>
+  result = <span class="num">10</span> / <span class="num">0</span>
+<span class="kw">rescue</span> ZeroDivisionError => e
+  puts <span class="str">"Error: #{e.message}"</span>
+<span class="kw">rescue</span> StandardError => e
+  puts <span class="str">"General error: #{e.message}"</span>
+<span class="kw">ensure</span>
+  puts <span class="str">"always runs"</span>
+<span class="kw">end</span>
+
+<span class="cmt"># Custom exception</span>
+<span class="kw">class</span> <span class="tp">NotFoundError</span> < StandardError; <span class="kw">end</span>
+<span class="kw">raise</span> NotFoundError, <span class="str">"User not found"</span>
+
+<span class="cmt"># Retry</span>
+attempts = <span class="num">0</span>
+<span class="kw">begin</span>
+  attempts += <span class="num">1</span>
+  risky_operation
+<span class="kw">rescue</span>
+  <span class="kw">retry</span> <span class="kw">if</span> attempts < <span class="num">3</span>
+<span class="kw">end</span></code></pre></div>
+</div>
+
+<!-- GEMS -->
+<div class="section" id="gems">
+  <div class="section-header"><span class="icon">📦</span><h2>Gems &amp; Bundler</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Install a gem</span>
+gem install rails
+gem install nokogiri
+
+<span class="cmt"># Gemfile (for Bundler)</span>
+source <span class="str">"https://rubygems.org"</span>
+gem <span class="str">"rails"</span>, <span class="str">"~> 7.1"</span>
+gem <span class="str">"pg"</span>
+gem <span class="str">"puma"</span>
+gem <span class="str">"redis"</span>
+
+group <span class="str">:development</span>, <span class="str">:test</span> <span class="kw">do</span>
+  gem <span class="str">"rspec-rails"</span>
+  gem <span class="str">"rubocop"</span>
+<span class="kw">end</span>
+
+<span class="cmt"># Bundle commands</span>
+bundle install         <span class="cmt"># install deps</span>
+bundle update          <span class="cmt"># update gems</span>
+bundle exec rails s    <span class="cmt"># run with bundled gems</span></code></pre></div>
+</div>
+
+<!-- RAILS ESSENTIALS -->
+<div class="section" id="rails">
+  <div class="section-header"><span class="icon">🛤️</span><h2>Rails Essentials</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Create app</span>
+rails new myapp --database=postgresql --api
+
+<span class="cmt"># Generate scaffold</span>
+rails generate scaffold User name:string email:string age:integer
+rails db:migrate
+
+<span class="cmt"># Routes (config/routes.rb)</span>
+Rails.application.routes.draw <span class="kw">do</span>
+  resources <span class="str">:users</span>          <span class="cmt"># RESTful routes</span>
+  get <span class="str">"/about"</span>, to: <span class="str">"pages#about"</span>
+  root <span class="str">"pages#home"</span>
+<span class="kw">end</span>
+
+<span class="cmt"># Controller</span>
+<span class="kw">class</span> <span class="tp">UsersController</span> < ApplicationController
+  <span class="kw">def</span> <span class="fn">index</span>
+    @users = User.all
+    render json: @users
+  <span class="kw">end</span>
+
+  <span class="kw">def</span> <span class="fn">create</span>
+    @user = User.new(user_params)
+    <span class="kw">if</span> @user.save
+      render json: @user, status: <span class="str">:created</span>
+    <span class="kw">else</span>
+      render json: @user.errors, status: <span class="str">:unprocessable_entity</span>
+    <span class="kw">end</span>
+  <span class="kw">end</span>
+
+  <span class="kw">private</span>
+  <span class="kw">def</span> <span class="fn">user_params</span>
+    params.require(<span class="str">:user</span>).permit(<span class="str">:name</span>, <span class="str">:email</span>, <span class="str">:age</span>)
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="cmt"># Model (Active Record)</span>
+<span class="kw">class</span> <span class="tp">User</span> < ApplicationRecord
+  has_many <span class="str">:posts</span>
+  validates <span class="str">:email</span>, presence: <span class="kw">true</span>, uniqueness: <span class="kw">true</span>
+  scope <span class="str">:active</span>, -> { where(active: <span class="kw">true</span>) }
+<span class="kw">end</span>
+
+<span class="cmt"># Active Record queries</span>
+User.all / User.find(<span class="num">1</span>) / User.find_by(email: <span class="str">"a@b.com"</span>)
+User.where(role: <span class="str">"admin"</span>).order(created_at: <span class="str">:desc</span>).limit(<span class="num">10</span>)
+User.pluck(<span class="str">:email</span>)  <span class="cmt"># array of emails only</span></code></pre></div>
+</div>
+
+</div>
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>Ruby Cheatsheet · 2026</footer>
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
+const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
+const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');
+si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
+</script>
+</body>
+</html>

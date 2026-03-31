@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Frameworks Cheatsheet — Django & Flask</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ Django &amp; Flask</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+<div class="container">
+<div class="hero">
+  <h1>Python Frameworks — Django &amp; Flask</h1>
+  <p class="subtitle">Routing, models, ORM, templates, auth, REST APIs &amp; deployment for both frameworks</p>
+  <span class="badge">Framework / Backend</span>
+  <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Filter sections…" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<div class="toc"><h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#django-setup">Django: Setup</a>
+    <a href="#django-models">Django: Models &amp; ORM</a>
+    <a href="#django-views">Django: Views &amp; URLs</a>
+    <a href="#django-forms">Django: Forms &amp; Validation</a>
+    <a href="#django-auth">Django: Auth</a>
+    <a href="#django-drf">Django REST Framework</a>
+    <a href="#flask-setup">Flask: Setup</a>
+    <a href="#flask-routes">Flask: Routing &amp; Blueprints</a>
+    <a href="#flask-db">Flask: Database (SQLAlchemy)</a>
+    <a href="#flask-auth">Flask: Auth &amp; JWT</a>
+    <a href="#flask-testing">Flask: Testing</a>
+    <a href="#comparison">Django vs Flask</a>
+  </div>
+</div>
+
+<!-- DJANGO SETUP -->
+<div class="section" id="django-setup">
+  <div class="section-header"><span class="icon">⚙️</span><h2>Django: Project Setup</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Install &amp; create project</span>
+pip install django
+django-admin startproject myproject .
+python manage.py startapp users
+python manage.py startapp posts
+
+<span class="cmt"># settings.py — add apps</span>
+INSTALLED_APPS = [
+    ...
+    <span class="str">"users"</span>,
+    <span class="str">"posts"</span>,
+    <span class="str">"rest_framework"</span>,  <span class="cmt"># if using DRF</span>
+]
+
+<span class="cmt"># Run</span>
+python manage.py runserver        <span class="cmt"># http://127.0.0.1:8000</span>
+python manage.py migrate          <span class="cmt"># apply migrations</span>
+python manage.py makemigrations   <span class="cmt"># create migrations</span>
+python manage.py createsuperuser  <span class="cmt"># admin user</span>
+python manage.py shell            <span class="cmt"># interactive shell</span></code></pre></div>
+</div>
+
+<!-- DJANGO MODELS -->
+<div class="section" id="django-models">
+  <div class="section-header"><span class="icon">🗄️</span><h2>Django: Models &amp; ORM</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> django.db <span class="kw">import</span> models
+
+<span class="kw">class</span> <span class="tp">User</span>(models.Model):
+    name = models.CharField(max_length=<span class="num">100</span>)
+    email = models.EmailField(unique=<span class="kw">True</span>)
+    is_active = models.BooleanField(default=<span class="kw">True</span>)
+    created_at = models.DateTimeField(auto_now_add=<span class="kw">True</span>)
+
+    <span class="kw">class</span> <span class="tp">Meta</span>:
+        ordering = [<span class="str">"-created_at"</span>]
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="kw">self</span>):
+        <span class="kw">return</span> <span class="kw">self</span>.name
+
+<span class="kw">class</span> <span class="tp">Post</span>(models.Model):
+    title = models.CharField(max_length=<span class="num">200</span>)
+    content = models.TextField(blank=<span class="kw">True</span>)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name=<span class="str">"posts"</span>)
+    tags = models.ManyToManyField(<span class="str">"Tag"</span>, blank=<span class="kw">True</span>)
+    published = models.BooleanField(default=<span class="kw">False</span>)
+
+<span class="kw">class</span> <span class="tp">Tag</span>(models.Model):
+    name = models.CharField(max_length=<span class="num">50</span>, unique=<span class="kw">True</span>)
+
+<span class="cmt"># ── ORM Queries ──</span>
+User.objects.all()
+User.objects.filter(is_active=<span class="kw">True</span>)
+User.objects.exclude(name=<span class="str">"Admin"</span>)
+User.objects.get(pk=<span class="num">1</span>)                 <span class="cmt"># raises DoesNotExist</span>
+User.objects.filter(name__icontains=<span class="str">"ali"</span>)
+User.objects.filter(created_at__gte=<span class="str">"2024-01-01"</span>)
+User.objects.order_by(<span class="str">"-created_at"</span>)[:<span class="num">10</span>]
+User.objects.values(<span class="str">"name"</span>, <span class="str">"email"</span>)  <span class="cmt"># dict queryset</span>
+User.objects.count()
+User.objects.exists()
+
+<span class="cmt"># Create / Update / Delete</span>
+user = User.objects.create(name=<span class="str">"Alice"</span>, email=<span class="str">"a@b.com"</span>)
+user.name = <span class="str">"Updated"</span>
+user.save()
+User.objects.filter(is_active=<span class="kw">False</span>).delete()
+
+<span class="cmt"># Aggregate</span>
+<span class="kw">from</span> django.db.models <span class="kw">import</span> Count, Avg, Q
+User.objects.aggregate(total=Count(<span class="str">"id"</span>))
+User.objects.annotate(post_count=Count(<span class="str">"posts"</span>))
+
+<span class="cmt"># Complex queries with Q</span>
+User.objects.filter(Q(name=<span class="str">"Alice"</span>) | Q(name=<span class="str">"Bob"</span>))
+
+<span class="cmt"># Select related (avoid N+1)</span>
+Post.objects.select_related(<span class="str">"author"</span>).all()         <span class="cmt"># FK join</span>
+Post.objects.prefetch_related(<span class="str">"tags"</span>).all()          <span class="cmt"># M2M</span></code></pre></div>
+</div>
+
+<!-- DJANGO VIEWS -->
+<div class="section" id="django-views">
+  <div class="section-header"><span class="icon">🌐</span><h2>Django: Views &amp; URLs</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># urls.py (project)</span>
+<span class="kw">from</span> django.urls <span class="kw">import</span> path, include
+urlpatterns = [
+    path(<span class="str">"admin/"</span>, admin.site.urls),
+    path(<span class="str">"api/"</span>, include(<span class="str">"users.urls"</span>)),
+]
+
+<span class="cmt"># users/urls.py</span>
+<span class="kw">from</span> django.urls <span class="kw">import</span> path
+<span class="kw">from</span> . <span class="kw">import</span> views
+urlpatterns = [
+    path(<span class="str">"users/"</span>, views.user_list, name=<span class="str">"user-list"</span>),
+    path(<span class="str">"users/&lt;int:pk&gt;/"</span>, views.user_detail, name=<span class="str">"user-detail"</span>),
+]
+
+<span class="cmt"># Function-based view</span>
+<span class="kw">from</span> django.http <span class="kw">import</span> JsonResponse
+<span class="kw">from</span> django.views.decorators.http <span class="kw">import</span> require_http_methods
+
+<span class="kw">@require_http_methods</span>([<span class="str">"GET"</span>])
+<span class="kw">def</span> <span class="fn">user_list</span>(request):
+    users = User.objects.values(<span class="str">"id"</span>, <span class="str">"name"</span>, <span class="str">"email"</span>)
+    <span class="kw">return</span> JsonResponse(<span class="fn">list</span>(users), safe=<span class="kw">False</span>)
+
+<span class="cmt"># Class-based view</span>
+<span class="kw">from</span> django.views <span class="kw">import</span> View
+<span class="kw">class</span> <span class="tp">UserDetailView</span>(View):
+    <span class="kw">def</span> <span class="fn">get</span>(<span class="kw">self</span>, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        <span class="kw">return</span> JsonResponse({<span class="str">"name"</span>: user.name})</code></pre></div>
+</div>
+
+<!-- DJANGO FORMS -->
+<div class="section" id="django-forms">
+  <div class="section-header"><span class="icon">📝</span><h2>Django: Forms &amp; Validation</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> django <span class="kw">import</span> forms
+
+<span class="kw">class</span> <span class="tp">UserForm</span>(forms.ModelForm):
+    <span class="kw">class</span> <span class="tp">Meta</span>:
+        model = User
+        fields = [<span class="str">"name"</span>, <span class="str">"email"</span>]
+
+    <span class="kw">def</span> <span class="fn">clean_email</span>(<span class="kw">self</span>):
+        email = <span class="kw">self</span>.cleaned_data[<span class="str">"email"</span>]
+        <span class="kw">if</span> <span class="kw">not</span> email.endswith(<span class="str">"@company.com"</span>):
+            <span class="kw">raise</span> forms.ValidationError(<span class="str">"Must be company email"</span>)
+        <span class="kw">return</span> email
+
+<span class="cmt"># In view</span>
+<span class="kw">def</span> <span class="fn">create_user</span>(request):
+    form = UserForm(request.POST)
+    <span class="kw">if</span> form.is_valid():
+        user = form.save()
+        <span class="kw">return</span> JsonResponse({<span class="str">"id"</span>: user.id})
+    <span class="kw">return</span> JsonResponse({<span class="str">"errors"</span>: form.errors}, status=<span class="num">400</span>)</code></pre></div>
+</div>
+
+<!-- DJANGO AUTH -->
+<div class="section" id="django-auth">
+  <div class="section-header"><span class="icon">🔐</span><h2>Django: Authentication</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> django.contrib.auth <span class="kw">import</span> authenticate, login, logout
+<span class="kw">from</span> django.contrib.auth.decorators <span class="kw">import</span> login_required
+<span class="kw">from</span> django.contrib.auth.models <span class="kw">import</span> User
+
+<span class="cmt"># Create user</span>
+user = User.objects.create_user(<span class="str">"alice"</span>, <span class="str">"alice@ex.com"</span>, <span class="str">"password123"</span>)
+
+<span class="cmt"># Authenticate</span>
+user = authenticate(request, username=<span class="str">"alice"</span>, password=<span class="str">"password123"</span>)
+<span class="kw">if</span> user:
+    login(request, user)
+
+<span class="cmt"># Protected view</span>
+<span class="kw">@login_required</span>
+<span class="kw">def</span> <span class="fn">profile</span>(request):
+    <span class="kw">return</span> JsonResponse({<span class="str">"user"</span>: request.user.username})
+
+<span class="cmt"># Custom user model (recommended)</span>
+<span class="kw">from</span> django.contrib.auth.models <span class="kw">import</span> AbstractUser
+
+<span class="kw">class</span> <span class="tp">CustomUser</span>(AbstractUser):
+    bio = models.TextField(blank=<span class="kw">True</span>)
+    avatar = models.URLField(blank=<span class="kw">True</span>)
+<span class="cmt"># settings.py: AUTH_USER_MODEL = "users.CustomUser"</span></code></pre></div>
+</div>
+
+<!-- DJANGO DRF -->
+<div class="section" id="django-drf">
+  <div class="section-header"><span class="icon">🚀</span><h2>Django REST Framework (DRF)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># pip install djangorestframework</span>
+<span class="kw">from</span> rest_framework <span class="kw">import</span> serializers, viewsets, routers
+
+<span class="cmt"># Serializer</span>
+<span class="kw">class</span> <span class="tp">UserSerializer</span>(serializers.ModelSerializer):
+    post_count = serializers.IntegerField(read_only=<span class="kw">True</span>)
+
+    <span class="kw">class</span> <span class="tp">Meta</span>:
+        model = User
+        fields = [<span class="str">"id"</span>, <span class="str">"name"</span>, <span class="str">"email"</span>, <span class="str">"post_count"</span>]
+
+<span class="cmt"># ViewSet (full CRUD auto)</span>
+<span class="kw">class</span> <span class="tp">UserViewSet</span>(viewsets.ModelViewSet):
+    queryset = User.objects.annotate(post_count=Count(<span class="str">"posts"</span>))
+    serializer_class = UserSerializer
+    filterset_fields = [<span class="str">"is_active"</span>]
+    search_fields = [<span class="str">"name"</span>, <span class="str">"email"</span>]
+    ordering_fields = [<span class="str">"created_at"</span>]
+
+<span class="cmt"># Router (auto URLs)</span>
+router = routers.DefaultRouter()
+router.register(<span class="str">"users"</span>, UserViewSet)
+<span class="cmt"># urlpatterns += router.urls</span>
+<span class="cmt"># GET /users/, POST /users/, GET /users/1/, PUT, PATCH, DELETE</span></code></pre></div>
+</div>
+
+<!-- FLASK SETUP -->
+<div class="section" id="flask-setup">
+  <div class="section-header"><span class="icon">🧪</span><h2>Flask: Setup &amp; Hello World</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># pip install flask</span>
+<span class="kw">from</span> flask <span class="kw">import</span> Flask, request, jsonify
+
+app = Flask(__name__)
+
+<span class="kw">@app.route</span>(<span class="str">"/"</span>)
+<span class="kw">def</span> <span class="fn">hello</span>():
+    <span class="kw">return</span> jsonify(message=<span class="str">"Hello, World!"</span>)
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    app.run(debug=<span class="kw">True</span>, port=<span class="num">5000</span>)
+
+<span class="cmt"># Project structure</span>
+<span class="cmt"># myapp/</span>
+<span class="cmt">#   __init__.py    (create_app factory)</span>
+<span class="cmt">#   models.py</span>
+<span class="cmt">#   routes/</span>
+<span class="cmt">#     users.py</span>
+<span class="cmt">#     posts.py</span>
+<span class="cmt">#   config.py</span></code></pre></div>
+</div>
+
+<!-- FLASK ROUTES -->
+<div class="section" id="flask-routes">
+  <div class="section-header"><span class="icon">🛤️</span><h2>Flask: Routing &amp; Blueprints</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># HTTP methods</span>
+<span class="kw">@app.route</span>(<span class="str">"/users"</span>, methods=[<span class="str">"GET"</span>])
+<span class="kw">def</span> <span class="fn">get_users</span>():
+    <span class="kw">return</span> jsonify(users)
+
+<span class="kw">@app.route</span>(<span class="str">"/users"</span>, methods=[<span class="str">"POST"</span>])
+<span class="kw">def</span> <span class="fn">create_user</span>():
+    data = request.get_json()
+    <span class="kw">return</span> jsonify(data), <span class="num">201</span>
+
+<span class="cmt"># URL parameters</span>
+<span class="kw">@app.route</span>(<span class="str">"/users/&lt;int:user_id&gt;"</span>)
+<span class="kw">def</span> <span class="fn">get_user</span>(user_id):
+    <span class="kw">return</span> jsonify(id=user_id)
+
+<span class="cmt"># Query params</span>
+<span class="kw">@app.route</span>(<span class="str">"/search"</span>)
+<span class="kw">def</span> <span class="fn">search</span>():
+    q = request.args.get(<span class="str">"q"</span>, <span class="str">""</span>)
+    page = request.args.get(<span class="str">"page"</span>, <span class="num">1</span>, type=<span class="tp">int</span>)
+    <span class="kw">return</span> jsonify(query=q, page=page)
+
+<span class="cmt"># ── Blueprints (modular routes) ──</span>
+<span class="cmt"># routes/users.py</span>
+<span class="kw">from</span> flask <span class="kw">import</span> Blueprint
+users_bp = Blueprint(<span class="str">"users"</span>, __name__, url_prefix=<span class="str">"/api/users"</span>)
+
+<span class="kw">@users_bp.route</span>(<span class="str">"/"</span>)
+<span class="kw">def</span> <span class="fn">list_users</span>():
+    <span class="kw">return</span> jsonify([])
+
+<span class="cmt"># __init__.py</span>
+<span class="kw">def</span> <span class="fn">create_app</span>():
+    app = Flask(__name__)
+    <span class="kw">from</span> .routes.users <span class="kw">import</span> users_bp
+    app.register_blueprint(users_bp)
+    <span class="kw">return</span> app</code></pre></div>
+</div>
+
+<!-- FLASK DB -->
+<div class="section" id="flask-db">
+  <div class="section-header"><span class="icon">🗄️</span><h2>Flask: Database (SQLAlchemy)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># pip install flask-sqlalchemy flask-migrate</span>
+<span class="kw">from</span> flask_sqlalchemy <span class="kw">import</span> SQLAlchemy
+<span class="kw">from</span> flask_migrate <span class="kw">import</span> Migrate
+
+db = SQLAlchemy()
+migrate = Migrate()
+
+<span class="kw">def</span> <span class="fn">create_app</span>():
+    app = Flask(__name__)
+    app.config[<span class="str">"SQLALCHEMY_DATABASE_URI"</span>] = <span class="str">"postgresql://user:pass@localhost/db"</span>
+    db.init_app(app)
+    migrate.init_app(app, db)
+    <span class="kw">return</span> app
+
+<span class="cmt"># Models</span>
+<span class="kw">class</span> <span class="tp">User</span>(db.Model):
+    id = db.Column(db.Integer, primary_key=<span class="kw">True</span>)
+    name = db.Column(db.String(<span class="num">100</span>), nullable=<span class="kw">False</span>)
+    email = db.Column(db.String(<span class="num">120</span>), unique=<span class="kw">True</span>)
+    posts = db.relationship(<span class="str">"Post"</span>, backref=<span class="str">"author"</span>, lazy=<span class="kw">True</span>)
+
+<span class="kw">class</span> <span class="tp">Post</span>(db.Model):
+    id = db.Column(db.Integer, primary_key=<span class="kw">True</span>)
+    title = db.Column(db.String(<span class="num">200</span>))
+    user_id = db.Column(db.Integer, db.ForeignKey(<span class="str">"user.id"</span>))
+
+<span class="cmt"># Migrations</span>
+<span class="cmt"># flask db init</span>
+<span class="cmt"># flask db migrate -m "initial"</span>
+<span class="cmt"># flask db upgrade</span>
+
+<span class="cmt"># Queries</span>
+User.query.all()
+User.query.filter_by(name=<span class="str">"Alice"</span>).first()
+User.query.filter(User.name.ilike(<span class="str">"%ali%"</span>)).all()
+
+user = User(name=<span class="str">"Bob"</span>, email=<span class="str">"bob@ex.com"</span>)
+db.session.add(user)
+db.session.commit()</code></pre></div>
+</div>
+
+<!-- FLASK AUTH -->
+<div class="section" id="flask-auth">
+  <div class="section-header"><span class="icon">🔐</span><h2>Flask: Auth &amp; JWT</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># pip install flask-jwt-extended</span>
+<span class="kw">from</span> flask_jwt_extended <span class="kw">import</span> (
+    JWTManager, create_access_token,
+    jwt_required, get_jwt_identity
+)
+
+app.config[<span class="str">"JWT_SECRET_KEY"</span>] = <span class="str">"super-secret"</span>
+jwt = JWTManager(app)
+
+<span class="kw">@app.route</span>(<span class="str">"/login"</span>, methods=[<span class="str">"POST"</span>])
+<span class="kw">def</span> <span class="fn">login</span>():
+    data = request.get_json()
+    user = User.query.filter_by(email=data[<span class="str">"email"</span>]).first()
+    <span class="kw">if</span> user <span class="kw">and</span> check_password_hash(user.password, data[<span class="str">"password"</span>]):
+        token = create_access_token(identity=user.id)
+        <span class="kw">return</span> jsonify(access_token=token)
+    <span class="kw">return</span> jsonify(error=<span class="str">"Invalid credentials"</span>), <span class="num">401</span>
+
+<span class="kw">@app.route</span>(<span class="str">"/profile"</span>)
+<span class="kw">@jwt_required</span>()
+<span class="kw">def</span> <span class="fn">profile</span>():
+    user_id = get_jwt_identity()
+    <span class="kw">return</span> jsonify(user_id=user_id)</code></pre></div>
+</div>
+
+<!-- FLASK TESTING -->
+<div class="section" id="flask-testing">
+  <div class="section-header"><span class="icon">🧪</span><h2>Flask: Testing</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> pytest
+<span class="kw">from</span> myapp <span class="kw">import</span> create_app
+
+<span class="kw">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">client</span>():
+    app = create_app()
+    app.config[<span class="str">"TESTING"</span>] = <span class="kw">True</span>
+    <span class="kw">with</span> app.test_client() <span class="kw">as</span> client:
+        <span class="kw">yield</span> client
+
+<span class="kw">def</span> <span class="fn">test_hello</span>(client):
+    response = client.get(<span class="str">"/"</span>)
+    <span class="kw">assert</span> response.status_code == <span class="num">200</span>
+    <span class="kw">assert</span> response.json[<span class="str">"message"</span>] == <span class="str">"Hello, World!"</span>
+
+<span class="kw">def</span> <span class="fn">test_create_user</span>(client):
+    response = client.post(<span class="str">"/api/users/"</span>,
+        json={<span class="str">"name"</span>: <span class="str">"Alice"</span>, <span class="str">"email"</span>: <span class="str">"a@b.com"</span>})
+    <span class="kw">assert</span> response.status_code == <span class="num">201</span></code></pre></div>
+</div>
+
+<!-- COMPARISON -->
+<div class="section" id="comparison">
+  <div class="section-header"><span class="icon">⚖️</span><h2>Django vs Flask</h2></div>
+  <div class="note tip">
+    <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem;">
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <th style="text-align:left; padding: 6px 8px;">Aspect</th>
+        <th style="text-align:left; padding: 6px 8px;">Django</th>
+        <th style="text-align:left; padding: 6px 8px;">Flask</th>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;">Philosophy</td>
+        <td style="padding: 4px 8px;">Batteries-included</td>
+        <td style="padding: 4px 8px;">Micro, pick your own</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;">ORM</td>
+        <td style="padding: 4px 8px;">Built-in (powerful)</td>
+        <td style="padding: 4px 8px;">SQLAlchemy (add-on)</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;">Admin Panel</td>
+        <td style="padding: 4px 8px;">Built-in (excellent)</td>
+        <td style="padding: 4px 8px;">Flask-Admin (add-on)</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;">Auth</td>
+        <td style="padding: 4px 8px;">Built-in</td>
+        <td style="padding: 4px 8px;">Flask-Login / JWT</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 8px;">Best For</td>
+        <td style="padding: 4px 8px;">Large apps, rapid dev</td>
+        <td style="padding: 4px 8px;">Microservices, APIs</td>
+      </tr>
+      <tr>
+        <td style="padding: 4px 8px;">Learning Curve</td>
+        <td style="padding: 4px 8px;">Steeper (more concepts)</td>
+        <td style="padding: 4px 8px;">Gentle (minimal API)</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+</div>
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>Python Frameworks Cheatsheet · 2026</footer>
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
+const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
+const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
+</script>
+</body>
+</html>

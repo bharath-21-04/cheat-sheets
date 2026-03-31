@@ -764,3 +764,107 @@ footer {
     background: rgba(248, 113, 113, 0.15);
     color: var(--accent5);
 }
+
+/* ===== Search / Filter ===== */
+.search-box {
+    position: relative;
+    max-width: 500px;
+    margin: 1.5rem auto 0;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.7rem 1.2rem 0.7rem 2.6rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    outline: none;
+    transition: all var(--transition);
+}
+
+.search-box input::placeholder {
+    color: var(--text-dim);
+}
+
+.search-box input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, .12);
+}
+
+.search-box .search-icon {
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    pointer-events: none;
+}
+
+.search-box .search-clear {
+    position: absolute;
+    right: 0.7rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.2rem;
+    line-height: 1;
+    display: none;
+    transition: color var(--transition);
+}
+
+.search-box .search-clear:hover {
+    color: var(--accent5);
+}
+
+.search-count {
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    margin-top: 0.5rem;
+}
+
+.section.search-hidden {
+    display: none !important;
+}
+
+.section .search-highlight {
+    background: rgba(250, 204, 21, .18);
+    border-radius: 2px;
+    padding: 0 1px;
+}
+
+/* Index search */
+.index-card.search-hidden {
+    display: none !important;
+}
+
+.index-section-title.search-hidden {
+    display: none !important;
+}
+
+/* ===== Additional Tag Types ===== */
+.tag-framework {
+    background: rgba(248, 113, 113, 0.1);
+    color: var(--accent5);
+    border: 1px solid rgba(248, 113, 113, 0.15);
+}
+
+.tag-ai {
+    background: rgba(250, 204, 21, 0.1);
+    color: var(--accent6);
+    border: 1px solid rgba(250, 204, 21, 0.15);
+}
+
+.tag-tool {
+    background: rgba(96, 165, 250, 0.1);
+    color: var(--accent);
+    border: 1px solid rgba(96, 165, 250, 0.15);
+}

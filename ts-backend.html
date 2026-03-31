@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TypeScript Backend Frameworks Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ TS Backend</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+<div class="container">
+<div class="hero">
+  <h1>TypeScript Backend Frameworks</h1>
+  <p class="subtitle">Express, Hono, Elysia, NestJS, tRPC, oRPC &amp; Bun — routes, middleware, type safety &amp; patterns</p>
+  <span class="badge">Framework / Backend</span>
+  <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Filter sections…" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<div class="toc"><h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#express">Express</a>
+    <a href="#hono">Hono</a>
+    <a href="#elysia">Elysia (Bun)</a>
+    <a href="#nestjs">NestJS</a>
+    <a href="#trpc">tRPC</a>
+    <a href="#orpc">oRPC</a>
+    <a href="#bun">Bun Runtime</a>
+    <a href="#comparison">Comparison</a>
+  </div>
+</div>
+
+<!-- EXPRESS -->
+<div class="section" id="express">
+  <div class="section-header"><span class="icon">🚂</span><h2>Express (with TypeScript)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// npm i express && npm i -D @types/express tsx</span>
+<span class="kw">import</span> express, { Request, Response, NextFunction } <span class="kw">from</span> <span class="str">"express"</span>;
+
+<span class="kw">const</span> app = express();
+app.use(express.json());
+
+<span class="cmt">// Typed route handler</span>
+<span class="kw">interface</span> <span class="tp">User</span> { id: <span class="tp">number</span>; name: <span class="tp">string</span>; email: <span class="tp">string</span>; }
+
+app.get(<span class="str">"/users"</span>, (req: Request, res: Response) => {
+  <span class="kw">const</span> page = Number(req.query.page) || <span class="num">1</span>;
+  res.json({ users: [], page });
+});
+
+app.post(<span class="str">"/users"</span>, (req: Request&lt;{}, {}, <span class="tp">Omit</span>&lt;User, <span class="str">"id"</span>&gt;&gt;, res) => {
+  <span class="kw">const</span> { name, email } = req.body;
+  res.status(<span class="num">201</span>).json({ id: <span class="num">1</span>, name, email });
+});
+
+app.get(<span class="str">"/users/:id"</span>, (req: Request&lt;{ id: <span class="tp">string</span> }&gt;, res) => {
+  <span class="kw">const</span> id = parseInt(req.params.id);
+  res.json({ id });
+});
+
+<span class="cmt">// Middleware</span>
+<span class="kw">const</span> <span class="fn">authMiddleware</span> = (req: Request, res: Response, next: NextFunction) => {
+  <span class="kw">const</span> token = req.headers.authorization;
+  <span class="kw">if</span> (!token) <span class="kw">return</span> res.status(<span class="num">401</span>).json({ error: <span class="str">"Unauthorized"</span> });
+  next();
+};
+
+app.use(<span class="str">"/api"</span>, authMiddleware);
+
+<span class="cmt">// Error handler</span>
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  res.status(<span class="num">500</span>).json({ error: err.message });
+});
+
+app.listen(<span class="num">3000</span>, () => console.log(<span class="str">"Express on :3000"</span>));</code></pre></div>
+</div>
+
+<!-- HONO -->
+<div class="section" id="hono">
+  <div class="section-header"><span class="icon">🔥</span><h2>Hono</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// npm i hono  |  Works on Node, Bun, Deno, CF Workers, Vercel Edge</span>
+<span class="kw">import</span> { Hono } <span class="kw">from</span> <span class="str">"hono"</span>;
+<span class="kw">import</span> { cors } <span class="kw">from</span> <span class="str">"hono/cors"</span>;
+<span class="kw">import</span> { jwt } <span class="kw">from</span> <span class="str">"hono/jwt"</span>;
+<span class="kw">import</span> { zValidator } <span class="kw">from</span> <span class="str">"@hono/zod-validator"</span>;
+<span class="kw">import</span> { z } <span class="kw">from</span> <span class="str">"zod"</span>;
+
+<span class="kw">const</span> app = <span class="kw">new</span> Hono();
+
+<span class="cmt">// Middleware</span>
+app.use(<span class="str">"*"</span>, cors());
+app.use(<span class="str">"/api/*"</span>, jwt({ secret: <span class="str">"my-secret"</span> }));
+
+<span class="cmt">// Routes with type-safe validation</span>
+<span class="kw">const</span> createUserSchema = z.object({
+  name: z.string().min(<span class="num">2</span>),
+  email: z.string().email(),
+});
+
+app.get(<span class="str">"/users"</span>, (c) => {
+  <span class="kw">const</span> page = c.req.query(<span class="str">"page"</span>) || <span class="str">"1"</span>;
+  <span class="kw">return</span> c.json({ users: [], page: Number(page) });
+});
+
+app.post(<span class="str">"/users"</span>, zValidator(<span class="str">"json"</span>, createUserSchema), (c) => {
+  <span class="kw">const</span> data = c.req.valid(<span class="str">"json"</span>);  <span class="cmt">// fully typed!</span>
+  <span class="kw">return</span> c.json({ id: <span class="num">1</span>, ...data }, <span class="num">201</span>);
+});
+
+app.get(<span class="str">"/users/:id"</span>, (c) => {
+  <span class="kw">const</span> id = c.req.param(<span class="str">"id"</span>);
+  <span class="kw">return</span> c.json({ id });
+});
+
+<span class="cmt">// Route groups</span>
+<span class="kw">const</span> api = <span class="kw">new</span> Hono();
+api.get(<span class="str">"/health"</span>, (c) => c.text(<span class="str">"OK"</span>));
+app.route(<span class="str">"/api"</span>, api);
+
+<span class="cmt">// Error handling</span>
+app.onError((err, c) => {
+  <span class="kw">return</span> c.json({ error: err.message }, <span class="num">500</span>);
+});
+
+<span class="kw">export default</span> app;  <span class="cmt">// for Bun/CF Workers</span>
+<span class="cmt">// Or: serve({ fetch: app.fetch, port: 3000 })</span></code></pre></div>
+</div>
+
+<!-- ELYSIA -->
+<div class="section" id="elysia">
+  <div class="section-header"><span class="icon">🦊</span><h2>Elysia (Bun-native)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// bun add elysia @elysiajs/swagger</span>
+<span class="kw">import</span> { Elysia, t } <span class="kw">from</span> <span class="str">"elysia"</span>;
+<span class="kw">import</span> { swagger } <span class="kw">from</span> <span class="str">"@elysiajs/swagger"</span>;
+
+<span class="kw">const</span> app = <span class="kw">new</span> Elysia()
+  .use(swagger())
+
+  <span class="cmt">// Type-safe route with validation</span>
+  .get(<span class="str">"/users"</span>, ({ query }) => {
+    <span class="kw">return</span> { users: [], page: query.page };
+  }, {
+    query: t.Object({ page: t.Number({ default: <span class="num">1</span> }) })
+  })
+
+  .post(<span class="str">"/users"</span>, ({ body }) => {
+    <span class="kw">return</span> { id: <span class="num">1</span>, ...body };
+  }, {
+    body: t.Object({
+      name: t.String({ minLength: <span class="num">2</span> }),
+      email: t.String({ format: <span class="str">"email"</span> }),
+    }),
+    response: t.Object({
+      id: t.Number(),
+      name: t.String(),
+      email: t.String(),
+    }),
+  })
+
+  .get(<span class="str">"/users/:id"</span>, ({ params }) => {
+    <span class="kw">return</span> { id: params.id };
+  }, {
+    params: t.Object({ id: t.Number() })
+  })
+
+  <span class="cmt">// Middleware (derive/guard)</span>
+  .derive(({ headers }) => {
+    <span class="kw">const</span> token = headers.authorization;
+    <span class="kw">return</span> { userId: <span class="fn">verifyToken</span>(token) };
+  })
+
+  <span class="cmt">// Groups</span>
+  .group(<span class="str">"/api"</span>, (app) =>
+    app.get(<span class="str">"/health"</span>, () => <span class="str">"OK"</span>)
+  )
+
+  .listen(<span class="num">3000</span>);
+
+console.log(<span class="str">`Elysia running at </span>${app.server?.url}<span class="str">`</span>);</code></pre></div>
+</div>
+
+<!-- NESTJS -->
+<div class="section" id="nestjs">
+  <div class="section-header"><span class="icon">🐱</span><h2>NestJS</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// npx @nestjs/cli new my-project</span>
+<span class="cmt">// Module + Controller + Service architecture</span>
+
+<span class="cmt">// ── user.entity.ts ──</span>
+<span class="kw">export class</span> <span class="tp">User</span> {
+  id: <span class="tp">number</span>;
+  name: <span class="tp">string</span>;
+  email: <span class="tp">string</span>;
+}
+
+<span class="cmt">// ── create-user.dto.ts ──</span>
+<span class="kw">import</span> { IsString, IsEmail, MinLength } <span class="kw">from</span> <span class="str">"class-validator"</span>;
+
+<span class="kw">export class</span> <span class="tp">CreateUserDto</span> {
+  @IsString() @MinLength(<span class="num">2</span>)
+  name: <span class="tp">string</span>;
+
+  @IsEmail()
+  email: <span class="tp">string</span>;
+}
+
+<span class="cmt">// ── users.service.ts ──</span>
+<span class="kw">import</span> { Injectable } <span class="kw">from</span> <span class="str">"@nestjs/common"</span>;
+
+@Injectable()
+<span class="kw">export class</span> <span class="tp">UsersService</span> {
+  <span class="kw">private</span> users: User[] = [];
+
+  findAll(): User[] { <span class="kw">return this</span>.users; }
+  findOne(id: <span class="tp">number</span>): User | <span class="kw">undefined</span> {
+    <span class="kw">return this</span>.users.find(u => u.id === id);
+  }
+  create(dto: CreateUserDto): User {
+    <span class="kw">const</span> user = { id: Date.now(), ...dto };
+    <span class="kw">this</span>.users.push(user);
+    <span class="kw">return</span> user;
+  }
+}
+
+<span class="cmt">// ── users.controller.ts ──</span>
+<span class="kw">import</span> { Controller, Get, Post, Body, Param, UseGuards } <span class="kw">from</span> <span class="str">"@nestjs/common"</span>;
+
+@Controller(<span class="str">"users"</span>)
+<span class="kw">export class</span> <span class="tp">UsersController</span> {
+  <span class="kw">constructor</span>(<span class="kw">private readonly</span> usersService: UsersService) {}
+
+  @Get()
+  findAll() { <span class="kw">return this</span>.usersService.findAll(); }
+
+  @Get(<span class="str">":id"</span>)
+  findOne(@Param(<span class="str">"id"</span>) id: <span class="tp">string</span>) {
+    <span class="kw">return this</span>.usersService.findOne(+id);
+  }
+
+  @Post()
+  create(@Body() dto: CreateUserDto) {
+    <span class="kw">return this</span>.usersService.create(dto);
+  }
+}
+
+<span class="cmt">// ── users.module.ts ──</span>
+<span class="kw">import</span> { Module } <span class="kw">from</span> <span class="str">"@nestjs/common"</span>;
+
+@Module({
+  controllers: [UsersController],
+  providers: [UsersService],
+})
+<span class="kw">export class</span> <span class="tp">UsersModule</span> {}
+
+<span class="cmt">// Guards (auth)</span>
+@UseGuards(AuthGuard)
+@Get(<span class="str">"profile"</span>)
+getProfile() { ... }</code></pre></div>
+</div>
+
+<!-- TRPC -->
+<div class="section" id="trpc">
+  <div class="section-header"><span class="icon">⚡</span><h2>tRPC</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// npm i @trpc/server @trpc/client zod</span>
+
+<span class="cmt">// ── server/trpc.ts ── (initialize)</span>
+<span class="kw">import</span> { initTRPC, TRPCError } <span class="kw">from</span> <span class="str">"@trpc/server"</span>;
+<span class="kw">import</span> { z } <span class="kw">from</span> <span class="str">"zod"</span>;
+
+<span class="kw">const</span> t = initTRPC.context&lt;{ userId?: <span class="tp">string</span> }&gt;().create();
+
+<span class="kw">export const</span> router = t.router;
+<span class="kw">export const</span> publicProcedure = t.procedure;
+
+<span class="cmt">// Protected procedure</span>
+<span class="kw">export const</span> protectedProcedure = t.procedure.use(({ ctx, next }) => {
+  <span class="kw">if</span> (!ctx.userId) <span class="kw">throw new</span> TRPCError({ code: <span class="str">"UNAUTHORIZED"</span> });
+  <span class="kw">return</span> next({ ctx: { userId: ctx.userId } });
+});
+
+<span class="cmt">// ── server/routers/users.ts ──</span>
+<span class="kw">export const</span> usersRouter = router({
+  list: publicProcedure.query(<span class="kw">async</span> () => {
+    <span class="kw">return</span> db.user.findMany();
+  }),
+
+  byId: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(<span class="kw">async</span> ({ input }) => {
+      <span class="kw">return</span> db.user.findUnique({ where: { id: input.id } });
+    }),
+
+  create: protectedProcedure
+    .input(z.object({
+      name: z.string().min(<span class="num">2</span>),
+      email: z.string().email(),
+    }))
+    .mutation(<span class="kw">async</span> ({ input, ctx }) => {
+      <span class="kw">return</span> db.user.create({ data: { ...input, createdBy: ctx.userId } });
+    }),
+});
+
+<span class="cmt">// ── server/index.ts ── (root router)</span>
+<span class="kw">export const</span> appRouter = router({
+  users: usersRouter,
+});
+<span class="kw">export type</span> <span class="tp">AppRouter</span> = <span class="kw">typeof</span> appRouter;
+
+<span class="cmt">// ── client usage (React example) ──</span>
+<span class="kw">import</span> { createTRPCReact } <span class="kw">from</span> <span class="str">"@trpc/react-query"</span>;
+<span class="kw">const</span> trpc = createTRPCReact&lt;AppRouter&gt;();
+
+<span class="cmt">// In component — fully type-safe!</span>
+<span class="kw">const</span> { data } = trpc.users.list.useQuery();
+<span class="kw">const</span> mutation = trpc.users.create.useMutation();</code></pre></div>
+</div>
+
+<!-- ORPC -->
+<div class="section" id="orpc">
+  <div class="section-header"><span class="icon">🌐</span><h2>oRPC</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// npm i @orpc/server @orpc/client</span>
+<span class="cmt">// Type-safe RPC — framework-agnostic, OpenAPI-native</span>
+
+<span class="kw">import</span> { os } <span class="kw">from</span> <span class="str">"@orpc/server"</span>;
+<span class="kw">import</span> { z } <span class="kw">from</span> <span class="str">"zod"</span>;
+
+<span class="cmt">// Define procedures</span>
+<span class="kw">const</span> listUsers = os
+  .input(z.object({ page: z.number().optional() }))
+  .handler(<span class="kw">async</span> ({ input }) => {
+    <span class="kw">return</span> db.user.findMany({ skip: ((input.page ?? <span class="num">1</span>) - <span class="num">1</span>) * <span class="num">20</span>, take: <span class="num">20</span> });
+  });
+
+<span class="kw">const</span> createUser = os
+  .input(z.object({
+    name: z.string().min(<span class="num">2</span>),
+    email: z.string().email(),
+  }))
+  .handler(<span class="kw">async</span> ({ input }) => {
+    <span class="kw">return</span> db.user.create({ data: input });
+  });
+
+<span class="cmt">// Router</span>
+<span class="kw">const</span> appRouter = os.router({
+  users: os.router({
+    list: listUsers,
+    create: createUser,
+  }),
+});
+
+<span class="cmt">// Serve (works with any HTTP framework)</span>
+<span class="kw">import</span> { createServer } <span class="kw">from</span> <span class="str">"@orpc/server/node"</span>;
+createServer({ router: appRouter }).listen(<span class="num">3000</span>);
+
+<span class="cmt">// Client</span>
+<span class="kw">import</span> { createORPCClient } <span class="kw">from</span> <span class="str">"@orpc/client"</span>;
+<span class="kw">const</span> client = createORPCClient&lt;<span class="kw">typeof</span> appRouter&gt;({ baseURL: <span class="str">"http://localhost:3000"</span> });
+
+<span class="kw">const</span> users = <span class="kw">await</span> client.users.list({ page: <span class="num">1</span> });  <span class="cmt">// typed!</span></code></pre></div>
+</div>
+
+<!-- BUN -->
+<div class="section" id="bun">
+  <div class="section-header"><span class="icon">🍞</span><h2>Bun Runtime</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Bun has a built-in HTTP server — no framework needed</span>
+Bun.serve({
+  port: <span class="num">3000</span>,
+  <span class="kw">async</span> fetch(req) {
+    <span class="kw">const</span> url = <span class="kw">new</span> URL(req.url);
+
+    <span class="kw">if</span> (url.pathname === <span class="str">"/users"</span> && req.method === <span class="str">"GET"</span>) {
+      <span class="kw">return</span> Response.json({ users: [] });
+    }
+
+    <span class="kw">if</span> (url.pathname === <span class="str">"/users"</span> && req.method === <span class="str">"POST"</span>) {
+      <span class="kw">const</span> body = <span class="kw">await</span> req.json();
+      <span class="kw">return</span> Response.json({ id: <span class="num">1</span>, ...body }, { status: <span class="num">201</span> });
+    }
+
+    <span class="kw">return new</span> Response(<span class="str">"Not Found"</span>, { status: <span class="num">404</span> });
+  },
+});
+
+<span class="cmt">// Bun utilities</span>
+<span class="kw">const</span> file = Bun.file(<span class="str">"data.json"</span>);
+<span class="kw">const</span> text = <span class="kw">await</span> file.text();
+<span class="kw">await</span> Bun.write(<span class="str">"output.txt"</span>, <span class="str">"Hello"</span>);
+
+<span class="cmt">// SQLite (built-in!)</span>
+<span class="kw">import</span> { Database } <span class="kw">from</span> <span class="str">"bun:sqlite"</span>;
+<span class="kw">const</span> db = <span class="kw">new</span> Database(<span class="str">"mydb.sqlite"</span>);
+db.run(<span class="str">"CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT)"</span>);
+<span class="kw">const</span> users = db.query(<span class="str">"SELECT * FROM users"</span>).all();
+
+<span class="cmt">// Password hashing (built-in!)</span>
+<span class="kw">const</span> hash = <span class="kw">await</span> Bun.password.hash(<span class="str">"mypassword"</span>);
+<span class="kw">const</span> valid = <span class="kw">await</span> Bun.password.verify(<span class="str">"mypassword"</span>, hash);
+
+<span class="cmt">// Package manager: bun install, bun add, bun remove</span>
+<span class="cmt">// Runner: bun run script.ts, bunx create-next-app</span></code></pre></div>
+</div>
+
+<!-- COMPARISON -->
+<div class="section" id="comparison">
+  <div class="section-header"><span class="icon">⚖️</span><h2>Framework Comparison</h2></div>
+  <div class="note tip">
+    <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <th style="text-align:left; padding: 5px;">Framework</th>
+        <th style="text-align:left; padding: 5px;">Runtime</th>
+        <th style="text-align:left; padding: 5px;">Style</th>
+        <th style="text-align:left; padding: 5px;">Best For</th>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 5px;"><strong>Express</strong></td>
+        <td style="padding: 4px 5px;">Node</td>
+        <td style="padding: 4px 5px;">Minimal</td>
+        <td style="padding: 4px 5px;">Mature ecosystem, flexible</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 5px;"><strong>Hono</strong></td>
+        <td style="padding: 4px 5px;">Any</td>
+        <td style="padding: 4px 5px;">Minimal</td>
+        <td style="padding: 4px 5px;">Edge/serverless, ultra-fast</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 5px;"><strong>Elysia</strong></td>
+        <td style="padding: 4px 5px;">Bun</td>
+        <td style="padding: 4px 5px;">Minimal</td>
+        <td style="padding: 4px 5px;">Performance, end-to-end types</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 5px;"><strong>NestJS</strong></td>
+        <td style="padding: 4px 5px;">Node</td>
+        <td style="padding: 4px 5px;">Opinionated</td>
+        <td style="padding: 4px 5px;">Enterprise, DI, Angular-like</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 5px;"><strong>tRPC</strong></td>
+        <td style="padding: 4px 5px;">Any</td>
+        <td style="padding: 4px 5px;">RPC</td>
+        <td style="padding: 4px 5px;">Full-stack TS, type inference</td>
+      </tr>
+      <tr>
+        <td style="padding: 4px 5px;"><strong>oRPC</strong></td>
+        <td style="padding: 4px 5px;">Any</td>
+        <td style="padding: 4px 5px;">RPC</td>
+        <td style="padding: 4px 5px;">OpenAPI-native, framework-agnostic</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+</div>
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>TypeScript Backend Frameworks Cheatsheet · 2026</footer>
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
+const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
+const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
+</script>
+</body>
+</html>

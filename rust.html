@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rust Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ Rust</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+<div class="container">
+<div class="hero">
+  <h1>Rust Cheatsheet</h1>
+  <p class="subtitle">Ownership, borrowing, lifetimes, traits, enums, pattern matching, error handling &amp; concurrency</p>
+  <span class="badge">Language</span>
+  <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Filter sections…" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<div class="toc"><h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#basics">Basics &amp; Types</a>
+    <a href="#ownership">Ownership &amp; Borrowing</a>
+    <a href="#structs">Structs &amp; Enums</a>
+    <a href="#pattern">Pattern Matching</a>
+    <a href="#traits">Traits</a>
+    <a href="#error">Error Handling</a>
+    <a href="#collections">Collections</a>
+    <a href="#iterators">Iterators &amp; Closures</a>
+    <a href="#concurrency">Concurrency</a>
+    <a href="#cargo">Cargo &amp; Crates</a>
+  </div>
+</div>
+
+<div class="section" id="basics">
+  <div class="section-header"><span class="icon">🦀</span><h2>Basics &amp; Types</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Variables (immutable by default!)</span>
+<span class="kw">let</span> x = <span class="num">5</span>;              <span class="cmt">// immutable</span>
+<span class="kw">let mut</span> y = <span class="num">10</span>;          <span class="cmt">// mutable</span>
+<span class="kw">const</span> MAX: <span class="tp">u32</span> = <span class="num">100</span>;   <span class="cmt">// compile-time constant</span>
+
+<span class="cmt">// Scalar types</span>
+<span class="kw">let</span> a: <span class="tp">i32</span> = <span class="num">42</span>;        <span class="cmt">// signed integers: i8, i16, i32, i64, i128</span>
+<span class="kw">let</span> b: <span class="tp">u64</span> = <span class="num">100</span>;       <span class="cmt">// unsigned: u8, u16, u32, u64, u128</span>
+<span class="kw">let</span> c: <span class="tp">f64</span> = <span class="num">3.14</span>;      <span class="cmt">// floats: f32, f64</span>
+<span class="kw">let</span> d: <span class="tp">bool</span> = <span class="kw">true</span>;
+<span class="kw">let</span> e: <span class="tp">char</span> = <span class="str">'🦀'</span>;     <span class="cmt">// 4 bytes, Unicode</span>
+
+<span class="cmt">// Compound types</span>
+<span class="kw">let</span> tup: (<span class="tp">i32</span>, <span class="tp">f64</span>, <span class="tp">char</span>) = (<span class="num">42</span>, <span class="num">3.14</span>, <span class="str">'x'</span>);  <span class="cmt">// tuple</span>
+<span class="kw">let</span> (x, y, z) = tup;                            <span class="cmt">// destructure</span>
+<span class="kw">let</span> arr: [<span class="tp">i32</span>; <span class="num">5</span>] = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>];              <span class="cmt">// fixed-size array</span>
+
+<span class="cmt">// String types</span>
+<span class="kw">let</span> s1: &amp;<span class="tp">str</span> = <span class="str">"hello"</span>;              <span class="cmt">// string slice (borrowed, stack)</span>
+<span class="kw">let</span> s2: <span class="tp">String</span> = <span class="tp">String</span>::from(<span class="str">"hello"</span>);  <span class="cmt">// owned String (heap)</span>
+<span class="kw">let</span> s3 = <span class="fn">format!</span>(<span class="str">"{} {}"</span>, s1, s2);
+
+<span class="cmt">// Functions</span>
+<span class="kw">fn</span> <span class="fn">add</span>(a: <span class="tp">i32</span>, b: <span class="tp">i32</span>) -> <span class="tp">i32</span> {
+    a + b  <span class="cmt">// no semicolon = return expression</span>
+}</code></pre></div>
+</div>
+
+<div class="section" id="ownership">
+  <div class="section-header"><span class="icon">🔑</span><h2>Ownership &amp; Borrowing</h2></div>
+  <p>Rust's core innovation — memory safety without garbage collection.</p>
+  <h3>Ownership Rules</h3>
+  <ol>
+    <li>Each value has exactly <strong>one owner</strong></li>
+    <li>When the owner goes out of scope, the value is <strong>dropped</strong></li>
+    <li>Value can be <strong>moved</strong> or <strong>borrowed</strong></li>
+  </ol>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Move (ownership transfer)</span>
+<span class="kw">let</span> s1 = <span class="tp">String</span>::from(<span class="str">"hello"</span>);
+<span class="kw">let</span> s2 = s1;              <span class="cmt">// s1 is MOVED to s2, s1 is now invalid</span>
+<span class="cmt">// println!("{}", s1);     // ❌ compile error!</span>
+
+<span class="cmt">// Clone (deep copy)</span>
+<span class="kw">let</span> s1 = <span class="tp">String</span>::from(<span class="str">"hello"</span>);
+<span class="kw">let</span> s2 = s1.clone();      <span class="cmt">// s1 still valid</span>
+
+<span class="cmt">// Borrowing (references)</span>
+<span class="kw">fn</span> <span class="fn">len</span>(s: &amp;<span class="tp">String</span>) -> <span class="tp">usize</span> {  <span class="cmt">// immutable borrow</span>
+    s.len()
+}
+
+<span class="kw">fn</span> <span class="fn">push_hello</span>(s: &amp;<span class="kw">mut</span> <span class="tp">String</span>) {  <span class="cmt">// mutable borrow</span>
+    s.push_str(<span class="str">", hello"</span>);
+}
+
+<span class="cmt">// Rules:</span>
+<span class="cmt">// - Any number of &T (immutable refs) OR</span>
+<span class="cmt">// - Exactly one &mut T (mutable ref)</span>
+<span class="cmt">// - Never both at the same time</span>
+
+<span class="cmt">// Lifetimes (explicit when needed)</span>
+<span class="kw">fn</span> <span class="fn">longest</span>&lt;<span class="tp">'a</span>&gt;(x: &amp;<span class="tp">'a</span> <span class="tp">str</span>, y: &amp;<span class="tp">'a</span> <span class="tp">str</span>) -> &amp;<span class="tp">'a</span> <span class="tp">str</span> {
+    <span class="kw">if</span> x.len() > y.len() { x } <span class="kw">else</span> { y }
+}</code></pre></div>
+</div>
+
+<div class="section" id="structs">
+  <div class="section-header"><span class="icon">🏗️</span><h2>Structs &amp; Enums</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Struct</span>
+<span class="kw">struct</span> <span class="tp">User</span> {
+    name: <span class="tp">String</span>,
+    age: <span class="tp">u32</span>,
+    active: <span class="tp">bool</span>,
+}
+
+<span class="kw">impl</span> <span class="tp">User</span> {
+    <span class="cmt">// Associated function (constructor)</span>
+    <span class="kw">fn</span> <span class="fn">new</span>(name: &amp;<span class="tp">str</span>, age: <span class="tp">u32</span>) -> <span class="tp">Self</span> {
+        <span class="tp">User</span> { name: name.to_string(), age, active: <span class="kw">true</span> }
+    }
+
+    <span class="cmt">// Method (takes &self)</span>
+    <span class="kw">fn</span> <span class="fn">greet</span>(&amp;<span class="kw">self</span>) -> <span class="tp">String</span> {
+        <span class="fn">format!</span>(<span class="str">"Hi, I'm {} ({})"</span>, <span class="kw">self</span>.name, <span class="kw">self</span>.age)
+    }
+}
+
+<span class="kw">let</span> u = <span class="tp">User</span>::new(<span class="str">"Alice"</span>, <span class="num">30</span>);
+
+<span class="cmt">// Enum (algebraic data types)</span>
+<span class="kw">enum</span> <span class="tp">Shape</span> {
+    Circle(<span class="tp">f64</span>),              <span class="cmt">// radius</span>
+    Rectangle(<span class="tp">f64</span>, <span class="tp">f64</span>),      <span class="cmt">// width, height</span>
+    Triangle { base: <span class="tp">f64</span>, height: <span class="tp">f64</span> },
+}
+
+<span class="cmt">// Option&lt;T&gt; — Rust's null alternative</span>
+<span class="kw">let</span> x: <span class="tp">Option</span>&lt;<span class="tp">i32</span>&gt; = <span class="tp">Some</span>(<span class="num">42</span>);
+<span class="kw">let</span> y: <span class="tp">Option</span>&lt;<span class="tp">i32</span>&gt; = <span class="tp">None</span>;
+<span class="kw">let</span> val = x.unwrap_or(<span class="num">0</span>);  <span class="cmt">// safe default</span></code></pre></div>
+</div>
+
+<div class="section" id="pattern">
+  <div class="section-header"><span class="icon">🎯</span><h2>Pattern Matching</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// match (exhaustive!)</span>
+<span class="kw">match</span> shape {
+    <span class="tp">Shape</span>::Circle(r) => std::f64::consts::PI * r * r,
+    <span class="tp">Shape</span>::Rectangle(w, h) => w * h,
+    <span class="tp">Shape</span>::Triangle { base, height } => <span class="num">0.5</span> * base * height,
+}
+
+<span class="cmt">// if let (single pattern)</span>
+<span class="kw">if let</span> <span class="tp">Some</span>(val) = optional_value {
+    <span class="fn">println!</span>(<span class="str">"Got: {}"</span>, val);
+}
+
+<span class="cmt">// while let</span>
+<span class="kw">while let</span> <span class="tp">Some</span>(item) = stack.pop() {
+    <span class="fn">println!</span>(<span class="str">"{}"</span>, item);
+}
+
+<span class="cmt">// Destructuring in match</span>
+<span class="kw">match</span> (x, y) {
+    (<span class="num">0</span>, <span class="num">0</span>) => <span class="str">"origin"</span>,
+    (x, <span class="num">0</span>) => <span class="str">"x-axis"</span>,
+    (<span class="num">0</span>, y) => <span class="str">"y-axis"</span>,
+    (x, y) <span class="kw">if</span> x == y => <span class="str">"diagonal"</span>,   <span class="cmt">// match guard</span>
+    _ => <span class="str">"other"</span>,                      <span class="cmt">// catch-all</span>
+}</code></pre></div>
+</div>
+
+<div class="section" id="traits">
+  <div class="section-header"><span class="icon">📐</span><h2>Traits</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Define a trait (like an interface)</span>
+<span class="kw">trait</span> <span class="tp">Summary</span> {
+    <span class="kw">fn</span> <span class="fn">summarize</span>(&amp;<span class="kw">self</span>) -> <span class="tp">String</span>;
+    <span class="kw">fn</span> <span class="fn">default_method</span>(&amp;<span class="kw">self</span>) -> <span class="tp">String</span> {
+        <span class="tp">String</span>::from(<span class="str">"(Read more...)"</span>)
+    }
+}
+
+<span class="cmt">// Implement for a type</span>
+<span class="kw">impl</span> <span class="tp">Summary</span> <span class="kw">for</span> <span class="tp">User</span> {
+    <span class="kw">fn</span> <span class="fn">summarize</span>(&amp;<span class="kw">self</span>) -> <span class="tp">String</span> {
+        <span class="fn">format!</span>(<span class="str">"{} ({})"</span>, <span class="kw">self</span>.name, <span class="kw">self</span>.age)
+    }
+}
+
+<span class="cmt">// Trait bounds (generics)</span>
+<span class="kw">fn</span> <span class="fn">notify</span>(item: &amp;<span class="kw">impl</span> <span class="tp">Summary</span>) { ... }
+<span class="kw">fn</span> <span class="fn">notify</span>&lt;T: <span class="tp">Summary</span> + <span class="tp">Display</span>&gt;(item: &amp;T) { ... }
+
+<span class="cmt">// Common derive traits</span>
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+<span class="kw">struct</span> <span class="tp">Point</span> { x: <span class="tp">f64</span>, y: <span class="tp">f64</span> }</code></pre></div>
+</div>
+
+<div class="section" id="error">
+  <div class="section-header"><span class="icon">⚠️</span><h2>Error Handling</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Result&lt;T, E&gt; — recoverable errors</span>
+<span class="kw">fn</span> <span class="fn">read_file</span>(path: &amp;<span class="tp">str</span>) -> <span class="tp">Result</span>&lt;<span class="tp">String</span>, std::io::<span class="tp">Error</span>&gt; {
+    std::fs::read_to_string(path)
+}
+
+<span class="cmt">// Handle with match</span>
+<span class="kw">match</span> read_file(<span class="str">"data.txt"</span>) {
+    <span class="tp">Ok</span>(content) => <span class="fn">println!</span>(<span class="str">"{}"</span>, content),
+    <span class="tp">Err</span>(e) => <span class="fn">eprintln!</span>(<span class="str">"Error: {}"</span>, e),
+}
+
+<span class="cmt">// ? operator (propagate errors)</span>
+<span class="kw">fn</span> <span class="fn">process</span>() -> <span class="tp">Result</span>&lt;(), Box&lt;<span class="kw">dyn</span> std::error::<span class="tp">Error</span>&gt;&gt; {
+    <span class="kw">let</span> content = std::fs::read_to_string(<span class="str">"file.txt"</span>)?;  <span class="cmt">// returns Err if fails</span>
+    <span class="kw">let</span> num: <span class="tp">i32</span> = content.trim().parse()?;
+    <span class="tp">Ok</span>(())
+}
+
+<span class="cmt">// Unwrap helpers</span>
+<span class="kw">let</span> val = result.unwrap();            <span class="cmt">// panic if Err</span>
+<span class="kw">let</span> val = result.expect(<span class="str">"msg"</span>);       <span class="cmt">// panic with message</span>
+<span class="kw">let</span> val = result.unwrap_or(<span class="num">0</span>);        <span class="cmt">// default value</span>
+<span class="kw">let</span> val = result.unwrap_or_else(|e| handle(e));</code></pre></div>
+</div>
+
+<div class="section" id="collections">
+  <div class="section-header"><span class="icon">📦</span><h2>Collections</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Vec&lt;T&gt; — growable array</span>
+<span class="kw">let mut</span> v: <span class="tp">Vec</span>&lt;<span class="tp">i32</span>&gt; = <span class="fn">vec!</span>[<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+v.push(<span class="num">4</span>);       v.pop();
+v.len();          v.is_empty();
+v[<span class="num">0</span>];             v.get(<span class="num">0</span>);  <span class="cmt">// Option&lt;&T&gt;</span>
+v.contains(&amp;<span class="num">3</span>);   v.sort();
+v.iter().for_each(|x| <span class="fn">println!</span>(<span class="str">"{}"</span>, x));
+
+<span class="cmt">// HashMap&lt;K, V&gt;</span>
+<span class="kw">use</span> std::collections::<span class="tp">HashMap</span>;
+<span class="kw">let mut</span> map = <span class="tp">HashMap</span>::new();
+map.insert(<span class="str">"alice"</span>, <span class="num">100</span>);
+map.entry(<span class="str">"bob"</span>).or_insert(<span class="num">0</span>);
+<span class="kw">if let</span> <span class="tp">Some</span>(val) = map.get(<span class="str">"alice"</span>) { ... }
+
+<span class="cmt">// HashSet&lt;T&gt;</span>
+<span class="kw">use</span> std::collections::<span class="tp">HashSet</span>;
+<span class="kw">let</span> set: <span class="tp">HashSet</span>&lt;<span class="tp">i32</span>&gt; = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>].iter().cloned().collect();
+set.contains(&amp;<span class="num">2</span>);
+set.intersection(&amp;other_set);</code></pre></div>
+</div>
+
+<div class="section" id="iterators">
+  <div class="section-header"><span class="icon">🔄</span><h2>Iterators &amp; Closures</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">let</span> nums = <span class="fn">vec!</span>[<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>];
+
+<span class="cmt">// Iterator chain</span>
+<span class="kw">let</span> result: <span class="tp">Vec</span>&lt;<span class="tp">i32</span>&gt; = nums.iter()
+    .filter(|&amp;&amp;x| x > <span class="num">2</span>)
+    .map(|&amp;x| x * <span class="num">10</span>)
+    .collect();  <span class="cmt">// [30, 40, 50]</span>
+
+nums.iter().sum::&lt;<span class="tp">i32</span>&gt;();       <span class="cmt">// 15</span>
+nums.iter().any(|&amp;x| x > <span class="num">4</span>);    <span class="cmt">// true</span>
+nums.iter().all(|&amp;x| x > <span class="num">0</span>);    <span class="cmt">// true</span>
+nums.iter().find(|&amp;&amp;x| x > <span class="num">3</span>);  <span class="cmt">// Some(&4)</span>
+nums.iter().enumerate();          <span class="cmt">// (index, value) pairs</span>
+nums.iter().zip(other.iter());    <span class="cmt">// pair up two iterators</span>
+nums.chunks(<span class="num">2</span>);                   <span class="cmt">// [[1,2],[3,4],[5]]</span>
+
+<span class="cmt">// Closures</span>
+<span class="kw">let</span> add = |a: <span class="tp">i32</span>, b: <span class="tp">i32</span>| -> <span class="tp">i32</span> { a + b };
+<span class="kw">let</span> square = |x| x * x;  <span class="cmt">// type inference</span></code></pre></div>
+</div>
+
+<div class="section" id="concurrency">
+  <div class="section-header"><span class="icon">⚡</span><h2>Concurrency</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">use</span> std::thread;
+<span class="kw">use</span> std::sync::{Arc, Mutex};
+
+<span class="cmt">// Spawn thread</span>
+<span class="kw">let</span> handle = thread::spawn(|| {
+    <span class="fn">println!</span>(<span class="str">"from thread!"</span>);
+});
+handle.join().unwrap();
+
+<span class="cmt">// Shared state with Arc + Mutex</span>
+<span class="kw">let</span> counter = Arc::new(Mutex::new(<span class="num">0</span>));
+<span class="kw">let mut</span> handles = <span class="fn">vec!</span>[];
+
+<span class="kw">for</span> _ <span class="kw">in</span> <span class="num">0</span>..<span class="num">10</span> {
+    <span class="kw">let</span> counter = Arc::clone(&amp;counter);
+    <span class="kw">let</span> handle = thread::spawn(<span class="kw">move</span> || {
+        <span class="kw">let mut</span> num = counter.lock().unwrap();
+        *num += <span class="num">1</span>;
+    });
+    handles.push(handle);
+}
+
+<span class="cmt">// Channels (message passing)</span>
+<span class="kw">use</span> std::sync::mpsc;
+<span class="kw">let</span> (tx, rx) = mpsc::channel();
+thread::spawn(<span class="kw">move</span> || { tx.send(<span class="str">"hello"</span>).unwrap(); });
+<span class="kw">let</span> msg = rx.recv().unwrap();
+
+<span class="cmt">// Async/await (with tokio)</span>
+<span class="cmt">// #[tokio::main]</span>
+<span class="cmt">// async fn main() {</span>
+<span class="cmt">//     let result = fetch_data().await?;</span>
+<span class="cmt">// }</span></code></pre></div>
+</div>
+
+<div class="section" id="cargo">
+  <div class="section-header"><span class="icon">📦</span><h2>Cargo &amp; Crates</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Create project</span>
+cargo new myapp
+cargo new mylib --lib
+
+<span class="cmt"># Build &amp; run</span>
+cargo build            <span class="cmt"># debug build</span>
+cargo build --release  <span class="cmt"># optimized build</span>
+cargo run              <span class="cmt"># build + run</span>
+cargo test             <span class="cmt"># run tests</span>
+cargo fmt              <span class="cmt"># format code</span>
+cargo clippy           <span class="cmt"># linter</span>
+
+<span class="cmt"># Cargo.toml dependencies</span>
+[dependencies]
+serde = { version = <span class="str">"1.0"</span>, features = [<span class="str">"derive"</span>] }
+tokio = { version = <span class="str">"1"</span>, features = [<span class="str">"full"</span>] }
+reqwest = <span class="str">"0.12"</span>
+axum = <span class="str">"0.7"</span>
+
+<span class="cmt"># Popular crates</span>
+<span class="cmt"># serde / serde_json — serialization</span>
+<span class="cmt"># tokio — async runtime</span>
+<span class="cmt"># axum — web framework</span>
+<span class="cmt"># sqlx — async SQL</span>
+<span class="cmt"># clap — CLI argument parsing</span>
+<span class="cmt"># anyhow / thiserror — error handling</span></code></pre></div>
+</div>
+
+</div>
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>Rust Cheatsheet · 2026</footer>
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
+const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
+const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');
+si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
+</script>
+</body>
+</html>

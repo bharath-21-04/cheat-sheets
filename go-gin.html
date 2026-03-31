@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Go Gin Framework Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ Go Gin</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+<div class="container">
+<div class="hero">
+  <h1>Go Gin Framework Cheatsheet</h1>
+  <p class="subtitle">Routing, middleware, request binding, JSON responses, auth, database &amp; deployment patterns</p>
+  <span class="badge">Framework / Backend</span>
+  <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Filter sections…" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<div class="toc"><h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#setup">Setup &amp; Hello World</a>
+    <a href="#routing">Routing &amp; Groups</a>
+    <a href="#params">Params &amp; Query Strings</a>
+    <a href="#binding">Request Binding</a>
+    <a href="#responses">Responses</a>
+    <a href="#middleware">Middleware</a>
+    <a href="#auth">Authentication (JWT)</a>
+    <a href="#validation">Validation</a>
+    <a href="#database">Database (GORM)</a>
+    <a href="#errors">Error Handling</a>
+    <a href="#testing">Testing</a>
+    <a href="#deploy">Deployment</a>
+  </div>
+</div>
+
+<!-- SETUP -->
+<div class="section" id="setup">
+  <div class="section-header"><span class="icon">⚙️</span><h2>Setup &amp; Hello World</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Install</span>
+<span class="cmt">// go get -u github.com/gin-gonic/gin</span>
+
+<span class="kw">package</span> main
+
+<span class="kw">import</span> (
+    <span class="str">"net/http"</span>
+    <span class="str">"github.com/gin-gonic/gin"</span>
+)
+
+<span class="kw">func</span> <span class="fn">main</span>() {
+    r := gin.Default()  <span class="cmt">// includes Logger + Recovery middleware</span>
+
+    r.GET(<span class="str">"/ping"</span>, <span class="kw">func</span>(c *gin.Context) {
+        c.JSON(http.StatusOK, gin.H{
+            <span class="str">"message"</span>: <span class="str">"pong"</span>,
+        })
+    })
+
+    r.Run(<span class="str">":8080"</span>)  <span class="cmt">// listen on 0.0.0.0:8080</span>
+}
+
+<span class="cmt">// gin.H is a shortcut for map[string]any</span></code></pre></div>
+</div>
+
+<!-- ROUTING -->
+<div class="section" id="routing">
+  <div class="section-header"><span class="icon">🛤️</span><h2>Routing &amp; Route Groups</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// HTTP methods</span>
+r.GET(<span class="str">"/users"</span>, getUsers)
+r.POST(<span class="str">"/users"</span>, createUser)
+r.PUT(<span class="str">"/users/:id"</span>, updateUser)
+r.PATCH(<span class="str">"/users/:id"</span>, patchUser)
+r.DELETE(<span class="str">"/users/:id"</span>, deleteUser)
+
+<span class="cmt">// Route groups (shared prefix + middleware)</span>
+api := r.Group(<span class="str">"/api/v1"</span>)
+{
+    api.GET(<span class="str">"/users"</span>, getUsers)
+    api.POST(<span class="str">"/users"</span>, createUser)
+
+    <span class="cmt">// Nested group with auth middleware</span>
+    admin := api.Group(<span class="str">"/admin"</span>)
+    admin.Use(AuthMiddleware())
+    {
+        admin.GET(<span class="str">"/stats"</span>, getStats)
+        admin.DELETE(<span class="str">"/users/:id"</span>, deleteUser)
+    }
+}
+
+<span class="cmt">// Static files</span>
+r.Static(<span class="str">"/assets"</span>, <span class="str">"./public"</span>)
+r.StaticFile(<span class="str">"/favicon.ico"</span>, <span class="str">"./public/favicon.ico"</span>)
+
+<span class="cmt">// No route (404 handler)</span>
+r.NoRoute(<span class="kw">func</span>(c *gin.Context) {
+    c.JSON(http.StatusNotFound, gin.H{<span class="str">"error"</span>: <span class="str">"not found"</span>})
+})</code></pre></div>
+</div>
+
+<!-- PARAMS -->
+<div class="section" id="params">
+  <div class="section-header"><span class="icon">📎</span><h2>Params, Query Strings &amp; Headers</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Path parameters</span>
+r.GET(<span class="str">"/users/:id"</span>, <span class="kw">func</span>(c *gin.Context) {
+    id := c.Param(<span class="str">"id"</span>)   <span class="cmt">// string</span>
+    c.JSON(<span class="num">200</span>, gin.H{<span class="str">"id"</span>: id})
+})
+
+<span class="cmt">// Wildcard</span>
+r.GET(<span class="str">"/files/*filepath"</span>, <span class="kw">func</span>(c *gin.Context) {
+    path := c.Param(<span class="str">"filepath"</span>)  <span class="cmt">// e.g., "/docs/readme.md"</span>
+})
+
+<span class="cmt">// Query parameters</span>
+<span class="cmt">// GET /search?q=golang&page=2&limit=10</span>
+r.GET(<span class="str">"/search"</span>, <span class="kw">func</span>(c *gin.Context) {
+    q := c.Query(<span class="str">"q"</span>)                     <span class="cmt">// "golang"</span>
+    page := c.DefaultQuery(<span class="str">"page"</span>, <span class="str">"1"</span>)    <span class="cmt">// "2"</span>
+    limit := c.DefaultQuery(<span class="str">"limit"</span>, <span class="str">"20"</span>) <span class="cmt">// "10"</span>
+})
+
+<span class="cmt">// Headers</span>
+token := c.GetHeader(<span class="str">"Authorization"</span>)
+c.Header(<span class="str">"X-Request-ID"</span>, <span class="str">"abc123"</span>)</code></pre></div>
+</div>
+
+<!-- BINDING -->
+<div class="section" id="binding">
+  <div class="section-header"><span class="icon">📦</span><h2>Request Binding (JSON, Form, URI)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">type</span> <span class="tp">CreateUserInput</span> <span class="kw">struct</span> {
+    Name  <span class="tp">string</span> <span class="str">`json:"name" binding:"required,min=2,max=100"`</span>
+    Email <span class="tp">string</span> <span class="str">`json:"email" binding:"required,email"`</span>
+    Age   <span class="tp">int</span>    <span class="str">`json:"age" binding:"required,gte=1,lte=150"`</span>
+}
+
+r.POST(<span class="str">"/users"</span>, <span class="kw">func</span>(c *gin.Context) {
+    <span class="kw">var</span> input CreateUserInput
+
+    <span class="cmt">// ShouldBindJSON — returns error, doesn't abort</span>
+    <span class="kw">if</span> err := c.ShouldBindJSON(&input); err != <span class="kw">nil</span> {
+        c.JSON(http.StatusBadRequest, gin.H{<span class="str">"error"</span>: err.Error()})
+        <span class="kw">return</span>
+    }
+
+    c.JSON(http.StatusCreated, gin.H{<span class="str">"user"</span>: input})
+})
+
+<span class="cmt">// Bind URI params</span>
+<span class="kw">type</span> <span class="tp">UserURI</span> <span class="kw">struct</span> {
+    ID <span class="tp">int</span> <span class="str">`uri:"id" binding:"required"`</span>
+}
+r.GET(<span class="str">"/users/:id"</span>, <span class="kw">func</span>(c *gin.Context) {
+    <span class="kw">var</span> uri UserURI
+    c.ShouldBindUri(&uri)
+})
+
+<span class="cmt">// Bind query params</span>
+<span class="kw">type</span> <span class="tp">SearchQuery</span> <span class="kw">struct</span> {
+    Q     <span class="tp">string</span> <span class="str">`form:"q"`</span>
+    Page  <span class="tp">int</span>    <span class="str">`form:"page,default=1"`</span>
+    Limit <span class="tp">int</span>    <span class="str">`form:"limit,default=20"`</span>
+}
+r.GET(<span class="str">"/search"</span>, <span class="kw">func</span>(c *gin.Context) {
+    <span class="kw">var</span> q SearchQuery
+    c.ShouldBindQuery(&q)
+})</code></pre></div>
+</div>
+
+<!-- RESPONSES -->
+<div class="section" id="responses">
+  <div class="section-header"><span class="icon">📤</span><h2>Responses</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// JSON</span>
+c.JSON(http.StatusOK, gin.H{<span class="str">"message"</span>: <span class="str">"success"</span>})
+c.JSON(<span class="num">200</span>, user)  <span class="cmt">// struct serialization</span>
+
+<span class="cmt">// IndentedJSON (pretty-printed)</span>
+c.IndentedJSON(<span class="num">200</span>, data)
+
+<span class="cmt">// String</span>
+c.String(<span class="num">200</span>, <span class="str">"Hello %s"</span>, name)
+
+<span class="cmt">// Status only</span>
+c.Status(http.StatusNoContent)  <span class="cmt">// 204</span>
+
+<span class="cmt">// Redirect</span>
+c.Redirect(http.StatusMovedPermanently, <span class="str">"https://example.com"</span>)
+
+<span class="cmt">// File download</span>
+c.File(<span class="str">"./files/report.pdf"</span>)
+c.FileAttachment(<span class="str">"./files/report.pdf"</span>, <span class="str">"report.pdf"</span>)
+
+<span class="cmt">// Streaming</span>
+c.Stream(<span class="kw">func</span>(w io.Writer) <span class="tp">bool</span> {
+    fmt.Fprintf(w, <span class="str">"data: %s\n\n"</span>, msg)
+    <span class="kw">return</span> keepStreaming
+})</code></pre></div>
+</div>
+
+<!-- MIDDLEWARE -->
+<div class="section" id="middleware">
+  <div class="section-header"><span class="icon">🔌</span><h2>Middleware</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Custom middleware</span>
+<span class="kw">func</span> <span class="fn">RequestLogger</span>() gin.HandlerFunc {
+    <span class="kw">return func</span>(c *gin.Context) {
+        start := time.Now()
+
+        c.Next()  <span class="cmt">// process request</span>
+
+        latency := time.Since(start)
+        status := c.Writer.Status()
+        log.Printf(<span class="str">"[%d] %s %s (%v)"</span>,
+            status, c.Request.Method, c.Request.URL.Path, latency)
+    }
+}
+
+<span class="cmt">// Apply globally</span>
+r.Use(RequestLogger())
+
+<span class="cmt">// CORS middleware</span>
+<span class="kw">import</span> <span class="str">"github.com/gin-contrib/cors"</span>
+
+r.Use(cors.New(cors.Config{
+    AllowOrigins:     []<span class="tp">string</span>{<span class="str">"http://localhost:3000"</span>},
+    AllowMethods:     []<span class="tp">string</span>{<span class="str">"GET"</span>, <span class="str">"POST"</span>, <span class="str">"PUT"</span>, <span class="str">"DELETE"</span>},
+    AllowHeaders:     []<span class="tp">string</span>{<span class="str">"Authorization"</span>, <span class="str">"Content-Type"</span>},
+    AllowCredentials: <span class="kw">true</span>,
+    MaxAge:           <span class="num">12</span> * time.Hour,
+}))
+
+<span class="cmt">// Rate limiter</span>
+<span class="kw">import</span> <span class="str">"github.com/gin-contrib/ratelimit"</span>
+
+<span class="cmt">// Recovery (built-in) — recovers from panics</span>
+r.Use(gin.Recovery())</code></pre></div>
+</div>
+
+<!-- AUTH -->
+<div class="section" id="auth">
+  <div class="section-header"><span class="icon">🔐</span><h2>Authentication (JWT)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> <span class="str">"github.com/golang-jwt/jwt/v5"</span>
+
+<span class="kw">var</span> jwtSecret = []<span class="tp">byte</span>(os.Getenv(<span class="str">"JWT_SECRET"</span>))
+
+<span class="cmt">// Generate token</span>
+<span class="kw">func</span> <span class="fn">GenerateToken</span>(userID <span class="tp">uint</span>) (<span class="tp">string</span>, <span class="tp">error</span>) {
+    claims := jwt.MapClaims{
+        <span class="str">"user_id"</span>: userID,
+        <span class="str">"exp"</span>:     time.Now().Add(<span class="num">24</span> * time.Hour).Unix(),
+    }
+    token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+    <span class="kw">return</span> token.SignedString(jwtSecret)
+}
+
+<span class="cmt">// Auth middleware</span>
+<span class="kw">func</span> <span class="fn">AuthMiddleware</span>() gin.HandlerFunc {
+    <span class="kw">return func</span>(c *gin.Context) {
+        header := c.GetHeader(<span class="str">"Authorization"</span>)
+        <span class="kw">if</span> header == <span class="str">""</span> {
+            c.AbortWithStatusJSON(<span class="num">401</span>, gin.H{<span class="str">"error"</span>: <span class="str">"missing token"</span>})
+            <span class="kw">return</span>
+        }
+
+        tokenStr := strings.TrimPrefix(header, <span class="str">"Bearer "</span>)
+        token, err := jwt.Parse(tokenStr, <span class="kw">func</span>(t *jwt.Token) (<span class="kw">any</span>, <span class="tp">error</span>) {
+            <span class="kw">return</span> jwtSecret, <span class="kw">nil</span>
+        })
+
+        <span class="kw">if</span> err != <span class="kw">nil</span> || !token.Valid {
+            c.AbortWithStatusJSON(<span class="num">401</span>, gin.H{<span class="str">"error"</span>: <span class="str">"invalid token"</span>})
+            <span class="kw">return</span>
+        }
+
+        claims := token.Claims.(jwt.MapClaims)
+        c.Set(<span class="str">"user_id"</span>, claims[<span class="str">"user_id"</span>])
+        c.Next()
+    }
+}
+
+<span class="cmt">// Use in handler</span>
+userID := c.MustGet(<span class="str">"user_id"</span>).(<span class="tp">float64</span>)</code></pre></div>
+</div>
+
+<!-- VALIDATION -->
+<div class="section" id="validation">
+  <div class="section-header"><span class="icon">✅</span><h2>Validation Tags</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Common validation tags (uses go-playground/validator)</span>
+<span class="kw">type</span> <span class="tp">Input</span> <span class="kw">struct</span> {
+    Name     <span class="tp">string</span> <span class="str">`binding:"required"`</span>
+    Email    <span class="tp">string</span> <span class="str">`binding:"required,email"`</span>
+    Age      <span class="tp">int</span>    <span class="str">`binding:"gte=0,lte=150"`</span>
+    Password <span class="tp">string</span> <span class="str">`binding:"required,min=8,max=64"`</span>
+    URL      <span class="tp">string</span> <span class="str">`binding:"url"`</span>
+    Role     <span class="tp">string</span> <span class="str">`binding:"oneof=admin user moderator"`</span>
+    Tags     []<span class="tp">string</span> <span class="str">`binding:"dive,min=1,max=50"`</span>
+}
+
+<span class="cmt">// Custom validator</span>
+<span class="kw">import</span> <span class="str">"github.com/go-playground/validator/v10"</span>
+
+<span class="kw">if</span> v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+    v.RegisterValidation(<span class="str">"nowhitespace"</span>, <span class="kw">func</span>(fl validator.FieldLevel) <span class="tp">bool</span> {
+        <span class="kw">return</span> !strings.Contains(fl.Field().String(), <span class="str">" "</span>)
+    })
+}</code></pre></div>
+</div>
+
+<!-- DATABASE -->
+<div class="section" id="database">
+  <div class="section-header"><span class="icon">🗄️</span><h2>Database (GORM Integration)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> (
+    <span class="str">"gorm.io/gorm"</span>
+    <span class="str">"gorm.io/driver/postgres"</span>
+)
+
+<span class="kw">type</span> <span class="tp">User</span> <span class="kw">struct</span> {
+    gorm.Model              <span class="cmt">// ID, CreatedAt, UpdatedAt, DeletedAt</span>
+    Name  <span class="tp">string</span> <span class="str">`json:"name"`</span>
+    Email <span class="tp">string</span> <span class="str">`json:"email" gorm:"uniqueIndex"`</span>
+    Posts []<span class="tp">Post</span> <span class="str">`json:"posts"`</span>
+}
+
+<span class="kw">type</span> <span class="tp">Post</span> <span class="kw">struct</span> {
+    gorm.Model
+    Title    <span class="tp">string</span> <span class="str">`json:"title"`</span>
+    Content  <span class="tp">string</span> <span class="str">`json:"content"`</span>
+    UserID   <span class="tp">uint</span>   <span class="str">`json:"user_id"`</span>
+}
+
+<span class="cmt">// Connect</span>
+dsn := <span class="str">"host=localhost user=dev password=pass dbname=app port=5432"</span>
+db, _ := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+db.AutoMigrate(&User{}, &Post{})
+
+<span class="cmt">// CRUD in handlers</span>
+r.GET(<span class="str">"/users"</span>, <span class="kw">func</span>(c *gin.Context) {
+    <span class="kw">var</span> users []User
+    db.Preload(<span class="str">"Posts"</span>).Find(&users)
+    c.JSON(<span class="num">200</span>, users)
+})
+
+r.POST(<span class="str">"/users"</span>, <span class="kw">func</span>(c *gin.Context) {
+    <span class="kw">var</span> user User
+    c.ShouldBindJSON(&user)
+    result := db.Create(&user)
+    <span class="kw">if</span> result.Error != <span class="kw">nil</span> {
+        c.JSON(<span class="num">400</span>, gin.H{<span class="str">"error"</span>: result.Error.Error()})
+        <span class="kw">return</span>
+    }
+    c.JSON(<span class="num">201</span>, user)
+})</code></pre></div>
+</div>
+
+<!-- ERRORS -->
+<div class="section" id="errors">
+  <div class="section-header"><span class="icon">❌</span><h2>Error Handling</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Standardized error response</span>
+<span class="kw">type</span> <span class="tp">APIError</span> <span class="kw">struct</span> {
+    Code    <span class="tp">int</span>    <span class="str">`json:"code"`</span>
+    Message <span class="tp">string</span> <span class="str">`json:"message"`</span>
+}
+
+<span class="kw">func</span> <span class="fn">ErrorHandler</span>() gin.HandlerFunc {
+    <span class="kw">return func</span>(c *gin.Context) {
+        c.Next()
+        <span class="kw">if</span> <span class="fn">len</span>(c.Errors) > <span class="num">0</span> {
+            err := c.Errors.Last()
+            c.JSON(c.Writer.Status(), APIError{
+                Code:    c.Writer.Status(),
+                Message: err.Error(),
+            })
+        }
+    }
+}
+
+<span class="cmt">// Usage in handler</span>
+r.GET(<span class="str">"/users/:id"</span>, <span class="kw">func</span>(c *gin.Context) {
+    user, err := findUser(c.Param(<span class="str">"id"</span>))
+    <span class="kw">if</span> err != <span class="kw">nil</span> {
+        c.AbortWithStatusJSON(<span class="num">404</span>, gin.H{<span class="str">"error"</span>: <span class="str">"user not found"</span>})
+        <span class="kw">return</span>
+    }
+    c.JSON(<span class="num">200</span>, user)
+})</code></pre></div>
+</div>
+
+<!-- TESTING -->
+<div class="section" id="testing">
+  <div class="section-header"><span class="icon">🧪</span><h2>Testing</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> (
+    <span class="str">"net/http"</span>
+    <span class="str">"net/http/httptest"</span>
+    <span class="str">"testing"</span>
+    <span class="str">"github.com/stretchr/testify/assert"</span>
+)
+
+<span class="kw">func</span> <span class="fn">setupRouter</span>() *gin.Engine {
+    r := gin.Default()
+    r.GET(<span class="str">"/ping"</span>, <span class="kw">func</span>(c *gin.Context) {
+        c.JSON(<span class="num">200</span>, gin.H{<span class="str">"message"</span>: <span class="str">"pong"</span>})
+    })
+    <span class="kw">return</span> r
+}
+
+<span class="kw">func</span> <span class="fn">TestPing</span>(t *testing.T) {
+    r := setupRouter()
+
+    w := httptest.NewRecorder()
+    req, _ := http.NewRequest(<span class="str">"GET"</span>, <span class="str">"/ping"</span>, <span class="kw">nil</span>)
+    r.ServeHTTP(w, req)
+
+    assert.Equal(t, <span class="num">200</span>, w.Code)
+    assert.Contains(t, w.Body.String(), <span class="str">"pong"</span>)
+}
+
+<span class="cmt">// Test with JSON body</span>
+<span class="kw">func</span> <span class="fn">TestCreateUser</span>(t *testing.T) {
+    r := setupRouter()
+    body := strings.NewReader(<span class="str">`{"name":"Alice","email":"a@b.com"}`</span>)
+    w := httptest.NewRecorder()
+    req, _ := http.NewRequest(<span class="str">"POST"</span>, <span class="str">"/users"</span>, body)
+    req.Header.Set(<span class="str">"Content-Type"</span>, <span class="str">"application/json"</span>)
+    r.ServeHTTP(w, req)
+    assert.Equal(t, <span class="num">201</span>, w.Code)
+}</code></pre></div>
+</div>
+
+<!-- DEPLOY -->
+<div class="section" id="deploy">
+  <div class="section-header"><span class="icon">🐳</span><h2>Deployment</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Multi-stage Dockerfile</span>
+FROM golang:1.23-alpine AS builder
+WORKDIR /app
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 go build -o server .
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+WORKDIR /app
+COPY --from=builder /app/server .
+EXPOSE 8080
+CMD ["./server"]
+
+<span class="cmt"># Set Gin to release mode in production</span>
+<span class="cmt"># export GIN_MODE=release</span></code></pre></div>
+</div>
+
+</div>
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>Go Gin Framework Cheatsheet · 2026</footer>
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
+const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
+const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
+</script>
+</body>
+</html>

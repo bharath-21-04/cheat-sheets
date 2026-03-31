@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frontend Frameworks Cheatsheet — React, Vue, Nuxt, Svelte</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ Frontend Frameworks</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+<div class="container">
+<div class="hero">
+  <h1>Frontend Frameworks</h1>
+  <p class="subtitle">React hooks &amp; patterns, Vue 3 Composition API, Nuxt 3, Svelte 5 — components, state, routing &amp; essentials</p>
+  <span class="badge">Framework / Frontend</span>
+  <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Filter sections…" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<div class="toc"><h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#react-basics">React: Basics &amp; JSX</a>
+    <a href="#react-hooks">React: Hooks</a>
+    <a href="#react-patterns">React: Patterns</a>
+    <a href="#react-router">React Router</a>
+    <a href="#vue-basics">Vue 3: Basics</a>
+    <a href="#vue-composition">Vue 3: Composition API</a>
+    <a href="#vue-router">Vue Router</a>
+    <a href="#nuxt">Nuxt 3</a>
+    <a href="#svelte-basics">Svelte 5: Basics</a>
+    <a href="#svelte-advanced">Svelte: Stores &amp; Advanced</a>
+    <a href="#comparison">Comparison</a>
+  </div>
+</div>
+
+<!-- REACT BASICS -->
+<div class="section" id="react-basics">
+  <div class="section-header"><span class="icon">⚛️</span><h2>React: Basics &amp; JSX</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Function component</span>
+<span class="kw">interface</span> <span class="tp">Props</span> {
+  name: <span class="tp">string</span>;
+  count?: <span class="tp">number</span>;
+  children: React.ReactNode;
+}
+
+<span class="kw">const</span> <span class="fn">Greeting</span> = ({ name, count = <span class="num">0</span>, children }: <span class="tp">Props</span>) => {
+  <span class="kw">return</span> (
+    &lt;div className=<span class="str">"card"</span>&gt;
+      &lt;h1&gt;Hello, {name}!&lt;/h1&gt;
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      {children}
+    &lt;/div&gt;
+  );
+};
+
+<span class="cmt">// Conditional rendering</span>
+{isLoggedIn ? &lt;Dashboard /&gt; : &lt;Login /&gt;}
+{error && &lt;ErrorBanner message={error} /&gt;}
+
+<span class="cmt">// Lists</span>
+{users.map(user => (
+  &lt;UserCard key={user.id} user={user} /&gt;
+))}
+
+<span class="cmt">// Events</span>
+&lt;button onClick={() => setCount(c => c + <span class="num">1</span>)}&gt;Increment&lt;/button&gt;
+&lt;input onChange={(e) => setQuery(e.target.value)} /&gt;
+
+<span class="cmt">// Styles</span>
+&lt;div style={{ color: <span class="str">"red"</span>, fontSize: <span class="num">16</span> }}&gt;Styled&lt;/div&gt;
+&lt;div className={<span class="str">`card </span>${isActive ? <span class="str">"active"</span> : <span class="str">""</span>}<span class="str">`</span>}&gt;Toggle&lt;/div&gt;</code></pre></div>
+</div>
+
+<!-- REACT HOOKS -->
+<div class="section" id="react-hooks">
+  <div class="section-header"><span class="icon">🪝</span><h2>React: Hooks</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> { useState, useEffect, useRef, useMemo, useCallback, useContext } <span class="kw">from</span> <span class="str">"react"</span>;
+
+<span class="cmt">// ── useState ──</span>
+<span class="kw">const</span> [count, setCount] = useState(<span class="num">0</span>);
+<span class="kw">const</span> [users, setUsers] = useState&lt;User[]&gt;([]);
+setCount(prev => prev + <span class="num">1</span>);  <span class="cmt">// functional update</span>
+
+<span class="cmt">// ── useEffect ──</span>
+useEffect(() => {
+  fetchUsers().then(setUsers);
+}, []);  <span class="cmt">// [] = run once on mount</span>
+
+useEffect(() => {
+  <span class="kw">const</span> timer = setInterval(() => tick(), <span class="num">1000</span>);
+  <span class="kw">return</span> () => clearInterval(timer);  <span class="cmt">// cleanup</span>
+}, []);
+
+<span class="cmt">// ── useRef ──</span>
+<span class="kw">const</span> inputRef = useRef&lt;HTMLInputElement&gt;(<span class="kw">null</span>);
+inputRef.current?.focus();
+
+<span class="cmt">// ── useMemo ── (cached computation)</span>
+<span class="kw">const</span> sorted = useMemo(
+  () => users.sort((a, b) => a.name.localeCompare(b.name)),
+  [users]
+);
+
+<span class="cmt">// ── useCallback ── (cached function)</span>
+<span class="kw">const</span> handleClick = useCallback(() => {
+  doSomething(id);
+}, [id]);
+
+<span class="cmt">// ── useContext ──</span>
+<span class="kw">const</span> ThemeContext = createContext&lt;<span class="str">"light"</span> | <span class="str">"dark"</span>&gt;(<span class="str">"light"</span>);
+<span class="kw">const</span> theme = useContext(ThemeContext);
+
+<span class="cmt">// Custom hook</span>
+<span class="kw">function</span> <span class="fn">useFetch</span>&lt;T&gt;(url: <span class="tp">string</span>) {
+  <span class="kw">const</span> [data, setData] = useState&lt;T | <span class="kw">null</span>&gt;(<span class="kw">null</span>);
+  <span class="kw">const</span> [loading, setLoading] = useState(<span class="kw">true</span>);
+
+  useEffect(() => {
+    fetch(url).then(r => r.json()).then(d => {
+      setData(d);
+      setLoading(<span class="kw">false</span>);
+    });
+  }, [url]);
+
+  <span class="kw">return</span> { data, loading };
+}</code></pre></div>
+</div>
+
+<!-- REACT PATTERNS -->
+<div class="section" id="react-patterns">
+  <div class="section-header"><span class="icon">🏗️</span><h2>React: Patterns</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// ── State management with useReducer ──</span>
+<span class="kw">type</span> <span class="tp">Action</span> = { type: <span class="str">"increment"</span> } | { type: <span class="str">"decrement"</span> } | { type: <span class="str">"reset"</span> };
+
+<span class="kw">function</span> <span class="fn">reducer</span>(state: <span class="tp">number</span>, action: <span class="tp">Action</span>): <span class="tp">number</span> {
+  <span class="kw">switch</span> (action.type) {
+    <span class="kw">case</span> <span class="str">"increment"</span>: <span class="kw">return</span> state + <span class="num">1</span>;
+    <span class="kw">case</span> <span class="str">"decrement"</span>: <span class="kw">return</span> state - <span class="num">1</span>;
+    <span class="kw">case</span> <span class="str">"reset"</span>: <span class="kw">return</span> <span class="num">0</span>;
+  }
+}
+<span class="kw">const</span> [count, dispatch] = useReducer(reducer, <span class="num">0</span>);
+
+<span class="cmt">// ── Suspense + lazy loading ──</span>
+<span class="kw">const</span> Dashboard = lazy(() => <span class="kw">import</span>(<span class="str">"./Dashboard"</span>));
+&lt;Suspense fallback={&lt;Spinner /&gt;}&gt;
+  &lt;Dashboard /&gt;
+&lt;/Suspense&gt;
+
+<span class="cmt">// ── Server state with TanStack Query ──</span>
+<span class="kw">import</span> { useQuery, useMutation, useQueryClient } <span class="kw">from</span> <span class="str">"@tanstack/react-query"</span>;
+
+<span class="kw">const</span> { data, isLoading } = useQuery({
+  queryKey: [<span class="str">"users"</span>],
+  queryFn: () => fetch(<span class="str">"/api/users"</span>).then(r => r.json()),
+});
+
+<span class="kw">const</span> queryClient = useQueryClient();
+<span class="kw">const</span> mutation = useMutation({
+  mutationFn: (newUser) => fetch(<span class="str">"/api/users"</span>, { method: <span class="str">"POST"</span>, body: JSON.stringify(newUser) }),
+  onSuccess: () => queryClient.invalidateQueries({ queryKey: [<span class="str">"users"</span>] }),
+});</code></pre></div>
+</div>
+
+<!-- REACT ROUTER -->
+<div class="section" id="react-router">
+  <div class="section-header"><span class="icon">🧭</span><h2>React Router</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> { BrowserRouter, Routes, Route, Link, useParams, useNavigate } <span class="kw">from</span> <span class="str">"react-router-dom"</span>;
+
+<span class="kw">function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    &lt;BrowserRouter&gt;
+      &lt;nav&gt;
+        &lt;Link to=<span class="str">"/"</span>&gt;Home&lt;/Link&gt;
+        &lt;Link to=<span class="str">"/users"</span>&gt;Users&lt;/Link&gt;
+      &lt;/nav&gt;
+      &lt;Routes&gt;
+        &lt;Route path=<span class="str">"/"</span> element={&lt;Home /&gt;} /&gt;
+        &lt;Route path=<span class="str">"/users"</span> element={&lt;Users /&gt;} /&gt;
+        &lt;Route path=<span class="str">"/users/:id"</span> element={&lt;UserDetail /&gt;} /&gt;
+        &lt;Route path=<span class="str">"*"</span> element={&lt;NotFound /&gt;} /&gt;
+      &lt;/Routes&gt;
+    &lt;/BrowserRouter&gt;
+  );
+}
+
+<span class="kw">function</span> <span class="fn">UserDetail</span>() {
+  <span class="kw">const</span> { id } = useParams&lt;{ id: <span class="tp">string</span> }&gt;();
+  <span class="kw">const</span> navigate = useNavigate();
+  <span class="kw">return</span> &lt;button onClick={() => navigate(<span class="str">"/users"</span>)}&gt;Back&lt;/button&gt;;
+}</code></pre></div>
+</div>
+
+<!-- VUE BASICS -->
+<div class="section" id="vue-basics">
+  <div class="section-header"><span class="icon">💚</span><h2>Vue 3: Basics</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">&lt;!-- Single File Component (.vue) --&gt;</span>
+&lt;script setup lang=<span class="str">"ts"</span>&gt;
+<span class="kw">import</span> { ref, computed } <span class="kw">from</span> <span class="str">"vue"</span>;
+
+<span class="kw">interface</span> <span class="tp">Props</span> { title: <span class="tp">string</span>; count?: <span class="tp">number</span>; }
+<span class="kw">const</span> props = withDefaults(defineProps&lt;<span class="tp">Props</span>&gt;(), { count: <span class="num">0</span> });
+<span class="kw">const</span> emit = defineEmits&lt;{ update: [value: <span class="tp">number</span>] }&gt;();
+
+<span class="kw">const</span> name = ref(<span class="str">"Vue"</span>);
+<span class="kw">const</span> greeting = computed(() => <span class="str">`Hello, </span>${name.value}<span class="str">!`</span>);
+
+<span class="kw">function</span> <span class="fn">increment</span>() {
+  emit(<span class="str">"update"</span>, props.count + <span class="num">1</span>);
+}
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div class=<span class="str">"card"</span>&gt;
+    &lt;h1&gt;{{ greeting }}&lt;/h1&gt;
+    &lt;p&gt;{{ props.title }}&lt;/p&gt;
+
+    <span class="cmt">&lt;!-- Two-way binding --&gt;</span>
+    &lt;input v-model=<span class="str">"name"</span> /&gt;
+
+    <span class="cmt">&lt;!-- Conditional --&gt;</span>
+    &lt;p v-if=<span class="str">"count &gt; 10"</span>&gt;High!&lt;/p&gt;
+    &lt;p v-else-if=<span class="str">"count &gt; 5"</span>&gt;Medium&lt;/p&gt;
+    &lt;p v-else&gt;Low&lt;/p&gt;
+
+    <span class="cmt">&lt;!-- List --&gt;</span>
+    &lt;ul&gt;
+      &lt;li v-for=<span class="str">"user in users"</span> :key=<span class="str">"user.id"</span>&gt;{{ user.name }}&lt;/li&gt;
+    &lt;/ul&gt;
+
+    <span class="cmt">&lt;!-- Event --&gt;</span>
+    &lt;button @click=<span class="str">"increment"</span>&gt;+1&lt;/button&gt;
+
+    <span class="cmt">&lt;!-- Slots --&gt;</span>
+    &lt;slot name=<span class="str">"header"</span>&gt;Default header&lt;/slot&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+.card { padding: 1rem; }
+&lt;/style&gt;</code></pre></div>
+</div>
+
+<!-- VUE COMPOSITION -->
+<div class="section" id="vue-composition">
+  <div class="section-header"><span class="icon">🔧</span><h2>Vue 3: Composition API</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> { ref, reactive, computed, watch, onMounted, toRefs } <span class="kw">from</span> <span class="str">"vue"</span>;
+
+<span class="cmt">// ref (primitives) vs reactive (objects)</span>
+<span class="kw">const</span> count = ref(<span class="num">0</span>);            <span class="cmt">// access via count.value</span>
+<span class="kw">const</span> state = reactive({ name: <span class="str">"Alice"</span>, age: <span class="num">25</span> });
+
+<span class="cmt">// Computed</span>
+<span class="kw">const</span> doubled = computed(() => count.value * <span class="num">2</span>);
+
+<span class="cmt">// Watch</span>
+watch(count, (newVal, oldVal) => {
+  console.log(<span class="str">`</span>${oldVal}<span class="str"> → </span>${newVal}<span class="str">`</span>);
+});
+
+watch(() => state.name, (newName) => {
+  console.log(<span class="str">"Name changed:"</span>, newName);
+});
+
+<span class="cmt">// Lifecycle</span>
+onMounted(() => { fetchData(); });
+
+<span class="cmt">// ── Composable (custom hook equivalent) ──</span>
+<span class="kw">export function</span> <span class="fn">useFetch</span>&lt;T&gt;(url: <span class="tp">string</span>) {
+  <span class="kw">const</span> data = ref&lt;T | <span class="kw">null</span>&gt;(<span class="kw">null</span>);
+  <span class="kw">const</span> loading = ref(<span class="kw">true</span>);
+  <span class="kw">const</span> error = ref&lt;Error | <span class="kw">null</span>&gt;(<span class="kw">null</span>);
+
+  onMounted(<span class="kw">async</span> () => {
+    <span class="kw">try</span> {
+      <span class="kw">const</span> res = <span class="kw">await</span> fetch(url);
+      data.value = <span class="kw">await</span> res.json();
+    } <span class="kw">catch</span> (e) {
+      error.value = e <span class="kw">as</span> Error;
+    } <span class="kw">finally</span> {
+      loading.value = <span class="kw">false</span>;
+    }
+  });
+
+  <span class="kw">return</span> { data, loading, error };
+}
+
+<span class="cmt">// Provide / Inject (dependency injection)</span>
+<span class="kw">import</span> { provide, inject } <span class="kw">from</span> <span class="str">"vue"</span>;
+provide(<span class="str">"theme"</span>, <span class="str">"dark"</span>);           <span class="cmt">// parent</span>
+<span class="kw">const</span> theme = inject(<span class="str">"theme"</span>);          <span class="cmt">// child</span></code></pre></div>
+</div>
+
+<!-- VUE ROUTER -->
+<div class="section" id="vue-router">
+  <div class="section-header"><span class="icon">🧭</span><h2>Vue Router</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> { createRouter, createWebHistory } <span class="kw">from</span> <span class="str">"vue-router"</span>;
+
+<span class="kw">const</span> router = createRouter({
+  history: createWebHistory(),
+  routes: [
+    { path: <span class="str">"/"</span>, component: () => <span class="kw">import</span>(<span class="str">"./views/Home.vue"</span>) },
+    { path: <span class="str">"/users"</span>, component: () => <span class="kw">import</span>(<span class="str">"./views/Users.vue"</span>) },
+    { path: <span class="str">"/users/:id"</span>, component: () => <span class="kw">import</span>(<span class="str">"./views/UserDetail.vue"</span>), props: <span class="kw">true</span> },
+    { path: <span class="str">"/:pathMatch(.*)*"</span>, component: NotFound },
+  ],
+});
+
+<span class="cmt">// Navigation guard</span>
+router.beforeEach((to, from) => {
+  <span class="kw">if</span> (to.meta.requiresAuth && !isAuthenticated()) {
+    <span class="kw">return</span> { path: <span class="str">"/login"</span> };
+  }
+});
+
+<span class="cmt">// In component</span>
+<span class="kw">import</span> { useRoute, useRouter } <span class="kw">from</span> <span class="str">"vue-router"</span>;
+<span class="kw">const</span> route = useRoute();
+<span class="kw">const</span> router = useRouter();
+console.log(route.params.id);
+router.push(<span class="str">"/users"</span>);</code></pre></div>
+</div>
+
+<!-- NUXT -->
+<div class="section" id="nuxt">
+  <div class="section-header"><span class="icon">💎</span><h2>Nuxt 3</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// npx nuxi@latest init my-app</span>
+<span class="cmt">// File-based routing: pages/index.vue → /</span>
+<span class="cmt">// pages/users/[id].vue → /users/:id</span>
+
+<span class="cmt">// ── pages/users/[id].vue ──</span>
+&lt;script setup lang=<span class="str">"ts"</span>&gt;
+<span class="kw">const</span> route = useRoute();
+
+<span class="cmt">// Auto-imported data fetching</span>
+<span class="kw">const</span> { data: user, pending } = <span class="kw">await</span> useFetch(
+  <span class="str">`/api/users/</span>${route.params.id}<span class="str">`</span>
+);
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div v-if=<span class="str">"pending"</span>&gt;Loading...&lt;/div&gt;
+  &lt;div v-else&gt;{{ user?.name }}&lt;/div&gt;
+&lt;/template&gt;
+
+<span class="cmt">// ── server/api/users/[id].get.ts ── (API route)</span>
+<span class="kw">export default</span> defineEventHandler(<span class="kw">async</span> (event) => {
+  <span class="kw">const</span> id = getRouterParam(event, <span class="str">"id"</span>);
+  <span class="kw">return</span> { id, name: <span class="str">"Alice"</span> };
+});
+
+<span class="cmt">// ── server/api/users.post.ts ──</span>
+<span class="kw">export default</span> defineEventHandler(<span class="kw">async</span> (event) => {
+  <span class="kw">const</span> body = <span class="kw">await</span> readBody(event);
+  <span class="kw">return</span> { id: <span class="num">1</span>, ...body };
+});
+
+<span class="cmt">// Layouts: layouts/default.vue</span>
+<span class="cmt">// Middleware: middleware/auth.ts</span>
+<span class="kw">export default</span> defineNuxtRouteMiddleware((to, from) => {
+  <span class="kw">if</span> (!useAuth().isLoggedIn) <span class="kw">return</span> navigateTo(<span class="str">"/login"</span>);
+});
+
+<span class="cmt">// nuxt.config.ts</span>
+<span class="kw">export default</span> defineNuxtConfig({
+  modules: [<span class="str">"@nuxtjs/tailwindcss"</span>, <span class="str">"@pinia/nuxt"</span>],
+  runtimeConfig: {
+    apiSecret: <span class="str">""</span>,           <span class="cmt">// server only</span>
+    <span class="kw">public</span>: { apiBase: <span class="str">""</span> },  <span class="cmt">// client + server</span>
+  },
+});</code></pre></div>
+</div>
+
+<!-- SVELTE BASICS -->
+<div class="section" id="svelte-basics">
+  <div class="section-header"><span class="icon">🔶</span><h2>Svelte 5: Basics (Runes)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">&lt;!-- Component.svelte (Svelte 5 with runes) --&gt;</span>
+&lt;script lang=<span class="str">"ts"</span>&gt;
+  <span class="cmt">// Props</span>
+  <span class="kw">let</span> { name, count = <span class="num">0</span> }: { name: <span class="tp">string</span>; count?: <span class="tp">number</span> } = $props();
+
+  <span class="cmt">// Reactive state</span>
+  <span class="kw">let</span> message = $state(<span class="str">"Hello"</span>);
+  <span class="kw">let</span> users = $state&lt;User[]&gt;([]);
+
+  <span class="cmt">// Derived (computed)</span>
+  <span class="kw">let</span> greeting = $derived(<span class="str">`</span>${message}<span class="str">, </span>${name}<span class="str">!`</span>);
+  <span class="kw">let</span> userCount = $derived(users.length);
+
+  <span class="cmt">// Effects</span>
+  $effect(() => {
+    console.log(<span class="str">"Count changed:"</span>, count);
+  });
+
+  <span class="cmt">// Functions</span>
+  <span class="kw">function</span> <span class="fn">addUser</span>(user: User) {
+    users.push(user);  <span class="cmt">// $state is deeply reactive</span>
+  }
+
+  <span class="cmt">// Lifecycle</span>
+  <span class="kw">import</span> { onMount } <span class="kw">from</span> <span class="str">"svelte"</span>;
+  onMount(<span class="kw">async</span> () => {
+    <span class="kw">const</span> res = <span class="kw">await</span> fetch(<span class="str">"/api/users"</span>);
+    users = <span class="kw">await</span> res.json();
+  });
+&lt;/script&gt;
+
+<span class="cmt">&lt;!-- Template --&gt;</span>
+&lt;h1&gt;{greeting}&lt;/h1&gt;
+&lt;input bind:value={message} /&gt;
+
+{#if userCount > <span class="num">0</span>}
+  &lt;ul&gt;
+    {#each users as user (user.id)}
+      &lt;li&gt;{user.name}&lt;/li&gt;
+    {/each}
+  &lt;/ul&gt;
+{:else}
+  &lt;p&gt;No users yet.&lt;/p&gt;
+{/if}
+
+&lt;button onclick={() => count++}&gt;Count: {count}&lt;/button&gt;
+
+<span class="cmt">&lt;!-- Slots --&gt;</span>
+&lt;slot&gt;Default content&lt;/slot&gt;
+
+&lt;style&gt;
+  h1 { color: tomato; }
+&lt;/style&gt;</code></pre></div>
+</div>
+
+<!-- SVELTE ADVANCED -->
+<div class="section" id="svelte-advanced">
+  <div class="section-header"><span class="icon">⚡</span><h2>Svelte: Stores &amp; SvelteKit</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// ── Stores (shared state) ──</span>
+<span class="cmt">// stores/counter.ts</span>
+<span class="kw">import</span> { writable, derived } <span class="kw">from</span> <span class="str">"svelte/store"</span>;
+
+<span class="kw">export const</span> count = writable(<span class="num">0</span>);
+<span class="kw">export const</span> doubled = derived(count, $c => $c * <span class="num">2</span>);
+
+<span class="cmt">// In component</span>
+<span class="kw">import</span> { count } <span class="kw">from</span> <span class="str">"./stores/counter"</span>;
+count.set(<span class="num">5</span>);
+count.update(n => n + <span class="num">1</span>);
+&lt;p&gt;{$count}&lt;/p&gt;  <span class="cmt">&lt;!-- auto-subscribe with $ prefix --&gt;</span>
+
+<span class="cmt">// ── SvelteKit ──</span>
+<span class="cmt">// npx sv create my-app</span>
+
+<span class="cmt">// File-based routing:</span>
+<span class="cmt">// src/routes/+page.svelte            → /</span>
+<span class="cmt">// src/routes/users/+page.svelte      → /users</span>
+<span class="cmt">// src/routes/users/[id]/+page.svelte → /users/:id</span>
+
+<span class="cmt">// ── src/routes/users/+page.server.ts ── (data loader)</span>
+<span class="kw">import type</span> { PageServerLoad } <span class="kw">from</span> <span class="str">"./$types"</span>;
+
+<span class="kw">export const</span> load: PageServerLoad = <span class="kw">async</span> ({ fetch }) => {
+  <span class="kw">const</span> res = <span class="kw">await</span> fetch(<span class="str">"/api/users"</span>);
+  <span class="kw">return</span> { users: <span class="kw">await</span> res.json() };
+};
+
+<span class="cmt">// ── +page.svelte ──</span>
+&lt;script lang=<span class="str">"ts"</span>&gt;
+  <span class="kw">let</span> { data } = $props();  <span class="cmt">// typed from load function</span>
+&lt;/script&gt;
+{#each data.users as user}
+  &lt;p&gt;{user.name}&lt;/p&gt;
+{/each}
+
+<span class="cmt">// ── API route: src/routes/api/users/+server.ts ──</span>
+<span class="kw">import</span> { json } <span class="kw">from</span> <span class="str">"@sveltejs/kit"</span>;
+<span class="kw">export async function</span> <span class="fn">GET</span>() {
+  <span class="kw">return</span> json([{ id: <span class="num">1</span>, name: <span class="str">"Alice"</span> }]);
+}
+<span class="kw">export async function</span> <span class="fn">POST</span>({ request }) {
+  <span class="kw">const</span> body = <span class="kw">await</span> request.json();
+  <span class="kw">return</span> json({ id: <span class="num">1</span>, ...body }, { status: <span class="num">201</span> });
+}</code></pre></div>
+</div>
+
+<!-- COMPARISON -->
+<div class="section" id="comparison">
+  <div class="section-header"><span class="icon">⚖️</span><h2>Framework Comparison</h2></div>
+  <div class="note tip">
+    <table style="width: 100%; border-collapse: collapse; font-size: 0.8rem;">
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+        <th style="text-align:left; padding: 5px;">Feature</th>
+        <th style="text-align:left; padding: 5px;">React</th>
+        <th style="text-align:left; padding: 5px;">Vue 3</th>
+        <th style="text-align:left; padding: 5px;">Svelte 5</th>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 5px;">Reactivity</td>
+        <td style="padding: 4px 5px;">Hooks (explicit)</td>
+        <td style="padding: 4px 5px;">Proxy-based (ref/reactive)</td>
+        <td style="padding: 4px 5px;">Runes ($state)</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 5px;">Template</td>
+        <td style="padding: 4px 5px;">JSX</td>
+        <td style="padding: 4px 5px;">HTML template + directives</td>
+        <td style="padding: 4px 5px;">HTML template + {#if}</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 5px;">Bundle</td>
+        <td style="padding: 4px 5px;">~40KB runtime</td>
+        <td style="padding: 4px 5px;">~33KB runtime</td>
+        <td style="padding: 4px 5px;">No runtime (compiled)</td>
+      </tr>
+      <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <td style="padding: 4px 5px;">Meta Framework</td>
+        <td style="padding: 4px 5px;">Next.js / Remix</td>
+        <td style="padding: 4px 5px;">Nuxt 3</td>
+        <td style="padding: 4px 5px;">SvelteKit</td>
+      </tr>
+      <tr>
+        <td style="padding: 4px 5px;">Ecosystem</td>
+        <td style="padding: 4px 5px;">Largest</td>
+        <td style="padding: 4px 5px;">Large, growing</td>
+        <td style="padding: 4px 5px;">Growing fast</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+</div>
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>Frontend Frameworks Cheatsheet · 2026</footer>
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
+const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
+const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
+</script>
+</body>
+</html>

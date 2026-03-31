@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Java Collections Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ Java Collections</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+<div class="container">
+<div class="hero">
+  <h1>Java Collections &amp; Essential Methods</h1>
+  <p class="subtitle">List, Set, Map, Queue, Stack, Streams, String methods, Arrays, and daily-use utility functions</p>
+  <span class="badge">Language / Daily Use</span>
+  <div class="search-box"><span class="search-icon">🔍</span><input type="text" id="searchInput" placeholder="Filter sections…" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<div class="toc"><h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#hierarchy">Collections Hierarchy</a>
+    <a href="#list">List (ArrayList, LinkedList)</a>
+    <a href="#set">Set (HashSet, TreeSet)</a>
+    <a href="#map">Map (HashMap, TreeMap)</a>
+    <a href="#queue">Queue &amp; Deque</a>
+    <a href="#stack">Stack</a>
+    <a href="#streams">Streams API</a>
+    <a href="#string">String Methods</a>
+    <a href="#arrays">Arrays Utility</a>
+    <a href="#collections-util">Collections Utility</a>
+    <a href="#optional">Optional</a>
+    <a href="#datetime">Date &amp; Time</a>
+    <a href="#fileio">File I/O</a>
+  </div>
+</div>
+
+<!-- HIERARCHY -->
+<div class="section" id="hierarchy">
+  <div class="section-header"><span class="icon">🏗️</span><h2>Collections Hierarchy</h2></div>
+  <div class="diagram-box">                    Iterable
+                       │
+                   Collection
+                  ╱    │     ╲
+               List   Set   Queue
+               │       │      │
+          ArrayList  HashSet  PriorityQueue
+          LinkedList TreeSet  ArrayDeque
+          Vector     LinkedHashSet
+          Stack
+
+                     Map (separate hierarchy)
+                      │
+                  HashMap
+                  TreeMap
+                  LinkedHashMap
+                  ConcurrentHashMap</div>
+  <div class="note tip">
+    <strong>💡 Quick picking guide</strong>
+    <ul>
+      <li><strong>ArrayList</strong>: Default choice for ordered, indexed access. O(1) get, O(n) insert middle.</li>
+      <li><strong>LinkedList</strong>: Frequent insert/delete at ends. O(n) get, O(1) add/remove first/last.</li>
+      <li><strong>HashSet</strong>: Unique elements, no order. O(1) add/contains/remove.</li>
+      <li><strong>TreeSet</strong>: Unique + sorted. O(log n) operations.</li>
+      <li><strong>HashMap</strong>: Key-value pairs. O(1) get/put. Most used Map.</li>
+      <li><strong>TreeMap</strong>: Sorted keys. O(log n) operations.</li>
+      <li><strong>PriorityQueue</strong>: Min-heap. O(log n) add/poll.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- LIST -->
+<div class="section" id="list">
+  <div class="section-header"><span class="icon">📋</span><h2>List (ArrayList, LinkedList)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> java.util.*;
+
+<span class="cmt">// Creation</span>
+List&lt;<span class="tp">String</span>&gt; list = <span class="kw">new</span> ArrayList&lt;&gt;();
+List&lt;<span class="tp">String</span>&gt; list2 = List.of(<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>);       <span class="cmt">// immutable</span>
+List&lt;<span class="tp">String</span>&gt; list3 = <span class="kw">new</span> ArrayList&lt;&gt;(List.of(<span class="str">"a"</span>, <span class="str">"b"</span>));  <span class="cmt">// mutable copy</span>
+
+<span class="cmt">// ── Add ──</span>
+list.add(<span class="str">"Alice"</span>);            <span class="cmt">// append</span>
+list.add(<span class="num">0</span>, <span class="str">"Bob"</span>);           <span class="cmt">// insert at index</span>
+list.addAll(List.of(<span class="str">"C"</span>, <span class="str">"D"</span>));
+
+<span class="cmt">// ── Access ──</span>
+list.get(<span class="num">0</span>);                   <span class="cmt">// by index</span>
+list.getFirst();               <span class="cmt">// Java 21+</span>
+list.getLast();                <span class="cmt">// Java 21+</span>
+list.indexOf(<span class="str">"Alice"</span>);         <span class="cmt">// first occurrence (-1 if not found)</span>
+list.lastIndexOf(<span class="str">"Alice"</span>);
+
+<span class="cmt">// ── Remove ──</span>
+list.remove(<span class="num">0</span>);                <span class="cmt">// by index</span>
+list.remove(<span class="str">"Alice"</span>);          <span class="cmt">// by value (first occurrence)</span>
+list.removeIf(s -> s.startsWith(<span class="str">"A"</span>));
+list.clear();
+
+<span class="cmt">// ── Query ──</span>
+list.size();
+list.isEmpty();
+list.contains(<span class="str">"Alice"</span>);
+list.containsAll(List.of(<span class="str">"A"</span>, <span class="str">"B"</span>));
+
+<span class="cmt">// ── Modify ──</span>
+list.set(<span class="num">0</span>, <span class="str">"Updated"</span>);       <span class="cmt">// replace at index</span>
+list.sort(Comparator.naturalOrder());
+list.sort(Comparator.comparing(<span class="tp">String</span>::length));
+Collections.reverse(list);
+Collections.shuffle(list);
+
+<span class="cmt">// ── Iterate ──</span>
+<span class="kw">for</span> (<span class="tp">String</span> s : list) { }
+<span class="kw">for</span> (<span class="tp">int</span> i = <span class="num">0</span>; i &lt; list.size(); i++) { list.get(i); }
+list.forEach(System.out::println);
+
+<span class="cmt">// ── Sublist &amp; Convert ──</span>
+list.subList(<span class="num">0</span>, <span class="num">2</span>);            <span class="cmt">// view [0, 2)</span>
+list.toArray(<span class="kw">new</span> <span class="tp">String</span>[<span class="num">0</span>]);   <span class="cmt">// to array</span>
+<span class="tp">String</span>.join(<span class="str">", "</span>, list);       <span class="cmt">// join to string</span></code></pre></div>
+</div>
+
+<!-- SET -->
+<div class="section" id="set">
+  <div class="section-header"><span class="icon">🔵</span><h2>Set (HashSet, TreeSet, LinkedHashSet)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Creation</span>
+Set&lt;<span class="tp">String</span>&gt; set = <span class="kw">new</span> HashSet&lt;&gt;();
+Set&lt;<span class="tp">String</span>&gt; sorted = <span class="kw">new</span> TreeSet&lt;&gt;();          <span class="cmt">// sorted</span>
+Set&lt;<span class="tp">String</span>&gt; ordered = <span class="kw">new</span> LinkedHashSet&lt;&gt;();    <span class="cmt">// insertion order</span>
+Set&lt;<span class="tp">String</span>&gt; immutable = Set.of(<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>);
+
+<span class="cmt">// ── Operations ──</span>
+set.add(<span class="str">"Alice"</span>);       <span class="cmt">// returns false if already exists</span>
+set.remove(<span class="str">"Alice"</span>);
+set.contains(<span class="str">"Alice"</span>);
+set.size();
+set.isEmpty();
+
+<span class="cmt">// ── Set Math ──</span>
+Set&lt;<span class="tp">Integer</span>&gt; a = <span class="kw">new</span> HashSet&lt;&gt;(Set.of(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>));
+Set&lt;<span class="tp">Integer</span>&gt; b = Set.of(<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>);
+
+a.retainAll(b);                <span class="cmt">// intersection: {2, 3}</span>
+a.addAll(b);                   <span class="cmt">// union: {1, 2, 3, 4}</span>
+a.removeAll(b);                <span class="cmt">// difference: {1}</span>
+
+<span class="cmt">// Convert</span>
+List&lt;<span class="tp">String</span>&gt; fromSet = <span class="kw">new</span> ArrayList&lt;&gt;(set);
+Set&lt;<span class="tp">String</span>&gt; fromList = <span class="kw">new</span> HashSet&lt;&gt;(list);</code></pre></div>
+</div>
+
+<!-- MAP -->
+<div class="section" id="map">
+  <div class="section-header"><span class="icon">🗺️</span><h2>Map (HashMap, TreeMap, LinkedHashMap)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Creation</span>
+Map&lt;<span class="tp">String</span>, <span class="tp">Integer</span>&gt; map = <span class="kw">new</span> HashMap&lt;&gt;();
+Map&lt;<span class="tp">String</span>, <span class="tp">Integer</span>&gt; sorted = <span class="kw">new</span> TreeMap&lt;&gt;();      <span class="cmt">// sorted keys</span>
+Map&lt;<span class="tp">String</span>, <span class="tp">Integer</span>&gt; ordered = <span class="kw">new</span> LinkedHashMap&lt;&gt;();  <span class="cmt">// insertion order</span>
+Map&lt;<span class="tp">String</span>, <span class="tp">Integer</span>&gt; immutable = Map.of(<span class="str">"a"</span>, <span class="num">1</span>, <span class="str">"b"</span>, <span class="num">2</span>);
+
+<span class="cmt">// ── Put / Get ──</span>
+map.put(<span class="str">"Alice"</span>, <span class="num">95</span>);
+map.putIfAbsent(<span class="str">"Bob"</span>, <span class="num">87</span>);      <span class="cmt">// only if key not present</span>
+map.get(<span class="str">"Alice"</span>);                  <span class="cmt">// null if missing</span>
+map.getOrDefault(<span class="str">"Charlie"</span>, <span class="num">0</span>);   <span class="cmt">// default if missing</span>
+
+<span class="cmt">// ── Remove ──</span>
+map.remove(<span class="str">"Alice"</span>);
+map.remove(<span class="str">"Alice"</span>, <span class="num">95</span>);          <span class="cmt">// only if value matches</span>
+
+<span class="cmt">// ── Query ──</span>
+map.containsKey(<span class="str">"Alice"</span>);
+map.containsValue(<span class="num">95</span>);
+map.size();
+map.isEmpty();
+
+<span class="cmt">// ── Compute / Merge ──</span>
+map.compute(<span class="str">"Alice"</span>, (k, v) -> v == <span class="kw">null</span> ? <span class="num">1</span> : v + <span class="num">1</span>);
+map.computeIfAbsent(<span class="str">"key"</span>, k -> expensiveCalculation());
+map.merge(<span class="str">"Alice"</span>, <span class="num">10</span>, <span class="tp">Integer</span>::sum);  <span class="cmt">// add to existing</span>
+
+<span class="cmt">// ── Iterate ──</span>
+<span class="kw">for</span> (Map.Entry&lt;<span class="tp">String</span>, <span class="tp">Integer</span>&gt; e : map.entrySet()) {
+    e.getKey(); e.getValue();
+}
+map.forEach((k, v) -> System.out.println(k + <span class="str">"="</span> + v));
+map.keySet();    <span class="cmt">// Set&lt;String&gt;</span>
+map.values();    <span class="cmt">// Collection&lt;Integer&gt;</span>
+map.entrySet();  <span class="cmt">// Set&lt;Entry&gt;</span>
+
+<span class="cmt">// ── Word frequency counter (classic pattern) ──</span>
+Map&lt;<span class="tp">String</span>, <span class="tp">Integer</span>&gt; freq = <span class="kw">new</span> HashMap&lt;&gt;();
+<span class="kw">for</span> (<span class="tp">String</span> word : words) {
+    freq.merge(word, <span class="num">1</span>, <span class="tp">Integer</span>::sum);
+}</code></pre></div>
+</div>
+
+<!-- QUEUE -->
+<div class="section" id="queue">
+  <div class="section-header"><span class="icon">📬</span><h2>Queue &amp; Deque</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Queue (FIFO)</span>
+Queue&lt;<span class="tp">String</span>&gt; queue = <span class="kw">new</span> LinkedList&lt;&gt;();
+queue.offer(<span class="str">"first"</span>);   <span class="cmt">// add to tail</span>
+queue.peek();            <span class="cmt">// view head (null if empty)</span>
+queue.poll();            <span class="cmt">// remove head (null if empty)</span>
+
+<span class="cmt">// PriorityQueue (min-heap by default)</span>
+PriorityQueue&lt;<span class="tp">Integer</span>&gt; minHeap = <span class="kw">new</span> PriorityQueue&lt;&gt;();
+PriorityQueue&lt;<span class="tp">Integer</span>&gt; maxHeap = <span class="kw">new</span> PriorityQueue&lt;&gt;(Comparator.reverseOrder());
+minHeap.offer(<span class="num">5</span>); minHeap.offer(<span class="num">1</span>); minHeap.offer(<span class="num">3</span>);
+minHeap.poll();   <span class="cmt">// 1 (smallest)</span>
+
+<span class="cmt">// Custom comparator</span>
+PriorityQueue&lt;<span class="tp">int</span>[]&gt; pq = <span class="kw">new</span> PriorityQueue&lt;&gt;((a, b) -> a[<span class="num">1</span>] - b[<span class="num">1</span>]);
+
+<span class="cmt">// Deque (double-ended queue)</span>
+Deque&lt;<span class="tp">String</span>&gt; deque = <span class="kw">new</span> ArrayDeque&lt;&gt;();
+deque.offerFirst(<span class="str">"front"</span>);
+deque.offerLast(<span class="str">"back"</span>);
+deque.peekFirst();
+deque.peekLast();
+deque.pollFirst();
+deque.pollLast();</code></pre></div>
+</div>
+
+<!-- STACK -->
+<div class="section" id="stack">
+  <div class="section-header"><span class="icon">📚</span><h2>Stack</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Use ArrayDeque as stack (preferred over Stack class)</span>
+Deque&lt;<span class="tp">Integer</span>&gt; stack = <span class="kw">new</span> ArrayDeque&lt;&gt;();
+stack.push(<span class="num">1</span>);           <span class="cmt">// push to top</span>
+stack.push(<span class="num">2</span>);
+stack.peek();            <span class="cmt">// 2 (view top)</span>
+stack.pop();             <span class="cmt">// 2 (remove top)</span>
+stack.isEmpty();
+
+<span class="cmt">// Classic pattern: valid parentheses</span>
+<span class="kw">public boolean</span> <span class="fn">isValid</span>(<span class="tp">String</span> s) {
+    Deque&lt;<span class="tp">Character</span>&gt; stack = <span class="kw">new</span> ArrayDeque&lt;&gt;();
+    <span class="kw">for</span> (<span class="tp">char</span> c : s.toCharArray()) {
+        <span class="kw">if</span> (c == <span class="str">'('</span>) stack.push(<span class="str">')'</span>);
+        <span class="kw">else if</span> (c == <span class="str">'['</span>) stack.push(<span class="str">']'</span>);
+        <span class="kw">else if</span> (c == <span class="str">'{'</span>) stack.push(<span class="str">'}'</span>);
+        <span class="kw">else if</span> (stack.isEmpty() || stack.pop() != c) <span class="kw">return false</span>;
+    }
+    <span class="kw">return</span> stack.isEmpty();
+}</code></pre></div>
+</div>
+
+<!-- STREAMS -->
+<div class="section" id="streams">
+  <div class="section-header"><span class="icon">🌊</span><h2>Streams API</h2></div>
+  <div class="code-wrapper"><pre><code>List&lt;<span class="tp">String</span>&gt; names = List.of(<span class="str">"Alice"</span>, <span class="str">"Bob"</span>, <span class="str">"Charlie"</span>, <span class="str">"Alice"</span>);
+
+<span class="cmt">// filter + map + collect</span>
+List&lt;<span class="tp">String</span>&gt; upper = names.stream()
+    .filter(n -> n.length() > <span class="num">3</span>)
+    .map(<span class="tp">String</span>::toUpperCase)
+    .distinct()
+    .sorted()
+    .collect(Collectors.toList());
+
+<span class="cmt">// reduce</span>
+<span class="tp">int</span> sum = List.of(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>).stream().reduce(<span class="num">0</span>, <span class="tp">Integer</span>::sum);
+
+<span class="cmt">// groupingBy</span>
+Map&lt;<span class="tp">Integer</span>, List&lt;<span class="tp">String</span>&gt;&gt; byLength = names.stream()
+    .collect(Collectors.groupingBy(<span class="tp">String</span>::length));
+<span class="cmt">// {3=[Bob], 5=[Alice, Alice], 7=[Charlie]}</span>
+
+<span class="cmt">// counting</span>
+Map&lt;<span class="tp">String</span>, <span class="tp">Long</span>&gt; freq = names.stream()
+    .collect(Collectors.groupingBy(n -> n, Collectors.counting()));
+
+<span class="cmt">// toMap</span>
+Map&lt;<span class="tp">String</span>, <span class="tp">Integer</span>&gt; nameLen = names.stream()
+    .distinct()
+    .collect(Collectors.toMap(n -> n, <span class="tp">String</span>::length));
+
+<span class="cmt">// joining</span>
+<span class="tp">String</span> joined = names.stream().collect(Collectors.joining(<span class="str">", "</span>));
+
+<span class="cmt">// anyMatch, allMatch, noneMatch</span>
+<span class="kw">boolean</span> hasAlice = names.stream().anyMatch(n -> n.equals(<span class="str">"Alice"</span>));
+
+<span class="cmt">// findFirst, findAny</span>
+Optional&lt;<span class="tp">String</span>&gt; first = names.stream()
+    .filter(n -> n.startsWith(<span class="str">"C"</span>))
+    .findFirst();
+
+<span class="cmt">// flatMap (flatten nested collections)</span>
+List&lt;List&lt;<span class="tp">Integer</span>&gt;&gt; nested = List.of(List.of(<span class="num">1</span>,<span class="num">2</span>), List.of(<span class="num">3</span>,<span class="num">4</span>));
+List&lt;<span class="tp">Integer</span>&gt; flat = nested.stream()
+    .flatMap(Collection::stream)
+    .toList();  <span class="cmt">// [1, 2, 3, 4]</span>
+
+<span class="cmt">// IntStream, range</span>
+IntStream.range(<span class="num">0</span>, <span class="num">10</span>).forEach(System.out::println);
+IntStream.rangeClosed(<span class="num">1</span>, <span class="num">100</span>).sum();
+
+<span class="cmt">// Parallel stream</span>
+<span class="tp">long</span> count = list.parallelStream().filter(x -> x > <span class="num">0</span>).count();</code></pre></div>
+</div>
+
+<!-- STRING -->
+<div class="section" id="string">
+  <div class="section-header"><span class="icon">📝</span><h2>String Methods</h2></div>
+  <div class="code-wrapper"><pre><code><span class="tp">String</span> s = <span class="str">"Hello, World!"</span>;
+
+<span class="cmt">// ── Basics ──</span>
+s.length();                    <span class="cmt">// 13</span>
+s.charAt(<span class="num">0</span>);                   <span class="cmt">// 'H'</span>
+s.substring(<span class="num">0</span>, <span class="num">5</span>);             <span class="cmt">// "Hello"</span>
+s.indexOf(<span class="str">"World"</span>);             <span class="cmt">// 7</span>
+s.lastIndexOf(<span class="str">"l"</span>);             <span class="cmt">// 10</span>
+s.contains(<span class="str">"World"</span>);            <span class="cmt">// true</span>
+s.isEmpty();                    <span class="cmt">// false</span>
+s.isBlank();                    <span class="cmt">// false (Java 11+)  "  ".isBlank() = true</span>
+
+<span class="cmt">// ── Transform ──</span>
+s.toUpperCase();               <span class="cmt">// "HELLO, WORLD!"</span>
+s.toLowerCase();
+s.trim();                      <span class="cmt">// remove leading/trailing whitespace</span>
+s.strip();                     <span class="cmt">// Unicode-aware trim (Java 11+)</span>
+s.replace(<span class="str">"World"</span>, <span class="str">"Java"</span>);
+s.replaceAll(<span class="str">"[aeiou]"</span>, <span class="str">"*"</span>); <span class="cmt">// regex</span>
+s.repeat(<span class="num">3</span>);                   <span class="cmt">// Java 11+</span>
+
+<span class="cmt">// ── Split &amp; Join ──</span>
+<span class="tp">String</span>[] parts = s.split(<span class="str">", "</span>);
+<span class="tp">String</span>.join(<span class="str">"-"</span>, <span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>);  <span class="cmt">// "a-b-c"</span>
+
+<span class="cmt">// ── Compare ──</span>
+s.equals(<span class="str">"Hello"</span>);              <span class="cmt">// case-sensitive</span>
+s.equalsIgnoreCase(<span class="str">"hello, world!"</span>);
+s.startsWith(<span class="str">"Hello"</span>);
+s.endsWith(<span class="str">"!"</span>);
+s.compareTo(<span class="str">"other"</span>);           <span class="cmt">// lexicographic</span>
+s.matches(<span class="str">"[A-Za-z ]+"</span>);        <span class="cmt">// regex match</span>
+
+<span class="cmt">// ── Format ──</span>
+<span class="tp">String</span>.format(<span class="str">"Name: %s, Age: %d"</span>, <span class="str">"Alice"</span>, <span class="num">30</span>);
+<span class="tp">String</span>.valueOf(<span class="num">42</span>);             <span class="cmt">// int to String</span>
+<span class="tp">Integer</span>.parseInt(<span class="str">"42"</span>);          <span class="cmt">// String to int</span>
+
+<span class="cmt">// StringBuilder (mutable, efficient concatenation)</span>
+StringBuilder sb = <span class="kw">new</span> StringBuilder();
+sb.append(<span class="str">"Hello"</span>).append(<span class="str">" World"</span>);
+sb.insert(<span class="num">5</span>, <span class="str">","</span>);
+sb.reverse();
+sb.toString();</code></pre></div>
+</div>
+
+<!-- ARRAYS -->
+<div class="section" id="arrays">
+  <div class="section-header"><span class="icon">📊</span><h2>Arrays Utility</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> java.util.Arrays;
+
+<span class="tp">int</span>[] arr = {<span class="num">5</span>, <span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">2</span>};
+
+Arrays.sort(arr);                     <span class="cmt">// in-place sort</span>
+Arrays.sort(arr, <span class="num">0</span>, <span class="num">3</span>);               <span class="cmt">// sort range [0,3)</span>
+Arrays.binarySearch(arr, <span class="num">3</span>);          <span class="cmt">// must be sorted first</span>
+Arrays.fill(arr, <span class="num">0</span>);                  <span class="cmt">// fill with 0</span>
+Arrays.copyOf(arr, <span class="num">10</span>);               <span class="cmt">// copy with new length</span>
+Arrays.copyOfRange(arr, <span class="num">1</span>, <span class="num">4</span>);        <span class="cmt">// copy range</span>
+Arrays.equals(arr, other);             <span class="cmt">// compare</span>
+Arrays.toString(arr);                  <span class="cmt">// "[1, 2, 3, 4, 5]"</span>
+Arrays.stream(arr).sum();              <span class="cmt">// stream operations</span>
+Arrays.asList(<span class="str">"a"</span>, <span class="str">"b"</span>, <span class="str">"c"</span>);       <span class="cmt">// array to List</span>
+
+<span class="cmt">// 2D arrays</span>
+<span class="tp">int</span>[][] matrix = <span class="kw">new</span> <span class="tp">int</span>[<span class="num">3</span>][<span class="num">4</span>];
+Arrays.deepToString(matrix);
+Arrays.sort(matrix, (a, b) -> a[<span class="num">0</span>] - b[<span class="num">0</span>]);  <span class="cmt">// sort by first column</span></code></pre></div>
+</div>
+
+<!-- COLLECTIONS UTIL -->
+<div class="section" id="collections-util">
+  <div class="section-header"><span class="icon">🔧</span><h2>Collections Utility Class</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> java.util.Collections;
+
+Collections.sort(list);
+Collections.reverse(list);
+Collections.shuffle(list);
+Collections.min(list);
+Collections.max(list);
+Collections.frequency(list, <span class="str">"Alice"</span>);
+Collections.swap(list, <span class="num">0</span>, <span class="num">1</span>);
+Collections.rotate(list, <span class="num">2</span>);
+Collections.binarySearch(sortedList, <span class="str">"key"</span>);
+
+<span class="cmt">// Immutable wrappers</span>
+List&lt;<span class="tp">String</span>&gt; unmod = Collections.unmodifiableList(list);
+Map&lt;<span class="tp">String</span>, <span class="tp">Integer</span>&gt; unmodMap = Collections.unmodifiableMap(map);
+
+<span class="cmt">// Thread-safe wrappers</span>
+List&lt;<span class="tp">String</span>&gt; syncList = Collections.synchronizedList(<span class="kw">new</span> ArrayList&lt;&gt;());
+
+<span class="cmt">// Singleton &amp; empty</span>
+List&lt;<span class="tp">String</span>&gt; single = Collections.singletonList(<span class="str">"only"</span>);
+List&lt;<span class="tp">String</span>&gt; empty = Collections.emptyList();</code></pre></div>
+</div>
+
+<!-- OPTIONAL -->
+<div class="section" id="optional">
+  <div class="section-header"><span class="icon">❓</span><h2>Optional</h2></div>
+  <div class="code-wrapper"><pre><code>Optional&lt;<span class="tp">String</span>&gt; opt = Optional.of(<span class="str">"Hello"</span>);
+Optional&lt;<span class="tp">String</span>&gt; empty = Optional.empty();
+Optional&lt;<span class="tp">String</span>&gt; nullable = Optional.ofNullable(getValue());
+
+<span class="cmt">// Check &amp; get</span>
+opt.isPresent();               <span class="cmt">// true</span>
+opt.isEmpty();                 <span class="cmt">// false (Java 11+)</span>
+opt.get();                     <span class="cmt">// "Hello" (throws if empty!)</span>
+opt.orElse(<span class="str">"default"</span>);         <span class="cmt">// value or default</span>
+opt.orElseGet(() -> compute()); <span class="cmt">// lazy default</span>
+opt.orElseThrow();             <span class="cmt">// throw NoSuchElementException</span>
+
+<span class="cmt">// Transform</span>
+opt.map(<span class="tp">String</span>::toUpperCase);   <span class="cmt">// Optional&lt;String&gt;</span>
+opt.flatMap(<span class="kw">this</span>::findUser);    <span class="cmt">// when mapper returns Optional</span>
+opt.filter(s -> s.length() > <span class="num">3</span>);
+opt.ifPresent(System.out::println);
+opt.ifPresentOrElse(
+    System.out::println,
+    () -> System.out.println(<span class="str">"empty"</span>)
+);</code></pre></div>
+</div>
+
+<!-- DATE/TIME -->
+<div class="section" id="datetime">
+  <div class="section-header"><span class="icon">🕐</span><h2>Date &amp; Time (java.time)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> java.time.*;
+<span class="kw">import</span> java.time.format.DateTimeFormatter;
+
+LocalDate date = LocalDate.now();
+LocalTime time = LocalTime.now();
+LocalDateTime dt = LocalDateTime.now();
+ZonedDateTime zdt = ZonedDateTime.now(ZoneId.of(<span class="str">"UTC"</span>));
+Instant instant = Instant.now();  <span class="cmt">// epoch millis</span>
+
+<span class="cmt">// Create specific</span>
+LocalDate.of(<span class="num">2024</span>, <span class="num">3</span>, <span class="num">15</span>);
+LocalDate.parse(<span class="str">"2024-03-15"</span>);
+
+<span class="cmt">// Manipulate</span>
+date.plusDays(<span class="num">7</span>).minusMonths(<span class="num">1</span>);
+date.withYear(<span class="num">2025</span>);
+Duration.between(start, end);
+Period.between(date1, date2);
+
+<span class="cmt">// Format</span>
+DateTimeFormatter fmt = DateTimeFormatter.ofPattern(<span class="str">"yyyy-MM-dd HH:mm"</span>);
+dt.format(fmt);
+LocalDateTime.parse(<span class="str">"2024-03-15 10:30"</span>, fmt);</code></pre></div>
+</div>
+
+<!-- FILE I/O -->
+<div class="section" id="fileio">
+  <div class="section-header"><span class="icon">📁</span><h2>File I/O</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> java.nio.file.*;
+
+<span class="cmt">// Read file</span>
+<span class="tp">String</span> content = Files.readString(Path.of(<span class="str">"data.txt"</span>));
+List&lt;<span class="tp">String</span>&gt; lines = Files.readAllLines(Path.of(<span class="str">"data.txt"</span>));
+
+<span class="cmt">// Write file</span>
+Files.writeString(Path.of(<span class="str">"out.txt"</span>), <span class="str">"Hello"</span>);
+Files.write(Path.of(<span class="str">"out.txt"</span>), lines);
+
+<span class="cmt">// Stream large files</span>
+<span class="kw">try</span> (Stream&lt;<span class="tp">String</span>&gt; stream = Files.lines(Path.of(<span class="str">"big.txt"</span>))) {
+    stream.filter(l -> l.contains(<span class="str">"error"</span>)).forEach(System.out::println);
+}
+
+<span class="cmt">// Directory operations</span>
+Files.exists(path);
+Files.createDirectories(Path.of(<span class="str">"a/b/c"</span>));
+Files.list(Path.of(<span class="str">"."</span>)).forEach(System.out::println);
+Files.walk(Path.of(<span class="str">"src"</span>)).filter(p -> p.toString().endsWith(<span class="str">".java"</span>));</code></pre></div>
+</div>
+
+</div>
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>Java Collections Cheatsheet · 2026</footer>
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
+const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
+const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
+</script>
+</body>
+</html>
