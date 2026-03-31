@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI &amp; ML Development Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+</head>
+<body>
+
+<nav>
+  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ AI &amp; ML Dev</span></div>
+  <div class="nav-right"><a href="index.html">All Sheets</a></div>
+</nav>
+
+<div class="container">
+
+<div class="hero">
+  <h1>AI &amp; ML Development Cheatsheet</h1>
+  <p class="subtitle">PyTorch, TensorFlow, Hugging Face, model training, CNNs, RNNs, Transformers, MLOps &amp; deployment</p>
+  <span class="tag tag-concept">AI / ML</span>
+</div>
+
+<div class="toc">
+  <div class="toc-title">Contents</div>
+  <div class="toc-grid">
+    <a href="#ml-fundamentals">ML Fundamentals</a>
+    <a href="#pytorch">PyTorch</a>
+    <a href="#tensorflow">TensorFlow / Keras</a>
+    <a href="#cnn">CNNs (Computer Vision)</a>
+    <a href="#rnn">RNNs &amp; Sequence Models</a>
+    <a href="#transformers">Transformers</a>
+    <a href="#huggingface">Hugging Face</a>
+    <a href="#training">Training Best Practices</a>
+    <a href="#nlp">NLP Essentials</a>
+    <a href="#mlops">MLOps &amp; Deployment</a>
+    <a href="#gpu">GPU &amp; Performance</a>
+    <a href="#math">Math Cheat Sheet</a>
+  </div>
+</div>
+
+<!-- ===== ML FUNDAMENTALS ===== -->
+<div class="section" id="ml-fundamentals">
+  <div class="section-header"><span class="icon">#</span><h2>ML Fundamentals</h2></div>
+
+  <h3>Types of Learning</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Type</th><th>Data</th><th>Goal</th><th>Examples</th></tr>
+      <tr><td><strong>Supervised</strong></td><td>Labeled (X, y)</td><td>Predict y from X</td><td>Classification, Regression</td></tr>
+      <tr><td><strong>Unsupervised</strong></td><td>Unlabeled (X only)</td><td>Find patterns</td><td>Clustering, PCA, Autoencoders</td></tr>
+      <tr><td><strong>Self-supervised</strong></td><td>Unlabeled (create labels)</td><td>Learn representations</td><td>BERT (mask prediction), GPT (next token)</td></tr>
+      <tr><td><strong>Reinforcement</strong></td><td>Environment + rewards</td><td>Maximize reward</td><td>Game AI, robotics, RLHF</td></tr>
+    </table>
+  </div>
+
+  <h3>Bias-Variance Tradeoff</h3>
+  <div class="diagram-box">High Bias, Low Variance          Low Bias, High Variance
+(Underfitting)                    (Overfitting)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Simple model (linear)    ◄──────────►    Complex model (deep net)
+Poor on train &amp; test        Sweet spot     Great on train, bad on test
+
+Fix underfitting:             Fix overfitting:
+• More features               • More data
+• More complex model           • Regularization (L1/L2, dropout)
+• Fewer regularization         • Early stopping
+                               • Data augmentation</div>
+</div>
+
+<!-- ===== PYTORCH ===== -->
+<div class="section" id="pytorch">
+  <div class="section-header"><span class="icon">#</span><h2>PyTorch</h2></div>
+
+  <h3>Tensors &amp; Basics</h3>
+  <div class="code-block"><pre><code><span class="kw">import</span> torch
+<span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+
+<span class="cm"># Tensor creation</span>
+x = torch.<span class="fn">tensor</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>], dtype=torch.float32)
+z = torch.<span class="fn">zeros</span>(<span class="num">3</span>, <span class="num">4</span>)
+r = torch.<span class="fn">randn</span>(<span class="num">3</span>, <span class="num">4</span>)           <span class="cm"># standard normal</span>
+device = torch.device(<span class="str">"cuda"</span> <span class="kw">if</span> torch.cuda.is_available() <span class="kw">else</span> <span class="str">"cpu"</span>)
+x = x.<span class="fn">to</span>(device)
+
+<span class="cm"># Operations</span>
+y = x @ W.T                      <span class="cm"># matrix multiply</span>
+y = x.<span class="fn">view</span>(<span class="num">-1</span>, <span class="num">784</span>)              <span class="cm"># reshape</span>
+y = x.<span class="fn">unsqueeze</span>(<span class="num">0</span>)               <span class="cm"># add batch dim</span>
+y = torch.<span class="fn">cat</span>([a, b], dim=<span class="num">0</span>)     <span class="cm"># concatenate</span>
+
+<span class="cm"># Autograd</span>
+x = torch.<span class="fn">tensor</span>([<span class="num">2.0</span>], requires_grad=<span class="kw">True</span>)
+y = x ** <span class="num">2</span> + <span class="num">3</span> * x
+y.<span class="fn">backward</span>()
+<span class="fn">print</span>(x.grad)  <span class="cm"># dy/dx = 2x + 3 = 7.0</span></code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Model Definition</h3>
+  <div class="code-block"><pre><code><span class="kw">class</span> <span class="tp">Net</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        <span class="fn">super</span>().__init__()
+        self.fc1 = nn.<span class="fn">Linear</span>(<span class="num">784</span>, <span class="num">256</span>)
+        self.fc2 = nn.<span class="fn">Linear</span>(<span class="num">256</span>, <span class="num">128</span>)
+        self.fc3 = nn.<span class="fn">Linear</span>(<span class="num">128</span>, <span class="num">10</span>)
+        self.relu = nn.<span class="fn">ReLU</span>()
+        self.dropout = nn.<span class="fn">Dropout</span>(<span class="num">0.2</span>)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        x = x.<span class="fn">view</span>(<span class="num">-1</span>, <span class="num">784</span>)
+        x = self.dropout(self.relu(self.fc1(x)))
+        x = self.dropout(self.relu(self.fc2(x)))
+        <span class="kw">return</span> self.fc3(x)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Training Loop</h3>
+  <div class="code-block"><pre><code>model = <span class="tp">Net</span>().<span class="fn">to</span>(device)
+optimizer = torch.optim.<span class="fn">Adam</span>(model.parameters(), lr=<span class="num">1e-3</span>)
+criterion = nn.<span class="fn">CrossEntropyLoss</span>()
+
+<span class="kw">for</span> epoch <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>):
+    model.<span class="fn">train</span>()
+    <span class="kw">for</span> batch_x, batch_y <span class="kw">in</span> train_loader:
+        batch_x, batch_y = batch_x.<span class="fn">to</span>(device), batch_y.<span class="fn">to</span>(device)
+
+        optimizer.<span class="fn">zero_grad</span>()
+        output = model(batch_x)
+        loss = criterion(output, batch_y)
+        loss.<span class="fn">backward</span>()
+        optimizer.<span class="fn">step</span>()
+
+    <span class="cm"># Validation</span>
+    model.<span class="fn">eval</span>()
+    <span class="kw">with</span> torch.<span class="fn">no_grad</span>():
+        correct = <span class="fn">sum</span>(
+            (model(x.<span class="fn">to</span>(device)).argmax(<span class="num">1</span>) == y.<span class="fn">to</span>(device)).sum().item()
+            <span class="kw">for</span> x, y <span class="kw">in</span> val_loader
+        )</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>DataLoader</h3>
+  <div class="code-block"><pre><code><span class="kw">from</span> torch.utils.data <span class="kw">import</span> Dataset, DataLoader
+
+<span class="kw">class</span> <span class="tp">MyDataset</span>(Dataset):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, X, y):
+        self.X = torch.<span class="fn">tensor</span>(X, dtype=torch.float32)
+        self.y = torch.<span class="fn">tensor</span>(y, dtype=torch.long)
+
+    <span class="kw">def</span> <span class="fn">__len__</span>(self): <span class="kw">return</span> <span class="fn">len</span>(self.X)
+    <span class="kw">def</span> <span class="fn">__getitem__</span>(self, idx): <span class="kw">return</span> self.X[idx], self.y[idx]
+
+train_loader = DataLoader(
+    <span class="tp">MyDataset</span>(X_train, y_train),
+    batch_size=<span class="num">32</span>, shuffle=<span class="kw">True</span>, num_workers=<span class="num">4</span>
+)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== TENSORFLOW ===== -->
+<div class="section" id="tensorflow">
+  <div class="section-header"><span class="icon">#</span><h2>TensorFlow / Keras</h2></div>
+
+  <div class="code-block"><pre><code><span class="kw">import</span> tensorflow <span class="kw">as</span> tf
+<span class="kw">from</span> tensorflow <span class="kw">import</span> keras
+<span class="kw">from</span> keras <span class="kw">import</span> layers
+
+<span class="cm"># Sequential model</span>
+model = keras.<span class="fn">Sequential</span>([
+    layers.<span class="fn">Flatten</span>(input_shape=(<span class="num">28</span>, <span class="num">28</span>)),
+    layers.<span class="fn">Dense</span>(<span class="num">256</span>, activation=<span class="str">"relu"</span>),
+    layers.<span class="fn">Dropout</span>(<span class="num">0.2</span>),
+    layers.<span class="fn">Dense</span>(<span class="num">128</span>, activation=<span class="str">"relu"</span>),
+    layers.<span class="fn">Dense</span>(<span class="num">10</span>, activation=<span class="str">"softmax"</span>),
+])
+
+model.<span class="fn">compile</span>(
+    optimizer=<span class="str">"adam"</span>,
+    loss=<span class="str">"sparse_categorical_crossentropy"</span>,
+    metrics=[<span class="str">"accuracy"</span>],
+)
+
+model.<span class="fn">fit</span>(X_train, y_train, epochs=<span class="num">10</span>, batch_size=<span class="num">32</span>,
+         validation_split=<span class="num">0.2</span>,
+         callbacks=[keras.callbacks.<span class="fn">EarlyStopping</span>(patience=<span class="num">3</span>)])
+
+model.<span class="fn">evaluate</span>(X_test, y_test)
+model.<span class="fn">save</span>(<span class="str">"my_model.keras"</span>)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== CNN ===== -->
+<div class="section" id="cnn">
+  <div class="section-header"><span class="icon">#</span><h2>CNNs (Computer Vision)</h2></div>
+
+  <div class="code-block"><pre><code><span class="cm"># PyTorch CNN</span>
+<span class="kw">class</span> <span class="tp">CNN</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        <span class="fn">super</span>().__init__()
+        self.conv1 = nn.<span class="fn">Conv2d</span>(<span class="num">1</span>, <span class="num">32</span>, kernel_size=<span class="num">3</span>, padding=<span class="num">1</span>)
+        self.conv2 = nn.<span class="fn">Conv2d</span>(<span class="num">32</span>, <span class="num">64</span>, kernel_size=<span class="num">3</span>, padding=<span class="num">1</span>)
+        self.pool = nn.<span class="fn">MaxPool2d</span>(<span class="num">2</span>)
+        self.fc1 = nn.<span class="fn">Linear</span>(<span class="num">64</span> * <span class="num">7</span> * <span class="num">7</span>, <span class="num">128</span>)
+        self.fc2 = nn.<span class="fn">Linear</span>(<span class="num">128</span>, <span class="num">10</span>)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):        <span class="cm"># x: (B, 1, 28, 28)</span>
+        x = self.pool(torch.relu(self.conv1(x)))  <span class="cm"># → (B, 32, 14, 14)</span>
+        x = self.pool(torch.relu(self.conv2(x)))  <span class="cm"># → (B, 64, 7, 7)</span>
+        x = x.<span class="fn">view</span>(x.size(<span class="num">0</span>), <span class="num">-1</span>)                  <span class="cm"># flatten</span>
+        x = torch.<span class="fn">relu</span>(self.fc1(x))
+        <span class="kw">return</span> self.fc2(x)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Popular Architectures</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Model</th><th>Year</th><th>Key Innovation</th><th>Use Case</th></tr>
+      <tr><td>ResNet</td><td>2015</td><td>Skip connections (residual)</td><td>Image classification baseline</td></tr>
+      <tr><td>EfficientNet</td><td>2019</td><td>Compound scaling</td><td>Efficient image classification</td></tr>
+      <tr><td>YOLO</td><td>2016+</td><td>Single-shot detection</td><td>Real-time object detection</td></tr>
+      <tr><td>U-Net</td><td>2015</td><td>Encoder-decoder + skip</td><td>Image segmentation</td></tr>
+      <tr><td>ViT</td><td>2020</td><td>Transformer for images</td><td>State-of-art classification</td></tr>
+    </table>
+  </div>
+
+  <h3>Transfer Learning (PyTorch)</h3>
+  <div class="code-block"><pre><code><span class="kw">from</span> torchvision <span class="kw">import</span> models
+
+<span class="cm"># Load pretrained ResNet, replace final layer</span>
+model = models.<span class="fn">resnet50</span>(weights=<span class="str">"IMAGENET1K_V2"</span>)
+model.fc = nn.<span class="fn">Linear</span>(model.fc.in_features, num_classes)
+
+<span class="cm"># Freeze early layers (optional)</span>
+<span class="kw">for</span> param <span class="kw">in</span> model.parameters():
+    param.requires_grad = <span class="kw">False</span>
+<span class="kw">for</span> param <span class="kw">in</span> model.fc.parameters():
+    param.requires_grad = <span class="kw">True</span></code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== RNN ===== -->
+<div class="section" id="rnn">
+  <div class="section-header"><span class="icon">#</span><h2>RNNs &amp; Sequence Models</h2></div>
+
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Model</th><th>Strengths</th><th>Weaknesses</th></tr>
+      <tr><td><strong>Vanilla RNN</strong></td><td>Simple sequence processing</td><td>Vanishing gradient, no long-range deps</td></tr>
+      <tr><td><strong>LSTM</strong></td><td>Long-range memory (forget/input/output gates)</td><td>Slower, more params</td></tr>
+      <tr><td><strong>GRU</strong></td><td>Simpler than LSTM, similar performance</td><td>Less control than LSTM</td></tr>
+      <tr><td><strong>Transformer</strong></td><td>Parallelizable, self-attention, dominant now</td><td>O(n²) memory for attention</td></tr>
+    </table>
+  </div>
+
+  <div class="code-block"><pre><code><span class="cm"># PyTorch LSTM</span>
+<span class="kw">class</span> <span class="tp">LSTMModel</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, vocab_size, embed_dim, hidden_dim, num_classes):
+        <span class="fn">super</span>().__init__()
+        self.embedding = nn.<span class="fn">Embedding</span>(vocab_size, embed_dim)
+        self.lstm = nn.<span class="fn">LSTM</span>(embed_dim, hidden_dim, batch_first=<span class="kw">True</span>, bidirectional=<span class="kw">True</span>)
+        self.fc = nn.<span class="fn">Linear</span>(hidden_dim * <span class="num">2</span>, num_classes)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        x = self.embedding(x)          <span class="cm"># (B, seq_len, embed_dim)</span>
+        out, (h, c) = self.lstm(x)     <span class="cm"># out: (B, seq_len, hidden*2)</span>
+        <span class="kw">return</span> self.fc(out[:, <span class="num">-1</span>, :])  <span class="cm"># last timestep</span></code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== TRANSFORMERS ===== -->
+<div class="section" id="transformers">
+  <div class="section-header"><span class="icon">#</span><h2>Transformers</h2></div>
+
+  <h3>Self-Attention Mechanism</h3>
+  <div class="diagram-box">Input: "The cat sat on the mat"
+         ↓
+   Token Embeddings + Positional Encoding
+         ↓
+   ┌──────────────────────────────┐
+   │  Multi-Head Self-Attention   │
+   │  Q = XW_q, K = XW_k, V = XW_v
+   │  Attention(Q,K,V) = softmax(QK^T / √d_k) × V
+   └──────────────────────────────┘
+         ↓
+   Feed-Forward Network
+         ↓
+   Layer Norm + Residual Connection
+         ↓
+   Repeat N layers → Output</div>
+
+  <h3>Architecture Families</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Type</th><th>Architecture</th><th>Training</th><th>Models</th></tr>
+      <tr><td><strong>Encoder-only</strong></td><td>Bidirectional attention</td><td>Masked language model</td><td>BERT, RoBERTa, DeBERTa</td></tr>
+      <tr><td><strong>Decoder-only</strong></td><td>Causal (left-to-right)</td><td>Next token prediction</td><td>GPT, LLaMA, Claude, Gemini</td></tr>
+      <tr><td><strong>Encoder-Decoder</strong></td><td>Cross-attention</td><td>Seq-to-seq</td><td>T5, BART, mBART</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== HUGGING FACE ===== -->
+<div class="section" id="huggingface">
+  <div class="section-header"><span class="icon">#</span><h2>Hugging Face Transformers</h2></div>
+
+  <div class="code-block"><pre><code><span class="kw">from</span> transformers <span class="kw">import</span> pipeline, AutoTokenizer, AutoModelForSequenceClassification
+
+<span class="cm"># Quick inference with pipeline</span>
+classifier = <span class="fn">pipeline</span>(<span class="str">"sentiment-analysis"</span>)
+result = classifier(<span class="str">"This movie was amazing!"</span>)
+<span class="cm"># [{'label': 'POSITIVE', 'score': 0.9998}]</span>
+
+<span class="cm"># Text generation</span>
+gen = <span class="fn">pipeline</span>(<span class="str">"text-generation"</span>, model=<span class="str">"gpt2"</span>)
+gen(<span class="str">"The future of AI is"</span>, max_length=<span class="num">50</span>)
+
+<span class="cm"># Custom model loading</span>
+tokenizer = AutoTokenizer.<span class="fn">from_pretrained</span>(<span class="str">"bert-base-uncased"</span>)
+model = AutoModelForSequenceClassification.<span class="fn">from_pretrained</span>(<span class="str">"bert-base-uncased"</span>, num_labels=<span class="num">2</span>)
+
+inputs = tokenizer(<span class="str">"Hello world"</span>, return_tensors=<span class="str">"pt"</span>, padding=<span class="kw">True</span>, truncation=<span class="kw">True</span>)
+outputs = model(**inputs)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Fine-Tuning with Trainer</h3>
+  <div class="code-block"><pre><code><span class="kw">from</span> transformers <span class="kw">import</span> TrainingArguments, Trainer
+
+args = TrainingArguments(
+    output_dir=<span class="str">"./results"</span>,
+    num_train_epochs=<span class="num">3</span>,
+    per_device_train_batch_size=<span class="num">16</span>,
+    learning_rate=<span class="num">2e-5</span>,
+    evaluation_strategy=<span class="str">"epoch"</span>,
+    save_strategy=<span class="str">"epoch"</span>,
+    load_best_model_at_end=<span class="kw">True</span>,
+)
+
+trainer = Trainer(
+    model=model,
+    args=args,
+    train_dataset=train_ds,
+    eval_dataset=val_ds,
+    tokenizer=tokenizer,
+)
+trainer.<span class="fn">train</span>()</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== TRAINING ===== -->
+<div class="section" id="training">
+  <div class="section-header"><span class="icon">#</span><h2>Training Best Practices</h2></div>
+
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Technique</th><th>Purpose</th><th>Code / Details</th></tr>
+      <tr><td><strong>Learning Rate Schedule</strong></td><td>Decay LR over time</td><td>Cosine annealing, OneCycleLR, warmup</td></tr>
+      <tr><td><strong>Gradient Clipping</strong></td><td>Prevent exploding gradients</td><td><code>torch.nn.utils.clip_grad_norm_(params, max_norm=1.0)</code></td></tr>
+      <tr><td><strong>Weight Decay</strong></td><td>L2 regularization</td><td><code>AdamW(params, lr=1e-3, weight_decay=0.01)</code></td></tr>
+      <tr><td><strong>Dropout</strong></td><td>Prevent overfitting</td><td>Randomly zero neurons during training</td></tr>
+      <tr><td><strong>Batch Normalization</strong></td><td>Stabilize training</td><td><code>nn.BatchNorm2d(num_features)</code></td></tr>
+      <tr><td><strong>Data Augmentation</strong></td><td>More training variety</td><td>Flip, rotate, crop, color jitter</td></tr>
+      <tr><td><strong>Early Stopping</strong></td><td>Stop when val loss plateaus</td><td>Monitor val loss, patience=5</td></tr>
+      <tr><td><strong>Mixed Precision</strong></td><td>Faster training, less memory</td><td><code>torch.cuda.amp.autocast()</code></td></tr>
+    </table>
+  </div>
+
+  <h3>Loss Functions</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Loss</th><th>Task</th><th>PyTorch</th></tr>
+      <tr><td>Cross Entropy</td><td>Multi-class classification</td><td><code>nn.CrossEntropyLoss()</code></td></tr>
+      <tr><td>Binary Cross Entropy</td><td>Binary / multi-label</td><td><code>nn.BCEWithLogitsLoss()</code></td></tr>
+      <tr><td>MSE</td><td>Regression</td><td><code>nn.MSELoss()</code></td></tr>
+      <tr><td>L1 / MAE</td><td>Regression (robust)</td><td><code>nn.L1Loss()</code></td></tr>
+      <tr><td>Huber</td><td>Regression (outlier-robust)</td><td><code>nn.SmoothL1Loss()</code></td></tr>
+      <tr><td>Contrastive</td><td>Similarity learning</td><td>Custom / <code>torch.nn.CosineEmbeddingLoss</code></td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== NLP ===== -->
+<div class="section" id="nlp">
+  <div class="section-header"><span class="icon">#</span><h2>NLP Essentials</h2></div>
+
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Concept</th><th>Description</th></tr>
+      <tr><td><strong>Tokenization</strong></td><td>Split text into tokens (words, subwords, chars). BPE, WordPiece, SentencePiece.</td></tr>
+      <tr><td><strong>Embeddings</strong></td><td>Dense vector representations. Word2Vec, GloVe, BERT embeddings.</td></tr>
+      <tr><td><strong>Attention</strong></td><td>Learn which tokens are relevant to each other. Self-attention = Transformer core.</td></tr>
+      <tr><td><strong>Fine-tuning</strong></td><td>Train pretrained model on your dataset. Usually last layers + low LR.</td></tr>
+      <tr><td><strong>LoRA</strong></td><td>Low-Rank Adaptation — train small rank matrices instead of full model. Memory efficient.</td></tr>
+      <tr><td><strong>RAG</strong></td><td>Retrieval-Augmented Generation — retrieve docs, feed to LLM for grounded answers.</td></tr>
+      <tr><td><strong>RLHF</strong></td><td>Reinforcement Learning from Human Feedback — align model to human preferences.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== MLOPS ===== -->
+<div class="section" id="mlops">
+  <div class="section-header"><span class="icon">#</span><h2>MLOps &amp; Deployment</h2></div>
+
+  <h3>MLOps Stack</h3>
+  <div class="diagram-box">Data Versioning    Experiment Tracking    Model Registry     Serving
+┌───────────┐    ┌──────────────┐    ┌──────────────┐  ┌──────────────┐
+│  DVC       │    │  MLflow      │    │  MLflow      │  │  TorchServe  │
+│  LakeFS    │    │  W&amp;B        │    │  W&amp;B        │  │  BentoML     │
+│  Delta Lake│    │  Neptune     │    │  Hugging Face│  │  vLLM        │
+└───────────┘    └──────────────┘    └──────────────┘  │  FastAPI      │
+                                                        └──────────────┘</div>
+
+  <h3>MLflow Tracking</h3>
+  <div class="code-block"><pre><code><span class="kw">import</span> mlflow
+
+mlflow.<span class="fn">set_experiment</span>(<span class="str">"my_experiment"</span>)
+
+<span class="kw">with</span> mlflow.<span class="fn">start_run</span>():
+    mlflow.<span class="fn">log_param</span>(<span class="str">"lr"</span>, <span class="num">1e-3</span>)
+    mlflow.<span class="fn">log_param</span>(<span class="str">"epochs"</span>, <span class="num">10</span>)
+
+    <span class="cm"># ... training ...</span>
+
+    mlflow.<span class="fn">log_metric</span>(<span class="str">"accuracy"</span>, <span class="num">0.95</span>)
+    mlflow.<span class="fn">log_metric</span>(<span class="str">"f1"</span>, <span class="num">0.93</span>)
+    mlflow.pytorch.<span class="fn">log_model</span>(model, <span class="str">"model"</span>)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Model Serving (FastAPI)</h3>
+  <div class="code-block"><pre><code><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">import</span> torch
+
+app = FastAPI()
+model = torch.<span class="fn">load</span>(<span class="str">"model.pt"</span>)
+model.<span class="fn">eval</span>()
+
+@app.<span class="fn">post</span>(<span class="str">"/predict"</span>)
+<span class="kw">async def</span> <span class="fn">predict</span>(data: dict):
+    tensor = torch.<span class="fn">tensor</span>(data[<span class="str">"features"</span>])
+    <span class="kw">with</span> torch.<span class="fn">no_grad</span>():
+        pred = model(tensor)
+    <span class="kw">return</span> {<span class="str">"prediction"</span>: pred.tolist()}</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== GPU ===== -->
+<div class="section" id="gpu">
+  <div class="section-header"><span class="icon">#</span><h2>GPU &amp; Performance</h2></div>
+
+  <div class="code-block"><pre><code><span class="cm"># Check GPU</span>
+torch.cuda.<span class="fn">is_available</span>()
+torch.cuda.<span class="fn">device_count</span>()
+torch.cuda.<span class="fn">get_device_name</span>(<span class="num">0</span>)
+
+<span class="cm"># Mixed precision training (2x speed, less memory)</span>
+scaler = torch.cuda.amp.<span class="fn">GradScaler</span>()
+<span class="kw">for</span> batch <span class="kw">in</span> loader:
+    <span class="kw">with</span> torch.cuda.amp.<span class="fn">autocast</span>():
+        output = model(batch)
+        loss = criterion(output, target)
+    scaler.<span class="fn">scale</span>(loss).<span class="fn">backward</span>()
+    scaler.<span class="fn">step</span>(optimizer)
+    scaler.<span class="fn">update</span>()
+
+<span class="cm"># Multi-GPU (DataParallel — simple)</span>
+model = nn.<span class="fn">DataParallel</span>(model)
+
+<span class="cm"># Memory tips</span>
+torch.cuda.<span class="fn">empty_cache</span>()
+<span class="cm"># Use gradient accumulation for large effective batch size</span>
+<span class="cm"># Use gradient checkpointing to trade compute for memory</span></code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== MATH ===== -->
+<div class="section" id="math">
+  <div class="section-header"><span class="icon">#</span><h2>Math Cheat Sheet</h2></div>
+
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Concept</th><th>Formula / Description</th><th>Used In</th></tr>
+      <tr><td><strong>Sigmoid</strong></td><td>σ(x) = 1 / (1 + e⁻ˣ) → maps to (0,1)</td><td>Binary classification output</td></tr>
+      <tr><td><strong>Softmax</strong></td><td>softmax(xᵢ) = eˣⁱ / Σeˣʲ → probability distribution</td><td>Multi-class output</td></tr>
+      <tr><td><strong>ReLU</strong></td><td>f(x) = max(0, x)</td><td>Default hidden activation</td></tr>
+      <tr><td><strong>Cross Entropy</strong></td><td>L = -Σ yᵢ·log(ŷᵢ)</td><td>Classification loss</td></tr>
+      <tr><td><strong>MSE</strong></td><td>L = (1/n)·Σ(yᵢ - ŷᵢ)²</td><td>Regression loss</td></tr>
+      <tr><td><strong>Gradient Descent</strong></td><td>θ = θ - α·∇L(θ)</td><td>All optimization</td></tr>
+      <tr><td><strong>Cosine Similarity</strong></td><td>cos(A,B) = A·B / (‖A‖·‖B‖)</td><td>Embeddings, RAG</td></tr>
+      <tr><td><strong>L1 Regularization</strong></td><td>λ·Σ|wᵢ| (sparse weights)</td><td>Feature selection</td></tr>
+      <tr><td><strong>L2 Regularization</strong></td><td>λ·Σwᵢ² (small weights)</td><td>Prevent overfitting</td></tr>
+    </table>
+  </div>
+</div>
+
+<a href="#" class="back-top">Back to top</a>
+<footer>AI &amp; ML Development Cheatsheet — PyTorch, TensorFlow, Transformers, Hugging Face &amp; MLOps</footer>
+</div>
+
+<script>
+function copyCode(btn) {
+  const code = btn.previousElementSibling.querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+<script src="spotlight.js"></script>
+</body>
+</html>

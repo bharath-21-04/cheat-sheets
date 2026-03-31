@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Science Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+</head>
+<body>
+
+<nav>
+  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Data Science</span></div>
+  <div class="nav-right"><a href="index.html">All Sheets</a></div>
+</nav>
+
+<div class="container">
+
+<div class="hero">
+  <h1>Data Science Cheatsheet</h1>
+  <p class="subtitle">NumPy, Pandas, Matplotlib, Seaborn, scikit-learn, statistics, EDA &amp; feature engineering</p>
+  <span class="tag tag-concept">Data / Science</span>
+</div>
+
+<div class="toc">
+  <div class="toc-title">Contents</div>
+  <div class="toc-grid">
+    <a href="#numpy">NumPy</a>
+    <a href="#pandas-ds">Pandas for DS</a>
+    <a href="#matplotlib">Matplotlib</a>
+    <a href="#seaborn">Seaborn</a>
+    <a href="#stats">Statistics Essentials</a>
+    <a href="#eda">EDA Workflow</a>
+    <a href="#feature-eng">Feature Engineering</a>
+    <a href="#sklearn">scikit-learn</a>
+    <a href="#metrics">Evaluation Metrics</a>
+    <a href="#preprocessing">Preprocessing</a>
+    <a href="#model-selection">Model Selection</a>
+    <a href="#viz-tips">Visualization Tips</a>
+  </div>
+</div>
+
+<!-- ===== NUMPY ===== -->
+<div class="section" id="numpy">
+  <div class="section-header"><span class="icon">#</span><h2>NumPy</h2></div>
+
+  <div class="code-block"><pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># Array creation</span>
+a = np.<span class="fn">array</span>([<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])
+z = np.<span class="fn">zeros</span>((<span class="num">3</span>, <span class="num">4</span>))          <span class="cm"># 3x4 of 0s</span>
+o = np.<span class="fn">ones</span>((<span class="num">2</span>, <span class="num">3</span>))            <span class="cm"># 2x3 of 1s</span>
+r = np.<span class="fn">arange</span>(<span class="num">0</span>, <span class="num">10</span>, <span class="num">2</span>)       <span class="cm"># [0, 2, 4, 6, 8]</span>
+l = np.<span class="fn">linspace</span>(<span class="num">0</span>, <span class="num">1</span>, <span class="num">5</span>)      <span class="cm"># 5 evenly spaced: [0, .25, .5, .75, 1]</span>
+e = np.<span class="fn">eye</span>(<span class="num">3</span>)                  <span class="cm"># 3x3 identity</span>
+rnd = np.random.<span class="fn">randn</span>(<span class="num">3</span>, <span class="num">4</span>)   <span class="cm"># 3x4 standard normal</span>
+
+<span class="cm"># Shape operations</span>
+a.shape                         <span class="cm"># (3,)</span>
+a.<span class="fn">reshape</span>(<span class="num">1</span>, <span class="num">3</span>)                <span class="cm"># 1 row, 3 cols</span>
+a.T                             <span class="cm"># transpose</span>
+np.<span class="fn">expand_dims</span>(a, axis=<span class="num">0</span>)      <span class="cm"># add dimension</span>
+np.<span class="fn">concatenate</span>([a, b], axis=<span class="num">0</span>) <span class="cm"># stack arrays</span>
+
+<span class="cm"># Math</span>
+np.<span class="fn">dot</span>(A, B)          <span class="cm"># matrix multiply (or A @ B)</span>
+np.<span class="fn">sum</span>(a, axis=<span class="num">0</span>)     <span class="cm"># sum along axis</span>
+np.<span class="fn">mean</span>(a), np.<span class="fn">std</span>(a), np.<span class="fn">median</span>(a)
+np.<span class="fn">argmax</span>(a)           <span class="cm"># index of max value</span>
+np.<span class="fn">where</span>(a > <span class="num">5</span>, a, <span class="num">0</span>)  <span class="cm"># conditional: keep if >5 else 0</span>
+
+<span class="cm"># Broadcasting: (3,4) + (1,4) → (3,4) — smaller dims stretched</span>
+<span class="cm"># Slicing: a[1:3], a[:, 0], a[a > 5] (boolean indexing)</span></code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== PANDAS DS ===== -->
+<div class="section" id="pandas-ds">
+  <div class="section-header"><span class="icon">#</span><h2>Pandas for Data Science</h2></div>
+
+  <div class="code-block"><pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># Quick EDA</span>
+df.shape                        <span class="cm"># (rows, cols)</span>
+df.info()                       <span class="cm"># types, nulls, memory</span>
+df.describe()                   <span class="cm"># stats for numeric cols</span>
+df.describe(include=<span class="str">'object'</span>)   <span class="cm"># stats for categorical</span>
+df.nunique()                    <span class="cm"># unique count per col</span>
+df.isnull().sum()               <span class="cm"># count nulls</span>
+df.duplicated().sum()           <span class="cm"># count duplicates</span>
+df.corr()                       <span class="cm"># correlation matrix</span>
+
+<span class="cm"># Handle missing data</span>
+df.<span class="fn">dropna</span>(subset=[<span class="str">"col"</span>])       <span class="cm"># drop rows with nulls in col</span>
+df[<span class="str">"col"</span>].<span class="fn">fillna</span>(df[<span class="str">"col"</span>].median())
+df[<span class="str">"col"</span>].<span class="fn">interpolate</span>()          <span class="cm"># linear interpolation</span>
+
+<span class="cm"># Categorical encoding</span>
+pd.<span class="fn">get_dummies</span>(df, columns=[<span class="str">"city"</span>])  <span class="cm"># one-hot</span>
+df[<span class="str">"size"</span>].<span class="fn">map</span>({<span class="str">"S"</span>: <span class="num">0</span>, <span class="str">"M"</span>: <span class="num">1</span>, <span class="str">"L"</span>: <span class="num">2</span>})  <span class="cm"># ordinal</span>
+
+<span class="cm"># Binning</span>
+df[<span class="str">"age_group"</span>] = pd.<span class="fn">cut</span>(df[<span class="str">"age"</span>], bins=[<span class="num">0</span>,<span class="num">18</span>,<span class="num">35</span>,<span class="num">60</span>,<span class="num">100</span>], labels=[<span class="str">"child"</span>,<span class="str">"young"</span>,<span class="str">"mid"</span>,<span class="str">"senior"</span>])
+
+<span class="cm"># Apply / lambda</span>
+df[<span class="str">"col"</span>].<span class="fn">apply</span>(<span class="kw">lambda</span> x: x ** <span class="num">2</span>)
+df.<span class="fn">applymap</span>(<span class="kw">lambda</span> x: <span class="fn">round</span>(x, <span class="num">2</span>))  <span class="cm"># element-wise</span>
+
+<span class="cm"># Value counts + cross tab</span>
+df[<span class="str">"city"</span>].<span class="fn">value_counts</span>(normalize=<span class="kw">True</span>)
+pd.<span class="fn">crosstab</span>(df[<span class="str">"gender"</span>], df[<span class="str">"bought"</span>])</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== MATPLOTLIB ===== -->
+<div class="section" id="matplotlib">
+  <div class="section-header"><span class="icon">#</span><h2>Matplotlib</h2></div>
+
+  <div class="code-block"><pre><code><span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="cm"># Basic plot types</span>
+fig, ax = plt.<span class="fn">subplots</span>(figsize=(<span class="num">10</span>, <span class="num">6</span>))
+
+ax.<span class="fn">plot</span>(x, y, label=<span class="str">"Line"</span>)             <span class="cm"># line</span>
+ax.<span class="fn">scatter</span>(x, y, alpha=<span class="num">0.5</span>)              <span class="cm"># scatter</span>
+ax.<span class="fn">bar</span>(categories, values)                <span class="cm"># bar</span>
+ax.<span class="fn">hist</span>(data, bins=<span class="num">30</span>, edgecolor=<span class="str">"black"</span>) <span class="cm"># histogram</span>
+ax.<span class="fn">boxplot</span>([data1, data2])                <span class="cm"># box plot</span>
+
+<span class="cm"># Formatting</span>
+ax.<span class="fn">set_title</span>(<span class="str">"Title"</span>, fontsize=<span class="num">14</span>)
+ax.<span class="fn">set_xlabel</span>(<span class="str">"X Axis"</span>)
+ax.<span class="fn">set_ylabel</span>(<span class="str">"Y Axis"</span>)
+ax.<span class="fn">legend</span>()
+ax.<span class="fn">grid</span>(<span class="kw">True</span>, alpha=<span class="num">0.3</span>)
+plt.<span class="fn">tight_layout</span>()
+
+<span class="cm"># Subplots grid</span>
+fig, axes = plt.<span class="fn">subplots</span>(<span class="num">2</span>, <span class="num">2</span>, figsize=(<span class="num">12</span>, <span class="num">10</span>))
+axes[<span class="num">0</span>][<span class="num">0</span>].<span class="fn">plot</span>(x, y)
+axes[<span class="num">0</span>][<span class="num">1</span>].<span class="fn">hist</span>(data)
+
+plt.<span class="fn">savefig</span>(<span class="str">"plot.png"</span>, dpi=<span class="num">300</span>, bbox_inches=<span class="str">"tight"</span>)
+plt.<span class="fn">show</span>()</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== SEABORN ===== -->
+<div class="section" id="seaborn">
+  <div class="section-header"><span class="icon">#</span><h2>Seaborn</h2></div>
+
+  <div class="code-block"><pre><code><span class="kw">import</span> seaborn <span class="kw">as</span> sns
+
+sns.<span class="fn">set_theme</span>(style=<span class="str">"darkgrid"</span>)
+
+<span class="cm"># Distribution</span>
+sns.<span class="fn">histplot</span>(df[<span class="str">"age"</span>], kde=<span class="kw">True</span>)
+sns.<span class="fn">kdeplot</span>(df[<span class="str">"salary"</span>], fill=<span class="kw">True</span>)
+
+<span class="cm"># Categorical</span>
+sns.<span class="fn">boxplot</span>(x=<span class="str">"city"</span>, y=<span class="str">"salary"</span>, data=df)
+sns.<span class="fn">violinplot</span>(x=<span class="str">"dept"</span>, y=<span class="str">"score"</span>, data=df)
+sns.<span class="fn">countplot</span>(x=<span class="str">"category"</span>, data=df)
+sns.<span class="fn">barplot</span>(x=<span class="str">"day"</span>, y=<span class="str">"sales"</span>, data=df, estimator=np.mean)
+
+<span class="cm"># Relationships</span>
+sns.<span class="fn">scatterplot</span>(x=<span class="str">"height"</span>, y=<span class="str">"weight"</span>, hue=<span class="str">"gender"</span>, data=df)
+sns.<span class="fn">regplot</span>(x=<span class="str">"x"</span>, y=<span class="str">"y"</span>, data=df)       <span class="cm"># scatter + regression line</span>
+sns.<span class="fn">pairplot</span>(df, hue=<span class="str">"species"</span>)           <span class="cm"># pairwise relationships</span>
+
+<span class="cm"># Heatmaps</span>
+sns.<span class="fn">heatmap</span>(df.corr(), annot=<span class="kw">True</span>, cmap=<span class="str">"coolwarm"</span>, fmt=<span class="str">".2f"</span>)
+
+<span class="cm"># FacetGrid — multi-panel plots</span>
+g = sns.<span class="fn">FacetGrid</span>(df, col=<span class="str">"city"</span>, row=<span class="str">"gender"</span>)
+g.<span class="fn">map</span>(sns.histplot, <span class="str">"age"</span>)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== STATISTICS ===== -->
+<div class="section" id="stats">
+  <div class="section-header"><span class="icon">#</span><h2>Statistics Essentials</h2></div>
+
+  <h3>Descriptive Statistics</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Measure</th><th>Formula / Description</th><th>Python</th></tr>
+      <tr><td><strong>Mean</strong></td><td>Sum / N (sensitive to outliers)</td><td><code>np.mean(x)</code></td></tr>
+      <tr><td><strong>Median</strong></td><td>Middle value (robust to outliers)</td><td><code>np.median(x)</code></td></tr>
+      <tr><td><strong>Mode</strong></td><td>Most frequent value</td><td><code>stats.mode(x)</code></td></tr>
+      <tr><td><strong>Std Dev</strong></td><td>Spread around mean</td><td><code>np.std(x, ddof=1)</code></td></tr>
+      <tr><td><strong>Variance</strong></td><td>Std Dev squared</td><td><code>np.var(x, ddof=1)</code></td></tr>
+      <tr><td><strong>IQR</strong></td><td>Q3 - Q1 (interquartile range)</td><td><code>np.percentile(x, 75) - np.percentile(x, 25)</code></td></tr>
+      <tr><td><strong>Skewness</strong></td><td>Asymmetry of distribution</td><td><code>stats.skew(x)</code></td></tr>
+    </table>
+  </div>
+
+  <h3>Hypothesis Testing</h3>
+  <div class="code-block"><pre><code><span class="kw">from</span> scipy <span class="kw">import</span> stats
+
+<span class="cm"># t-test (compare means of 2 groups)</span>
+t_stat, p_val = stats.<span class="fn">ttest_ind</span>(group_a, group_b)
+
+<span class="cm"># Chi-squared (categorical independence)</span>
+chi2, p, dof, expected = stats.<span class="fn">chi2_contingency</span>(contingency_table)
+
+<span class="cm"># Pearson correlation</span>
+r, p_val = stats.<span class="fn">pearsonr</span>(x, y)
+
+<span class="cm"># Normal distribution test</span>
+stat, p = stats.<span class="fn">shapiro</span>(data)   <span class="cm"># Shapiro-Wilk</span>
+
+<span class="cm"># If p_value &lt; 0.05 → reject null hypothesis</span></code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <div class="note">
+    <strong>p-value rule of thumb:</strong> p &lt; 0.05 → statistically significant (reject H₀). p &gt; 0.05 → not significant (fail to reject H₀). Always consider effect size, not just p-value.
+  </div>
+</div>
+
+<!-- ===== EDA ===== -->
+<div class="section" id="eda">
+  <div class="section-header"><span class="icon">#</span><h2>EDA Workflow</h2></div>
+
+  <h3>Step-by-Step EDA</h3>
+  <div class="code-block"><pre><code><span class="cm"># 1. Load &amp; inspect</span>
+df = pd.<span class="fn">read_csv</span>(<span class="str">"data.csv"</span>)
+df.shape, df.dtypes, df.head()
+
+<span class="cm"># 2. Check missing &amp; duplicates</span>
+df.isnull().sum().sort_values(ascending=<span class="kw">False</span>)
+df.duplicated().sum()
+
+<span class="cm"># 3. Univariate analysis</span>
+<span class="kw">for</span> col <span class="kw">in</span> df.select_dtypes(<span class="str">"number"</span>).columns:
+    fig, ax = plt.<span class="fn">subplots</span>(<span class="num">1</span>, <span class="num">2</span>, figsize=(<span class="num">10</span>, <span class="num">3</span>))
+    sns.<span class="fn">histplot</span>(df[col], ax=ax[<span class="num">0</span>], kde=<span class="kw">True</span>)
+    sns.<span class="fn">boxplot</span>(x=df[col], ax=ax[<span class="num">1</span>])
+    plt.<span class="fn">suptitle</span>(col)
+    plt.<span class="fn">show</span>()
+
+<span class="cm"># 4. Bivariate analysis</span>
+sns.<span class="fn">heatmap</span>(df.corr(), annot=<span class="kw">True</span>, cmap=<span class="str">"RdBu_r"</span>)
+sns.<span class="fn">pairplot</span>(df, hue=<span class="str">"target"</span>)
+
+<span class="cm"># 5. Outlier detection</span>
+Q1, Q3 = df[<span class="str">"col"</span>].<span class="fn">quantile</span>([<span class="num">.25</span>, <span class="num">.75</span>])
+IQR = Q3 - Q1
+outliers = df[(df[<span class="str">"col"</span>] &lt; Q1 - <span class="num">1.5</span>*IQR) | (df[<span class="str">"col"</span>] > Q3 + <span class="num">1.5</span>*IQR)]</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== FEATURE ENGINEERING ===== -->
+<div class="section" id="feature-eng">
+  <div class="section-header"><span class="icon">#</span><h2>Feature Engineering</h2></div>
+
+  <div class="code-block"><pre><code><span class="cm"># Scaling</span>
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler, MinMaxScaler
+scaler = StandardScaler()        <span class="cm"># z-score: (x - mean) / std</span>
+X_scaled = scaler.<span class="fn">fit_transform</span>(X)
+
+<span class="cm"># Encoding</span>
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> LabelEncoder, OneHotEncoder
+le = LabelEncoder()
+df[<span class="str">"city_enc"</span>] = le.<span class="fn">fit_transform</span>(df[<span class="str">"city"</span>])
+
+<span class="cm"># Log transform (right-skewed data)</span>
+df[<span class="str">"log_salary"</span>] = np.<span class="fn">log1p</span>(df[<span class="str">"salary"</span>])
+
+<span class="cm"># Polynomial features</span>
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> PolynomialFeatures
+poly = PolynomialFeatures(degree=<span class="num">2</span>, include_bias=<span class="kw">False</span>)
+X_poly = poly.<span class="fn">fit_transform</span>(X)
+
+<span class="cm"># Date features</span>
+df[<span class="str">"year"</span>]    = df[<span class="str">"date"</span>].dt.year
+df[<span class="str">"month"</span>]   = df[<span class="str">"date"</span>].dt.month
+df[<span class="str">"weekday"</span>] = df[<span class="str">"date"</span>].dt.dayofweek
+df[<span class="str">"is_weekend"</span>] = df[<span class="str">"weekday"</span>].isin([<span class="num">5</span>, <span class="num">6</span>]).astype(<span class="tp">int</span>)
+
+<span class="cm"># Text features</span>
+df[<span class="str">"word_count"</span>] = df[<span class="str">"text"</span>].str.split().str.len()
+df[<span class="str">"has_url"</span>] = df[<span class="str">"text"</span>].str.contains(<span class="str">r"https?://"</span>).astype(<span class="tp">int</span>)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== SKLEARN ===== -->
+<div class="section" id="sklearn">
+  <div class="section-header"><span class="icon">#</span><h2>scikit-learn</h2></div>
+
+  <h3>Standard Pipeline</h3>
+  <div class="code-block"><pre><code><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report
+
+<span class="cm"># Split data</span>
+X_train, X_test, y_train, y_test = <span class="fn">train_test_split</span>(
+    X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>, stratify=y
+)
+
+<span class="cm"># Pipeline</span>
+pipe = Pipeline([
+    (<span class="str">"scaler"</span>, StandardScaler()),
+    (<span class="str">"model"</span>, RandomForestClassifier(n_estimators=<span class="num">100</span>, random_state=<span class="num">42</span>)),
+])
+
+pipe.<span class="fn">fit</span>(X_train, y_train)
+y_pred = pipe.<span class="fn">predict</span>(X_test)
+<span class="fn">print</span>(classification_report(y_test, y_pred))</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Common Models Quick Reference</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Task</th><th>Model</th><th>Import</th></tr>
+      <tr><td>Classification</td><td>Logistic Regression</td><td><code>sklearn.linear_model.LogisticRegression</code></td></tr>
+      <tr><td>Classification</td><td>Random Forest</td><td><code>sklearn.ensemble.RandomForestClassifier</code></td></tr>
+      <tr><td>Classification</td><td>XGBoost</td><td><code>xgboost.XGBClassifier</code></td></tr>
+      <tr><td>Regression</td><td>Linear Regression</td><td><code>sklearn.linear_model.LinearRegression</code></td></tr>
+      <tr><td>Regression</td><td>Random Forest</td><td><code>sklearn.ensemble.RandomForestRegressor</code></td></tr>
+      <tr><td>Clustering</td><td>K-Means</td><td><code>sklearn.cluster.KMeans</code></td></tr>
+      <tr><td>Clustering</td><td>DBSCAN</td><td><code>sklearn.cluster.DBSCAN</code></td></tr>
+      <tr><td>Dim Reduction</td><td>PCA</td><td><code>sklearn.decomposition.PCA</code></td></tr>
+    </table>
+  </div>
+
+  <h3>Cross Validation &amp; Hyperparameter Tuning</h3>
+  <div class="code-block"><pre><code><span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> cross_val_score, GridSearchCV
+
+<span class="cm"># Cross validation</span>
+scores = <span class="fn">cross_val_score</span>(model, X, y, cv=<span class="num">5</span>, scoring=<span class="str">"accuracy"</span>)
+<span class="fn">print</span>(f<span class="str">"Mean: {scores.mean():.3f} ± {scores.std():.3f}"</span>)
+
+<span class="cm"># Grid search</span>
+params = {<span class="str">"n_estimators"</span>: [<span class="num">50</span>, <span class="num">100</span>, <span class="num">200</span>], <span class="str">"max_depth"</span>: [<span class="num">5</span>, <span class="num">10</span>, <span class="kw">None</span>]}
+grid = GridSearchCV(RandomForestClassifier(), params, cv=<span class="num">5</span>, scoring=<span class="str">"f1"</span>)
+grid.<span class="fn">fit</span>(X_train, y_train)
+<span class="fn">print</span>(grid.best_params_, grid.best_score_)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== METRICS ===== -->
+<div class="section" id="metrics">
+  <div class="section-header"><span class="icon">#</span><h2>Evaluation Metrics</h2></div>
+
+  <h3>Classification</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Metric</th><th>Formula</th><th>When to Use</th></tr>
+      <tr><td><strong>Accuracy</strong></td><td>(TP+TN) / Total</td><td>Balanced classes</td></tr>
+      <tr><td><strong>Precision</strong></td><td>TP / (TP+FP)</td><td>Cost of false positives high (spam)</td></tr>
+      <tr><td><strong>Recall</strong></td><td>TP / (TP+FN)</td><td>Cost of false negatives high (cancer)</td></tr>
+      <tr><td><strong>F1 Score</strong></td><td>2 × (P×R)/(P+R)</td><td>Imbalanced data, balance P &amp; R</td></tr>
+      <tr><td><strong>AUC-ROC</strong></td><td>Area under ROC curve</td><td>Probability ranking quality</td></tr>
+    </table>
+  </div>
+
+  <h3>Regression</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Metric</th><th>Formula</th><th>Note</th></tr>
+      <tr><td><strong>MAE</strong></td><td>mean(|y - ŷ|)</td><td>Average absolute error</td></tr>
+      <tr><td><strong>MSE</strong></td><td>mean((y - ŷ)²)</td><td>Penalizes large errors more</td></tr>
+      <tr><td><strong>RMSE</strong></td><td>√MSE</td><td>Same unit as target</td></tr>
+      <tr><td><strong>R² Score</strong></td><td>1 - SS_res/SS_tot</td><td>% variance explained (0-1)</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== PREPROCESSING ===== -->
+<div class="section" id="preprocessing">
+  <div class="section-header"><span class="icon">#</span><h2>Preprocessing Pipeline</h2></div>
+
+  <div class="code-block"><pre><code><span class="kw">from</span> sklearn.compose <span class="kw">import</span> ColumnTransformer
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.impute <span class="kw">import</span> SimpleImputer
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler, OneHotEncoder
+
+numeric_features = [<span class="str">"age"</span>, <span class="str">"salary"</span>, <span class="str">"experience"</span>]
+categorical_features = [<span class="str">"city"</span>, <span class="str">"department"</span>]
+
+preprocessor = ColumnTransformer([
+    (<span class="str">"num"</span>, Pipeline([
+        (<span class="str">"imputer"</span>, SimpleImputer(strategy=<span class="str">"median"</span>)),
+        (<span class="str">"scaler"</span>, StandardScaler()),
+    ]), numeric_features),
+    (<span class="str">"cat"</span>, Pipeline([
+        (<span class="str">"imputer"</span>, SimpleImputer(strategy=<span class="str">"most_frequent"</span>)),
+        (<span class="str">"encoder"</span>, OneHotEncoder(handle_unknown=<span class="str">"ignore"</span>)),
+    ]), categorical_features),
+])
+
+full_pipe = Pipeline([
+    (<span class="str">"preprocess"</span>, preprocessor),
+    (<span class="str">"model"</span>, RandomForestClassifier()),
+])
+full_pipe.<span class="fn">fit</span>(X_train, y_train)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== MODEL SELECTION ===== -->
+<div class="section" id="model-selection">
+  <div class="section-header"><span class="icon">#</span><h2>Model Selection Guide</h2></div>
+
+  <div class="diagram-box">          Is it supervised?
+          ┌────┴────┐
+         Yes        No
+          │          │
+    Classification?  → Clustering (KMeans, DBSCAN)
+    ┌────┴────┐       → Dim. Reduction (PCA, t-SNE)
+   Yes        No
+    │          │
+  Binary?   Regression
+    │       → LinearReg, Ridge, Lasso, RF, XGBoost
+   Yes/No
+    │
+  Small data?  → LogisticReg, SVM, KNN
+  Large data?  → RandomForest, XGBoost, LightGBM
+  Text data?   → Naive Bayes, Transformers</div>
+</div>
+
+<!-- ===== VIZ TIPS ===== -->
+<div class="section" id="viz-tips">
+  <div class="section-header"><span class="icon">#</span><h2>Visualization Tips</h2></div>
+
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Data Type</th><th>Best Chart</th><th>Seaborn Function</th></tr>
+      <tr><td>Distribution (1 var)</td><td>Histogram / KDE</td><td><code>histplot</code>, <code>kdeplot</code></td></tr>
+      <tr><td>Distribution + outliers</td><td>Box / Violin</td><td><code>boxplot</code>, <code>violinplot</code></td></tr>
+      <tr><td>Two numeric vars</td><td>Scatter</td><td><code>scatterplot</code>, <code>regplot</code></td></tr>
+      <tr><td>Categorical counts</td><td>Bar / Count</td><td><code>countplot</code>, <code>barplot</code></td></tr>
+      <tr><td>Category vs. numeric</td><td>Box / Bar</td><td><code>boxplot</code>, <code>barplot</code></td></tr>
+      <tr><td>Correlation matrix</td><td>Heatmap</td><td><code>heatmap</code></td></tr>
+      <tr><td>Many variables</td><td>Pair plot</td><td><code>pairplot</code></td></tr>
+      <tr><td>Time series</td><td>Line plot</td><td><code>lineplot</code></td></tr>
+    </table>
+  </div>
+</div>
+
+<a href="#" class="back-top">Back to top</a>
+<footer>Data Science Cheatsheet — NumPy, Pandas, Matplotlib, scikit-learn, stats &amp; EDA</footer>
+</div>
+
+<script>
+function copyCode(btn) {
+  const code = btn.previousElementSibling.querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+<script src="spotlight.js"></script>
+</body>
+</html>

@@ -862,3 +862,218 @@ footer {
         min-width: 100%;
     }
 }
+
+/* ──────────────────────────────────────────────────
+   Spotlight Search Overlay
+   ────────────────────────────────────────────────── */
+
+.spotlight-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: min(20vh, 160px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.15s, visibility 0.15s;
+}
+
+.spotlight-overlay.spotlight-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.spotlight-modal {
+    width: 90%;
+    max-width: 620px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    transform: scale(0.96) translateY(-8px);
+    transition: transform 0.15s;
+}
+
+.spotlight-open .spotlight-modal {
+    transform: scale(1) translateY(0);
+}
+
+.spotlight-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.spotlight-search-icon {
+    width: 20px;
+    height: 20px;
+    stroke: var(--text-dim);
+    stroke-width: 2;
+    fill: none;
+    flex-shrink: 0;
+}
+
+.spotlight-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.spotlight-input::placeholder {
+    color: var(--text-dim);
+}
+
+.spotlight-esc {
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-dim);
+    background: var(--bg);
+    flex-shrink: 0;
+}
+
+.spotlight-results {
+    max-height: 380px;
+    overflow-y: auto;
+    padding: 8px 0;
+}
+
+.spotlight-cat {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    padding: 10px 16px 4px;
+}
+
+.spotlight-item {
+    display: block;
+    padding: 10px 16px;
+    text-decoration: none;
+    color: var(--text);
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: background 0.08s;
+}
+
+.spotlight-item:hover,
+.spotlight-active {
+    background: rgba(88, 166, 255, 0.08);
+    border-left-color: var(--accent);
+}
+
+.spotlight-item-title {
+    font-weight: 600;
+    font-size: 0.92rem;
+    margin-bottom: 2px;
+}
+
+.spotlight-item-desc {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.spotlight-item mark {
+    background: rgba(88, 166, 255, 0.25);
+    color: var(--accent);
+    border-radius: 2px;
+    padding: 0 1px;
+}
+
+.spotlight-empty {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+}
+
+.spotlight-footer {
+    display: flex;
+    gap: 16px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+}
+
+.spotlight-footer kbd {
+    display: inline-block;
+    font-size: 0.68rem;
+    padding: 1px 5px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--bg);
+    margin: 0 2px;
+    font-family: inherit;
+}
+
+/* Spotlight trigger button in nav */
+.spotlight-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-family: inherit;
+    transition: border-color 0.15s, color 0.15s;
+    margin-right: 8px;
+}
+
+.spotlight-trigger:hover {
+    border-color: var(--accent);
+    color: var(--text);
+}
+
+.spotlight-trigger svg {
+    width: 14px;
+    height: 14px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+}
+
+.spotlight-trigger kbd {
+    font-size: 0.7rem;
+    padding: 1px 5px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--bg-card);
+    font-family: inherit;
+}
+
+@media (max-width: 600px) {
+
+    .spotlight-trigger-text,
+    .spotlight-trigger kbd {
+        display: none;
+    }
+
+    .spotlight-trigger {
+        padding: 5px 8px;
+    }
+
+    .spotlight-modal {
+        width: 96%;
+    }
+}

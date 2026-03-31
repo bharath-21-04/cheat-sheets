@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Engineering Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+</head>
+<body>
+
+<nav>
+  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Data Engineering</span></div>
+  <div class="nav-right"><a href="index.html">All Sheets</a></div>
+</nav>
+
+<div class="container">
+
+<div class="hero">
+  <h1>Data Engineering Cheatsheet</h1>
+  <p class="subtitle">Snowflake, PySpark, Airflow, dbt, Kafka, data pipelines, warehousing &amp; Python data libraries</p>
+  <span class="tag tag-concept">Data / Engineering</span>
+</div>
+
+<div class="toc">
+  <div class="toc-title">Contents</div>
+  <div class="toc-grid">
+    <a href="#snowflake">Snowflake</a>
+    <a href="#snowflake-sql">Snowflake SQL</a>
+    <a href="#pyspark">PySpark</a>
+    <a href="#pandas">Pandas Essentials</a>
+    <a href="#polars">Polars</a>
+    <a href="#airflow">Apache Airflow</a>
+    <a href="#dbt">dbt (Data Build Tool)</a>
+    <a href="#kafka">Apache Kafka</a>
+    <a href="#etl">ETL / ELT Patterns</a>
+    <a href="#data-modeling">Data Modeling</a>
+    <a href="#warehouse">Data Warehouse Concepts</a>
+    <a href="#file-formats">File Formats</a>
+    <a href="#orchestration">Orchestration &amp; Scheduling</a>
+    <a href="#quality">Data Quality</a>
+  </div>
+</div>
+
+<!-- ===== SNOWFLAKE ===== -->
+<div class="section" id="snowflake">
+  <div class="section-header"><span class="icon">#</span><h2>Snowflake</h2></div>
+  <p>Cloud-native data warehouse with separate compute &amp; storage, auto-scaling, and near-zero maintenance.</p>
+
+  <h3>Architecture</h3>
+  <div class="diagram-box">┌─────────────────────────────────────────────┐
+│            Cloud Services Layer              │
+│  (Query parsing, optimization, metadata,     │
+│   access control, infrastructure mgmt)       │
+├─────────────────────────────────────────────┤
+│         Virtual Warehouses (Compute)         │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐       │
+│  │  XS WH  │ │  M WH   │ │  XL WH  │       │
+│  └─────────┘ └─────────┘ └─────────┘       │
+├─────────────────────────────────────────────┤
+│        Centralized Storage (S3/Blob/GCS)     │
+│  Micro-partitions │ Columnar │ Compressed    │
+└─────────────────────────────────────────────┘</div>
+
+  <h3>Key Concepts</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Concept</th><th>Description</th></tr>
+      <tr><td><strong>Virtual Warehouse</strong></td><td>Compute cluster (XS to 6XL). Can suspend/resume. Pay only when running.</td></tr>
+      <tr><td><strong>Database / Schema</strong></td><td>Logical containers. <code>DB.SCHEMA.TABLE</code> naming convention.</td></tr>
+      <tr><td><strong>Micro-partition</strong></td><td>50-500 MB compressed columnar files. Snowflake handles partitioning automatically.</td></tr>
+      <tr><td><strong>Clustering Key</strong></td><td>Define sort order for micro-partitions — improves pruning on large tables.</td></tr>
+      <tr><td><strong>Time Travel</strong></td><td>Query data as it was up to 90 days ago. <code>AT</code> / <code>BEFORE</code> clauses.</td></tr>
+      <tr><td><strong>Zero-Copy Clone</strong></td><td>Instant clone of DB/schema/table — no extra storage until data changes.</td></tr>
+      <tr><td><strong>Stages</strong></td><td>Internal or external (S3/GCS) locations for loading data.</td></tr>
+      <tr><td><strong>Streams</strong></td><td>Change data capture (CDC) — track INSERTs, UPDATEs, DELETEs on a table.</td></tr>
+      <tr><td><strong>Tasks</strong></td><td>Scheduled SQL execution. Chain tasks into DAGs.</td></tr>
+      <tr><td><strong>Pipes</strong></td><td>Snowpipe — continuous auto-ingest from stages.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== SNOWFLAKE SQL ===== -->
+<div class="section" id="snowflake-sql">
+  <div class="section-header"><span class="icon">#</span><h2>Snowflake SQL</h2></div>
+
+  <h3>Warehouse &amp; Database Setup</h3>
+  <div class="code-block"><pre><code><span class="cm">-- Create warehouse</span>
+<span class="kw">CREATE WAREHOUSE</span> analytics_wh
+  <span class="kw">WITH</span> WAREHOUSE_SIZE = <span class="str">'MEDIUM'</span>
+  AUTO_SUSPEND = <span class="num">300</span>      <span class="cm">-- suspend after 5 min idle</span>
+  AUTO_RESUME = <span class="kw">TRUE</span>
+  MIN_CLUSTER_COUNT = <span class="num">1</span>
+  MAX_CLUSTER_COUNT = <span class="num">3</span>;  <span class="cm">-- multi-cluster auto-scale</span>
+
+<span class="cm">-- Create database &amp; schema</span>
+<span class="kw">CREATE DATABASE</span> raw_data;
+<span class="kw">CREATE SCHEMA</span> raw_data.events;
+
+<span class="cm">-- Create table</span>
+<span class="kw">CREATE TABLE</span> raw_data.events.clicks (
+  id        <span class="tp">INT</span> AUTOINCREMENT,
+  user_id   <span class="tp">VARCHAR</span>(<span class="num">50</span>),
+  event     <span class="tp">VARCHAR</span>(<span class="num">100</span>),
+  payload   <span class="tp">VARIANT</span>,        <span class="cm">-- semi-structured JSON</span>
+  ts        <span class="tp">TIMESTAMP_NTZ</span> <span class="kw">DEFAULT</span> CURRENT_TIMESTAMP()
+);</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Data Loading</h3>
+  <div class="code-block"><pre><code><span class="cm">-- Create stage (S3)</span>
+<span class="kw">CREATE STAGE</span> my_s3_stage
+  URL = <span class="str">'s3://my-bucket/data/'</span>
+  CREDENTIALS = (AWS_KEY_ID=<span class="str">'...'</span> AWS_SECRET_KEY=<span class="str">'...'</span>);
+
+<span class="cm">-- Create file format</span>
+<span class="kw">CREATE FILE FORMAT</span> csv_format
+  TYPE = <span class="str">'CSV'</span> FIELD_DELIMITER=<span class="str">','</span> SKIP_HEADER=<span class="num">1</span>;
+
+<span class="cm">-- COPY INTO (bulk load)</span>
+<span class="kw">COPY INTO</span> raw_data.events.clicks
+<span class="kw">FROM</span> @my_s3_stage/clicks/
+FILE_FORMAT = csv_format
+PATTERN = <span class="str">'.*\.csv'</span>;
+
+<span class="cm">-- Snowpipe (continuous ingest)</span>
+<span class="kw">CREATE PIPE</span> clicks_pipe AUTO_INGEST = <span class="kw">TRUE</span> <span class="kw">AS</span>
+  <span class="kw">COPY INTO</span> raw_data.events.clicks
+  <span class="kw">FROM</span> @my_s3_stage/clicks/
+  FILE_FORMAT = csv_format;</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Time Travel &amp; Cloning</h3>
+  <div class="code-block"><pre><code><span class="cm">-- Query data 1 hour ago</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> clicks <span class="kw">AT</span>(OFFSET =&gt; <span class="num">-3600</span>);
+
+<span class="cm">-- Query data at specific timestamp</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> clicks <span class="kw">AT</span>(TIMESTAMP =&gt; <span class="str">'2025-01-15 10:00:00'</span>::TIMESTAMP);
+
+<span class="cm">-- Undrop a table</span>
+<span class="kw">UNDROP TABLE</span> clicks;
+
+<span class="cm">-- Zero-copy clone</span>
+<span class="kw">CREATE TABLE</span> clicks_backup <span class="kw">CLONE</span> clicks;
+<span class="kw">CREATE DATABASE</span> dev_db <span class="kw">CLONE</span> prod_db;</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Streams &amp; Tasks (CDC + Scheduling)</h3>
+  <div class="code-block"><pre><code><span class="cm">-- Stream: tracks changes on a table</span>
+<span class="kw">CREATE STREAM</span> clicks_stream <span class="kw">ON TABLE</span> clicks;
+
+<span class="cm">-- Task: scheduled SQL</span>
+<span class="kw">CREATE TASK</span> process_clicks
+  WAREHOUSE = analytics_wh
+  SCHEDULE = <span class="str">'USING CRON 0 * * * * UTC'</span>  <span class="cm">-- every hour</span>
+  <span class="kw">WHEN</span> SYSTEM$STREAM_HAS_DATA(<span class="str">'clicks_stream'</span>)
+<span class="kw">AS</span>
+  <span class="kw">INSERT INTO</span> analytics.clicks_agg
+  <span class="kw">SELECT</span> event, COUNT(*), DATE_TRUNC(<span class="str">'hour'</span>, ts)
+  <span class="kw">FROM</span> clicks_stream
+  <span class="kw">GROUP BY</span> <span class="num">1</span>, <span class="num">3</span>;
+
+<span class="kw">ALTER TASK</span> process_clicks <span class="kw">RESUME</span>;</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Semi-structured Data (VARIANT)</h3>
+  <div class="code-block"><pre><code><span class="cm">-- Query JSON inside VARIANT column</span>
+<span class="kw">SELECT</span>
+  payload:<span class="str">page</span>::<span class="tp">STRING</span> <span class="kw">AS</span> page,
+  payload:<span class="str">duration</span>::<span class="tp">INT</span> <span class="kw">AS</span> duration,
+  payload:<span class="str">tags</span>[<span class="num">0</span>]::<span class="tp">STRING</span> <span class="kw">AS</span> first_tag
+<span class="kw">FROM</span> clicks
+<span class="kw">WHERE</span> payload:<span class="str">page</span> <span class="kw">IS NOT NULL</span>;
+
+<span class="cm">-- FLATTEN nested arrays</span>
+<span class="kw">SELECT</span> c.user_id, f.value::STRING <span class="kw">AS</span> tag
+<span class="kw">FROM</span> clicks c,
+  <span class="kw">LATERAL FLATTEN</span>(input =&gt; c.payload:<span class="str">tags</span>) f;</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== PYSPARK ===== -->
+<div class="section" id="pyspark">
+  <div class="section-header"><span class="icon">#</span><h2>PySpark</h2></div>
+  <p>Python API for Apache Spark — distributed data processing for big data at scale.</p>
+
+  <h3>Session &amp; DataFrame Basics</h3>
+  <div class="code-block"><pre><code><span class="kw">from</span> pyspark.sql <span class="kw">import</span> SparkSession
+<span class="kw">from</span> pyspark.sql <span class="kw">import</span> functions <span class="kw">as</span> F
+<span class="kw">from</span> pyspark.sql.types <span class="kw">import</span> StructType, StructField, StringType, IntegerType
+
+<span class="cm"># Create session</span>
+spark = SparkSession.builder \
+    .appName(<span class="str">"MyApp"</span>) \
+    .config(<span class="str">"spark.sql.shuffle.partitions"</span>, <span class="num">200</span>) \
+    .<span class="fn">getOrCreate</span>()
+
+<span class="cm"># Read data</span>
+df = spark.<span class="fn">read</span>.csv(<span class="str">"s3://bucket/data.csv"</span>, header=<span class="kw">True</span>, inferSchema=<span class="kw">True</span>)
+df = spark.<span class="fn">read</span>.parquet(<span class="str">"s3://bucket/data.parquet"</span>)
+df = spark.<span class="fn">read</span>.json(<span class="str">"s3://bucket/data.json"</span>)
+
+<span class="cm"># Schema</span>
+df.printSchema()
+df.dtypes              <span class="cm"># list of (col_name, dtype)</span>
+df.columns             <span class="cm"># column names</span>
+df.count()             <span class="cm"># row count</span></code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Transformations</h3>
+  <div class="code-block"><pre><code><span class="cm"># Select &amp; filter</span>
+df.<span class="fn">select</span>(<span class="str">"name"</span>, <span class="str">"age"</span>).<span class="fn">filter</span>(F.col(<span class="str">"age"</span>) > <span class="num">25</span>)
+df.<span class="fn">where</span>(<span class="str">"age > 25 AND city = 'NYC'"</span>)
+
+<span class="cm"># Add / rename / drop columns</span>
+df.<span class="fn">withColumn</span>(<span class="str">"age_next"</span>, F.col(<span class="str">"age"</span>) + <span class="num">1</span>)
+df.<span class="fn">withColumnRenamed</span>(<span class="str">"name"</span>, <span class="str">"full_name"</span>)
+df.<span class="fn">drop</span>(<span class="str">"temp_col"</span>)
+
+<span class="cm"># Group by &amp; aggregate</span>
+df.<span class="fn">groupBy</span>(<span class="str">"city"</span>).<span class="fn">agg</span>(
+    F.<span class="fn">count</span>(<span class="str">"*"</span>).alias(<span class="str">"total"</span>),
+    F.<span class="fn">avg</span>(<span class="str">"salary"</span>).alias(<span class="str">"avg_salary"</span>),
+    F.<span class="fn">max</span>(<span class="str">"age"</span>).alias(<span class="str">"max_age"</span>)
+)
+
+<span class="cm"># Joins</span>
+df1.<span class="fn">join</span>(df2, df1.id == df2.id, <span class="str">"inner"</span>)     <span class="cm"># inner, left, right, full, cross, semi, anti</span>
+
+<span class="cm"># Window functions</span>
+<span class="kw">from</span> pyspark.sql.window <span class="kw">import</span> Window
+w = Window.partitionBy(<span class="str">"dept"</span>).orderBy(F.desc(<span class="str">"salary"</span>))
+df.<span class="fn">withColumn</span>(<span class="str">"rank"</span>, F.<span class="fn">row_number</span>().over(w))
+
+<span class="cm"># Write</span>
+df.<span class="fn">write</span>.mode(<span class="str">"overwrite"</span>).parquet(<span class="str">"s3://output/"</span>)
+df.<span class="fn">write</span>.partitionBy(<span class="str">"year"</span>, <span class="str">"month"</span>).parquet(<span class="str">"s3://output/"</span>)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Spark SQL</h3>
+  <div class="code-block"><pre><code>df.<span class="fn">createOrReplaceTempView</span>(<span class="str">"users"</span>)
+
+result = spark.<span class="fn">sql</span>(<span class="str">"""
+    SELECT city, COUNT(*) as cnt, AVG(salary) as avg_sal
+    FROM users
+    WHERE age > 25
+    GROUP BY city
+    ORDER BY cnt DESC
+"""</span>)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <div class="note tip">
+    <strong>Performance tips:</strong> Use <code>.cache()</code> for reused DataFrames, <code>.repartition(n)</code> to balance partitions, <code>.coalesce(1)</code> to write single file, and broadcast small tables with <code>F.broadcast(small_df)</code> in joins.
+  </div>
+</div>
+
+<!-- ===== PANDAS ===== -->
+<div class="section" id="pandas">
+  <div class="section-header"><span class="icon">#</span><h2>Pandas Essentials</h2></div>
+
+  <div class="code-block"><pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># Read / write</span>
+df = pd.<span class="fn">read_csv</span>(<span class="str">"data.csv"</span>)
+df = pd.<span class="fn">read_parquet</span>(<span class="str">"data.parquet"</span>)
+df = pd.<span class="fn">read_json</span>(<span class="str">"data.json"</span>)
+df.<span class="fn">to_csv</span>(<span class="str">"out.csv"</span>, index=<span class="kw">False</span>)
+
+<span class="cm"># Inspect</span>
+df.shape          <span class="cm"># (rows, cols)</span>
+df.info()         <span class="cm"># dtypes, memory, non-null counts</span>
+df.describe()     <span class="cm"># summary stats</span>
+df.head(<span class="num">10</span>)       <span class="cm"># first 10 rows</span>
+df.dtypes         <span class="cm"># column types</span>
+df.isnull().sum() <span class="cm"># null counts per column</span>
+
+<span class="cm"># Select / filter</span>
+df[<span class="str">"col"</span>]                        <span class="cm"># Series</span>
+df[[<span class="str">"col1"</span>, <span class="str">"col2"</span>]]            <span class="cm"># DataFrame</span>
+df[df[<span class="str">"age"</span>] > <span class="num">25</span>]               <span class="cm"># filter rows</span>
+df.<span class="fn">query</span>(<span class="str">"age > 25 and city == 'NYC'"</span>)
+
+<span class="cm"># Transforms</span>
+df[<span class="str">"new"</span>] = df[<span class="str">"a"</span>] + df[<span class="str">"b"</span>]
+df.<span class="fn">rename</span>(columns={<span class="str">"old"</span>: <span class="str">"new"</span>})
+df.<span class="fn">drop</span>(columns=[<span class="str">"temp"</span>])
+df.<span class="fn">sort_values</span>(<span class="str">"col"</span>, ascending=<span class="kw">False</span>)
+
+<span class="cm"># Group by</span>
+df.<span class="fn">groupby</span>(<span class="str">"city"</span>).<span class="fn">agg</span>({<span class="str">"salary"</span>: [<span class="str">"mean"</span>, <span class="str">"max"</span>], <span class="str">"age"</span>: <span class="str">"count"</span>})
+df.<span class="fn">groupby</span>(<span class="str">"city"</span>)[<span class="str">"salary"</span>].<span class="fn">transform</span>(<span class="str">"rank"</span>)
+
+<span class="cm"># Joins</span>
+pd.<span class="fn">merge</span>(df1, df2, on=<span class="str">"id"</span>, how=<span class="str">"left"</span>)
+
+<span class="cm"># Pivot / melt</span>
+df.<span class="fn">pivot_table</span>(values=<span class="str">"sales"</span>, index=<span class="str">"region"</span>, columns=<span class="str">"quarter"</span>, aggfunc=<span class="str">"sum"</span>)
+pd.<span class="fn">melt</span>(df, id_vars=[<span class="str">"name"</span>], value_vars=[<span class="str">"q1"</span>, <span class="str">"q2"</span>])</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== POLARS ===== -->
+<div class="section" id="polars">
+  <div class="section-header"><span class="icon">#</span><h2>Polars</h2></div>
+  <p>Blazing-fast DataFrame library in Rust with a Python API. Lazy evaluation, multi-threaded, no GIL limitations.</p>
+
+  <div class="code-block"><pre><code><span class="kw">import</span> polars <span class="kw">as</span> pl
+
+<span class="cm"># Read</span>
+df = pl.<span class="fn">read_csv</span>(<span class="str">"data.csv"</span>)
+df = pl.<span class="fn">read_parquet</span>(<span class="str">"data.parquet"</span>)
+
+<span class="cm"># Lazy mode (optimized query plan)</span>
+lf = pl.<span class="fn">scan_parquet</span>(<span class="str">"data.parquet"</span>)
+result = lf.<span class="fn">filter</span>(pl.col(<span class="str">"age"</span>) > <span class="num">25</span>) \
+    .<span class="fn">group_by</span>(<span class="str">"city"</span>) \
+    .<span class="fn">agg</span>(pl.col(<span class="str">"salary"</span>).<span class="fn">mean</span>().alias(<span class="str">"avg_sal"</span>)) \
+    .<span class="fn">sort</span>(<span class="str">"avg_sal"</span>, descending=<span class="kw">True</span>) \
+    .<span class="fn">collect</span>()   <span class="cm"># execute the lazy plan</span>
+
+<span class="cm"># Transformations (eager)</span>
+df.<span class="fn">select</span>(pl.col(<span class="str">"name"</span>), pl.col(<span class="str">"age"</span>) + <span class="num">1</span>)
+df.<span class="fn">with_columns</span>((pl.col(<span class="str">"a"</span>) * pl.col(<span class="str">"b"</span>)).alias(<span class="str">"product"</span>))
+df.<span class="fn">filter</span>(pl.col(<span class="str">"city"</span>).<span class="fn">is_in</span>([<span class="str">"NYC"</span>, <span class="str">"LA"</span>]))
+
+<span class="cm"># Window functions</span>
+df.<span class="fn">with_columns</span>(
+    pl.col(<span class="str">"salary"</span>).<span class="fn">rank</span>().over(<span class="str">"dept"</span>).alias(<span class="str">"rank"</span>)
+)</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <div class="note tip">
+    <strong>Polars vs Pandas:</strong> Polars is 10–100x faster for large datasets thanks to Rust, lazy execution, and multi-threading. Use <code>.lazy()</code> → chain transforms → <code>.collect()</code> for best performance.
+  </div>
+</div>
+
+<!-- ===== AIRFLOW ===== -->
+<div class="section" id="airflow">
+  <div class="section-header"><span class="icon">#</span><h2>Apache Airflow</h2></div>
+  <p>Workflow orchestration platform for scheduling and monitoring data pipelines as code (DAGs).</p>
+
+  <div class="code-block"><pre><code><span class="kw">from</span> airflow <span class="kw">import</span> DAG
+<span class="kw">from</span> airflow.operators.python <span class="kw">import</span> PythonOperator
+<span class="kw">from</span> airflow.providers.snowflake.operators.snowflake <span class="kw">import</span> SnowflakeOperator
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime, timedelta
+
+default_args = {
+    <span class="str">"owner"</span>: <span class="str">"data-team"</span>,
+    <span class="str">"retries"</span>: <span class="num">2</span>,
+    <span class="str">"retry_delay"</span>: timedelta(minutes=<span class="num">5</span>),
+}
+
+<span class="kw">with</span> DAG(
+    dag_id=<span class="str">"daily_etl"</span>,
+    schedule=<span class="str">"0 6 * * *"</span>,          <span class="cm"># daily at 6 AM</span>
+    start_date=datetime(<span class="num">2025</span>, <span class="num">1</span>, <span class="num">1</span>),
+    catchup=<span class="kw">False</span>,
+    default_args=default_args,
+) <span class="kw">as</span> dag:
+
+    extract = PythonOperator(
+        task_id=<span class="str">"extract"</span>,
+        python_callable=extract_data,
+    )
+
+    transform = PythonOperator(
+        task_id=<span class="str">"transform"</span>,
+        python_callable=transform_data,
+    )
+
+    load = SnowflakeOperator(
+        task_id=<span class="str">"load_to_snowflake"</span>,
+        sql=<span class="str">"COPY INTO analytics.events FROM @stage/..."</span>,
+        snowflake_conn_id=<span class="str">"snowflake_default"</span>,
+    )
+
+    extract >> transform >> load   <span class="cm"># task dependencies</span></code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <div class="note">
+    <strong>Key concepts:</strong> <code>DAG</code> = Directed Acyclic Graph (pipeline definition), <code>Task</code> = unit of work, <code>Operator</code> = task type (Python, Bash, SQL, etc.), <code>XCom</code> = cross-task data passing, <code>Sensor</code> = wait for external condition.
+  </div>
+</div>
+
+<!-- ===== dbt ===== -->
+<div class="section" id="dbt">
+  <div class="section-header"><span class="icon">#</span><h2>dbt (Data Build Tool)</h2></div>
+  <p>SQL-first transformation tool. Write SELECT statements, dbt handles DDL, dependencies, testing, and documentation.</p>
+
+  <div class="code-block"><pre><code><span class="cm">-- models/staging/stg_orders.sql</span>
+<span class="kw">WITH</span> source <span class="kw">AS</span> (
+    <span class="kw">SELECT</span> * <span class="kw">FROM</span> {{ <span class="fn">source</span>(<span class="str">'raw'</span>, <span class="str">'orders'</span>) }}
+)
+<span class="kw">SELECT</span>
+    id <span class="kw">AS</span> order_id,
+    customer_id,
+    amount::DECIMAL(<span class="num">10</span>,<span class="num">2</span>) <span class="kw">AS</span> order_amount,
+    created_at::DATE <span class="kw">AS</span> order_date
+<span class="kw">FROM</span> source
+<span class="kw">WHERE</span> amount > <span class="num">0</span></code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <div class="code-block"><pre><code><span class="cm">-- models/marts/fct_daily_revenue.sql</span>
+{{ <span class="fn">config</span>(materialized=<span class="str">'incremental'</span>, unique_key=<span class="str">'order_date'</span>) }}
+
+<span class="kw">SELECT</span>
+    order_date,
+    COUNT(*) <span class="kw">AS</span> total_orders,
+    SUM(order_amount) <span class="kw">AS</span> revenue
+<span class="kw">FROM</span> {{ <span class="fn">ref</span>(<span class="str">'stg_orders'</span>) }}
+{% <span class="kw">if</span> is_incremental() %}
+    <span class="kw">WHERE</span> order_date > (<span class="kw">SELECT</span> MAX(order_date) <span class="kw">FROM</span> {{ <span class="kw">this</span> }})
+{% endif %}
+<span class="kw">GROUP BY</span> order_date</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>CLI Commands</h3>
+  <div class="code-block"><pre><code><span class="fn">dbt</span> init my_project           <span class="cm"># scaffold project</span>
+<span class="fn">dbt</span> run                        <span class="cm"># run all models</span>
+<span class="fn">dbt</span> run --select stg_orders    <span class="cm"># run specific model</span>
+<span class="fn">dbt</span> test                       <span class="cm"># run all tests</span>
+<span class="fn">dbt</span> build                      <span class="cm"># run + test in DAG order</span>
+<span class="fn">dbt</span> docs generate &amp;&amp; dbt docs serve  <span class="cm"># auto-generated docs</span></code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Materialization</th><th>What It Does</th><th>Use When</th></tr>
+      <tr><td><code>view</code></td><td>CREATE VIEW</td><td>Light transforms, infrequent queries</td></tr>
+      <tr><td><code>table</code></td><td>CREATE TABLE AS</td><td>Frequently queried, stable data</td></tr>
+      <tr><td><code>incremental</code></td><td>INSERT new rows only</td><td>Large tables, append-mostly data</td></tr>
+      <tr><td><code>ephemeral</code></td><td>CTE (no object created)</td><td>Intermediate helper logic</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== KAFKA ===== -->
+<div class="section" id="kafka">
+  <div class="section-header"><span class="icon">#</span><h2>Apache Kafka</h2></div>
+  <p>Distributed event streaming platform. Publish &amp; subscribe to streams of records in real-time.</p>
+
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Concept</th><th>Description</th></tr>
+      <tr><td><strong>Topic</strong></td><td>Named category of messages. Producers write to, consumers read from.</td></tr>
+      <tr><td><strong>Partition</strong></td><td>Ordered, immutable log within a topic. Enables parallelism.</td></tr>
+      <tr><td><strong>Producer</strong></td><td>Publishes messages to topics.</td></tr>
+      <tr><td><strong>Consumer</strong></td><td>Reads messages from topics. Belongs to a consumer group.</td></tr>
+      <tr><td><strong>Consumer Group</strong></td><td>Each partition consumed by exactly one member — enables parallel consumption.</td></tr>
+      <tr><td><strong>Offset</strong></td><td>Position of a message within a partition. Consumers track their offset.</td></tr>
+      <tr><td><strong>Broker</strong></td><td>A Kafka server. Cluster = multiple brokers.</td></tr>
+    </table>
+  </div>
+
+  <h3>Python (confluent-kafka)</h3>
+  <div class="code-block"><pre><code><span class="kw">from</span> confluent_kafka <span class="kw">import</span> Producer, Consumer
+
+<span class="cm"># Producer</span>
+p = Producer({<span class="str">'bootstrap.servers'</span>: <span class="str">'localhost:9092'</span>})
+p.<span class="fn">produce</span>(<span class="str">'events'</span>, key=<span class="str">'user_1'</span>, value=<span class="str">'{"action":"click"}'</span>)
+p.<span class="fn">flush</span>()
+
+<span class="cm"># Consumer</span>
+c = Consumer({
+    <span class="str">'bootstrap.servers'</span>: <span class="str">'localhost:9092'</span>,
+    <span class="str">'group.id'</span>: <span class="str">'my-group'</span>,
+    <span class="str">'auto.offset.reset'</span>: <span class="str">'earliest'</span>
+})
+c.<span class="fn">subscribe</span>([<span class="str">'events'</span>])
+<span class="kw">while True</span>:
+    msg = c.<span class="fn">poll</span>(<span class="num">1.0</span>)
+    <span class="kw">if</span> msg <span class="kw">is not None</span>:
+        <span class="fn">print</span>(msg.<span class="fn">value</span>().<span class="fn">decode</span>())</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<!-- ===== ETL / ELT ===== -->
+<div class="section" id="etl">
+  <div class="section-header"><span class="icon">#</span><h2>ETL / ELT Patterns</h2></div>
+
+  <div class="comparison-grid">
+    <div>
+      <h4>ETL (Extract → Transform → Load)</h4>
+      <ul>
+        <li>Transform <strong>before</strong> loading into warehouse</li>
+        <li>Traditional approach (on-prem era)</li>
+        <li>Tools: Informatica, Talend, custom scripts</li>
+        <li>Less storage needed in warehouse</li>
+      </ul>
+    </div>
+    <div>
+      <h4>ELT (Extract → Load → Transform)</h4>
+      <ul>
+        <li>Load raw data, transform <strong>inside</strong> warehouse</li>
+        <li>Modern approach (cloud-native)</li>
+        <li>Tools: dbt, Snowflake, BigQuery</li>
+        <li>Leverage warehouse compute power</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Modern Data Stack</h3>
+  <div class="diagram-box">  Ingestion         Storage          Transform        BI / Analytics
+┌──────────┐   ┌──────────────┐   ┌──────────┐   ┌──────────────┐
+│ Fivetran  │──▶│  Snowflake   │──▶│   dbt    │──▶│  Looker /    │
+│ Airbyte   │   │  BigQuery    │   │  Spark   │   │  Metabase /  │
+│ Stitch    │   │  Redshift    │   │  Airflow │   │  Tableau     │
+└──────────┘   └──────────────┘   └──────────┘   └──────────────┘</div>
+</div>
+
+<!-- ===== DATA MODELING ===== -->
+<div class="section" id="data-modeling">
+  <div class="section-header"><span class="icon">#</span><h2>Data Modeling</h2></div>
+
+  <h3>Kimball Dimensional Modeling</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Concept</th><th>Description</th><th>Example</th></tr>
+      <tr><td><strong>Fact Table</strong></td><td>Measurable events (metrics, transactions)</td><td><code>fct_orders</code> — amount, quantity</td></tr>
+      <tr><td><strong>Dimension Table</strong></td><td>Descriptive context for facts</td><td><code>dim_customer</code> — name, city, segment</td></tr>
+      <tr><td><strong>Star Schema</strong></td><td>Fact in center, dimensions around it</td><td>Simple, fast queries</td></tr>
+      <tr><td><strong>Snowflake Schema</strong></td><td>Normalized dimensions (dim → sub-dim)</td><td>Less redundancy, more joins</td></tr>
+      <tr><td><strong>SCD Type 1</strong></td><td>Overwrite old value (no history)</td><td>Customer address update</td></tr>
+      <tr><td><strong>SCD Type 2</strong></td><td>New row for changes (full history)</td><td><code>valid_from</code>, <code>valid_to</code>, <code>is_current</code></td></tr>
+    </table>
+  </div>
+
+  <h3>Medallion Architecture (Lakehouse)</h3>
+  <div class="diagram-box">Bronze (Raw)          Silver (Cleaned)        Gold (Business)
+┌─────────────┐      ┌─────────────┐      ┌─────────────────┐
+│ Raw ingested │─────▶│ Deduplicated│─────▶│ Aggregated      │
+│ data as-is   │      │ Typed       │      │ Business logic  │
+│ Append-only  │      │ Validated   │      │ Ready for BI    │
+└─────────────┘      └─────────────┘      └─────────────────┘</div>
+</div>
+
+<!-- ===== WAREHOUSE CONCEPTS ===== -->
+<div class="section" id="warehouse">
+  <div class="section-header"><span class="icon">#</span><h2>Data Warehouse Concepts</h2></div>
+
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Term</th><th>Description</th></tr>
+      <tr><td><strong>OLTP</strong></td><td>Online Transaction Processing — row-oriented, fast writes (MySQL, PostgreSQL)</td></tr>
+      <tr><td><strong>OLAP</strong></td><td>Online Analytical Processing — column-oriented, fast reads (Snowflake, BigQuery)</td></tr>
+      <tr><td><strong>Data Lake</strong></td><td>Raw storage for structured + unstructured data (S3, ADLS, GCS)</td></tr>
+      <tr><td><strong>Data Lakehouse</strong></td><td>Lake + Warehouse features (Delta Lake, Iceberg, Hudi)</td></tr>
+      <tr><td><strong>Partitioning</strong></td><td>Split data by date/region → skip irrelevant partitions</td></tr>
+      <tr><td><strong>Columnar Storage</strong></td><td>Store columns together → great compression + fast analytics</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== FILE FORMATS ===== -->
+<div class="section" id="file-formats">
+  <div class="section-header"><span class="icon">#</span><h2>File Formats</h2></div>
+
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Format</th><th>Type</th><th>Compression</th><th>Best For</th></tr>
+      <tr><td><strong>CSV</strong></td><td>Row-based, text</td><td>None (gzip external)</td><td>Simple exchange, small data</td></tr>
+      <tr><td><strong>JSON / NDJSON</strong></td><td>Row-based, text</td><td>None (gzip external)</td><td>APIs, semi-structured data</td></tr>
+      <tr><td><strong>Parquet</strong></td><td>Columnar, binary</td><td>Snappy / Zstd / Gzip</td><td>Analytics, warehouses, Spark</td></tr>
+      <tr><td><strong>ORC</strong></td><td>Columnar, binary</td><td>Zlib / Snappy</td><td>Hive ecosystem</td></tr>
+      <tr><td><strong>Avro</strong></td><td>Row-based, binary</td><td>Snappy / Deflate</td><td>Kafka, schema evolution</td></tr>
+      <tr><td><strong>Delta Lake</strong></td><td>Parquet + tx log</td><td>Same as Parquet</td><td>Lakehouse, ACID on lake</td></tr>
+      <tr><td><strong>Iceberg</strong></td><td>Parquet + metadata</td><td>Same as Parquet</td><td>Open table format, Snowflake/Spark</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== ORCHESTRATION ===== -->
+<div class="section" id="orchestration">
+  <div class="section-header"><span class="icon">#</span><h2>Orchestration &amp; Scheduling</h2></div>
+
+  <div class="table-wrapper">
+    <table>
+      <tr><th>Tool</th><th>Type</th><th>Best For</th></tr>
+      <tr><td><strong>Apache Airflow</strong></td><td>DAG-based, Python</td><td>Complex pipelines, mature ecosystem</td></tr>
+      <tr><td><strong>Prefect</strong></td><td>Python-native, flow-based</td><td>Modern Python data workflows</td></tr>
+      <tr><td><strong>Dagster</strong></td><td>Asset-based, Python</td><td>Software-defined data assets</td></tr>
+      <tr><td><strong>dbt Cloud</strong></td><td>SQL transforms</td><td>dbt-native scheduling</td></tr>
+      <tr><td><strong>Mage</strong></td><td>Notebook-style</td><td>Quick ETL pipelines</td></tr>
+      <tr><td><strong>Cron</strong></td><td>OS scheduler</td><td>Simple scripts, one-off jobs</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ===== DATA QUALITY ===== -->
+<div class="section" id="quality">
+  <div class="section-header"><span class="icon">#</span><h2>Data Quality</h2></div>
+
+  <h3>dbt Tests</h3>
+  <div class="code-block"><pre><code><span class="cm"># schema.yml</span>
+models:
+  - name: stg_orders
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: order_amount
+        tests:
+          - not_null
+          - <span class="fn">dbt_utils.accepted_range</span>:
+              min_value: 0
+              max_value: 100000</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+
+  <h3>Great Expectations (Python)</h3>
+  <div class="code-block"><pre><code><span class="kw">import</span> great_expectations <span class="kw">as</span> gx
+
+context = gx.<span class="fn">get_context</span>()
+validator = context.<span class="fn">get_validator</span>(datasource=<span class="str">"my_ds"</span>, data_asset=<span class="str">"orders"</span>)
+
+validator.<span class="fn">expect_column_values_to_not_be_null</span>(<span class="str">"order_id"</span>)
+validator.<span class="fn">expect_column_values_to_be_between</span>(<span class="str">"amount"</span>, min_value=<span class="num">0</span>)
+validator.<span class="fn">expect_column_values_to_be_unique</span>(<span class="str">"order_id"</span>)
+results = validator.<span class="fn">validate</span>()</code></pre><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
+</div>
+
+<a href="#" class="back-top">Back to top</a>
+<footer>Data Engineering Cheatsheet — Snowflake, PySpark, Airflow, dbt, Kafka &amp; Python data libraries</footer>
+</div>
+
+<script>
+function copyCode(btn) {
+  const code = btn.previousElementSibling.querySelector('code');
+  navigator.clipboard.writeText(code.innerText).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+<script src="spotlight.js"></script>
+</body>
+</html>
