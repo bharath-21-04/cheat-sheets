@@ -1254,6 +1254,16 @@ footer {
     margin-bottom: 1.5rem;
 }
 
+.index-filter-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+    padding: 1rem 0 .25rem;
+    margin-top: .5rem;
+}
+
 .filter-label {
     color: var(--text-dim);
     font-size: .8rem;

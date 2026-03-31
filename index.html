@@ -25,6 +25,15 @@
         <input type="text" id="searchInput" placeholder="Search cheatsheets..." autocomplete="off" />
       </div>
     </div>
+    <div class="index-filter-bar" id="indexFilterBar">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="lang,fw,cs">&#128187; Development</button>
+      <button class="filter-btn" data-filter="db,auth">&#128452; Databases</button>
+      <button class="filter-btn" data-filter="ai,data">&#129302; AI &amp; Data</button>
+      <button class="filter-btn" data-filter="tool,linux,fmt">&#9881; DevOps &amp; Linux</button>
+      <button class="filter-btn" data-filter="keys">&#9000; Shortcuts</button>
+      <button class="filter-btn" data-filter="ref">&#128214; Reference</button>
+    </div>
     <div class="no-results" id="noResults">No matching cheatsheets found.</div>
   </div>
 
@@ -798,27 +807,45 @@
 <script>
 const si = document.getElementById('searchInput');
 const nr = document.getElementById('noResults');
+let activeFilter = 'all';
 
-si.addEventListener('input', () => {
+function applyFilters() {
   const q = si.value.toLowerCase().trim();
+  const filterCats = activeFilter === 'all' ? null : activeFilter.split(',');
   const cards = document.querySelectorAll('.card');
   const titles = document.querySelectorAll('.section-title');
   let visible = 0;
 
   cards.forEach(c => {
-    const match = !q || c.textContent.toLowerCase().includes(q);
-    c.style.display = match ? '' : 'none';
-    if (match) visible++;
+    const cat = c.getAttribute('data-cat') || '';
+    const catMatch = !filterCats || filterCats.includes(cat);
+    const textMatch = !q || c.textContent.toLowerCase().includes(q);
+    const show = catMatch && textMatch;
+    c.style.display = show ? '' : 'none';
+    if (show) visible++;
   });
 
   titles.forEach(t => {
     const grid = t.nextElementSibling;
     if (!grid) return;
     const hasVisible = grid.querySelector('.card:not([style*="display: none"])');
-    t.style.display = (!q || hasVisible) ? '' : 'none';
+    t.style.display = hasVisible ? '' : 'none';
+    if (grid) grid.style.display = hasVisible ? '' : 'none';
   });
 
-  nr.style.display = (q && visible === 0) ? 'block' : 'none';
+  nr.style.display = visible === 0 ? 'block' : 'none';
+}
+
+si.addEventListener('input', applyFilters);
+
+document.getElementById('indexFilterBar').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('#indexFilterBar .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeFilter = btn.getAttribute('data-filter');
+  si.value = '';
+  applyFilters();
 });
 </script>
 
