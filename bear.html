@@ -1,58 +1,103 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bear Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Bear</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Bear Cheatsheet</h1>
-  <p class="subtitle">Notes, formatting, tags, search, export &amp; essential shortcuts</p>
-  <span class="tag tag-concept">Keyboard Shortcuts</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Bear Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Bear</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Bear Cheatsheet</h1><p class="subtitle">Note-taking app shortcuts (macOS/iOS)</p><span class="tag tag-concept">Shortcuts</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#notes">Notes</a>
+    <a href="#edit">Editing</a>
+    <a href="#format">Formatting</a>
+    <a href="#tags">Tags &amp; Search</a>
+    <a href="#nav">Navigation</a>
+    <a href="#export">Export</a>
+</div></div>
+<div class="section" id="notes"><div class="section-header"><span class="icon">📝</span><h2>Notes</h2></div><div class="code-wrapper"><pre><code>⌘N             <span class="cmt">New note</span>
+⌘⇧N            <span class="cmt">New note in new window</span>
+⌘⌫             <span class="cmt">Delete note (Trash)</span>
+⌘P             <span class="cmt">Pin/unpin note</span>
+⌘⇧A            <span class="cmt">Archive note</span>
+⌘D             <span class="cmt">Duplicate note</span>
+⌘⇧M            <span class="cmt">Move note to tag</span>
+⌘⇧P            <span class="cmt">Print note</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Note info</span>
+⌘I             <span class="cmt">Show note info</span>
+<span class="cmt">(word count, created, modified)</span></code></pre></div></div>
+<div class="section" id="edit"><div class="section-header"><span class="icon">✏️</span><h2>Editing</h2></div><div class="code-wrapper"><pre><code>⌘Z             <span class="cmt">Undo</span>
+⌘⇧Z            <span class="cmt">Redo</span>
+⌘C / ⌘V       <span class="cmt">Copy / Paste</span>
+⌘⌥V            <span class="cmt">Paste as plain text</span>
+⌘A             <span class="cmt">Select all</span>
+⌘⌥T            <span class="cmt">Insert todo</span>
+⌘K             <span class="cmt">Insert link</span>
+⌘⇧V            <span class="cmt">Insert file</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Bear content.</div>
-</div>
+<span class="cmt"># Fold/unfold</span>
+⌘⌥←            <span class="cmt">Fold heading</span>
+⌘⌥→            <span class="cmt">Unfold heading</span></code></pre></div></div>
+<div class="section" id="format"><div class="section-header"><span class="icon">🎨</span><h2>Markdown Formatting</h2></div><div class="code-wrapper"><pre><code>⌘B             <span class="cmt">Bold     **text**</span>
+⌘I             <span class="cmt">Italic   _text_</span>
+⌘U             <span class="cmt">Underline  ~text~</span>
+⌘⇧S            <span class="cmt">Strikethrough  -text-</span>
+⌘1-6           <span class="cmt">Heading 1-6  ## text</span>
+⌘L             <span class="cmt">Unordered list  - item</span>
+⌘⇧L            <span class="cmt">Ordered list    1. item</span>
+⌘⌥C            <span class="cmt">Code block  ```code```</span>
+⌘⇧E            <span class="cmt">Inline code  `code`</span>
+⌘'             <span class="cmt">Quote block  &gt; text</span>
+⌘⇧U            <span class="cmt">Toggle markup visibility</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Bear basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Special markers</span>
+::marker::     <span class="cmt">Highlight text</span>
+[x] / [ ]      <span class="cmt">Todo checkbox</span></code></pre></div></div>
+<div class="section" id="tags"><div class="section-header"><span class="icon">🏷️</span><h2>Tags &amp; Search</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Tags (use # in note body)</span>
+#work          <span class="cmt">Simple tag</span>
+#work/project  <span class="cmt">Nested tag</span>
+#multi word#   <span class="cmt">Multi-word tag</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Bear patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Search</span>
+⌘⇧F            <span class="cmt">Search all notes</span>
+⌘F             <span class="cmt">Search within note</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Bear Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Search operators</span>
+@title(text)   <span class="cmt">Search in titles</span>
+@text(text)    <span class="cmt">Search in body</span>
+@tagged        <span class="cmt">Notes with tags</span>
+@untagged      <span class="cmt">Untagged notes</span>
+@todo          <span class="cmt">Notes with todos</span>
+@today         <span class="cmt">Modified today</span>
+@files         <span class="cmt">Notes with files</span></code></pre></div></div>
+<div class="section" id="nav"><div class="section-header"><span class="icon">🧭</span><h2>Navigation</h2></div><div class="code-wrapper"><pre><code>⌘1             <span class="cmt">Show sidebar</span>
+⌘2             <span class="cmt">Show note list</span>
+⌘3             <span class="cmt">Show editor</span>
+⌘\             <span class="cmt">Toggle sidebar</span>
+⌘⌥↓            <span class="cmt">Next note</span>
+⌘⌥↑            <span class="cmt">Previous note</span>
+⌘Enter         <span class="cmt">Open note in new window</span>
+
+<span class="cmt"># Views</span>
+⌘⇧1            <span class="cmt">View by date</span>
+⌘⇧2            <span class="cmt">View by title</span>
+⌘⇧3            <span class="cmt">View by modification</span></code></pre></div></div>
+<div class="section" id="export"><div class="section-header"><span class="icon">📤</span><h2>Export</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Export formats</span>
+Markdown (.md)
+HTML
+PDF
+DOCX
+JPEG (image)
+TextBundle
+
+<span class="cmt"># Export</span>
+⌘⇧S            <span class="cmt">Export note</span>
+File → Export Notes
+
+<span class="cmt"># Import</span>
+File → Import Notes
+<span class="cmt">Supports: Markdown, TextBundle,</span>
+<span class="cmt">Evernote, DayOne, other apps</span>
+
+<span class="cmt"># Sync</span>
+<span class="cmt">iCloud sync across devices</span>
+<span class="cmt">Bear Pro for all export formats</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Bear Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

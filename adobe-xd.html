@@ -1,58 +1,119 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Adobe XD Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Adobe XD</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Adobe XD Cheatsheet</h1>
-  <p class="subtitle">Design, prototyping, layers, artboards, components &amp; essential shortcuts</p>
-  <span class="tag tag-concept">Keyboard Shortcuts</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Adobe XD Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Adobe XD</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Adobe XD Cheatsheet</h1><p class="subtitle">UI/UX design tool shortcuts</p><span class="tag tag-concept">Shortcuts</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#tools">Tools</a>
+    <a href="#layers">Layers &amp; Artboards</a>
+    <a href="#edit">Edit &amp; Arrange</a>
+    <a href="#view">View</a>
+    <a href="#text">Text</a>
+    <a href="#proto">Prototype</a>
+    <a href="#export">Export &amp; Share</a>
+</div></div>
+<div class="section" id="tools"><div class="section-header"><span class="icon">🔧</span><h2>Tools</h2></div><div class="code-wrapper"><pre><code>V              <span class="cmt">Select</span>
+R              <span class="cmt">Rectangle</span>
+E              <span class="cmt">Ellipse</span>
+Y              <span class="cmt">Polygon</span>
+L              <span class="cmt">Line</span>
+P              <span class="cmt">Pen</span>
+T              <span class="cmt">Text</span>
+A              <span class="cmt">Artboard</span>
+I              <span class="cmt">Eyedropper</span>
+Space + drag   <span class="cmt">Pan</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Drawing</span>
+⇧ drag         <span class="cmt">Constrain shape</span>
+⌥ drag         <span class="cmt">Draw from center</span>
+Double-click   <span class="cmt">Edit path points</span></code></pre></div></div>
+<div class="section" id="layers"><div class="section-header"><span class="icon">📦</span><h2>Layers &amp; Artboards</h2></div><div class="code-wrapper"><pre><code>⌘G / Ctrl+G           <span class="cmt">Group</span>
+⌘⇧G / Ctrl+Shift+G   <span class="cmt">Ungroup</span>
+⌘L / Ctrl+L           <span class="cmt">Lock/Unlock</span>
+⌘; / Ctrl+;           <span class="cmt">Hide/Show</span>
+⌘K / Ctrl+K           <span class="cmt">Make component</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Adobe XD content.</div>
-</div>
+<span class="cmt"># Artboards</span>
+A                      <span class="cmt">Artboard tool</span>
+<span class="cmt">Presets: iPhone, iPad, Web, Custom</span>
+⌘D / Ctrl+D           <span class="cmt">Duplicate artboard</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Adobe XD basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Z-order</span>
+⌘[ / Ctrl+[           <span class="cmt">Send backward</span>
+⌘] / Ctrl+]           <span class="cmt">Bring forward</span>
+⌘⇧[ / Ctrl+Shift+[   <span class="cmt">Send to back</span>
+⌘⇧] / Ctrl+Shift+]   <span class="cmt">Bring to front</span></code></pre></div></div>
+<div class="section" id="edit"><div class="section-header"><span class="icon">✏️</span><h2>Edit &amp; Arrange</h2></div><div class="code-wrapper"><pre><code>⌘D / Ctrl+D           <span class="cmt">Duplicate</span>
+⌘⇧R / Ctrl+Shift+R   <span class="cmt">Repeat grid</span>
+⌘Z / Ctrl+Z           <span class="cmt">Undo</span>
+⌘⇧Z / Ctrl+Shift+Z   <span class="cmt">Redo</span>
+⌘A / Ctrl+A           <span class="cmt">Select all</span>
+⌥ drag                <span class="cmt">Duplicate (drag copy)</span>
+Arrow keys             <span class="cmt">Nudge 1px</span>
+⇧ Arrow               <span class="cmt">Nudge 10px</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Adobe XD patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Boolean operations</span>
+Add (Union)            <span class="cmt">Combine shapes</span>
+Subtract               <span class="cmt">Cut shape</span>
+Intersect              <span class="cmt">Overlap only</span>
+Exclude Overlap        <span class="cmt">Remove overlap</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Adobe XD Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Responsive resize</span>
+<span class="cmt">Select element → Responsive Resize panel</span></code></pre></div></div>
+<div class="section" id="view"><div class="section-header"><span class="icon">👁️</span><h2>View</h2></div><div class="code-wrapper"><pre><code>⌘+ / Ctrl++           <span class="cmt">Zoom in</span>
+⌘- / Ctrl+-           <span class="cmt">Zoom out</span>
+⌘0 / Ctrl+0           <span class="cmt">Zoom to fit</span>
+⌘1 / Ctrl+1           <span class="cmt">100%</span>
+⌘3 / Ctrl+3           <span class="cmt">Zoom to selection</span>
+⌘' / Ctrl+'           <span class="cmt">Toggle grid</span>
+⌘⇧' / Ctrl+Shift+'   <span class="cmt">Toggle layout grid</span>
+⌘Y / Ctrl+Y           <span class="cmt">Toggle layers panel</span>
+⌘⇧Y / Ctrl+Shift+Y   <span class="cmt">Toggle assets panel</span></code></pre></div></div>
+<div class="section" id="text"><div class="section-header"><span class="icon">🔤</span><h2>Text</h2></div><div class="code-wrapper"><pre><code>⌘B / Ctrl+B           <span class="cmt">Bold</span>
+⌘I / Ctrl+I           <span class="cmt">Italic</span>
+⌘⇧&lt; / Ctrl+Shift+&lt;   <span class="cmt">Decrease font</span>
+⌘⇧&gt; / Ctrl+Shift+&gt;   <span class="cmt">Increase font</span>
+⌘⇧L / Ctrl+Shift+L   <span class="cmt">Align left</span>
+⌘⇧C / Ctrl+Shift+C   <span class="cmt">Align center</span>
+⌘⇧R / Ctrl+Shift+R   <span class="cmt">Align right</span>
+
+<span class="cmt"># Point vs Area text</span>
+<span class="cmt">Click = point text (grows)</span>
+<span class="cmt">Drag = area text (wraps)</span>
+
+<span class="cmt"># Auto-height: double-click bottom handle</span></code></pre></div></div>
+<div class="section" id="proto"><div class="section-header"><span class="icon">🔗</span><h2>Prototype Mode</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Switch to Prototype mode</span>
+<span class="cmt">Click "Prototype" tab at top</span>
+
+<span class="cmt"># Create interaction</span>
+<span class="cmt">1. Select element</span>
+<span class="cmt">2. Drag blue arrow → target artboard</span>
+<span class="cmt">3. Set trigger: Tap, Drag, Time, Voice</span>
+<span class="cmt">4. Set action: Transition, Auto-Animate</span>
+<span class="cmt">5. Set easing: Ease In/Out, Bounce...</span>
+
+<span class="cmt"># Preview</span>
+⌘Enter / Ctrl+Enter   <span class="cmt">Desktop preview</span>
+<span class="cmt">Record preview for sharing</span>
+
+<span class="cmt"># Auto-Animate</span>
+<span class="cmt">Name layers same across artboards</span>
+<span class="cmt">XD interpolates position, size, etc.</span></code></pre></div></div>
+<div class="section" id="export"><div class="section-header"><span class="icon">📤</span><h2>Export &amp; Share</h2></div><div class="code-wrapper"><pre><code>⌘E / Ctrl+E           <span class="cmt">Export selected</span>
+⌘⇧E / Ctrl+Shift+E   <span class="cmt">Export batch</span>
+
+<span class="cmt"># Export formats: PNG, SVG, JPG, PDF</span>
+<span class="cmt"># Scales: 1x, 2x, 3x (iOS / Android)</span>
+
+<span class="cmt"># Sharing</span>
+<span class="cmt">Share → Design Review (get link)</span>
+<span class="cmt">Share → Development (specs + CSS)</span>
+<span class="cmt">Share → Presentation (fullscreen)</span>
+
+<span class="cmt"># Design specs auto-generate:</span>
+<span class="cmt">- Colors, fonts, sizes</span>
+<span class="cmt">- CSS snippets</span>
+<span class="cmt">- Asset downloads</span>
+<span class="cmt">- Spacing measurements</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Adobe XD Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

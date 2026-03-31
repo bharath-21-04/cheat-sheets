@@ -1,58 +1,119 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FileZilla Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ FileZilla</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>FileZilla Cheatsheet</h1>
-  <p class="subtitle">Connections, file transfer, navigation, bookmarks &amp; essential shortcuts</p>
-  <span class="tag tag-concept">Keyboard Shortcuts</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>FileZilla Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ FileZilla</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>FileZilla Cheatsheet</h1><p class="subtitle">FTP/SFTP client shortcuts &amp; reference</p><span class="tag tag-concept">Tool</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#connect">Connection</a>
+    <a href="#nav">Navigation</a>
+    <a href="#transfer">File Transfer</a>
+    <a href="#shortcuts">Shortcuts</a>
+    <a href="#settings">Settings</a>
+    <a href="#tips">Tips</a>
+</div></div>
+<div class="section" id="connect"><div class="section-header"><span class="icon">🔌</span><h2>Connection</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Quick Connect bar (top)</span>
+Host:     sftp://example.com   <span class="cmt">or ftp://</span>
+Username: user
+Password: pass
+Port:     22 (SFTP) / 21 (FTP)
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Site Manager (⌘S / Ctrl+S)</span>
+File → Site Manager
+  Protocol: SFTP / FTP / FTPS
+  Host:     server.com
+  Port:     22
+  Logon:    Normal / Key file / Interactive
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive FileZilla content.</div>
-</div>
+<span class="cmt"># Protocols:</span>
+FTP      Port 21   <span class="cmt">Unencrypted</span>
+FTPS     Port 990  <span class="cmt">FTP over TLS</span>
+SFTP     Port 22   <span class="cmt">SSH File Transfer</span></code></pre></div></div>
+<div class="section" id="nav"><div class="section-header"><span class="icon">🧭</span><h2>Navigation</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Panel layout</span>
+Left:   Local (your computer)
+Right:  Remote (server)
+Top:    Message log
+Bottom: Transfer queue
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// FileZilla basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Navigate</span>
+Double-click  <span class="cmt">Enter directory</span>
+..            <span class="cmt">Parent directory</span>
+Address bar   <span class="cmt">Type path directly</span>
+Bookmarks     <span class="cmt">⌘B / Ctrl+B</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// FileZilla patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># View</span>
+F5                 <span class="cmt">Refresh</span>
+⌘F / Ctrl+F        <span class="cmt">Search</span>
+<span class="cmt">Hidden files: Server → Force showing hidden files</span></code></pre></div></div>
+<div class="section" id="transfer"><div class="section-header"><span class="icon">📤</span><h2>File Transfer</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Transfer files</span>
+Double-click       <span class="cmt">Transfer/open file</span>
+Drag &amp; drop       <span class="cmt">Local ↔ Remote</span>
+Right-click → Upload/Download
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>FileZilla Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Transfer modes</span>
+Auto               <span class="cmt">Detect binary/ASCII</span>
+Binary             <span class="cmt">Images, executables</span>
+ASCII              <span class="cmt">Text files</span>
+
+<span class="cmt"># Queue</span>
+<span class="cmt">Bottom panel shows transfers</span>
+<span class="cmt">Queued / Failed / Successful tabs</span>
+<span class="cmt">Right-click failed → Retry</span>
+
+<span class="cmt"># Simultaneous transfers</span>
+<span class="cmt">Edit → Settings → Transfers</span>
+<span class="cmt">Max simultaneous: 1-10</span></code></pre></div></div>
+<div class="section" id="shortcuts"><div class="section-header"><span class="icon">⌨️</span><h2>Keyboard Shortcuts</h2></div><div class="code-wrapper"><pre><code>⌘S / Ctrl+S           <span class="cmt">Site Manager</span>
+⌘N / Ctrl+N           <span class="cmt">New connection tab</span>
+⌘W / Ctrl+W           <span class="cmt">Close tab</span>
+⌘Q / Alt+F4           <span class="cmt">Quit</span>
+⌘R / F5               <span class="cmt">Refresh</span>
+⌘B / Ctrl+B           <span class="cmt">Bookmarks</span>
+⌘D / Ctrl+D           <span class="cmt">Disconnect</span>
+⌘T / Ctrl+T           <span class="cmt">New tab</span>
+⌘⇧P / Ctrl+Shift+P   <span class="cmt">Process queue</span>
+Tab                    <span class="cmt">Switch panels</span>
+Enter                  <span class="cmt">Transfer file</span>
+Delete                 <span class="cmt">Delete file</span>
+F2                     <span class="cmt">Rename</span></code></pre></div></div>
+<div class="section" id="settings"><div class="section-header"><span class="icon">⚙️</span><h2>Important Settings</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Edit → Settings</span>
+
+<span class="cmt"># Connection</span>
+Timeout:           20 sec
+Retries:           5
+Keepalive:         30 sec
+
+<span class="cmt"># Transfers</span>
+Max transfers:     2
+Limit download:    Unlimited
+Limit upload:      Unlimited
+
+<span class="cmt"># FTP → Active vs Passive</span>
+Passive recommended (behind NAT/firewall)
+
+<span class="cmt"># Interface</span>
+File exists action:
+  Ask / Overwrite / Skip / Resume</code></pre></div></div>
+<div class="section" id="tips"><div class="section-header"><span class="icon">💡</span><h2>Tips</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Directory comparison</span>
+View → Directory Comparison
+<span class="cmt">Highlights different files</span>
+
+<span class="cmt"># Synchronized browsing</span>
+View → Synchronized Browsing
+<span class="cmt">Navigate both sides together</span>
+
+<span class="cmt"># File filtering</span>
+View → Filename Filter
+<span class="cmt">Show only specific file types</span>
+
+<span class="cmt"># Export sites</span>
+File → Export → Export Site Manager
+<span class="cmt">Backup site connections</span>
+
+<span class="cmt"># CLI (fzsftp)</span>
+<span class="cmt">Scripting support for automation</span>
+
+<span class="cmt"># Speed limit</span>
+Transfer → Speed Limit
+<span class="cmt">Cap bandwidth usage</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>FileZilla Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

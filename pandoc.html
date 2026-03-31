@@ -1,58 +1,135 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pandoc Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Pandoc</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Pandoc Cheatsheet</h1>
-  <p class="subtitle">Document conversion, formats, templates, filters &amp; citation processing</p>
-  <span class="tag tag-concept">Linux / Command</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Pandoc Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Pandoc</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Pandoc Cheatsheet</h1><p class="subtitle">Universal document converter</p><span class="tag tag-concept">Tool</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#basics">Basic Conversion</a>
+    <a href="#formats">Formats</a>
+    <a href="#markdown">Markdown Options</a>
+    <a href="#pdf">PDF Output</a>
+    <a href="#templates">Templates</a>
+    <a href="#advanced">Advanced</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">🔄</span><h2>Basic Conversion</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Basic syntax</span>
+<span class="fn">pandoc</span> input.md -o output.html
+<span class="fn">pandoc</span> input.md -o output.pdf
+<span class="fn">pandoc</span> input.md -o output.docx
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Specify formats explicitly</span>
+<span class="fn">pandoc</span> -f markdown -t html input.md
+<span class="fn">pandoc</span> -f html -t markdown page.html
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Pandoc content.</div>
-</div>
+<span class="cmt"># From stdin</span>
+<span class="fn">echo</span> <span class="str">"# Hello"</span> | <span class="fn">pandoc</span> -t html
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Pandoc basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Multiple input files</span>
+<span class="fn">pandoc</span> ch1.md ch2.md ch3.md -o book.pdf
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Pandoc patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Standalone (full HTML with head)</span>
+<span class="fn">pandoc</span> -s input.md -o output.html</code></pre></div></div>
+<div class="section" id="formats"><div class="section-header"><span class="icon">📋</span><h2>Supported Formats</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Input formats (-f / --from):</span>
+markdown, gfm, commonmark,
+html, latex, rst, textile,
+docx, odt, epub, mediawiki,
+org, csv, json, yaml
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Pandoc Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Output formats (-t / --to):</span>
+html, html5, latex, pdf,
+docx, odt, epub, epub3,
+rst, asciidoc, mediawiki,
+pptx, revealjs, beamer,
+man, plain, json, icml
+
+<span class="cmt"># List all formats</span>
+<span class="fn">pandoc</span> --list-input-formats
+<span class="fn">pandoc</span> --list-output-formats</code></pre></div></div>
+<div class="section" id="markdown"><div class="section-header"><span class="icon">📝</span><h2>Markdown Options</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># GitHub Flavored Markdown</span>
+<span class="fn">pandoc</span> -f gfm -t html input.md
+
+<span class="cmt"># Enable extensions</span>
+<span class="fn">pandoc</span> -f markdown+emoji+task_lists
+
+<span class="cmt"># Disable extensions</span>
+<span class="fn">pandoc</span> -f markdown-smart
+
+<span class="cmt"># Common extensions:</span>
++task_lists          <span class="cmt">- [ ] checkboxes</span>
++emoji               <span class="cmt">:smile:</span>
++pipe_tables         <span class="cmt">| tables |</span>
++footnotes           <span class="cmt">[^1] style</span>
++yaml_metadata_block <span class="cmt">YAML front matter</span>
++tex_math_dollars    <span class="cmt">$math$ support</span>
++smart               <span class="cmt">Smart quotes/dashes</span>
++strikeout           <span class="cmt">~~strikethrough~~</span>
+
+<span class="cmt"># Table of contents</span>
+<span class="fn">pandoc</span> --toc -s input.md -o output.html</code></pre></div></div>
+<div class="section" id="pdf"><div class="section-header"><span class="icon">📄</span><h2>PDF Output</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Requires LaTeX (pdflatex, xelatex, etc.)</span>
+<span class="fn">pandoc</span> input.md -o output.pdf
+
+<span class="cmt"># Use XeLaTeX (better Unicode)</span>
+<span class="fn">pandoc</span> --pdf-engine=xelatex input.md -o output.pdf
+
+<span class="cmt"># Custom margins</span>
+<span class="fn">pandoc</span> -V geometry:margin=1in input.md -o out.pdf
+
+<span class="cmt"># Font</span>
+<span class="fn">pandoc</span> --pdf-engine=xelatex \
+  -V mainfont=<span class="str">"Helvetica"</span> input.md -o out.pdf
+
+<span class="cmt"># Via HTML (wkhtmltopdf or weasyprint)</span>
+<span class="fn">pandoc</span> --pdf-engine=weasyprint input.md -o out.pdf
+
+<span class="cmt"># Paper size</span>
+<span class="fn">pandoc</span> -V papersize:a4 input.md -o out.pdf
+
+<span class="cmt"># Syntax highlighting style</span>
+<span class="fn">pandoc</span> --highlight-style=tango input.md -o out.pdf</code></pre></div></div>
+<div class="section" id="templates"><div class="section-header"><span class="icon">🎨</span><h2>Templates &amp; Variables</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># YAML front matter (in .md file):</span>
+---
+title: "My Document"
+author: "Name"
+date: "2024-01-01"
+---
+
+<span class="cmt"># Pass variables from CLI</span>
+<span class="fn">pandoc</span> -V title=<span class="str">"Report"</span> -V author=<span class="str">"Me"</span>
+
+<span class="cmt"># Use custom template</span>
+<span class="fn">pandoc</span> --template=custom.html input.md -o out.html
+
+<span class="cmt"># Print default template</span>
+<span class="fn">pandoc</span> -D html &gt; template.html
+<span class="fn">pandoc</span> -D latex &gt; template.tex
+
+<span class="cmt"># Custom CSS</span>
+<span class="fn">pandoc</span> -s --css=style.css input.md -o out.html
+
+<span class="cmt"># Include in header/before/after body</span>
+<span class="fn">pandoc</span> -H header.html -B before.html -A after.html</code></pre></div></div>
+<div class="section" id="advanced"><div class="section-header"><span class="icon">⚡</span><h2>Advanced Features</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Slide shows</span>
+<span class="fn">pandoc</span> -t revealjs -s slides.md -o slides.html
+<span class="fn">pandoc</span> -t beamer slides.md -o slides.pdf
+
+<span class="cmt"># Filters (Lua)</span>
+<span class="fn">pandoc</span> --lua-filter=filter.lua input.md
+
+<span class="cmt"># Bibliography (citations)</span>
+<span class="fn">pandoc</span> --citeproc --bibliography=refs.bib
+
+<span class="cmt"># Number sections</span>
+<span class="fn">pandoc</span> --number-sections
+
+<span class="cmt"># Extract media from docx</span>
+<span class="fn">pandoc</span> --extract-media=./media input.docx -o out.md
+
+<span class="cmt"># Convert notebook</span>
+<span class="fn">pandoc</span> notebook.ipynb -o output.md
+
+<span class="cmt"># Batch convert</span>
+<span class="kw">for</span> f <span class="kw">in</span> *.md; <span class="kw">do</span>
+  <span class="fn">pandoc</span> "$f" -o "${f%.md}.html"
+<span class="kw">done</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Pandoc Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

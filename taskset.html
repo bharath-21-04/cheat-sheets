@@ -1,58 +1,105 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Taskset Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Taskset</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Taskset Cheatsheet</h1>
-  <p class="subtitle">CPU affinity, process binding, core masks &amp; performance tuning</p>
-  <span class="tag tag-concept">Linux / Command</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>taskset Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ taskset</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>taskset Cheatsheet</h1><p class="subtitle">CPU affinity &amp; process pinning</p><span class="tag tag-lang">Linux</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#mask">CPU Mask</a>
+    <a href="#set">Set Affinity</a>
+    <a href="#get">Get Affinity</a>
+    <a href="#cgroups">cgroups &amp; isolcpus</a>
+    <a href="#examples">Examples</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">🔧</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Run command on specific CPU(s)</span>
+<span class="fn">taskset</span> -c <span class="num">0</span> command        <span class="cmt"># CPU 0 only</span>
+<span class="fn">taskset</span> -c <span class="num">0,1</span> command      <span class="cmt"># CPU 0 and 1</span>
+<span class="fn">taskset</span> -c <span class="num">0-3</span> command      <span class="cmt"># CPU 0 through 3</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Taskset content.</div>
-</div>
+<span class="cmt"># -c flag = CPU list (human readable)</span>
+<span class="cmt"># Without -c = hex bitmask</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Taskset basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Check number of CPUs</span>
+<span class="fn">nproc</span>
+<span class="fn">lscpu</span> | <span class="fn">grep</span> <span class="str">"CPU(s)"</span>
+<span class="fn">cat</span> /proc/cpuinfo | <span class="fn">grep</span> processor | <span class="fn">wc</span> -l</code></pre></div></div>
+<div class="section" id="mask"><div class="section-header"><span class="icon">🎭</span><h2>CPU Mask (Hex Bitmask)</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Hex bitmask: each bit = one CPU</span>
+<span class="cmt"># CPU 0 →  0x1  (binary: 0001)</span>
+<span class="cmt"># CPU 1 →  0x2  (binary: 0010)</span>
+<span class="cmt"># CPU 2 →  0x4  (binary: 0100)</span>
+<span class="cmt"># CPU 3 →  0x8  (binary: 1000)</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Taskset patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Combinations:</span>
+<span class="cmt"># CPU 0,1   → 0x3  (0011)</span>
+<span class="cmt"># CPU 0,2   → 0x5  (0101)</span>
+<span class="cmt"># CPU 0-3   → 0xF  (1111)</span>
+<span class="cmt"># CPU 0-7   → 0xFF</span>
+<span class="cmt"># All CPUs  → 0xFFFFFFFF</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Taskset Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Using mask directly</span>
+<span class="fn">taskset</span> <span class="num">0x3</span> command   <span class="cmt"># CPUs 0,1</span>
+<span class="fn">taskset</span> <span class="num">0xF</span> command   <span class="cmt"># CPUs 0-3</span></code></pre></div></div>
+<div class="section" id="set"><div class="section-header"><span class="icon">📌</span><h2>Set Affinity</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Set for running process</span>
+<span class="fn">taskset</span> -p -c <span class="num">0</span> <span class="num">1234</span>      <span class="cmt"># PID 1234 → CPU 0</span>
+<span class="fn">taskset</span> -p -c <span class="num">0-3</span> <span class="num">1234</span>    <span class="cmt"># PID 1234 → CPUs 0-3</span>
+<span class="fn">taskset</span> -p <span class="num">0xF</span> <span class="num">1234</span>       <span class="cmt"># hex mask</span>
+
+<span class="cmt"># Start new process pinned</span>
+<span class="fn">taskset</span> -c <span class="num">2</span> ./myapp
+<span class="fn">taskset</span> -c <span class="num">4-7</span> python3 script.py
+
+<span class="cmt"># Pin to NUMA node (numactl)</span>
+<span class="fn">numactl</span> --cpunodebind=<span class="num">0</span> command
+<span class="fn">numactl</span> --membind=<span class="num">0</span> command</code></pre></div></div>
+<div class="section" id="get"><div class="section-header"><span class="icon">🔍</span><h2>Get Affinity</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Get affinity of PID</span>
+<span class="fn">taskset</span> -p <span class="num">1234</span>
+<span class="cmt"># Output: pid 1234's current affinity mask: f</span>
+
+<span class="cmt"># With CPU list</span>
+<span class="fn">taskset</span> -cp <span class="num">1234</span>
+<span class="cmt"># Output: pid 1234's current affinity list: 0-3</span>
+
+<span class="cmt"># All processes affinity</span>
+<span class="kw">for</span> pid <span class="kw">in</span> $(<span class="fn">ls</span> /proc/ | <span class="fn">grep</span> -E <span class="str">'^[0-9]+$'</span>); <span class="kw">do</span>
+  <span class="fn">taskset</span> -cp $pid <span class="num">2</span>&gt;/dev/null
+<span class="kw">done</span>
+
+<span class="cmt"># Check via /proc</span>
+<span class="fn">cat</span> /proc/<span class="num">1234</span>/status | <span class="fn">grep</span> Cpus_allowed</code></pre></div></div>
+<div class="section" id="cgroups"><div class="section-header"><span class="icon">🏗️</span><h2>cgroups &amp; isolcpus</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Kernel boot param: isolate CPUs from scheduler</span>
+<span class="cmt"># Add to GRUB_CMDLINE_LINUX:</span>
+isolcpus=<span class="num">2,3</span>
+
+<span class="cmt"># cgroups v2 (systemd):</span>
+<span class="fn">systemctl</span> set-property myservice.service AllowedCPUs=<span class="num">0,1</span>
+
+<span class="cmt"># cgroups manual:</span>
+<span class="fn">echo</span> <span class="str">"0-1"</span> &gt; /sys/fs/cgroup/mygroup/cpuset.cpus
+<span class="fn">echo</span> <span class="str">"0"</span> &gt; /sys/fs/cgroup/mygroup/cpuset.mems
+<span class="fn">echo</span> $$ &gt; /sys/fs/cgroup/mygroup/cgroup.procs
+
+<span class="cmt"># Docker CPU pinning</span>
+<span class="fn">docker run</span> --cpuset-cpus=<span class="str">"0,1"</span> myimage</code></pre></div></div>
+<div class="section" id="examples"><div class="section-header"><span class="icon">💡</span><h2>Practical Examples</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Pin database to CPUs 0-3</span>
+<span class="fn">taskset</span> -c <span class="num">0-3</span> mysqld
+
+<span class="cmt"># Pin web server to CPUs 4-7</span>
+<span class="fn">taskset</span> -c <span class="num">4-7</span> nginx
+
+<span class="cmt"># Benchmark on single core</span>
+<span class="fn">taskset</span> -c <span class="num">0</span> ./benchmark
+
+<span class="cmt"># Real-time process on isolated CPU</span>
+<span class="fn">taskset</span> -c <span class="num">3</span> <span class="fn">chrt</span> -f <span class="num">99</span> ./rt_app
+
+<span class="cmt"># Python multiprocessing</span>
+<span class="fn">taskset</span> -c <span class="num">0-3</span> python3 -c <span class="str">"
+import os
+os.sched_getaffinity(0)  # {0, 1, 2, 3}
+os.sched_setaffinity(0, {0, 1})
+"</span>
+
+<span class="cmt"># Monitor CPU usage per core</span>
+<span class="fn">mpstat</span> -P ALL <span class="num">1</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>taskset Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

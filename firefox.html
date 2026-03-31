@@ -1,58 +1,104 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Firefox Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Firefox</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Firefox Cheatsheet</h1>
-  <p class="subtitle">Tabs, navigation, bookmarks, dev tools, search &amp; essential shortcuts</p>
-  <span class="tag tag-concept">Keyboard Shortcuts</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Firefox Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Firefox</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Firefox Cheatsheet</h1><p class="subtitle">Browser keyboard shortcuts</p><span class="tag tag-concept">Shortcuts</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#nav">Navigation</a>
+    <a href="#tabs">Tabs</a>
+    <a href="#page">Page</a>
+    <a href="#find">Find &amp; Search</a>
+    <a href="#dev">Developer Tools</a>
+    <a href="#address">Address Bar</a>
+    <a href="#misc">Miscellaneous</a>
+</div></div>
+<div class="section" id="nav"><div class="section-header"><span class="icon">🧭</span><h2>Navigation</h2></div><div class="code-wrapper"><pre><code>⌘L / Ctrl+L           <span class="cmt">Focus address bar</span>
+⌘← / Alt+←            <span class="cmt">Back</span>
+⌘→ / Alt+→            <span class="cmt">Forward</span>
+⌘R / Ctrl+R           <span class="cmt">Reload</span>
+⌘⇧R / Ctrl+Shift+R   <span class="cmt">Hard reload (skip cache)</span>
+⌘. / Esc              <span class="cmt">Stop loading</span>
+⌘D / Ctrl+D           <span class="cmt">Bookmark page</span>
+⌘⇧B / Ctrl+Shift+B   <span class="cmt">Show/hide bookmarks bar</span>
+⌘⇧O / Ctrl+Shift+O   <span class="cmt">Bookmarks manager</span>
+⌘H / Ctrl+H           <span class="cmt">Show history</span>
+⌘J / Ctrl+J           <span class="cmt">Downloads</span></code></pre></div></div>
+<div class="section" id="tabs"><div class="section-header"><span class="icon">📑</span><h2>Tabs</h2></div><div class="code-wrapper"><pre><code>⌘T / Ctrl+T           <span class="cmt">New tab</span>
+⌘W / Ctrl+W           <span class="cmt">Close tab</span>
+⌘⇧T / Ctrl+Shift+T   <span class="cmt">Reopen closed tab</span>
+⌘⌥→ / Ctrl+Tab        <span class="cmt">Next tab</span>
+⌘⌥← / Ctrl+Shift+Tab  <span class="cmt">Previous tab</span>
+⌘1-8 / Ctrl+1-8       <span class="cmt">Go to tab 1-8</span>
+⌘9 / Ctrl+9           <span class="cmt">Go to last tab</span>
+⌘⇧N / Ctrl+Shift+P   <span class="cmt">New private window</span>
+⌘N / Ctrl+N           <span class="cmt">New window</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Pin tab: Right-click → Pin Tab</span>
+<span class="cmt"># Mute tab: Right-click → Mute Tab</span></code></pre></div></div>
+<div class="section" id="page"><div class="section-header"><span class="icon">📄</span><h2>Page Navigation</h2></div><div class="code-wrapper"><pre><code>Space / ⇧Space        <span class="cmt">Scroll down / up</span>
+Home / End             <span class="cmt">Top / bottom of page</span>
+⌘↑ / Ctrl+Home        <span class="cmt">Top of page</span>
+⌘↓ / Ctrl+End         <span class="cmt">Bottom of page</span>
+⌘+ / Ctrl++           <span class="cmt">Zoom in</span>
+⌘- / Ctrl+-           <span class="cmt">Zoom out</span>
+⌘0 / Ctrl+0           <span class="cmt">Reset zoom</span>
+⌘P / Ctrl+P           <span class="cmt">Print</span>
+⌘S / Ctrl+S           <span class="cmt">Save page</span>
+⌘U / Ctrl+U           <span class="cmt">View source</span>
+F11                    <span class="cmt">Full screen</span>
+F7                     <span class="cmt">Caret browsing</span></code></pre></div></div>
+<div class="section" id="find"><div class="section-header"><span class="icon">🔍</span><h2>Find &amp; Search</h2></div><div class="code-wrapper"><pre><code>⌘F / Ctrl+F           <span class="cmt">Find in page</span>
+⌘G / Ctrl+G           <span class="cmt">Find next</span>
+⌘⇧G / Ctrl+Shift+G   <span class="cmt">Find previous</span>
+/                      <span class="cmt">Quick find</span>
+Esc                    <span class="cmt">Close find</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Firefox content.</div>
-</div>
+<span class="cmt"># Address bar search</span>
+*                      <span class="cmt">Search bookmarks</span>
+^                      <span class="cmt">Search history</span>
+%                      <span class="cmt">Search open tabs</span>
+#                      <span class="cmt">Search page titles</span>
+@engine term           <span class="cmt">Search with engine</span></code></pre></div></div>
+<div class="section" id="dev"><div class="section-header"><span class="icon">🛠️</span><h2>Developer Tools</h2></div><div class="code-wrapper"><pre><code>⌘⌥I / F12             <span class="cmt">Toggle DevTools</span>
+⌘⌥C / Ctrl+Shift+C   <span class="cmt">Inspector (pick element)</span>
+⌘⌥K / Ctrl+Shift+K   <span class="cmt">Console</span>
+⌘⌥E / Ctrl+Shift+E   <span class="cmt">Network</span>
+⌘⌥J / Ctrl+Shift+J   <span class="cmt">Browser console</span>
+⌘⌥S / Ctrl+Shift+S   <span class="cmt">Debugger</span>
+⌘⌥M / Ctrl+Shift+M   <span class="cmt">Responsive design mode</span>
+⇧F5                   <span class="cmt">Performance profiler</span>
+⇧F7                   <span class="cmt">Style editor</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Firefox basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># In DevTools</span>
+F5                     <span class="cmt">Reload (cache)</span>
+⌘⇧F / Ctrl+Shift+F   <span class="cmt">Search across files</span></code></pre></div></div>
+<div class="section" id="address"><div class="section-header"><span class="icon">📍</span><h2>Address Bar</h2></div><div class="code-wrapper"><pre><code>⌘L / Ctrl+L           <span class="cmt">Focus address bar</span>
+⌘↩ / Ctrl+Enter       <span class="cmt">Add .com + go</span>
+⇧↩ / Shift+Enter      <span class="cmt">Add .net + go</span>
+⌘⇧↩ / Ctrl+Shift+Enter  <span class="cmt">Add .org + go</span>
+⌥↩ / Alt+Enter        <span class="cmt">Open in new tab</span>
+⌘K / Ctrl+K           <span class="cmt">Focus search bar</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Firefox patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># about: pages</span>
+about:config           <span class="cmt">Advanced settings</span>
+about:performance      <span class="cmt">Tab performance</span>
+about:memory           <span class="cmt">Memory usage</span>
+about:support          <span class="cmt">Troubleshooting info</span>
+about:crashes          <span class="cmt">Crash reports</span></code></pre></div></div>
+<div class="section" id="misc"><div class="section-header"><span class="icon">🔧</span><h2>Miscellaneous</h2></div><div class="code-wrapper"><pre><code>⌘⇧Delete / Ctrl+Shift+Del  <span class="cmt">Clear history</span>
+⌘⇧A / Ctrl+Shift+A        <span class="cmt">Add-ons manager</span>
+⌘⇧S / Ctrl+Shift+S        <span class="cmt">Screenshot tool</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Firefox Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Reader mode</span>
+F9 or ⌘⌥R                  <span class="cmt">Toggle reader view</span>
+
+<span class="cmt"># Pocket</span>
+<span class="cmt">Click Pocket icon to save</span>
+
+<span class="cmt"># Container tabs (Multi-Account)</span>
+<span class="cmt">Long-press + → Choose container</span>
+
+<span class="cmt"># Picture-in-Picture</span>
+<span class="cmt">Hover video → click PiP icon</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Firefox Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

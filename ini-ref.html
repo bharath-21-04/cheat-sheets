@@ -1,58 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>INI Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ INI</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>INI Cheatsheet</h1>
-  <p class="subtitle">Sections, key-value pairs, comments, multi-line values &amp; common patterns</p>
-  <span class="tag tag-concept">Data Format</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>INI Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ INI</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>INI Cheatsheet</h1><p class="subtitle">Sections, keys, values &amp; configuration file format</p><span class="tag tag-concept">Data Format</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#sections">Sections</a>
+    <a href="#values">Value Types</a>
+    <a href="#features">Features</a>
+    <a href="#python">Python configparser</a>
+    <a href="#patterns">Common Patterns</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">📝</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt">; INI = Initialization file format</span>
+<span class="cmt">; Simple key=value pairs organized in sections</span>
+<span class="cmt">; Comments with ; or #</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive INI content.</div>
-</div>
+<span class="cmt">; Key-value pairs</span>
+key = value
+name = Alice
+port = 8080
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// INI basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">; Comments</span>
+; This is a comment
+# This is also a comment</code></pre></div></div>
+<div class="section" id="sections"><div class="section-header"><span class="icon">📂</span><h2>Sections</h2></div><div class="code-wrapper"><pre><code><span class="cmt">; Sections group related settings</span>
+[general]
+app_name = MyApp
+version = 1.0
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// INI patterns coming soon...</span></code></pre></div>
-</div>
+[server]
+host = localhost
+port = 8080
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>INI Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+[database]
+host = localhost
+port = 5432
+name = mydb
+user = admin
+password = secret
+
+[logging]
+level = INFO
+file = /var/log/app.log</code></pre></div></div>
+<div class="section" id="values"><div class="section-header"><span class="icon">💎</span><h2>Value Types</h2></div><div class="code-wrapper"><pre><code><span class="cmt">; All values are strings</span>
+<span class="cmt">; Application interprets types</span>
+
+<span class="cmt">; String</span>
+name = Alice
+path = /usr/local/bin
+
+<span class="cmt">; Number (as string)</span>
+port = 8080
+timeout = 30.5
+
+<span class="cmt">; Boolean (conventions)</span>
+enabled = true
+debug = false
+verbose = yes
+<span class="cmt">; Also: on/off, 1/0</span>
+
+<span class="cmt">; Empty value</span>
+optional =
+
+<span class="cmt">; Values with spaces</span>
+message = Hello World
+<span class="cmt">; Quotes are optional in most parsers</span>
+quoted = "Hello World"</code></pre></div></div>
+<div class="section" id="features"><div class="section-header"><span class="icon">🔧</span><h2>Features</h2></div><div class="code-wrapper"><pre><code><span class="cmt">; Multi-line (continuation with indent)</span>
+description = This is a long value
+    that spans multiple lines
+
+<span class="cmt">; Interpolation (Python configparser)</span>
+[paths]
+home = /home/user
+data = %(home)s/data
+logs = %(home)s/logs
+
+<span class="cmt">; DEFAULT section (inherited by all)</span>
+[DEFAULT]
+timeout = 30
+
+[server]
+host = localhost
+<span class="cmt">; timeout = 30  (inherited)</span></code></pre></div></div>
+<div class="section" id="python"><div class="section-header"><span class="icon">🐍</span><h2>Python configparser</h2></div><div class="code-wrapper"><pre><code><span class="kw">import</span> configparser
+
+config = configparser.<span class="fn">ConfigParser</span>()
+config.<span class="fn">read</span>(<span class="str">'config.ini'</span>)
+
+<span class="cmt"># Read</span>
+config[<span class="str">'server'</span>][<span class="str">'host'</span>]
+config.<span class="fn">get</span>(<span class="str">'server'</span>, <span class="str">'host'</span>)
+config.<span class="fn">getint</span>(<span class="str">'server'</span>, <span class="str">'port'</span>)
+config.<span class="fn">getboolean</span>(<span class="str">'server'</span>, <span class="str">'debug'</span>)
+config.<span class="fn">getfloat</span>(<span class="str">'server'</span>, <span class="str">'timeout'</span>)
+
+<span class="cmt"># Write</span>
+config[<span class="str">'new_section'</span>] = {<span class="str">'key'</span>: <span class="str">'value'</span>}
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">'config.ini'</span>, <span class="str">'w'</span>) <span class="kw">as</span> f:
+    config.<span class="fn">write</span>(f)
+
+<span class="cmt"># Check</span>
+config.<span class="fn">has_section</span>(<span class="str">'server'</span>)
+config.<span class="fn">has_option</span>(<span class="str">'server'</span>, <span class="str">'host'</span>)
+config.<span class="fn">sections</span>()</code></pre></div></div>
+<div class="section" id="patterns"><div class="section-header"><span class="icon">📋</span><h2>Common Patterns</h2></div><div class="code-wrapper"><pre><code><span class="cmt">; Git config (~/.gitconfig)</span>
+[user]
+name = Alice
+email = alice@example.com
+
+[core]
+autocrlf = input
+editor = vim
+
+[alias]
+co = checkout
+br = branch
+ci = commit
+
+<span class="cmt">; PHP config (php.ini)</span>
+[PHP]
+memory_limit = 256M
+upload_max_filesize = 10M
+display_errors = Off
+date.timezone = UTC</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>INI Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

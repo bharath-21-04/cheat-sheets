@@ -1,58 +1,116 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Slack Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Slack</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Slack Cheatsheet</h1>
-  <p class="subtitle">Navigation, messaging, channels, search, calls &amp; essential shortcuts</p>
-  <span class="tag tag-concept">Keyboard Shortcuts</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Slack Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Slack</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Slack Cheatsheet</h1><p class="subtitle">Keyboard shortcuts &amp; slash commands</p><span class="tag tag-concept">Shortcuts</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#nav">Navigation</a>
+    <a href="#messages">Messages</a>
+    <a href="#format">Formatting</a>
+    <a href="#slash">Slash Commands</a>
+    <a href="#search">Search</a>
+    <a href="#calls">Huddles &amp; Calls</a>
+</div></div>
+<div class="section" id="nav"><div class="section-header"><span class="icon">🧭</span><h2>Navigation</h2></div><div class="code-wrapper"><pre><code>⌘K / Ctrl+K           <span class="cmt">Quick switch (channel/DM)</span>
+⌘⇧K / Ctrl+Shift+K   <span class="cmt">DM browser</span>
+⌘⇧L / Ctrl+Shift+L   <span class="cmt">Channel browser</span>
+⌘⇧T / Ctrl+Shift+T   <span class="cmt">Threads panel</span>
+⌘⇧A / Ctrl+Shift+A   <span class="cmt">All unreads</span>
+⌘⇧S / Ctrl+Shift+S   <span class="cmt">Saved items</span>
+⌘. / Ctrl+.           <span class="cmt">Toggle right sidebar</span>
+⌘, / Ctrl+,           <span class="cmt">Preferences</span>
+⌘[ / Ctrl+[           <span class="cmt">History back</span>
+⌘] / Ctrl+]           <span class="cmt">History forward</span>
+⌘1-9 / Ctrl+1-9       <span class="cmt">Switch workspace</span>
+⌥↑ / Alt+↑            <span class="cmt">Previous channel</span>
+⌥↓ / Alt+↓            <span class="cmt">Next channel</span>
+⌥⇧↑ / Alt+Shift+↑    <span class="cmt">Prev unread channel</span>
+⌥⇧↓ / Alt+Shift+↓    <span class="cmt">Next unread channel</span></code></pre></div></div>
+<div class="section" id="messages"><div class="section-header"><span class="icon">💬</span><h2>Messages</h2></div><div class="code-wrapper"><pre><code>⌘N / Ctrl+N           <span class="cmt">New message</span>
+⇧Enter               <span class="cmt">New line</span>
+Enter                  <span class="cmt">Send message</span>
+⌘⇧Enter              <span class="cmt">Create snippet</span>
+⌘U / Ctrl+U           <span class="cmt">Upload file</span>
+↑                      <span class="cmt">Edit last message</span>
+⌘⇧\ / Ctrl+Shift+\   <span class="cmt">React to last message</span>
+⌘⇧M / Ctrl+Shift+M   <span class="cmt">Mute channel</span>
+E                      <span class="cmt">Edit message (when selected)</span>
+R                      <span class="cmt">Add reaction (when selected)</span>
+T                      <span class="cmt">Open thread (when selected)</span>
+P                      <span class="cmt">Pin message (when selected)</span>
+S                      <span class="cmt">Share message (when selected)</span>
+A                      <span class="cmt">Save message (when selected)</span>
+Delete                 <span class="cmt">Delete message (when selected)</span></code></pre></div></div>
+<div class="section" id="format"><div class="section-header"><span class="icon">🎨</span><h2>Message Formatting</h2></div><div class="code-wrapper"><pre><code>*bold*                    <span class="cmt">Bold</span>
+_italic_                  <span class="cmt">Italic</span>
+~strikethrough~           <span class="cmt">Strikethrough</span>
+`inline code`             <span class="cmt">Inline code</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Code block (triple backticks)</span>
+``` code block ```
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Slack content.</div>
-</div>
+&gt; blockquote              <span class="cmt">Quote</span>
+&gt;&gt;&gt; multi-line quote
+- bulleted list
+1. numbered list
+:emoji_name:              <span class="cmt">Emoji shortcode</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Slack basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Mentions</span>
+@username                 <span class="cmt">Mention user</span>
+@here                     <span class="cmt">Online members</span>
+@channel                  <span class="cmt">All members</span>
+@everyone                 <span class="cmt">Everyone</span>
+#channel-name             <span class="cmt">Link channel</span></code></pre></div></div>
+<div class="section" id="slash"><div class="section-header"><span class="icon">⚡</span><h2>Slash Commands</h2></div><div class="code-wrapper"><pre><code>/status :emoji: text     <span class="cmt">Set status</span>
+/active                   <span class="cmt">Set active</span>
+/away                     <span class="cmt">Set away</span>
+/dnd [time]               <span class="cmt">Do not disturb</span>
+/mute                     <span class="cmt">Mute channel</span>
+/unmute                   <span class="cmt">Unmute channel</span>
+/topic [text]             <span class="cmt">Set channel topic</span>
+/invite @user             <span class="cmt">Invite to channel</span>
+/remove @user             <span class="cmt">Remove from channel</span>
+/leave                    <span class="cmt">Leave channel</span>
+/rename [name]            <span class="cmt">Rename channel</span>
+/archive                  <span class="cmt">Archive channel</span>
+/collapse                 <span class="cmt">Collapse images</span>
+/expand                   <span class="cmt">Expand images</span>
+/remind @user [text] [time]  <span class="cmt">Set reminder</span>
+/shrug                    <span class="cmt">¯\_(ツ)_/¯</span>
+/giphy [text]             <span class="cmt">Random GIF</span>
+/who                      <span class="cmt">List members</span>
+/msg @user [text]         <span class="cmt">Direct message</span></code></pre></div></div>
+<div class="section" id="search"><div class="section-header"><span class="icon">🔍</span><h2>Search</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Search box: ⌘G / Ctrl+G or ⌘F / Ctrl+F</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Slack patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Search modifiers:</span>
+from:@username            <span class="cmt">From a user</span>
+in:#channel               <span class="cmt">In a channel</span>
+in:@username              <span class="cmt">In a DM</span>
+has:link                  <span class="cmt">Contains links</span>
+has:reaction              <span class="cmt">Has reactions</span>
+has:star                  <span class="cmt">Is saved</span>
+has:pin                   <span class="cmt">Is pinned</span>
+before:2024-01-01         <span class="cmt">Before date</span>
+after:2024-01-01          <span class="cmt">After date</span>
+during:January            <span class="cmt">During month</span>
+on:2024-06-15             <span class="cmt">On date</span>
+is:thread                 <span class="cmt">In threads</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Slack Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Combine:</span>
+from:@alice in:#dev has:link after:2024-03-01</code></pre></div></div>
+<div class="section" id="calls"><div class="section-header"><span class="icon">📞</span><h2>Huddles &amp; Calls</h2></div><div class="code-wrapper"><pre><code>⌘⇧H / Ctrl+Shift+H   <span class="cmt">Start huddle</span>
+M                      <span class="cmt">Toggle mute (in huddle)</span>
+V                      <span class="cmt">Toggle camera</span>
+
+<span class="cmt"># Huddle features:</span>
+<span class="cmt">Screen share, threads, reactions</span>
+<span class="cmt">Live captions, notes</span>
+
+<span class="cmt"># Slack Connect</span>
+<span class="cmt">DM/channel with external orgs</span>
+
+<span class="cmt"># Workflow Builder</span>
+<span class="cmt">Automate: messages, forms, approvals</span>
+<span class="cmt">Triggers: emoji, channel join, schedule</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Slack Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

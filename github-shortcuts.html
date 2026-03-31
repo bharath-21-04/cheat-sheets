@@ -1,58 +1,136 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GitHub Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ GitHub</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>GitHub Cheatsheet</h1>
-  <p class="subtitle">Navigation, pull requests, issues, code review &amp; essential shortcuts</p>
-  <span class="tag tag-concept">Keyboard Shortcuts</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>GitHub Shortcuts Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ GitHub Shortcuts</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>GitHub Shortcuts Cheatsheet</h1><p class="subtitle">Keyboard shortcuts for github.com</p><span class="tag tag-concept">Shortcuts</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#general">General</a>
+    <a href="#repo">Repository</a>
+    <a href="#code">Code Browsing</a>
+    <a href="#issues">Issues &amp; PRs</a>
+    <a href="#editor">Editor</a>
+    <a href="#nav">Navigation</a>
+    <a href="#md">Markdown</a>
+</div></div>
+<div class="section" id="general"><div class="section-header"><span class="icon">⌨️</span><h2>General</h2></div><div class="code-wrapper"><pre><code>?              <span class="cmt">Show keyboard shortcuts</span>
+S or /         <span class="cmt">Focus search bar</span>
+⌘K / Ctrl+K   <span class="cmt">Command palette</span>
+G N            <span class="cmt">Go to notifications</span>
+Esc            <span class="cmt">Close dialog/hovercard</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Command Palette (⌘K)</span>
+<span class="cmt">> command       Run command</span>
+<span class="cmt"># issue          Find issue</span>
+<span class="cmt">! PR             Find PR</span>
+<span class="cmt">@ user           Find user</span>
+<span class="cmt">filename         Find file</span></code></pre></div></div>
+<div class="section" id="repo"><div class="section-header"><span class="icon">📁</span><h2>Repository Page</h2></div><div class="code-wrapper"><pre><code>G C            <span class="cmt">Go to Code</span>
+G I            <span class="cmt">Go to Issues</span>
+G P            <span class="cmt">Go to Pull Requests</span>
+G A            <span class="cmt">Go to Actions</span>
+G B            <span class="cmt">Go to Projects (Board)</span>
+G W            <span class="cmt">Go to Wiki</span>
+G G            <span class="cmt">Go to Discussions</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive GitHub content.</div>
-</div>
+<span class="cmt"># File finder</span>
+T              <span class="cmt">Find file in repo</span>
+<span class="cmt">Type filename to filter</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// GitHub basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Branch switcher</span>
+W              <span class="cmt">Switch branch/tag</span></code></pre></div></div>
+<div class="section" id="code"><div class="section-header"><span class="icon">💻</span><h2>Code Browsing</h2></div><div class="code-wrapper"><pre><code>T              <span class="cmt">File finder</span>
+L              <span class="cmt">Go to line</span>
+B              <span class="cmt">Blame view</span>
+Y              <span class="cmt">Permalink (canonical URL)</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// GitHub patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># File view</span>
+<span class="cmt">Click line #   Select line</span>
+<span class="cmt">Shift+click    Select range</span>
+<span class="cmt">Copy link →    Share specific lines</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>GitHub Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Code search (new)</span>
+<span class="cmt">language:python  Filter by language</span>
+<span class="cmt">path:src/        Filter by path</span>
+<span class="cmt">repo:owner/name  Specific repo</span>
+<span class="cmt">symbol:funcName  Find symbol</span></code></pre></div></div>
+<div class="section" id="issues"><div class="section-header"><span class="icon">📋</span><h2>Issues &amp; Pull Requests</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Issue/PR list</span>
+C              <span class="cmt">Create new issue</span>
+⌘/ / Ctrl+/   <span class="cmt">Focus filter</span>
+U              <span class="cmt">Filter by author</span>
+L              <span class="cmt">Filter by label</span>
+M              <span class="cmt">Filter by milestone</span>
+
+<span class="cmt"># PR diff view</span>
+<span class="cmt">Click + drag     Select lines for comment</span>
+⌘Enter          Submit review comment</span>
+
+<span class="cmt"># Cross-references</span>
+#123             <span class="cmt">Link issue/PR</span>
+owner/repo#123   <span class="cmt">Cross-repo ref</span>
+@username        <span class="cmt">Mention user</span>
+fixes #123       <span class="cmt">Auto-close issue</span>
+closes #123      <span class="cmt">Auto-close issue</span></code></pre></div></div>
+<div class="section" id="editor"><div class="section-header"><span class="icon">📝</span><h2>Web Editor</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># github.dev (press . in any repo)</span>
+.              <span class="cmt">Open in web editor</span>
+
+<span class="cmt"># VS Code shortcuts work:</span>
+⌘P / Ctrl+P   <span class="cmt">Quick open file</span>
+⌘⇧P           <span class="cmt">Command palette</span>
+⌘S / Ctrl+S   <span class="cmt">Save file</span>
+⌘⇧E           <span class="cmt">Explorer sidebar</span>
+⌘⇧F           <span class="cmt">Search across files</span>
+⌘⇧G           <span class="cmt">Source control</span>
+
+<span class="cmt"># Codespaces</span>
+<span class="cmt">Code → Codespaces → Create</span>
+<span class="cmt">Full VS Code environment</span>
+<span class="cmt">Terminal, extensions, ports</span></code></pre></div></div>
+<div class="section" id="nav"><div class="section-header"><span class="icon">🧭</span><h2>Navigation Tips</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># URL shortcuts</span>
+github.com/user                <span class="cmt">Profile</span>
+github.com/user?tab=repos      <span class="cmt">Repos</span>
+github.com/user/repo/pulls     <span class="cmt">PRs</span>
+github.com/user/repo/compare   <span class="cmt">Compare branches</span>
+
+<span class="cmt"># Compare</span>
+/compare/main...feature        <span class="cmt">Compare branches</span>
+/compare/v1.0...v2.0           <span class="cmt">Compare tags</span>
+
+<span class="cmt"># Specific commit</span>
+/commit/abc1234                <span class="cmt">View commit</span>
+
+<span class="cmt"># Raw file</span>
+raw.githubusercontent.com/...  <span class="cmt">Raw content</span></code></pre></div></div>
+<div class="section" id="md"><div class="section-header"><span class="icon">📝</span><h2>Markdown Extras</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># GitHub Flavored Markdown</span>
+- [x] Task complete
+- [ ] Task pending
+
+<span class="cmt"># Tables</span>
+| Col1 | Col2 |
+|------|------|
+| data | data |
+
+<span class="cmt"># Alerts (new)</span>
+&gt; [!NOTE]
+&gt; Informational
+
+&gt; [!TIP]
+&gt; Helpful advice
+
+&gt; [!WARNING]
+&gt; Potential issue
+
+&gt; [!CAUTION]
+&gt; Dangerous action
+
+<span class="cmt"># Mermaid diagrams</span>
+```mermaid
+graph LR
+  A --&gt; B
+```
+
+<span class="cmt"># Collapsible sections</span>
+&lt;details&gt;&lt;summary&gt;Click&lt;/summary&gt;
+Hidden content
+&lt;/details&gt;</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>GitHub Shortcuts Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

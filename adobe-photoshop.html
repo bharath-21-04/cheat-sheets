@@ -1,58 +1,111 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Adobe Photoshop Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Adobe Photoshop</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Adobe Photoshop Cheatsheet</h1>
-  <p class="subtitle">Layers, selection, brushes, filters, transform &amp; essential shortcuts</p>
-  <span class="tag tag-concept">Keyboard Shortcuts</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Adobe Photoshop Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Adobe Photoshop</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Adobe Photoshop Cheatsheet</h1><p class="subtitle">Keyboard shortcuts quick reference</p><span class="tag tag-concept">Shortcuts</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#tools">Tools</a>
+    <a href="#select">Selection</a>
+    <a href="#layers">Layers</a>
+    <a href="#edit">Edit</a>
+    <a href="#view">View &amp; Navigate</a>
+    <a href="#brushes">Brushes &amp; Paint</a>
+    <a href="#filters">Filters &amp; Adjustments</a>
+</div></div>
+<div class="section" id="tools"><div class="section-header"><span class="icon">🔧</span><h2>Tool Shortcuts</h2></div><div class="code-wrapper"><pre><code>V   Move                M   Marquee
+L   Lasso               W   Quick Selection
+C   Crop                I   Eyedropper
+J   Healing Brush       S   Clone Stamp
+B   Brush               E   Eraser
+G   Gradient            O   Dodge/Burn
+P   Pen                 T   Type
+A   Path Selection      U   Shape
+H   Hand                Z   Zoom
+D   Default colors (B/W)
+X   Swap foreground/background
+Q   Quick Mask mode
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Cycle through hidden tools: Shift + shortcut</span>
+<span class="cmt"># e.g., Shift+L cycles Lasso tools</span></code></pre></div></div>
+<div class="section" id="select"><div class="section-header"><span class="icon">✂️</span><h2>Selection</h2></div><div class="code-wrapper"><pre><code>⌘A / Ctrl+A           <span class="cmt">Select all</span>
+⌘D / Ctrl+D           <span class="cmt">Deselect</span>
+⌘⇧I / Ctrl+Shift+I   <span class="cmt">Inverse selection</span>
+⌘⇧D / Ctrl+Shift+D   <span class="cmt">Reselect</span>
+⇧ + drag              <span class="cmt">Add to selection</span>
+⌥ + drag              <span class="cmt">Subtract from selection</span>
+⌘⌥R / Ctrl+Alt+R      <span class="cmt">Refine Edge / Select &amp; Mask</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Adobe Photoshop content.</div>
-</div>
+<span class="cmt"># Transform selection</span>
+⌘T / Ctrl+T           <span class="cmt">Free Transform</span>
+⇧ drag corner         <span class="cmt">Constrain proportions</span>
+⌥ drag                <span class="cmt">Transform from center</span>
+Enter                  <span class="cmt">Apply transform</span>
+Esc                    <span class="cmt">Cancel transform</span></code></pre></div></div>
+<div class="section" id="layers"><div class="section-header"><span class="icon">📚</span><h2>Layers</h2></div><div class="code-wrapper"><pre><code>⌘⇧N / Ctrl+Shift+N    <span class="cmt">New layer</span>
+⌘J / Ctrl+J           <span class="cmt">Duplicate layer (copy)</span>
+⌘⇧J / Ctrl+Shift+J   <span class="cmt">Cut to new layer</span>
+⌘E / Ctrl+E           <span class="cmt">Merge down</span>
+⌘⇧E / Ctrl+Shift+E   <span class="cmt">Merge visible</span>
+⌘G / Ctrl+G           <span class="cmt">Group layers</span>
+⌘⇧G / Ctrl+Shift+G   <span class="cmt">Ungroup</span>
+⌘[ / Ctrl+[           <span class="cmt">Send backward</span>
+⌘] / Ctrl+]           <span class="cmt">Bring forward</span>
+⌘⌥⇧E / Ctrl+Alt+Shift+E  <span class="cmt">Stamp visible</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Adobe Photoshop basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Opacity: press 1-9, 0</span>
+<span class="cmt"># 5 = 50%   0 = 100%   15 (quick) = 15%</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Adobe Photoshop patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Clipping mask</span>
+⌘⌥G / Ctrl+Alt+G</code></pre></div></div>
+<div class="section" id="edit"><div class="section-header"><span class="icon">✏️</span><h2>Edit</h2></div><div class="code-wrapper"><pre><code>⌘Z / Ctrl+Z           <span class="cmt">Undo (multiple)</span>
+⌘⇧Z / Ctrl+Shift+Z   <span class="cmt">Redo</span>
+⌘⌥Z / Ctrl+Alt+Z      <span class="cmt">Step backward</span>
+⌘C / Ctrl+C           <span class="cmt">Copy</span>
+⌘V / Ctrl+V           <span class="cmt">Paste</span>
+⌘⇧V / Ctrl+Shift+V   <span class="cmt">Paste in place</span>
+⇧F5 / Shift+F5        <span class="cmt">Fill dialog</span>
+⌘⌫ / Ctrl+Backspace   <span class="cmt">Fill with bg color</span>
+⌥⌫ / Alt+Backspace    <span class="cmt">Fill with fg color</span>
+⌘⇧S / Ctrl+Shift+S    <span class="cmt">Save As</span>
+⌘⌥⇧S / Ctrl+Alt+Shift+S  <span class="cmt">Save for Web</span></code></pre></div></div>
+<div class="section" id="view"><div class="section-header"><span class="icon">👁️</span><h2>View &amp; Navigate</h2></div><div class="code-wrapper"><pre><code>⌘+ / Ctrl++           <span class="cmt">Zoom in</span>
+⌘- / Ctrl+-           <span class="cmt">Zoom out</span>
+⌘0 / Ctrl+0           <span class="cmt">Fit to screen</span>
+⌘1 / Ctrl+1           <span class="cmt">Actual pixels (100%)</span>
+Space + drag           <span class="cmt">Pan</span>
+⌘R / Ctrl+R           <span class="cmt">Toggle rulers</span>
+⌘; / Ctrl+;           <span class="cmt">Toggle guides</span>
+⌘' / Ctrl+'           <span class="cmt">Toggle grid</span>
+F                      <span class="cmt">Cycle screen modes</span>
+Tab                    <span class="cmt">Hide/show panels</span></code></pre></div></div>
+<div class="section" id="brushes"><div class="section-header"><span class="icon">🖌️</span><h2>Brushes &amp; Paint</h2></div><div class="code-wrapper"><pre><code>[ / ]                  <span class="cmt">Decrease / increase size</span>
+{ / }                  <span class="cmt">Decrease / increase hardness</span>
+,  / .                 <span class="cmt">Previous / next brush</span>
+&lt; / &gt;                  <span class="cmt">First / last brush</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Adobe Photoshop Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Blend modes (while Brush active):</span>
+⇧⌥N  Normal            ⇧⌥M  Multiply
+⇧⌥S  Screen             ⇧⌥O  Overlay
+⇧⌥F  Soft Light         ⇧⌥H  Hard Light
+
+<span class="cmt"># Flow vs Opacity</span>
+<span class="cmt">Opacity: amount per stroke</span>
+<span class="cmt">Flow: amount per stamp (builds up)</span></code></pre></div></div>
+<div class="section" id="filters"><div class="section-header"><span class="icon">🎛️</span><h2>Filters &amp; Adjustments</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Quick adjustments</span>
+⌘L / Ctrl+L           <span class="cmt">Levels</span>
+⌘M / Ctrl+M           <span class="cmt">Curves</span>
+⌘U / Ctrl+U           <span class="cmt">Hue/Saturation</span>
+⌘B / Ctrl+B           <span class="cmt">Color Balance</span>
+⌘⇧U / Ctrl+Shift+U   <span class="cmt">Desaturate</span>
+⌘I / Ctrl+I           <span class="cmt">Invert</span>
+
+<span class="cmt"># Repeat last filter</span>
+⌘F / Ctrl+F
+
+<span class="cmt"># Camera Raw</span>
+⌘⇧A / Ctrl+Shift+A
+
+<span class="cmt"># Liquify</span>
+⌘⇧X / Ctrl+Shift+X</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Adobe Photoshop Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

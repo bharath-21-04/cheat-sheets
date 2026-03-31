@@ -1,58 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Feedly Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Feedly</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Feedly Cheatsheet</h1>
-  <p class="subtitle">Navigation, articles, boards, tags, search &amp; essential shortcuts</p>
-  <span class="tag tag-concept">Keyboard Shortcuts</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Feedly Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Feedly</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Feedly Cheatsheet</h1><p class="subtitle">RSS reader keyboard shortcuts</p><span class="tag tag-concept">Shortcuts</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#nav">Navigation</a>
+    <a href="#articles">Articles</a>
+    <a href="#manage">Manage Feeds</a>
+    <a href="#shortcuts">All Shortcuts</a>
+    <a href="#search">Search &amp; Filter</a>
+    <a href="#tips">Pro Features</a>
+</div></div>
+<div class="section" id="nav"><div class="section-header"><span class="icon">🧭</span><h2>Navigation</h2></div><div class="code-wrapper"><pre><code>J / ↓              <span class="cmt">Next item</span>
+K / ↑              <span class="cmt">Previous item</span>
+G A                <span class="cmt">Go to All</span>
+G G                <span class="cmt">Go to feed list</span>
+G T                <span class="cmt">Go to Today</span>
+G S                <span class="cmt">Go to Saved</span>
+G R                <span class="cmt">Go to Read Later</span>
+G H                <span class="cmt">Go to highlights</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Views</span>
+⇧V                 <span class="cmt">Toggle view mode</span>
+<span class="cmt">(Magazine / Cards / Title-only)</span></code></pre></div></div>
+<div class="section" id="articles"><div class="section-header"><span class="icon">📰</span><h2>Articles</h2></div><div class="code-wrapper"><pre><code>Enter / O          <span class="cmt">Open article</span>
+V                  <span class="cmt">Open in new tab</span>
+S                  <span class="cmt">Save for later</span>
+M                  <span class="cmt">Mark as read</span>
+⇧A                 <span class="cmt">Mark all as read</span>
+X                  <span class="cmt">Dismiss</span>
+B                  <span class="cmt">Save to board</span>
+T                  <span class="cmt">Tag article</span>
+.                  <span class="cmt">Share menu</span>
+N                  <span class="cmt">Add note</span>
+H                  <span class="cmt">Highlight text</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Feedly content.</div>
-</div>
+<span class="cmt"># Sharing</span>
+<span class="cmt">Twitter, LinkedIn, Buffer, Slack</span>
+<span class="cmt">Pocket, Evernote, OneNote</span>
+<span class="cmt">Email, copy link</span></code></pre></div></div>
+<div class="section" id="manage"><div class="section-header"><span class="icon">📋</span><h2>Manage Feeds</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Add new feed</span>
++ button          <span class="cmt">Add content</span>
+<span class="cmt">Paste RSS URL or search</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Feedly basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Organize</span>
+<span class="cmt">Create folders/categories</span>
+<span class="cmt">Drag feeds between folders</span>
+<span class="cmt">Rename: right-click → Rename</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Feedly patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Feed settings</span>
+<span class="cmt">Right-click feed → Settings</span>
+<span class="cmt">- Auto-mark as read</span>
+<span class="cmt">- Mute</span>
+<span class="cmt">- Unsubscribe</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Feedly Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># OPML</span>
+<span class="cmt">Settings → Import/Export OPML</span>
+<span class="cmt">Backup feed subscriptions</span></code></pre></div></div>
+<div class="section" id="shortcuts"><div class="section-header"><span class="icon">⌨️</span><h2>All Keyboard Shortcuts</h2></div><div class="code-wrapper"><pre><code>?                  <span class="cmt">Show all shortcuts</span>
+J / K              <span class="cmt">Next / previous</span>
+N / P              <span class="cmt">Next / prev (alt)</span>
+Enter              <span class="cmt">Open/close article</span>
+⇧Enter             <span class="cmt">Open in background</span>
+V                  <span class="cmt">Visit original</span>
+S                  <span class="cmt">Save</span>
+M                  <span class="cmt">Read/unread</span>
+⇧A                 <span class="cmt">Mark all read</span>
+R                  <span class="cmt">Refresh</span>
+1 / 2 / 3          <span class="cmt">View: magazine/card/list</span>
+⇧J / ⇧K            <span class="cmt">Expand next/prev</span></code></pre></div></div>
+<div class="section" id="search"><div class="section-header"><span class="icon">🔍</span><h2>Search &amp; Filter</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Search bar: / or click search</span>
+
+<span class="cmt"># Filters</span>
+<span class="cmt">Unread only</span>
+<span class="cmt">Sorted by: Newest / Oldest / Popularity</span>
+
+<span class="cmt"># Power Search (Pro)</span>
+<span class="cmt">Boolean operators: AND OR NOT</span>
+<span class="cmt">author:"name"</span>
+<span class="cmt">source:"feed name"</span>
+<span class="cmt">title:"text"</span>
+
+<span class="cmt"># AI Features (Pro+)</span>
+<span class="cmt">Leo AI assistant</span>
+<span class="cmt">Priority feeds, topic tracking</span>
+<span class="cmt">Mute keywords/sources</span></code></pre></div></div>
+<div class="section" id="tips"><div class="section-header"><span class="icon">✨</span><h2>Pro Features</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Boards</span>
+<span class="cmt">Curate articles into topic boards</span>
+<span class="cmt">Team sharing (Teams plan)</span>
+
+<span class="cmt"># Automation</span>
+<span class="cmt">IFTTT integration</span>
+<span class="cmt">Zapier integration</span>
+<span class="cmt">Save rules (if keyword → save)</span>
+
+<span class="cmt"># Leo AI (Pro+)</span>
+<span class="cmt">- Prioritize important topics</span>
+<span class="cmt">- Summarize articles</span>
+<span class="cmt">- Mute duplicates</span>
+<span class="cmt">- Topic clustering</span>
+
+<span class="cmt"># Newsletter</span>
+<span class="cmt">Feedly email → read newsletters in feed</span>
+
+<span class="cmt"># API</span>
+<span class="cmt">cloud.feedly.com/v3/ for developers</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Feedly Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

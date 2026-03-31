@@ -1,58 +1,121 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Netcat Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Netcat</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Netcat Cheatsheet</h1>
-  <p class="subtitle">TCP/UDP connections, port scanning, file transfer, chat &amp; network debugging</p>
-  <span class="tag tag-concept">Linux / Command</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>netcat (nc) Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ netcat (nc)</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>netcat (nc) Cheatsheet</h1><p class="subtitle">Swiss army knife for TCP/UDP networking</p><span class="tag tag-lang">Linux</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#listen">Listen Mode</a>
+    <a href="#transfer">File Transfer</a>
+    <a href="#scan">Port Scanning</a>
+    <a href="#proxy">Proxy &amp; Relay</a>
+    <a href="#tricks">Tricks</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">🔧</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Connect to host:port</span>
+<span class="fn">nc</span> host <span class="num">80</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Netcat content.</div>
-</div>
+<span class="cmt"># Verbose mode</span>
+<span class="fn">nc</span> -v host <span class="num">80</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Netcat basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># UDP mode</span>
+<span class="fn">nc</span> -u host <span class="num">53</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Netcat patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Set timeout</span>
+<span class="fn">nc</span> -w <span class="num">5</span> host <span class="num">80</span>     <span class="cmt"># 5 sec timeout</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Netcat Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Send data</span>
+<span class="fn">echo</span> <span class="str">"GET / HTTP/1.0\r\n\r\n"</span> | <span class="fn">nc</span> host <span class="num">80</span>
+
+<span class="cmt"># Close after EOF</span>
+<span class="fn">nc</span> -q <span class="num">0</span> host <span class="num">80</span> &lt; request.txt
+
+<span class="cmt"># Variants: nc, ncat, netcat, nmap-ncat</span></code></pre></div></div>
+<div class="section" id="listen"><div class="section-header"><span class="icon">👂</span><h2>Listen Mode</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Listen on a port</span>
+<span class="fn">nc</span> -l <span class="num">4444</span>
+
+<span class="cmt"># Listen (keep listening after disconnect)</span>
+<span class="fn">nc</span> -lk <span class="num">4444</span>
+
+<span class="cmt"># Listen verbose</span>
+<span class="fn">nc</span> -lv <span class="num">4444</span>
+
+<span class="cmt"># Simple chat between 2 machines:</span>
+<span class="cmt"># Machine A (listen):</span>
+<span class="fn">nc</span> -l <span class="num">4444</span>
+<span class="cmt"># Machine B (connect):</span>
+<span class="fn">nc</span> machineA <span class="num">4444</span>
+<span class="cmt"># Type messages — bidirectional!</span>
+
+<span class="cmt"># HTTP server (one-shot)</span>
+<span class="kw">while</span> <span class="kw">true</span>; <span class="kw">do</span>
+  <span class="fn">echo</span> -e <span class="str">"HTTP/1.1 200 OK\n\nHello"</span> | <span class="fn">nc</span> -l <span class="num">8080</span> -q <span class="num">1</span>
+<span class="kw">done</span></code></pre></div></div>
+<div class="section" id="transfer"><div class="section-header"><span class="icon">📤</span><h2>File Transfer</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Receiver (listen):</span>
+<span class="fn">nc</span> -l <span class="num">9999</span> &gt; received_file
+
+<span class="cmt"># Sender:</span>
+<span class="fn">nc</span> receiver_host <span class="num">9999</span> &lt; file_to_send
+
+<span class="cmt"># Transfer directory (tar + nc):</span>
+<span class="cmt"># Receiver:</span>
+<span class="fn">nc</span> -l <span class="num">9999</span> | <span class="fn">tar</span> xvf -
+<span class="cmt"># Sender:</span>
+<span class="fn">tar</span> cvf - /path/dir | <span class="fn">nc</span> receiver <span class="num">9999</span>
+
+<span class="cmt"># With compression:</span>
+<span class="cmt"># Receiver:</span>
+<span class="fn">nc</span> -l <span class="num">9999</span> | <span class="fn">gunzip</span> &gt; file
+<span class="cmt"># Sender:</span>
+<span class="fn">gzip</span> -c file | <span class="fn">nc</span> receiver <span class="num">9999</span>
+
+<span class="cmt"># With progress (pv):</span>
+<span class="fn">pv</span> file | <span class="fn">nc</span> receiver <span class="num">9999</span></code></pre></div></div>
+<div class="section" id="scan"><div class="section-header"><span class="icon">🔍</span><h2>Port Scanning</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Scan single port</span>
+<span class="fn">nc</span> -zv host <span class="num">80</span>
+
+<span class="cmt"># Scan port range</span>
+<span class="fn">nc</span> -zv host <span class="num">20</span>-<span class="num">100</span>
+
+<span class="cmt"># Scan common ports</span>
+<span class="fn">nc</span> -zv host <span class="num">22</span> <span class="num">80</span> <span class="num">443</span> <span class="num">3306</span> <span class="num">5432</span>
+
+<span class="cmt"># Fast scan (low timeout)</span>
+<span class="fn">nc</span> -zv -w <span class="num">1</span> host <span class="num">1</span>-<span class="num">1000</span>
+
+<span class="cmt"># UDP port scan</span>
+<span class="fn">nc</span> -zuv host <span class="num">53</span>
+
+<span class="cmt"># Banner grabbing</span>
+<span class="fn">echo</span> <span class="str">""</span> | <span class="fn">nc</span> -v -w <span class="num">2</span> host <span class="num">22</span></code></pre></div></div>
+<div class="section" id="proxy"><div class="section-header"><span class="icon">🔄</span><h2>Proxy &amp; Relay</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Simple port forwarding (with named pipe)</span>
+<span class="fn">mkfifo</span> /tmp/pipe
+<span class="fn">nc</span> -l <span class="num">8080</span> &lt; /tmp/pipe | <span class="fn">nc</span> target <span class="num">80</span> &gt; /tmp/pipe
+
+<span class="cmt"># Using ncat (nmap version) — better:</span>
+<span class="fn">ncat</span> -l <span class="num">8080</span> --sh-exec <span class="str">"ncat target 80"</span>
+
+<span class="cmt"># Proxy with socat (alternative):</span>
+<span class="fn">socat</span> TCP-LISTEN:<span class="num">8080</span>,fork TCP:target:<span class="num">80</span></code></pre></div></div>
+<div class="section" id="tricks"><div class="section-header"><span class="icon">💡</span><h2>Tricks</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Test if port is open</span>
+<span class="fn">nc</span> -zv google.com <span class="num">443</span> &amp;&amp; <span class="fn">echo</span> <span class="str">"open"</span>
+
+<span class="cmt"># Send email (SMTP test)</span>
+<span class="fn">nc</span> mail.server <span class="num">25</span>
+HELO test
+MAIL FROM:&lt;a@b.com&gt;
+RCPT TO:&lt;c@d.com&gt;
+DATA
+Subject: Test
+Body
+.
+QUIT
+
+<span class="cmt"># HTTP request</span>
+<span class="fn">printf</span> <span class="str">"GET / HTTP/1.1\r\nHost: example.com\r\n\r\n"</span> | \
+  <span class="fn">nc</span> example.com <span class="num">80</span>
+
+<span class="cmt"># Measure connection speed</span>
+<span class="fn">dd</span> if=/dev/zero bs=1M count=100 | <span class="fn">nc</span> -l <span class="num">9999</span>
+<span class="fn">nc</span> host <span class="num">9999</span> &gt; /dev/null   <span class="cmt"># on other end</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>netcat Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

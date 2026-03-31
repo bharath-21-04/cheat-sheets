@@ -1,58 +1,138 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TOML Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ TOML</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>TOML Cheatsheet</h1>
-  <p class="subtitle">Tables, arrays, inline tables, date/time, strings &amp; configuration patterns</p>
-  <span class="tag tag-concept">Data Format</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
-
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>TOML Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ TOML</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>TOML Cheatsheet</h1><p class="subtitle">Keys, values, tables, arrays &amp; common config patterns</p><span class="tag tag-concept">Data Format</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+    <a href="#types">Data Types</a>
+    <a href="#tables">Tables</a>
+    <a href="#arrays">Arrays</a>
+    <a href="#inline">Inline Tables</a>
+    <a href="#datetime">Dates &amp; Times</a>
+    <a href="#patterns">Common Patterns</a>
+</div></div>
+<div class="section" id="basics"><div class="section-header"><span class="icon">📝</span><h2>Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># TOML = Tom's Obvious Minimal Language</span>
+<span class="cmt"># Designed for config files</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive TOML content.</div>
-</div>
+<span class="cmt"># Key-value pairs</span>
+name = <span class="str">"Alice"</span>
+age = <span class="num">30</span>
+active = <span class="kw">true</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// TOML basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Comments with #</span>
+<span class="cmt"># Keys are bare or quoted</span>
+bare-key = <span class="str">"value"</span>
+<span class="str">"quoted key"</span> = <span class="str">"value"</span>
+<span class="str">"key.with.dots"</span> = <span class="str">"value"</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// TOML patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Dotted keys (creates nested tables)</span>
+server.host = <span class="str">"localhost"</span>
+server.port = <span class="num">8080</span></code></pre></div></div>
+<div class="section" id="types"><div class="section-header"><span class="icon">💎</span><h2>Data Types</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># String</span>
+str1 = <span class="str">"basic string"</span>
+str2 = <span class="str">'literal string (no escapes)'</span>
+str3 = <span class="str">"""
+multi-line
+basic string"""</span>
+str4 = <span class="str">&#39;&#39;&#39;
+multi-line
+literal string&#39;&#39;&#39;</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>TOML Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Integer</span>
+int1 = <span class="num">42</span>
+int2 = <span class="num">1_000_000</span>          <span class="cmt"># underscore separator</span>
+hex = <span class="num">0xDEADBEEF</span>
+oct = <span class="num">0o755</span>
+bin = <span class="num">0b11010110</span>
+
+<span class="cmt"># Float</span>
+flt1 = <span class="num">3.14</span>
+flt2 = <span class="num">1e6</span>
+special1 = inf
+special2 = nan
+
+<span class="cmt"># Boolean</span>
+enabled = <span class="kw">true</span>
+disabled = <span class="kw">false</span></code></pre></div></div>
+<div class="section" id="tables"><div class="section-header"><span class="icon">📦</span><h2>Tables</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Table (like object/dict)</span>
+[server]
+host = <span class="str">"localhost"</span>
+port = <span class="num">8080</span>
+
+<span class="cmt"># Nested table</span>
+[database]
+host = <span class="str">"localhost"</span>
+port = <span class="num">5432</span>
+
+[database.connection]
+pool_size = <span class="num">10</span>
+timeout = <span class="num">30</span>
+
+<span class="cmt"># Super-table (dotted)</span>
+[a.b.c]
+key = <span class="str">"value"</span>
+<span class="cmt"># Same as: a → b → c → key</span></code></pre></div></div>
+<div class="section" id="arrays"><div class="section-header"><span class="icon">📋</span><h2>Arrays</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Array</span>
+colors = [<span class="str">"red"</span>, <span class="str">"green"</span>, <span class="str">"blue"</span>]
+numbers = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+nested = [[<span class="num">1</span>, <span class="num">2</span>], [<span class="num">3</span>, <span class="num">4</span>]]
+
+<span class="cmt"># Multi-line array</span>
+hosts = [
+    <span class="str">"alpha"</span>,
+    <span class="str">"beta"</span>,
+    <span class="str">"gamma"</span>,   <span class="cmt"># trailing comma OK</span>
+]
+
+<span class="cmt"># Array of tables</span>
+[[products]]
+name = <span class="str">"Hammer"</span>
+price = <span class="num">9.99</span>
+
+[[products]]
+name = <span class="str">"Nail"</span>
+price = <span class="num">0.05</span>
+<span class="cmt"># → products = [{name: "Hammer"...}, {name: "Nail"...}]</span></code></pre></div></div>
+<div class="section" id="inline"><div class="section-header"><span class="icon">🔧</span><h2>Inline Tables</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Inline table (single line)</span>
+point = { x = <span class="num">1</span>, y = <span class="num">2</span> }
+user = { name = <span class="str">"Alice"</span>, age = <span class="num">30</span> }
+
+<span class="cmt"># Inline array of inline tables</span>
+points = [
+    { x = <span class="num">0</span>, y = <span class="num">0</span> },
+    { x = <span class="num">1</span>, y = <span class="num">1</span> },
+]</code></pre></div></div>
+<div class="section" id="datetime"><div class="section-header"><span class="icon">📅</span><h2>Dates &amp; Times</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Offset date-time</span>
+odt = <span class="num">2024-01-15T10:30:00Z</span>
+odt2 = <span class="num">2024-01-15T10:30:00-05:00</span>
+
+<span class="cmt"># Local date-time</span>
+ldt = <span class="num">2024-01-15T10:30:00</span>
+
+<span class="cmt"># Local date</span>
+ld = <span class="num">2024-01-15</span>
+
+<span class="cmt"># Local time</span>
+lt = <span class="num">10:30:00</span></code></pre></div></div>
+<div class="section" id="patterns"><div class="section-header"><span class="icon">📋</span><h2>Common Patterns</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Cargo.toml (Rust)</span>
+[package]
+name = <span class="str">"my-app"</span>
+version = <span class="str">"0.1.0"</span>
+edition = <span class="str">"2021"</span>
+
+[dependencies]
+serde = { version = <span class="str">"1.0"</span>, features = [<span class="str">"derive"</span>] }
+tokio = { version = <span class="str">"1"</span>, features = [<span class="str">"full"</span>] }
+
+<span class="cmt"># pyproject.toml (Python)</span>
+[project]
+name = <span class="str">"my-app"</span>
+version = <span class="str">"0.1.0"</span>
+requires-python = <span class="str">">=3.12"</span>
+dependencies = [<span class="str">"fastapi"</span>, <span class="str">"uvicorn"</span>]
+
+[tool.ruff]
+line-length = <span class="num">88</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>TOML Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

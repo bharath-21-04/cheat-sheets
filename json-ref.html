@@ -1,58 +1,130 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>JSON Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ JSON</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>JSON Cheatsheet</h1>
-  <p class="subtitle">Syntax, data types, nested structures, JSON Schema, parsing &amp; serialization</p>
-  <span class="tag tag-concept">Data Format</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>JSON Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ JSON</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>JSON Cheatsheet</h1><p class="subtitle">Syntax, data types, schema &amp; common patterns</p><span class="tag tag-concept">Data Format</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#syntax">Syntax</a>
+    <a href="#types">Data Types</a>
+    <a href="#nested">Nested Structures</a>
+    <a href="#schema">JSON Schema</a>
+    <a href="#parse">Parsing</a>
+    <a href="#patterns">Common Patterns</a>
+    <a href="#rules">Rules &amp; Gotchas</a>
+</div></div>
+<div class="section" id="syntax"><div class="section-header"><span class="icon">📝</span><h2>Syntax</h2></div><div class="code-wrapper"><pre><code>{
+  <span class="str">"name"</span>: <span class="str">"Alice"</span>,
+  <span class="str">"age"</span>: <span class="num">30</span>,
+  <span class="str">"active"</span>: <span class="kw">true</span>,
+  <span class="str">"address"</span>: <span class="kw">null</span>,
+  <span class="str">"tags"</span>: [<span class="str">"dev"</span>, <span class="str">"admin"</span>],
+  <span class="str">"profile"</span>: {
+    <span class="str">"bio"</span>: <span class="str">"Hello"</span>,
+    <span class="str">"avatar"</span>: <span class="str">"url"</span>
+  }
+}
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt">Rules:</span>
+<span class="cmt">• Keys MUST be double-quoted strings</span>
+<span class="cmt">• No trailing commas</span>
+<span class="cmt">• No comments</span>
+<span class="cmt">• No single quotes</span></code></pre></div></div>
+<div class="section" id="types"><div class="section-header"><span class="icon">📦</span><h2>Data Types</h2></div><div class="code-wrapper"><pre><code><span class="str">"string"</span>       <span class="cmt">String (double quotes only)</span>
+<span class="num">42</span>             <span class="cmt">Number (integer)</span>
+<span class="num">3.14</span>           <span class="cmt">Number (float)</span>
+<span class="num">-1</span>             <span class="cmt">Number (negative)</span>
+<span class="num">1.2e10</span>         <span class="cmt">Number (scientific)</span>
+<span class="kw">true</span>           <span class="cmt">Boolean</span>
+<span class="kw">false</span>          <span class="cmt">Boolean</span>
+<span class="kw">null</span>           <span class="cmt">Null</span>
+[<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]     <span class="cmt">Array</span>
+{<span class="str">"k"</span>: <span class="str">"v"</span>}     <span class="cmt">Object</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive JSON content.</div>
-</div>
+<span class="cmt">No: undefined, NaN, Infinity, Date, RegExp</span>
+<span class="cmt">No: single quotes, hex numbers, octal</span></code></pre></div></div>
+<div class="section" id="nested"><div class="section-header"><span class="icon">🔗</span><h2>Nested Structures</h2></div><div class="code-wrapper"><pre><code><span class="cmt">Array of objects</span>
+[
+  {<span class="str">"id"</span>: <span class="num">1</span>, <span class="str">"name"</span>: <span class="str">"Alice"</span>},
+  {<span class="str">"id"</span>: <span class="num">2</span>, <span class="str">"name"</span>: <span class="str">"Bob"</span>}
+]
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// JSON basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">Nested objects</span>
+{
+  <span class="str">"user"</span>: {
+    <span class="str">"name"</span>: <span class="str">"Alice"</span>,
+    <span class="str">"address"</span>: {
+      <span class="str">"city"</span>: <span class="str">"NYC"</span>,
+      <span class="str">"zip"</span>: <span class="str">"10001"</span>
+    }
+  }
+}
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// JSON patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt">Mixed</span>
+{
+  <span class="str">"matrix"</span>: [[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,<span class="num">4</span>]],
+  <span class="str">"config"</span>: {<span class="str">"debug"</span>: <span class="kw">false</span>}
+}</code></pre></div></div>
+<div class="section" id="schema"><div class="section-header"><span class="icon">📐</span><h2>JSON Schema</h2></div><div class="code-wrapper"><pre><code>{
+  <span class="str">"$schema"</span>: <span class="str">"https://json-schema.org/draft/2020-12/schema"</span>,
+  <span class="str">"type"</span>: <span class="str">"object"</span>,
+  <span class="str">"properties"</span>: {
+    <span class="str">"name"</span>: { <span class="str">"type"</span>: <span class="str">"string"</span>, <span class="str">"minLength"</span>: <span class="num">1</span> },
+    <span class="str">"age"</span>:  { <span class="str">"type"</span>: <span class="str">"integer"</span>, <span class="str">"minimum"</span>: <span class="num">0</span> },
+    <span class="str">"email"</span>: { <span class="str">"type"</span>: <span class="str">"string"</span>, <span class="str">"format"</span>: <span class="str">"email"</span> },
+    <span class="str">"role"</span>: { <span class="str">"enum"</span>: [<span class="str">"admin"</span>, <span class="str">"user"</span>] }
+  },
+  <span class="str">"required"</span>: [<span class="str">"name"</span>, <span class="str">"email"</span>]
+}</code></pre></div></div>
+<div class="section" id="parse"><div class="section-header"><span class="icon">⚡</span><h2>Parsing</h2></div><div class="code-wrapper"><pre><code><span class="cmt">JavaScript</span>
+<span class="kw">const</span> obj = JSON.<span class="fn">parse</span>(jsonStr);
+<span class="kw">const</span> str = JSON.<span class="fn">stringify</span>(obj, <span class="kw">null</span>, <span class="num">2</span>);
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>JSON Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt">Python</span>
+<span class="kw">import</span> json
+obj = json.<span class="fn">loads</span>(json_str)
+s = json.<span class="fn">dumps</span>(obj, indent=<span class="num">2</span>)
+
+<span class="cmt">CLI (jq)</span>
+cat data.json | jq <span class="str">'.'</span>               <span class="cmt"># pretty print</span>
+cat data.json | jq <span class="str">'.name'</span>           <span class="cmt"># get field</span>
+cat data.json | jq <span class="str">'.[0]'</span>            <span class="cmt"># first element</span>
+cat data.json | jq <span class="str">'.[] | .name'</span>     <span class="cmt"># map</span>
+cat data.json | jq <span class="str">'length'</span>          <span class="cmt"># count</span></code></pre></div></div>
+<div class="section" id="patterns"><div class="section-header"><span class="icon">📋</span><h2>Common Patterns</h2></div><div class="code-wrapper"><pre><code><span class="cmt">API Response</span>
+{
+  <span class="str">"status"</span>: <span class="str">"success"</span>,
+  <span class="str">"data"</span>: { <span class="str">"id"</span>: <span class="num">1</span>, <span class="str">"name"</span>: <span class="str">"Alice"</span> },
+  <span class="str">"meta"</span>: { <span class="str">"page"</span>: <span class="num">1</span>, <span class="str">"total"</span>: <span class="num">50</span> }
+}
+
+<span class="cmt">Error Response</span>
+{
+  <span class="str">"error"</span>: {
+    <span class="str">"code"</span>: <span class="num">404</span>,
+    <span class="str">"message"</span>: <span class="str">"Not found"</span>
+  }
+}
+
+<span class="cmt">package.json</span>
+{
+  <span class="str">"name"</span>: <span class="str">"my-app"</span>,
+  <span class="str">"version"</span>: <span class="str">"1.0.0"</span>,
+  <span class="str">"scripts"</span>: { <span class="str">"start"</span>: <span class="str">"node index.js"</span> }
+}</code></pre></div></div>
+<div class="section" id="rules"><div class="section-header"><span class="icon">⚠️</span><h2>Rules &amp; Gotchas</h2></div><div class="code-wrapper"><pre><code><span class="cmt">✅ Valid</span>
+{"key": "value"}
+{"num": 42}
+
+<span class="cmt">❌ Invalid</span>
+{'key': 'value'}       <span class="cmt">single quotes</span>
+{key: "value"}          <span class="cmt">unquoted key</span>
+{"a": 1,}               <span class="cmt">trailing comma</span>
+// comment              <span class="cmt">no comments</span>
+{"a": undefined}        <span class="cmt">no undefined</span>
+{"a": NaN}              <span class="cmt">no NaN</span>
+
+<span class="cmt">Use JSONC or JSON5 for comments</span>
+<span class="cmt">MIME type: application/json</span>
+<span class="cmt">File extension: .json</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>JSON Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

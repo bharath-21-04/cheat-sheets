@@ -1,58 +1,189 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shopify Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Shopify</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Shopify Cheatsheet</h1>
-  <p class="subtitle">Admin navigation, products, orders, themes &amp; essential shortcuts</p>
-  <span class="tag tag-concept">Keyboard Shortcuts</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Shopify Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Shopify</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Shopify Cheatsheet</h1><p class="subtitle">Liquid template &amp; Shopify development reference</p><span class="tag tag-fw">Framework</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#liquid">Liquid Basics</a>
+    <a href="#objects">Objects</a>
+    <a href="#filters">Filters</a>
+    <a href="#tags">Tags</a>
+    <a href="#theme">Theme Structure</a>
+    <a href="#cli">Shopify CLI</a>
+    <a href="#api">API Basics</a>
+</div></div>
+<div class="section" id="liquid"><div class="section-header"><span class="icon">📝</span><h2>Liquid Template Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Output (double curly braces)</span>
+{{ product.title }}
+{{ cart.total_price | money }}
+{{ shop.name }}
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Logic tags</span>
+{% <span class="kw">if</span> product.available %}
+  In stock
+{% <span class="kw">elsif</span> product.compare_at_price %}
+  Sold out (was {{ product.compare_at_price | money }})
+{% <span class="kw">else</span> %}
+  Unavailable
+{% <span class="kw">endif</span> %}
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Shopify content.</div>
-</div>
+<span class="cmt"># Loops</span>
+{% <span class="kw">for</span> product <span class="kw">in</span> collection.products %}
+  {{ product.title }} - {{ product.price | money }}
+{% <span class="kw">endfor</span> %}
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Shopify basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Comments</span>
+{% comment %} This is hidden {% endcomment %}</code></pre></div></div>
+<div class="section" id="objects"><div class="section-header"><span class="icon">📦</span><h2>Common Objects</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Shop</span>
+{{ shop.name }}
+{{ shop.url }}
+{{ shop.email }}
+{{ shop.currency }}
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Shopify patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Product</span>
+{{ product.title }}
+{{ product.price | money }}
+{{ product.description }}
+{{ product.featured_image | img_url: 'medium' }}
+{{ product.variants.size }}
+{{ product.tags | join: ', ' }}
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Shopify Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Collection</span>
+{{ collection.title }}
+{{ collection.products_count }}
+{{ collection.url }}
+
+<span class="cmt"># Cart</span>
+{{ cart.item_count }}
+{{ cart.total_price | money }}
+{{ cart.items }}
+
+<span class="cmt"># Customer</span>
+{{ customer.first_name }}
+{{ customer.email }}
+{{ customer.orders_count }}</code></pre></div></div>
+<div class="section" id="filters"><div class="section-header"><span class="icon">🔧</span><h2>Liquid Filters</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Money</span>
+{{ price | money }}              <span class="cmt">$10.00</span>
+{{ price | money_with_currency }} <span class="cmt">$10.00 USD</span>
+
+<span class="cmt"># String</span>
+{{ "hello" | upcase }}           <span class="cmt">HELLO</span>
+{{ "HELLO" | downcase }}         <span class="cmt">hello</span>
+{{ "hello" | capitalize }}       <span class="cmt">Hello</span>
+{{ "hello world" | truncate: 8 }} <span class="cmt">hello...</span>
+{{ "hello" | append: " world" }} <span class="cmt">hello world</span>
+{{ "hello" | replace: "l", "r" }} <span class="cmt">herro</span>
+{{ string | strip_html }}
+
+<span class="cmt"># Image</span>
+{{ img | img_url: 'small' }}     <span class="cmt">100x100</span>
+{{ img | img_url: 'medium' }}    <span class="cmt">240x240</span>
+{{ img | img_url: 'large' }}     <span class="cmt">480x480</span>
+{{ img | img_url: '600x' }}      <span class="cmt">width 600</span>
+
+<span class="cmt"># URL</span>
+{{ page.url | link_to: page.title }}
+{{ 'style.css' | asset_url }}
+{{ 'logo.png' | shopify_asset_url }}
+
+<span class="cmt"># Date</span>
+{{ article.created_at | date: "%B %d, %Y" }}
+<span class="cmt"># → January 15, 2024</span></code></pre></div></div>
+<div class="section" id="tags"><div class="section-header"><span class="icon">🏷️</span><h2>Liquid Tags</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Assign</span>
+{% <span class="kw">assign</span> my_var = "hello" %}
+{% <span class="kw">capture</span> my_block %}...{% <span class="kw">endcapture</span> %}
+
+<span class="cmt"># Conditionals</span>
+{% <span class="kw">if</span> condition %}{% <span class="kw">endif</span> %}
+{% <span class="kw">unless</span> condition %}{% <span class="kw">endunless</span> %}
+{% <span class="kw">case</span> variable %}
+  {% <span class="kw">when</span> 'value' %} ...
+{% <span class="kw">endcase</span> %}
+
+<span class="cmt"># Loops</span>
+{% <span class="kw">for</span> item <span class="kw">in</span> array limit:5 offset:2 %}
+  {{ forloop.index }}   <span class="cmt">1-based</span>
+  {{ forloop.index0 }}  <span class="cmt">0-based</span>
+  {{ forloop.first }}   <span class="cmt">true/false</span>
+  {{ forloop.last }}    <span class="cmt">true/false</span>
+{% <span class="kw">endfor</span> %}
+
+<span class="cmt"># Include / Render</span>
+{% <span class="kw">render</span> 'snippet-name' %}
+{% <span class="kw">render</span> 'card', product: product %}
+
+<span class="cmt"># Section</span>
+{% <span class="kw">section</span> 'header' %}
+
+<span class="cmt"># Raw (no processing)</span>
+{% <span class="kw">raw</span> %}{{ not processed }}{% <span class="kw">endraw</span> %}</code></pre></div></div>
+<div class="section" id="theme"><div class="section-header"><span class="icon">🎨</span><h2>Theme Structure</h2></div><div class="code-wrapper"><pre><code>theme/
+├── assets/          <span class="cmt">CSS, JS, images</span>
+├── config/
+│   ├── settings_data.json
+│   └── settings_schema.json
+├── layout/
+│   └── theme.liquid    <span class="cmt">Main layout</span>
+├── locales/         <span class="cmt">Translations</span>
+├── sections/        <span class="cmt">Theme sections</span>
+├── snippets/        <span class="cmt">Reusable partials</span>
+└── templates/
+    ├── index.json      <span class="cmt">Homepage</span>
+    ├── product.json    <span class="cmt">Product page</span>
+    ├── collection.json <span class="cmt">Collection page</span>
+    ├── cart.json       <span class="cmt">Cart page</span>
+    ├── page.json       <span class="cmt">Custom pages</span>
+    └── customers/      <span class="cmt">Account pages</span>
+
+<span class="cmt"># Sections (JSON templates, OS 2.0)</span>
+{% schema %}
+{ "name": "My Section",
+  "settings": [...] }
+{% endschema %}</code></pre></div></div>
+<div class="section" id="cli"><div class="section-header"><span class="icon">💻</span><h2>Shopify CLI</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Install</span>
+<span class="fn">npm install</span> -g @shopify/cli @shopify/theme
+
+<span class="cmt"># Auth</span>
+<span class="fn">shopify</span> auth login --store mystore.myshopify.com
+
+<span class="cmt"># Theme commands</span>
+<span class="fn">shopify</span> theme dev         <span class="cmt">Local development</span>
+<span class="fn">shopify</span> theme push        <span class="cmt">Push to store</span>
+<span class="fn">shopify</span> theme pull        <span class="cmt">Pull from store</span>
+<span class="fn">shopify</span> theme list        <span class="cmt">List themes</span>
+<span class="fn">shopify</span> theme info        <span class="cmt">Current theme info</span>
+<span class="fn">shopify</span> theme check       <span class="cmt">Lint theme</span>
+<span class="fn">shopify</span> theme package     <span class="cmt">Create .zip</span>
+
+<span class="cmt"># App commands</span>
+<span class="fn">shopify</span> app init         <span class="cmt">New app</span>
+<span class="fn">shopify</span> app dev          <span class="cmt">Start dev server</span>
+<span class="fn">shopify</span> app deploy       <span class="cmt">Deploy app</span></code></pre></div></div>
+<div class="section" id="api"><div class="section-header"><span class="icon">🔗</span><h2>API Basics</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Storefront API (public)</span>
+POST /api/2024-01/graphql.json
+X-Shopify-Storefront-Access-Token: token
+
+<span class="cmt"># Admin API (private)</span>
+GET /admin/api/2024-01/products.json
+X-Shopify-Access-Token: token
+
+<span class="cmt"># REST endpoints</span>
+/products.json
+/orders.json
+/customers.json
+/collections.json
+/inventory_levels.json
+
+<span class="cmt"># GraphQL (preferred)</span>
+{
+  products(first: 10) {
+    edges {
+      node { id title priceRangeV2 { ... } }
+    }
+  }
+}
+
+<span class="cmt"># Webhooks</span>
+orders/create, products/update,
+carts/update, customers/create</code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Shopify Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

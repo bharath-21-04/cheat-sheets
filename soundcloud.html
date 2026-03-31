@@ -1,58 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SoundCloud Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ SoundCloud</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>SoundCloud Cheatsheet</h1>
-  <p class="subtitle">Playback, navigation, playlists, likes &amp; essential shortcuts</p>
-  <span class="tag tag-concept">Keyboard Shortcuts</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>SoundCloud Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ SoundCloud</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>SoundCloud Cheatsheet</h1><p class="subtitle">Music platform keyboard shortcuts</p><span class="tag tag-concept">Shortcuts</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#playback">Playback</a>
+    <a href="#nav">Navigation</a>
+    <a href="#shortcuts">All Shortcuts</a>
+    <a href="#upload">Upload &amp; Create</a>
+    <a href="#social">Social Features</a>
+    <a href="#embed">Embed &amp; API</a>
+</div></div>
+<div class="section" id="playback"><div class="section-header"><span class="icon">🎵</span><h2>Playback Controls</h2></div><div class="code-wrapper"><pre><code>Space          <span class="cmt">Play / pause</span>
+⇧→             <span class="cmt">Next track</span>
+⇧←             <span class="cmt">Previous track</span>
+→              <span class="cmt">Skip forward</span>
+←              <span class="cmt">Skip backward</span>
+⇧↑             <span class="cmt">Volume up</span>
+⇧↓             <span class="cmt">Volume down</span>
+M              <span class="cmt">Mute/unmute</span>
+L              <span class="cmt">Like track</span>
+R              <span class="cmt">Repost</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Repeat / Shuffle</span>
+<span class="cmt">Click repeat icon in player bar</span>
+<span class="cmt">Click shuffle icon in player bar</span></code></pre></div></div>
+<div class="section" id="nav"><div class="section-header"><span class="icon">🧭</span><h2>Navigation</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Click logo → Home (stream)</span>
+<span class="cmt"># Top nav:</span>
+Home           <span class="cmt">Your stream</span>
+Feed           <span class="cmt">Reposts &amp; new uploads</span>
+Library        <span class="cmt">Likes, playlists, history</span>
+Upload         <span class="cmt">Upload new track</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive SoundCloud content.</div>
-</div>
+<span class="cmt"># Search</span>
+/              <span class="cmt">Focus search (or click)</span>
+<span class="cmt">Filter: Tracks, People, Albums,</span>
+<span class="cmt">Playlists, Everything</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// SoundCloud basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Profile</span>
+<span class="cmt">Tracks, Albums, Playlists, Reposts</span></code></pre></div></div>
+<div class="section" id="shortcuts"><div class="section-header"><span class="icon">⌨️</span><h2>Keyboard Shortcuts Summary</h2></div><div class="code-wrapper"><pre><code>Space          <span class="cmt">Play/pause</span>
+⇧→ / ⇧←       <span class="cmt">Next/prev track</span>
+→ / ←          <span class="cmt">Seek fwd/back</span>
+⇧↑ / ⇧↓       <span class="cmt">Volume up/down</span>
+M              <span class="cmt">Mute</span>
+L              <span class="cmt">Like</span>
+R              <span class="cmt">Repost</span>
+S              <span class="cmt">Share</span>
+Q              <span class="cmt">Add to Queue</span>
+G              <span class="cmt">Go to track page</span>
+P              <span class="cmt">Add to playlist</span></code></pre></div></div>
+<div class="section" id="upload"><div class="section-header"><span class="icon">📤</span><h2>Upload &amp; Create</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Upload page: /upload</span>
+<span class="cmt">Drag &amp; drop or choose files</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// SoundCloud patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Supported formats</span>
+WAV, FLAC, AIFF, ALAC,
+MP3, OGG, MP2, MP4, AAC, WMA
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>SoundCloud Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Metadata</span>
+Title, Genre, Tags, Description
+Album art (min 800×800)
+Track privacy: Public/Private
+
+<span class="cmt"># Plans</span>
+Free:    3 hours upload
+Next:    6 hours + stats
+Pro:     Unlimited + Spotlight
+<span class="cmt">Pro Unlimited: Unlimited everything</span></code></pre></div></div>
+<div class="section" id="social"><div class="section-header"><span class="icon">🤝</span><h2>Social Features</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Actions on tracks</span>
+♥ Like         <span class="cmt">Save to likes</span>
+⟳ Repost      <span class="cmt">Share to followers</span>
+↗ Share       <span class="cmt">External share</span>
+💬 Comment    <span class="cmt">Timed comment</span>
++ Playlist    <span class="cmt">Add to playlist</span>
+
+<span class="cmt"># Timed comments</span>
+<span class="cmt">Click waveform position → type</span>
+<span class="cmt">Shows at that timestamp</span>
+
+<span class="cmt"># Discover</span>
+Charts: Top 50, New &amp; Hot
+Genres, Moods
+Related tracks &amp; artists
+
+<span class="cmt"># Stations</span>
+<span class="cmt">Auto-generated radio from a track</span></code></pre></div></div>
+<div class="section" id="embed"><div class="section-header"><span class="icon">🔗</span><h2>Embed &amp; API</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Embed player</span>
+<span class="cmt">Share → Embed → Copy HTML</span>
+
+&lt;iframe width="100%" height="166"
+  src="https://w.soundcloud.com/player/
+  ?url=https://api.soundcloud.com/tracks/ID"
+&gt;&lt;/iframe&gt;
+
+<span class="cmt"># Widget parameters</span>
+auto_play=false
+color=%23ff5500
+hide_related=true
+show_comments=true
+show_user=true
+
+<span class="cmt"># API (v2, OAuth)</span>
+GET /tracks/:id
+GET /users/:id/tracks
+GET /playlists/:id
+<span class="cmt">Register app at soundcloud.com/you/apps</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>SoundCloud Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

@@ -1,58 +1,118 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Figma Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Figma</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Figma Cheatsheet</h1>
-  <p class="subtitle">Selection, frames, components, prototyping, layers &amp; essential shortcuts</p>
-  <span class="tag tag-concept">Keyboard Shortcuts</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Figma Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Figma</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Figma Cheatsheet</h1><p class="subtitle">Design tool keyboard shortcuts &amp; tips</p><span class="tag tag-concept">Shortcuts</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#tools">Tools</a>
+    <a href="#layers">Layers &amp; Objects</a>
+    <a href="#edit">Edit &amp; Transform</a>
+    <a href="#view">View &amp; Zoom</a>
+    <a href="#text">Text</a>
+    <a href="#components">Components</a>
+    <a href="#proto">Prototyping</a>
+</div></div>
+<div class="section" id="tools"><div class="section-header"><span class="icon">🔧</span><h2>Tools (macOS / Windows)</h2></div><div class="code-wrapper"><pre><code>V              <span class="cmt">Move tool</span>
+K              <span class="cmt">Scale tool</span>
+F              <span class="cmt">Frame tool</span>
+S              <span class="cmt">Slice tool</span>
+R              <span class="cmt">Rectangle</span>
+O              <span class="cmt">Ellipse</span>
+L              <span class="cmt">Line</span>
+P              <span class="cmt">Pen tool</span>
+T              <span class="cmt">Text tool</span>
+I              <span class="cmt">Color picker</span>
+C              <span class="cmt">Comment</span>
+H              <span class="cmt">Hand tool (pan)</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt">Hold Space     Pan (temp hand tool)</span></code></pre></div></div>
+<div class="section" id="layers"><div class="section-header"><span class="icon">📦</span><h2>Layers &amp; Objects</h2></div><div class="code-wrapper"><pre><code>⌘G / Ctrl+G           <span class="cmt">Group selection</span>
+⌘⇧G / Ctrl+Shift+G   <span class="cmt">Ungroup</span>
+⌘[ / Ctrl+[           <span class="cmt">Send backward</span>
+⌘] / Ctrl+]           <span class="cmt">Bring forward</span>
+⌘⌥[ / Ctrl+Alt+[      <span class="cmt">Send to back</span>
+⌘⌥] / Ctrl+Alt+]      <span class="cmt">Bring to front</span>
+⌘⇧H / Ctrl+Shift+H   <span class="cmt">Show/hide selection</span>
+⌘⇧L / Ctrl+Shift+L   <span class="cmt">Lock/unlock</span>
+⌘R / Ctrl+R           <span class="cmt">Rename layer</span>
+Tab                    <span class="cmt">Select next sibling</span>
+Enter                  <span class="cmt">Select child</span>
+Escape                 <span class="cmt">Select parent</span></code></pre></div></div>
+<div class="section" id="edit"><div class="section-header"><span class="icon">✏️</span><h2>Edit &amp; Transform</h2></div><div class="code-wrapper"><pre><code>⌘D / Ctrl+D           <span class="cmt">Duplicate</span>
+⌘C / Ctrl+C           <span class="cmt">Copy</span>
+⌘V / Ctrl+V           <span class="cmt">Paste</span>
+⌘⇧V / Ctrl+Shift+V   <span class="cmt">Paste in place</span>
+⌘X / Ctrl+X           <span class="cmt">Cut</span>
+⌘Z / Ctrl+Z           <span class="cmt">Undo</span>
+⌘⇧Z / Ctrl+Shift+Z   <span class="cmt">Redo</span>
+⌘A / Ctrl+A           <span class="cmt">Select all</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Figma content.</div>
-</div>
+<span class="cmt"># Transform</span>
+⇧ drag                <span class="cmt">Constrain proportions</span>
+⌥ drag / Alt drag     <span class="cmt">Resize from center</span>
+⌥ hover               <span class="cmt">Show distance</span>
+Arrow keys             <span class="cmt">Move 1px</span>
+⇧ Arrow               <span class="cmt">Move 10px</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Figma basics coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Align</span>
+⌥A / Alt+A            <span class="cmt">Align left</span>
+⌥D / Alt+D            <span class="cmt">Align right</span>
+⌥V / Alt+V            <span class="cmt">Align vertical center</span>
+⌥H / Alt+H            <span class="cmt">Align horizontal center</span></code></pre></div></div>
+<div class="section" id="view"><div class="section-header"><span class="icon">👁️</span><h2>View &amp; Zoom</h2></div><div class="code-wrapper"><pre><code>⌘+ / Ctrl++           <span class="cmt">Zoom in</span>
+⌘- / Ctrl+-           <span class="cmt">Zoom out</span>
+⌘0 / Ctrl+0           <span class="cmt">Zoom to 100%</span>
+⌘1 / Ctrl+1           <span class="cmt">Zoom to fit</span>
+⌘2 / Ctrl+2           <span class="cmt">Zoom to selection</span>
+Z + click              <span class="cmt">Zoom in</span>
+Z + ⌥ click            <span class="cmt">Zoom out</span>
+⌘⇧3                   <span class="cmt">Toggle grid</span>
+⌘. / Ctrl+.           <span class="cmt">Toggle UI</span>
+⌘\ / Ctrl+\           <span class="cmt">Toggle panels</span>
+⌘⌥L / Ctrl+Alt+L      <span class="cmt">Toggle layers panel</span></code></pre></div></div>
+<div class="section" id="text"><div class="section-header"><span class="icon">🔤</span><h2>Text</h2></div><div class="code-wrapper"><pre><code>⌘B / Ctrl+B           <span class="cmt">Bold</span>
+⌘I / Ctrl+I           <span class="cmt">Italic</span>
+⌘U / Ctrl+U           <span class="cmt">Underline</span>
+⌘⇧&lt; / Ctrl+Shift+&lt;   <span class="cmt">Decrease font size</span>
+⌘⇧&gt; / Ctrl+Shift+&gt;   <span class="cmt">Increase font size</span>
+⌥⌘L / Ctrl+Alt+L      <span class="cmt">Align left</span>
+⌥⌘T / Ctrl+Alt+T      <span class="cmt">Align center</span>
+⌥⌘R / Ctrl+Alt+R      <span class="cmt">Align right</span>
+⌥⌘J / Ctrl+Alt+J      <span class="cmt">Justify</span>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Figma patterns coming soon...</span></code></pre></div>
-</div>
+<span class="cmt"># Line/letter spacing</span>
+⌥⌘&lt; / Ctrl+Alt+&lt;      <span class="cmt">Decrease line height</span>
+⌥⌘&gt; / Ctrl+Alt+&gt;      <span class="cmt">Increase line height</span></code></pre></div></div>
+<div class="section" id="components"><div class="section-header"><span class="icon">🧩</span><h2>Components</h2></div><div class="code-wrapper"><pre><code>⌘⌥K / Ctrl+Alt+K      <span class="cmt">Create component</span>
+⌘⌥B / Ctrl+Alt+B      <span class="cmt">Detach instance</span>
+⌘⌥O / Ctrl+Alt+O      <span class="cmt">Open component</span>
 
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Figma Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Styles</span>
+⌘⌥C / Ctrl+Alt+C      <span class="cmt">Copy properties</span>
+⌘⌥V / Ctrl+Alt+V      <span class="cmt">Paste properties</span>
+
+<span class="cmt"># Boolean operations (select 2+ shapes)</span>
+<span class="cmt">Union, Subtract, Intersect, Exclude</span>
+<span class="cmt">Available in toolbar when shapes selected</span>
+
+<span class="cmt"># Auto Layout</span>
+⇧A / Shift+A          <span class="cmt">Add auto layout</span>
+⌘⇧A / Ctrl+Shift+A    <span class="cmt">Remove auto layout</span></code></pre></div></div>
+<div class="section" id="proto"><div class="section-header"><span class="icon">🔗</span><h2>Prototyping</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Switch to prototype mode</span>
+<span class="cmt">Tab between Design / Prototype / Inspect</span>
+
+<span class="cmt"># Presentation</span>
+⌘⌥Enter               <span class="cmt">Present from frame</span>
+⌘Enter                 <span class="cmt">Present from start</span>
+
+<span class="cmt"># In presentation</span>
+→ / ←                  <span class="cmt">Next / prev frame</span>
+R                      <span class="cmt">Restart</span>
+F                      <span class="cmt">Toggle flow list</span>
+
+<span class="cmt"># Export</span>
+⌘⇧E / Ctrl+Shift+E    <span class="cmt">Export selection</span>
+<span class="cmt">Formats: PNG, JPG, SVG, PDF</span>
+<span class="cmt">Scales: 1x, 2x, 3x, 4x</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Figma Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>

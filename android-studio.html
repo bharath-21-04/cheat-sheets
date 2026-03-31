@@ -1,58 +1,105 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Android Studio Cheatsheet</title>
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-</head>
-<body>
-<nav>
-  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Android Studio</span></div>
-  <div class="nav-right"><a href="index.html">All Sheets</a></div>
-</nav>
-<div class="container">
-<div class="hero">
-  <h1>Android Studio Cheatsheet</h1>
-  <p class="subtitle">Navigation, editing, refactoring, debugging, build &amp; essential shortcuts</p>
-  <span class="tag tag-concept">Keyboard Shortcuts</span>
-  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
-  <div class="search-count" id="searchCount"></div>
-</div>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Android Studio Cheatsheet</title><link rel="stylesheet" href="styles.css"/></head><body>
+<nav><div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Android Studio</span></div><div class="nav-right"><a href="index.html">All Sheets</a></div></nav>
+<div class="container"><div class="hero"><h1>Android Studio Cheatsheet</h1><p class="subtitle">IDE keyboard shortcuts (macOS / Windows)</p><span class="tag tag-concept">Shortcuts</span>
+<div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off"/><button class="search-clear" id="searchClear">&times;</button></div><div class="search-count" id="searchCount"></div></div>
+<div class="toc"><div class="toc-title">Contents</div><div class="toc-grid">
+    <a href="#general">General</a>
+    <a href="#edit">Editing</a>
+    <a href="#nav">Navigation</a>
+    <a href="#refactor">Refactoring</a>
+    <a href="#run">Run &amp; Debug</a>
+    <a href="#emulator">Emulator</a>
+    <a href="#gradle">Gradle</a>
+</div></div>
+<div class="section" id="general"><div class="section-header"><span class="icon">⌨️</span><h2>General</h2></div><div class="code-wrapper"><pre><code>⌘⇧A / Ctrl+Shift+A   <span class="cmt">Find Action</span>
+⌘, / Ctrl+Alt+S       <span class="cmt">Settings</span>
+⌘; / Ctrl+Alt+Shift+S <span class="cmt">Project Structure</span>
+⌘1 / Alt+1             <span class="cmt">Project panel</span>
+⌘7 / Alt+7             <span class="cmt">Structure panel</span>
+⌘9 / Alt+9             <span class="cmt">Version control</span>
+⌘⇧F12                 <span class="cmt">Toggle maximize editor</span>
+⌘E / Ctrl+E           <span class="cmt">Recent files</span>
+⌘⇧E / Ctrl+Shift+E   <span class="cmt">Recent locations</span>
+⌘` / Ctrl+`           <span class="cmt">Quick switch scheme</span></code></pre></div></div>
+<div class="section" id="edit"><div class="section-header"><span class="icon">✏️</span><h2>Editing</h2></div><div class="code-wrapper"><pre><code>⌘⇧Enter / Ctrl+Shift+Enter  <span class="cmt">Complete statement</span>
+⌥Enter / Alt+Enter         <span class="cmt">Quick fix / intention</span>
+⌘P / Ctrl+P                <span class="cmt">Parameter info</span>
+⌘⇧↑ / Alt+Shift+↑         <span class="cmt">Move line up</span>
+⌘⇧↓ / Alt+Shift+↓         <span class="cmt">Move line down</span>
+⌘D / Ctrl+D                <span class="cmt">Duplicate line</span>
+⌘⌫ / Ctrl+Y                <span class="cmt">Delete line</span>
+⌘/ / Ctrl+/                <span class="cmt">Line comment</span>
+⌘⌥/ / Ctrl+Shift+/         <span class="cmt">Block comment</span>
+⌥↑ / Ctrl+W                <span class="cmt">Extend selection</span>
+⌥↓ / Ctrl+Shift+W          <span class="cmt">Shrink selection</span>
+⌘⌥L / Ctrl+Alt+L           <span class="cmt">Reformat code</span>
+⌘⌥O / Ctrl+Alt+O           <span class="cmt">Optimize imports</span>
+Tab / ⇧Tab                 <span class="cmt">Indent / unindent</span></code></pre></div></div>
+<div class="section" id="nav"><div class="section-header"><span class="icon">🧭</span><h2>Navigation</h2></div><div class="code-wrapper"><pre><code>⌘O / Ctrl+N                <span class="cmt">Go to class</span>
+⌘⇧O / Ctrl+Shift+N        <span class="cmt">Go to file</span>
+⌘⌥O / Ctrl+Alt+Shift+N    <span class="cmt">Go to symbol</span>
+⌘B / Ctrl+B                <span class="cmt">Go to declaration</span>
+⌘⌥B / Ctrl+Alt+B           <span class="cmt">Go to implementation</span>
+⌘U / Ctrl+U                <span class="cmt">Go to super method</span>
+⌘F12 / Ctrl+F12            <span class="cmt">File structure</span>
+⌘L / Ctrl+G                <span class="cmt">Go to line</span>
+F2 / Shift+F2              <span class="cmt">Next/prev error</span>
+⌘[ / Alt+Left              <span class="cmt">Navigate back</span>
+⌘] / Alt+Right             <span class="cmt">Navigate forward</span>
+⌘⇧T / Ctrl+Shift+T        <span class="cmt">Go to test</span></code></pre></div></div>
+<div class="section" id="refactor"><div class="section-header"><span class="icon">🔄</span><h2>Refactoring</h2></div><div class="code-wrapper"><pre><code>⇧F6 / Shift+F6             <span class="cmt">Rename</span>
+⌘F6 / Ctrl+F6              <span class="cmt">Change signature</span>
+F6                          <span class="cmt">Move</span>
+⌘⌥M / Ctrl+Alt+M           <span class="cmt">Extract method</span>
+⌘⌥V / Ctrl+Alt+V           <span class="cmt">Extract variable</span>
+⌘⌥F / Ctrl+Alt+F           <span class="cmt">Extract field</span>
+⌘⌥C / Ctrl+Alt+C           <span class="cmt">Extract constant</span>
+⌘⌥P / Ctrl+Alt+P           <span class="cmt">Extract parameter</span>
+⌘⌥N / Ctrl+Alt+N           <span class="cmt">Inline</span></code></pre></div></div>
+<div class="section" id="run"><div class="section-header"><span class="icon">🏃</span><h2>Run &amp; Debug</h2></div><div class="code-wrapper"><pre><code>⌃R / Shift+F10             <span class="cmt">Run</span>
+⌃D / Shift+F9              <span class="cmt">Debug</span>
+⌘F9 / Ctrl+F9              <span class="cmt">Build project</span>
+⌘⇧F9                       <span class="cmt">Rebuild</span>
+⌘R / Ctrl+F5               <span class="cmt">Rerun</span>
+⌘F2 / Ctrl+F2              <span class="cmt">Stop</span>
+⌃⌥R / Alt+Shift+F10        <span class="cmt">Run config</span>
 
-<div class="toc"><div class="toc-title">Contents</div>
-  <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
-  </div>
-</div>
+<span class="cmt"># Debug</span>
+F8                          <span class="cmt">Step over</span>
+F7                          <span class="cmt">Step into</span>
+⇧F8                         <span class="cmt">Step out</span>
+F9                          <span class="cmt">Resume</span>
+⌘F8 / Ctrl+F8              <span class="cmt">Toggle breakpoint</span>
+⌘⇧F8                       <span class="cmt">View breakpoints</span>
+⌥F8 / Alt+F8               <span class="cmt">Evaluate expression</span></code></pre></div></div>
+<div class="section" id="emulator"><div class="section-header"><span class="icon">📱</span><h2>Emulator</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Emulator shortcuts</span>
+⌘⇧L                        <span class="cmt">Rotate left</span>
+⌘⇧R                        <span class="cmt">Rotate right</span>
+⌘=                          <span class="cmt">Zoom in</span>
+⌘-                          <span class="cmt">Zoom out</span>
+⌘⇧S                        <span class="cmt">Screenshot</span>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Android Studio content.</div>
-</div>
+<span class="cmt"># ADB commands</span>
+adb devices                 <span class="cmt">List devices</span>
+adb install app.apk         <span class="cmt">Install APK</span>
+adb logcat                  <span class="cmt">View logs</span>
+adb shell                   <span class="cmt">Shell access</span>
+adb push local remote       <span class="cmt">Push file</span>
+adb pull remote local       <span class="cmt">Pull file</span>
+adb reverse tcp:8080 tcp:8080  <span class="cmt">Port forward</span></code></pre></div></div>
+<div class="section" id="gradle"><div class="section-header"><span class="icon">🐘</span><h2>Gradle</h2></div><div class="code-wrapper"><pre><code><span class="cmt"># Sync project</span>
+<span class="cmt">File → Sync Project with Gradle</span>
+⌘⇧I / Ctrl+Shift+O        <span class="cmt">Sync now</span>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Android Studio basics coming soon...</span></code></pre></div>
-</div>
-
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Android Studio patterns coming soon...</span></code></pre></div>
-</div>
-
-</div>
-<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
-<footer>Android Studio Cheatsheet &middot; 2026</footer>
-<script>
-document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
-const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
-const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
-</script>
-<script src="spotlight.js"></script>
-<script src="sheet-grid.js"></script>
-</body>
-</html>
+<span class="cmt"># Common tasks</span>
+./gradlew build             <span class="cmt">Build</span>
+./gradlew clean             <span class="cmt">Clean</span>
+./gradlew assembleDebug     <span class="cmt">Debug APK</span>
+./gradlew assembleRelease   <span class="cmt">Release APK</span>
+./gradlew test              <span class="cmt">Run tests</span>
+./gradlew lint              <span class="cmt">Run lint</span>
+./gradlew dependencies      <span class="cmt">Show deps</span>
+./gradlew tasks             <span class="cmt">List tasks</span></code></pre></div></div>
+</div><button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button><footer>Android Studio Cheatsheet &middot; 2026</footer>
+<script>document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)});};w.appendChild(b)});const bb=document.querySelector('.back-top');window.addEventListener('scroll',()=>bb.classList.toggle('visible',window.scrollY>400));const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});</script>
+<script src="spotlight.js"></script><script src="sheet-grid.js"></script></body></html>
