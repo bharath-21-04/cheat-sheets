@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Docker Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+</head>
+<body>
+<nav>
+  <div class="nav-left"><span class="logo-mark">&lt;/&gt;</span><a href="index.html">Cheatsheets</a><span style="color:var(--text-dim);font-size:.85rem">/ Docker</span></div>
+  <div class="nav-right"><a href="index.html">All Sheets</a></div>
+</nav>
+<div class="container">
+<div class="hero">
+  <h1>Docker Cheatsheet</h1>
+  <p class="subtitle">Dockerfile, images, containers, volumes, networking, compose &amp; best practices</p>
+  <span class="tag tag-fw">DevOps / Containers</span>
+  <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
+  <div class="search-count" id="searchCount"></div>
+</div>
+
+<div class="toc"><div class="toc-title">Contents</div>
+  <div class="toc-grid">
+    <a href="#overview">Overview</a>
+    <a href="#basics">Basics</a>
+    <a href="#common">Common Patterns</a>
+  </div>
+</div>
+
+<div class="section" id="overview">
+  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
+  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Docker content.</div>
+</div>
+
+<div class="section" id="basics">
+  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Docker basics coming soon...</span></code></pre></div>
+</div>
+
+<div class="section" id="common">
+  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Docker patterns coming soon...</span></code></pre></div>
+</div>
+
+</div>
+<button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
+<footer>Docker Cheatsheet &middot; 2026</footer>
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w=>{const b=document.createElement('button');b.className='copy-btn';b.textContent='Copy';b.onclick=()=>{navigator.clipboard.writeText(w.querySelector('code').textContent).then(()=>{b.textContent='Copied!';b.classList.add('copied');setTimeout(()=>{b.textContent='Copy';b.classList.remove('copied')},1500)})};w.appendChild(b)});
+const backBtn=document.querySelector('.back-top');window.addEventListener('scroll',()=>backBtn.classList.toggle('visible',window.scrollY>400));
+const si=document.getElementById('searchInput'),sc=document.getElementById('searchClear'),sct=document.getElementById('searchCount');si.addEventListener('input',()=>{const q=si.value.toLowerCase().trim();sc.style.display=q?'block':'none';const secs=document.querySelectorAll('.section');let v=0;secs.forEach(s=>{if(!q){s.classList.remove('search-hidden');v++}else if(s.textContent.toLowerCase().includes(q)){s.classList.remove('search-hidden');v++}else{s.classList.add('search-hidden')}});sct.textContent=q?v+' section'+(v!==1?'s':'')+' found':'';});sc.addEventListener('click',()=>{si.value='';si.dispatchEvent(new Event('input'));si.focus()});
+</script>
+<script src="spotlight.js"></script>
+<script src="sheet-grid.js"></script>
+</body>
+</html>
