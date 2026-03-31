@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Development Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ Python Dev</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+
+<div class="container">
+
+<div class="hero">
+  <h1>Python Development Cheatsheet</h1>
+  <p class="subtitle">FastAPI, async, testing, typing, packaging &amp; production patterns</p>
+  <span class="badge">Development</span>
+</div>
+
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#project">Project Structure</a>
+    <a href="#venv">Virtual Environments</a>
+    <a href="#typing">Type Hints</a>
+    <a href="#fastapi">FastAPI</a>
+    <a href="#sqlalchemy">SQLAlchemy</a>
+    <a href="#async">Async / Await</a>
+    <a href="#decorators">Decorators</a>
+    <a href="#context">Context Managers</a>
+    <a href="#testing">Testing (pytest)</a>
+    <a href="#logging">Logging</a>
+    <a href="#env">Environment &amp; Config</a>
+    <a href="#packaging">Packaging</a>
+    <a href="#docker">Docker</a>
+    <a href="#patterns">Common Patterns</a>
+  </div>
+</div>
+
+<!-- ===== PROJECT STRUCTURE ===== -->
+<div class="section" id="project">
+  <div class="section-header"><span class="icon">📁</span><h2>Project Structure</h2></div>
+  <div class="code-wrapper"><pre><code>myproject/
+├── src/
+│   └── myproject/
+│       ├── __init__.py
+│       ├── main.py              <span class="cmt"># FastAPI app entry</span>
+│       ├── config.py            <span class="cmt"># settings / env vars</span>
+│       ├── models/
+│       │   ├── __init__.py
+│       │   └── user.py          <span class="cmt"># SQLAlchemy models</span>
+│       ├── schemas/
+│       │   ├── __init__.py
+│       │   └── user.py          <span class="cmt"># Pydantic schemas</span>
+│       ├── routers/
+│       │   ├── __init__.py
+│       │   └── users.py         <span class="cmt"># API routes</span>
+│       ├── services/
+│       │   └── user_service.py  <span class="cmt"># business logic</span>
+│       ├── repositories/
+│       │   └── user_repo.py     <span class="cmt"># data access</span>
+│       └── utils/
+│           └── security.py
+├── tests/
+│   ├── conftest.py
+│   ├── test_users.py
+│   └── test_services.py
+├── pyproject.toml
+├── Dockerfile
+├── docker-compose.yml
+├── .env
+└── README.md</code></pre></div>
+</div>
+
+<!-- ===== VIRTUAL ENVIRONMENTS ===== -->
+<div class="section" id="venv">
+  <div class="section-header"><span class="icon">📦</span><h2>Virtual Environments</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># venv (built-in)</span>
+python -m venv .venv
+source .venv/bin/activate        <span class="cmt"># macOS/Linux</span>
+.venv\Scripts\activate           <span class="cmt"># Windows</span>
+deactivate
+
+<span class="cmt"># pip</span>
+pip install fastapi uvicorn
+pip install -r requirements.txt
+pip freeze > requirements.txt
+
+<span class="cmt"># Poetry (modern)</span>
+poetry init
+poetry add fastapi uvicorn
+poetry add --group dev pytest httpx
+poetry install
+poetry run python main.py
+poetry shell                     <span class="cmt"># activate venv</span>
+
+<span class="cmt"># uv (blazing fast, Rust-based)</span>
+uv venv
+uv pip install fastapi
+uv pip compile requirements.in -o requirements.txt
+uv pip sync requirements.txt</code></pre></div>
+</div>
+
+<!-- ===== TYPE HINTS ===== -->
+<div class="section" id="typing">
+  <div class="section-header"><span class="icon">🏷️</span><h2>Type Hints</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> typing <span class="kw">import</span> Optional, Union, TypeAlias, TypeVar, Generic
+
+<span class="cmt"># Basic types</span>
+name: <span class="tp">str</span> = <span class="str">"Bob"</span>
+age: <span class="tp">int</span> = <span class="num">25</span>
+active: <span class="tp">bool</span> = <span class="kw">True</span>
+score: <span class="tp">float</span> = <span class="num">9.5</span>
+
+<span class="cmt"># Collections (Python 3.9+ — use built-in generics)</span>
+names: <span class="tp">list</span>[<span class="tp">str</span>] = [<span class="str">"a"</span>, <span class="str">"b"</span>]
+lookup: <span class="tp">dict</span>[<span class="tp">str</span>, <span class="tp">int</span>] = {<span class="str">"a"</span>: <span class="num">1</span>}
+pair: <span class="tp">tuple</span>[<span class="tp">str</span>, <span class="tp">int</span>] = (<span class="str">"age"</span>, <span class="num">25</span>)
+ids: <span class="tp">set</span>[<span class="tp">int</span>] = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>}
+
+<span class="cmt"># Optional &amp; Union (Python 3.10+ → use |)</span>
+email: <span class="tp">str</span> | <span class="kw">None</span> = <span class="kw">None</span>          <span class="cmt"># same as Optional[str]</span>
+value: <span class="tp">int</span> | <span class="tp">str</span> = <span class="num">42</span>             <span class="cmt"># same as Union[int, str]</span>
+
+<span class="cmt"># Function signatures</span>
+<span class="kw">def</span> <span class="fn">greet</span>(name: <span class="tp">str</span>, times: <span class="tp">int</span> = <span class="num">1</span>) -> <span class="tp">str</span>:
+    <span class="kw">return</span> name * times
+
+<span class="cmt"># Callable</span>
+<span class="kw">from</span> collections.abc <span class="kw">import</span> Callable
+handler: Callable[[<span class="tp">str</span>, <span class="tp">int</span>], <span class="tp">bool</span>]
+
+<span class="cmt"># TypeVar &amp; Generic</span>
+T = TypeVar(<span class="str">"T"</span>)
+<span class="kw">def</span> <span class="fn">first</span>(items: <span class="tp">list</span>[T]) -> T:
+    <span class="kw">return</span> items[<span class="num">0</span>]
+
+<span class="cmt"># TypeAlias</span>
+UserId: TypeAlias = <span class="tp">int</span>
+JSON: TypeAlias = <span class="tp">dict</span>[<span class="tp">str</span>, <span class="tp">any</span>]
+
+<span class="cmt"># Literal</span>
+<span class="kw">from</span> typing <span class="kw">import</span> Literal
+<span class="kw">def</span> <span class="fn">set_mode</span>(mode: Literal[<span class="str">"read"</span>, <span class="str">"write"</span>]) -> <span class="kw">None</span>: ...
+
+<span class="cmt"># TypedDict</span>
+<span class="kw">from</span> typing <span class="kw">import</span> TypedDict
+<span class="kw">class</span> <span class="tp">UserDict</span>(TypedDict):
+    name: <span class="tp">str</span>
+    age: <span class="tp">int</span>
+    email: <span class="tp">str</span> | <span class="kw">None</span>
+
+<span class="cmt"># Protocol (structural subtyping)</span>
+<span class="kw">from</span> typing <span class="kw">import</span> Protocol
+<span class="kw">class</span> <span class="tp">HasName</span>(Protocol):
+    name: <span class="tp">str</span>
+
+<span class="kw">def</span> <span class="fn">greet</span>(obj: <span class="tp">HasName</span>) -> <span class="tp">str</span>:
+    <span class="kw">return</span> <span class="kw">f</span><span class="str">"Hello {obj.name}"</span></code></pre></div>
+</div>
+
+<!-- ===== FASTAPI ===== -->
+<div class="section" id="fastapi">
+  <div class="section-header"><span class="icon">⚡</span><h2>FastAPI</h2></div>
+
+  <h3>Basic App</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, HTTPException, Depends, Query, Path
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field, EmailStr
+
+app = FastAPI(title=<span class="str">"My API"</span>, version=<span class="str">"1.0.0"</span>)
+
+<span class="cmt"># Pydantic schemas</span>
+<span class="kw">class</span> <span class="tp">CreateUser</span>(BaseModel):
+    name: <span class="tp">str</span> = Field(..., min_length=<span class="num">1</span>, max_length=<span class="num">100</span>)
+    email: EmailStr
+    age: <span class="tp">int</span> = Field(ge=<span class="num">18</span>, le=<span class="num">150</span>)
+
+<span class="kw">class</span> <span class="tp">UserResponse</span>(BaseModel):
+    id: <span class="tp">int</span>
+    name: <span class="tp">str</span>
+    email: <span class="tp">str</span>
+
+    model_config = {<span class="str">"from_attributes"</span>: <span class="kw">True</span>}  <span class="cmt"># enables ORM mode</span>
+
+<span class="cmt"># Routes</span>
+<span class="kw">@app.get</span>(<span class="str">"/users"</span>, response_model=<span class="tp">list</span>[<span class="tp">UserResponse</span>])
+<span class="kw">async def</span> <span class="fn">get_users</span>(
+    skip: <span class="tp">int</span> = Query(<span class="num">0</span>, ge=<span class="num">0</span>),
+    limit: <span class="tp">int</span> = Query(<span class="num">10</span>, ge=<span class="num">1</span>, le=<span class="num">100</span>),
+):
+    <span class="kw">return await</span> user_service.<span class="fn">get_all</span>(skip, limit)
+
+<span class="kw">@app.get</span>(<span class="str">"/users/{user_id}"</span>, response_model=<span class="tp">UserResponse</span>)
+<span class="kw">async def</span> <span class="fn">get_user</span>(user_id: <span class="tp">int</span> = Path(..., gt=<span class="num">0</span>)):
+    user = <span class="kw">await</span> user_service.<span class="fn">get_by_id</span>(user_id)
+    <span class="kw">if not</span> user:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="num">404</span>, detail=<span class="str">"User not found"</span>)
+    <span class="kw">return</span> user
+
+<span class="kw">@app.post</span>(<span class="str">"/users"</span>, response_model=<span class="tp">UserResponse</span>, status_code=<span class="num">201</span>)
+<span class="kw">async def</span> <span class="fn">create_user</span>(data: <span class="tp">CreateUser</span>):
+    <span class="kw">return await</span> user_service.<span class="fn">create</span>(data)
+
+<span class="kw">@app.delete</span>(<span class="str">"/users/{user_id}"</span>, status_code=<span class="num">204</span>)
+<span class="kw">async def</span> <span class="fn">delete_user</span>(user_id: <span class="tp">int</span>):
+    <span class="kw">await</span> user_service.<span class="fn">delete</span>(user_id)</code></pre></div>
+
+  <h3>Dependency Injection</h3>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Database session dependency</span>
+<span class="kw">async def</span> <span class="fn">get_db</span>():
+    db = SessionLocal()
+    <span class="kw">try</span>:
+        <span class="kw">yield</span> db
+    <span class="kw">finally</span>:
+        db.<span class="fn">close</span>()
+
+<span class="cmt"># Auth dependency</span>
+<span class="kw">async def</span> <span class="fn">get_current_user</span>(token: <span class="tp">str</span> = Depends(oauth2_scheme)):
+    user = <span class="fn">decode_token</span>(token)
+    <span class="kw">if not</span> user:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="num">401</span>, detail=<span class="str">"Invalid token"</span>)
+    <span class="kw">return</span> user
+
+<span class="cmt"># Use in route</span>
+<span class="kw">@app.get</span>(<span class="str">"/me"</span>)
+<span class="kw">async def</span> <span class="fn">profile</span>(
+    user: <span class="tp">User</span> = Depends(get_current_user),
+    db: <span class="tp">Session</span> = Depends(get_db),
+):
+    <span class="kw">return</span> user</code></pre></div>
+
+  <h3>Middleware &amp; Error Handling</h3>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Custom middleware</span>
+<span class="kw">@app.middleware</span>(<span class="str">"http"</span>)
+<span class="kw">async def</span> <span class="fn">log_requests</span>(request, call_next):
+    start = time.<span class="fn">time</span>()
+    response = <span class="kw">await</span> <span class="fn">call_next</span>(request)
+    duration = time.<span class="fn">time</span>() - start
+    logger.<span class="fn">info</span>(<span class="kw">f</span><span class="str">"{request.method} {request.url.path} {response.status_code} {duration:.3f}s"</span>)
+    <span class="kw">return</span> response
+
+<span class="cmt"># Exception handler</span>
+<span class="kw">@app.exception_handler</span>(ValueError)
+<span class="kw">async def</span> <span class="fn">value_error_handler</span>(request, exc):
+    <span class="kw">return</span> JSONResponse(status_code=<span class="num">400</span>, content={<span class="str">"detail"</span>: <span class="fn">str</span>(exc)})
+
+<span class="cmt"># CORS</span>
+<span class="kw">from</span> fastapi.middleware.cors <span class="kw">import</span> CORSMiddleware
+app.<span class="fn">add_middleware</span>(CORSMiddleware, allow_origins=[<span class="str">"*"</span>], allow_methods=[<span class="str">"*"</span>])
+
+<span class="cmt"># Run</span>
+<span class="cmt"># uvicorn main:app --reload --port 8000</span></code></pre></div>
+</div>
+
+<!-- ===== SQLALCHEMY ===== -->
+<div class="section" id="sqlalchemy">
+  <div class="section-header"><span class="icon">🗄️</span><h2>SQLAlchemy</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine, Column, Integer, String, ForeignKey
+<span class="kw">from</span> sqlalchemy.orm <span class="kw">import</span> DeclarativeBase, Mapped, mapped_column, relationship, sessionmaker
+
+<span class="cmt"># Engine &amp; Session</span>
+DATABASE_URL = <span class="str">"postgresql+asyncpg://user:pass@localhost/db"</span>
+engine = create_engine(DATABASE_URL)
+SessionLocal = sessionmaker(bind=engine)
+
+<span class="cmt"># Modern declarative models (SQLAlchemy 2.0+)</span>
+<span class="kw">class</span> <span class="tp">Base</span>(DeclarativeBase):
+    <span class="kw">pass</span>
+
+<span class="kw">class</span> <span class="tp">User</span>(Base):
+    __tablename__ = <span class="str">"users"</span>
+
+    id: Mapped[<span class="tp">int</span>] = mapped_column(primary_key=<span class="kw">True</span>)
+    name: Mapped[<span class="tp">str</span>] = mapped_column(String(<span class="num">100</span>))
+    email: Mapped[<span class="tp">str</span>] = mapped_column(String(<span class="num">255</span>), unique=<span class="kw">True</span>)
+    posts: Mapped[<span class="tp">list</span>[<span class="str">"Post"</span>]] = relationship(back_populates=<span class="str">"author"</span>)
+
+<span class="kw">class</span> <span class="tp">Post</span>(Base):
+    __tablename__ = <span class="str">"posts"</span>
+
+    id: Mapped[<span class="tp">int</span>] = mapped_column(primary_key=<span class="kw">True</span>)
+    title: Mapped[<span class="tp">str</span>] = mapped_column(String(<span class="num">200</span>))
+    author_id: Mapped[<span class="tp">int</span>] = mapped_column(ForeignKey(<span class="str">"users.id"</span>))
+    author: Mapped[<span class="str">"User"</span>] = relationship(back_populates=<span class="str">"posts"</span>)
+
+<span class="cmt"># CRUD operations</span>
+<span class="kw">def</span> <span class="fn">get_user</span>(db: Session, user_id: <span class="tp">int</span>):
+    <span class="kw">return</span> db.<span class="fn">get</span>(User, user_id)
+
+<span class="kw">def</span> <span class="fn">get_users</span>(db: Session, skip=<span class="num">0</span>, limit=<span class="num">10</span>):
+    <span class="kw">return</span> db.<span class="fn">query</span>(User).<span class="fn">offset</span>(skip).<span class="fn">limit</span>(limit).<span class="fn">all</span>()
+
+<span class="kw">def</span> <span class="fn">create_user</span>(db: Session, name: <span class="tp">str</span>, email: <span class="tp">str</span>):
+    user = User(name=name, email=email)
+    db.<span class="fn">add</span>(user)
+    db.<span class="fn">commit</span>()
+    db.<span class="fn">refresh</span>(user)
+    <span class="kw">return</span> user
+
+<span class="cmt"># Select statement (2.0 style)</span>
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> select
+stmt = <span class="fn">select</span>(User).<span class="fn">where</span>(User.email == <span class="str">"bob@mail.com"</span>)
+result = db.<span class="fn">execute</span>(stmt).<span class="fn">scalar_one_or_none</span>()</code></pre></div>
+</div>
+
+<!-- ===== ASYNC ===== -->
+<div class="section" id="async">
+  <div class="section-header"><span class="icon">⏳</span><h2>Async / Await</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> asyncio
+<span class="kw">import</span> httpx
+
+<span class="cmt"># Basic async function</span>
+<span class="kw">async def</span> <span class="fn">fetch_data</span>(url: <span class="tp">str</span>) -> <span class="tp">dict</span>:
+    <span class="kw">async with</span> httpx.AsyncClient() <span class="kw">as</span> client:
+        resp = <span class="kw">await</span> client.<span class="fn">get</span>(url)
+        <span class="kw">return</span> resp.<span class="fn">json</span>()
+
+<span class="cmt"># Run multiple concurrently</span>
+<span class="kw">async def</span> <span class="fn">main</span>():
+    results = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(
+        <span class="fn">fetch_data</span>(<span class="str">"https://api.example.com/a"</span>),
+        <span class="fn">fetch_data</span>(<span class="str">"https://api.example.com/b"</span>),
+        <span class="fn">fetch_data</span>(<span class="str">"https://api.example.com/c"</span>),
+    )
+    <span class="kw">return</span> results
+
+asyncio.<span class="fn">run</span>(<span class="fn">main</span>())
+
+<span class="cmt"># Async generator</span>
+<span class="kw">async def</span> <span class="fn">paginate</span>(url):
+    page = <span class="num">1</span>
+    <span class="kw">while True</span>:
+        data = <span class="kw">await</span> <span class="fn">fetch_data</span>(<span class="kw">f</span><span class="str">"{url}?page={page}"</span>)
+        <span class="kw">if not</span> data: <span class="kw">break</span>
+        <span class="kw">yield</span> data
+        page += <span class="num">1</span>
+
+<span class="kw">async for</span> batch <span class="kw">in</span> <span class="fn">paginate</span>(<span class="str">"/api/users"</span>):
+    <span class="fn">process</span>(batch)
+
+<span class="cmt"># Semaphore (limit concurrency)</span>
+sem = asyncio.<span class="fn">Semaphore</span>(<span class="num">10</span>)
+<span class="kw">async def</span> <span class="fn">limited_fetch</span>(url):
+    <span class="kw">async with</span> sem:
+        <span class="kw">return await</span> <span class="fn">fetch_data</span>(url)
+
+<span class="cmt"># Timeout</span>
+<span class="kw">async with</span> asyncio.<span class="fn">timeout</span>(<span class="num">5.0</span>):
+    result = <span class="kw">await</span> <span class="fn">slow_operation</span>()</code></pre></div>
+</div>
+
+<!-- ===== DECORATORS ===== -->
+<div class="section" id="decorators">
+  <div class="section-header"><span class="icon">🎀</span><h2>Decorators</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> functools
+<span class="kw">import</span> time
+
+<span class="cmt"># Basic decorator</span>
+<span class="kw">def</span> <span class="fn">timer</span>(func):
+    <span class="kw">@functools.wraps</span>(func)
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+        start = time.<span class="fn">time</span>()
+        result = <span class="fn">func</span>(*args, **kwargs)
+        <span class="fn">print</span>(<span class="kw">f</span><span class="str">"{func.__name__} took {time.time() - start:.3f}s"</span>)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> wrapper
+
+<span class="kw">@timer</span>
+<span class="kw">def</span> <span class="fn">slow_fn</span>():
+    time.<span class="fn">sleep</span>(<span class="num">1</span>)
+
+<span class="cmt"># Decorator with arguments</span>
+<span class="kw">def</span> <span class="fn">retry</span>(max_retries=<span class="num">3</span>, delay=<span class="num">1</span>):
+    <span class="kw">def</span> <span class="fn">decorator</span>(func):
+        <span class="kw">@functools.wraps</span>(func)
+        <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+            <span class="kw">for</span> attempt <span class="kw">in</span> <span class="fn">range</span>(max_retries):
+                <span class="kw">try</span>:
+                    <span class="kw">return</span> <span class="fn">func</span>(*args, **kwargs)
+                <span class="kw">except</span> Exception <span class="kw">as</span> e:
+                    <span class="kw">if</span> attempt == max_retries - <span class="num">1</span>: <span class="kw">raise</span>
+                    time.<span class="fn">sleep</span>(delay)
+        <span class="kw">return</span> wrapper
+    <span class="kw">return</span> decorator
+
+<span class="kw">@retry</span>(max_retries=<span class="num">5</span>, delay=<span class="num">2</span>)
+<span class="kw">def</span> <span class="fn">flaky_api_call</span>(): ...
+
+<span class="cmt"># Class-based decorator</span>
+<span class="kw">class</span> <span class="tp">Cache</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, func):
+        self.func = func
+        self.cache = {}
+    <span class="kw">def</span> <span class="fn">__call__</span>(self, *args):
+        <span class="kw">if</span> args <span class="kw">not in</span> self.cache:
+            self.cache[args] = self.<span class="fn">func</span>(*args)
+        <span class="kw">return</span> self.cache[args]
+
+<span class="cmt"># Built-in decorators</span>
+<span class="kw">@property</span>              <span class="cmt"># getter</span>
+<span class="kw">@staticmethod</span>          <span class="cmt"># no self/cls</span>
+<span class="kw">@classmethod</span>           <span class="cmt"># receives cls</span>
+<span class="kw">@functools.lru_cache</span>   <span class="cmt"># memoization</span>
+<span class="kw">@functools.cached_property</span>  <span class="cmt"># computed once</span>
+<span class="kw">@dataclass</span>             <span class="cmt"># auto __init__, __repr__, etc.</span></code></pre></div>
+</div>
+
+<!-- ===== CONTEXT MANAGERS ===== -->
+<div class="section" id="context">
+  <div class="section-header"><span class="icon">🔐</span><h2>Context Managers</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Built-in</span>
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"file.txt"</span>) <span class="kw">as</span> f:
+    content = f.<span class="fn">read</span>()
+
+<span class="cmt"># Custom (class-based)</span>
+<span class="kw">class</span> <span class="tp">DBConnection</span>:
+    <span class="kw">def</span> <span class="fn">__enter__</span>(self):
+        self.conn = <span class="fn">connect_db</span>()
+        <span class="kw">return</span> self.conn
+    <span class="kw">def</span> <span class="fn">__exit__</span>(self, exc_type, exc_val, exc_tb):
+        self.conn.<span class="fn">close</span>()
+        <span class="kw">return False</span>  <span class="cmt"># don't suppress exceptions</span>
+
+<span class="cmt"># Custom (decorator-based — simpler)</span>
+<span class="kw">from</span> contextlib <span class="kw">import</span> contextmanager
+
+<span class="kw">@contextmanager</span>
+<span class="kw">def</span> <span class="fn">timer</span>(label):
+    start = time.<span class="fn">time</span>()
+    <span class="kw">yield</span>
+    <span class="fn">print</span>(<span class="kw">f</span><span class="str">"{label}: {time.time() - start:.3f}s"</span>)
+
+<span class="kw">with</span> <span class="fn">timer</span>(<span class="str">"processing"</span>):
+    <span class="fn">heavy_work</span>()
+
+<span class="cmt"># Async context manager</span>
+<span class="kw">from</span> contextlib <span class="kw">import</span> asynccontextmanager
+
+<span class="kw">@asynccontextmanager</span>
+<span class="kw">async def</span> <span class="fn">lifespan</span>(app):
+    <span class="cmt"># startup</span>
+    db = <span class="kw">await</span> <span class="fn">connect_db</span>()
+    <span class="kw">yield</span> {<span class="str">"db"</span>: db}
+    <span class="cmt"># shutdown</span>
+    <span class="kw">await</span> db.<span class="fn">close</span>()</code></pre></div>
+</div>
+
+<!-- ===== TESTING ===== -->
+<div class="section" id="testing">
+  <div class="section-header"><span class="icon">🧪</span><h2>Testing (pytest)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Install: pip install pytest pytest-asyncio httpx</span>
+
+<span class="cmt"># Basic test</span>
+<span class="kw">def</span> <span class="fn">test_add</span>():
+    <span class="kw">assert</span> <span class="fn">add</span>(<span class="num">2</span>, <span class="num">3</span>) == <span class="num">5</span>
+
+<span class="cmt"># Parametrize</span>
+<span class="kw">import</span> pytest
+
+<span class="kw">@pytest.mark.parametrize</span>(<span class="str">"a, b, expected"</span>, [
+    (<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>),
+    (-<span class="num">1</span>, <span class="num">1</span>, <span class="num">0</span>),
+    (<span class="num">0</span>, <span class="num">0</span>, <span class="num">0</span>),
+])
+<span class="kw">def</span> <span class="fn">test_add_parametrized</span>(a, b, expected):
+    <span class="kw">assert</span> <span class="fn">add</span>(a, b) == expected
+
+<span class="cmt"># Fixtures</span>
+<span class="kw">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">sample_user</span>():
+    <span class="kw">return</span> User(name=<span class="str">"Bob"</span>, email=<span class="str">"bob@mail.com"</span>)
+
+<span class="kw">def</span> <span class="fn">test_user_name</span>(sample_user):
+    <span class="kw">assert</span> sample_user.name == <span class="str">"Bob"</span>
+
+<span class="cmt"># Exception testing</span>
+<span class="kw">def</span> <span class="fn">test_divide_by_zero</span>():
+    <span class="kw">with</span> pytest.<span class="fn">raises</span>(ZeroDivisionError):
+        <span class="fn">divide</span>(<span class="num">1</span>, <span class="num">0</span>)
+
+<span class="cmt"># Mock</span>
+<span class="kw">from</span> unittest.mock <span class="kw">import</span> patch, MagicMock
+
+<span class="kw">@patch</span>(<span class="str">"myproject.services.user_service.user_repo"</span>)
+<span class="kw">def</span> <span class="fn">test_create_user</span>(mock_repo):
+    mock_repo.create.<span class="fn">return_value</span> = User(id=<span class="num">1</span>, name=<span class="str">"Bob"</span>)
+    result = user_service.<span class="fn">create</span>({<span class="str">"name"</span>: <span class="str">"Bob"</span>})
+    <span class="kw">assert</span> result.name == <span class="str">"Bob"</span>
+    mock_repo.create.<span class="fn">assert_called_once</span>()
+
+<span class="cmt"># Async test</span>
+<span class="kw">@pytest.mark.asyncio</span>
+<span class="kw">async def</span> <span class="fn">test_fetch</span>():
+    result = <span class="kw">await</span> <span class="fn">fetch_data</span>(<span class="str">"/api/health"</span>)
+    <span class="kw">assert</span> result[<span class="str">"status"</span>] == <span class="str">"ok"</span>
+
+<span class="cmt"># FastAPI test client</span>
+<span class="kw">from</span> httpx <span class="kw">import</span> AsyncClient
+
+<span class="kw">@pytest.mark.asyncio</span>
+<span class="kw">async def</span> <span class="fn">test_create_user_api</span>():
+    <span class="kw">async with</span> AsyncClient(app=app, base_url=<span class="str">"http://test"</span>) <span class="kw">as</span> client:
+        resp = <span class="kw">await</span> client.<span class="fn">post</span>(<span class="str">"/users"</span>, json={<span class="str">"name"</span>: <span class="str">"Bob"</span>, <span class="str">"email"</span>: <span class="str">"bob@mail.com"</span>})
+        <span class="kw">assert</span> resp.status_code == <span class="num">201</span>
+
+<span class="cmt"># Run: pytest -v
+# Run: pytest -k "test_add" --tb=short
+# Run: pytest --cov=myproject</span></code></pre></div>
+</div>
+
+<!-- ===== LOGGING ===== -->
+<div class="section" id="logging">
+  <div class="section-header"><span class="icon">📝</span><h2>Logging</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> logging
+
+<span class="cmt"># Basic setup</span>
+logging.<span class="fn">basicConfig</span>(
+    level=logging.INFO,
+    format=<span class="str">"%(asctime)s %(levelname)s %(name)s: %(message)s"</span>,
+)
+logger = logging.<span class="fn">getLogger</span>(__name__)
+
+logger.<span class="fn">debug</span>(<span class="str">"Debug message"</span>)
+logger.<span class="fn">info</span>(<span class="str">"User created: %s"</span>, user.name)
+logger.<span class="fn">warning</span>(<span class="str">"Deprecated endpoint called"</span>)
+logger.<span class="fn">error</span>(<span class="str">"Failed to connect"</span>, exc_info=<span class="kw">True</span>)
+logger.<span class="fn">critical</span>(<span class="str">"System is down!"</span>)
+
+<span class="cmt"># Structured logging with structlog</span>
+<span class="kw">import</span> structlog
+log = structlog.<span class="fn">get_logger</span>()
+log.<span class="fn">info</span>(<span class="str">"user.created"</span>, user_id=<span class="num">123</span>, email=<span class="str">"bob@mail.com"</span>)</code></pre></div>
+</div>
+
+<!-- ===== ENV & CONFIG ===== -->
+<div class="section" id="env">
+  <div class="section-header"><span class="icon">⚙️</span><h2>Environment &amp; Config</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Pydantic Settings (recommended for FastAPI)</span>
+<span class="kw">from</span> pydantic_settings <span class="kw">import</span> BaseSettings
+
+<span class="kw">class</span> <span class="tp">Settings</span>(BaseSettings):
+    app_name: <span class="tp">str</span> = <span class="str">"My App"</span>
+    debug: <span class="tp">bool</span> = <span class="kw">False</span>
+    database_url: <span class="tp">str</span>
+    jwt_secret: <span class="tp">str</span>
+    redis_url: <span class="tp">str</span> = <span class="str">"redis://localhost:6379"</span>
+
+    model_config = {<span class="str">"env_file"</span>: <span class="str">".env"</span>}
+
+settings = <span class="tp">Settings</span>()
+
+<span class="cmt"># .env file</span>
+<span class="cmt"># DATABASE_URL=postgresql://user:pass@localhost/db</span>
+<span class="cmt"># JWT_SECRET=mysecretkey</span>
+
+<span class="cmt"># os.environ (basic)</span>
+<span class="kw">import</span> os
+db_url = os.environ.<span class="fn">get</span>(<span class="str">"DATABASE_URL"</span>, <span class="str">"sqlite:///db.sqlite3"</span>)
+
+<span class="cmt"># python-dotenv</span>
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+<span class="fn">load_dotenv</span>()</code></pre></div>
+</div>
+
+<!-- ===== PACKAGING ===== -->
+<div class="section" id="packaging">
+  <div class="section-header"><span class="icon">📦</span><h2>Packaging (pyproject.toml)</h2></div>
+  <div class="code-wrapper"><pre><code>[<span class="kw">project</span>]
+name = <span class="str">"myproject"</span>
+version = <span class="str">"0.1.0"</span>
+description = <span class="str">"My awesome project"</span>
+requires-python = <span class="str">">=3.11"</span>
+dependencies = [
+    <span class="str">"fastapi>=0.110"</span>,
+    <span class="str">"uvicorn[standard]>=0.27"</span>,
+    <span class="str">"sqlalchemy>=2.0"</span>,
+    <span class="str">"pydantic-settings>=2.0"</span>,
+]
+
+[<span class="kw">project.optional-dependencies</span>]
+dev = [
+    <span class="str">"pytest>=8.0"</span>,
+    <span class="str">"pytest-asyncio>=0.23"</span>,
+    <span class="str">"httpx>=0.27"</span>,
+    <span class="str">"ruff>=0.3"</span>,
+    <span class="str">"mypy>=1.8"</span>,
+]
+
+[<span class="kw">tool.ruff</span>]
+line-length = <span class="num">100</span>
+target-version = <span class="str">"py311"</span>
+
+[<span class="kw">tool.ruff.lint</span>]
+select = [<span class="str">"E"</span>, <span class="str">"F"</span>, <span class="str">"I"</span>, <span class="str">"N"</span>, <span class="str">"UP"</span>]
+
+[<span class="kw">tool.mypy</span>]
+strict = <span class="kw">true</span>
+
+[<span class="kw">tool.pytest.ini_options</span>]
+asyncio_mode = <span class="str">"auto"</span></code></pre></div>
+</div>
+
+<!-- ===== DOCKER ===== -->
+<div class="section" id="docker">
+  <div class="section-header"><span class="icon">🐳</span><h2>Docker</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># Multi-stage Dockerfile</span>
+FROM python:<span class="num">3.12</span>-slim AS base
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+FROM base AS production
+COPY src/ ./src/
+EXPOSE <span class="num">8000</span>
+CMD [<span class="str">"uvicorn"</span>, <span class="str">"src.myproject.main:app"</span>, <span class="str">"--host"</span>, <span class="str">"0.0.0.0"</span>, <span class="str">"--port"</span>, <span class="str">"8000"</span>]</code></pre></div>
+  <div class="code-wrapper"><pre><code><span class="cmt"># docker-compose.yml</span>
+<span class="kw">services</span>:
+  <span class="kw">app</span>:
+    <span class="kw">build</span>: <span class="str">.</span>
+    <span class="kw">ports</span>: [<span class="str">"8000:8000"</span>]
+    <span class="kw">env_file</span>: <span class="str">.env</span>
+    <span class="kw">depends_on</span>: [<span class="str">db</span>, <span class="str">redis</span>]
+  <span class="kw">db</span>:
+    <span class="kw">image</span>: <span class="str">postgres:16-alpine</span>
+    <span class="kw">environment</span>:
+      POSTGRES_DB: <span class="str">mydb</span>
+      POSTGRES_PASSWORD: <span class="str">secret</span>
+    <span class="kw">volumes</span>: [<span class="str">"pgdata:/var/lib/postgresql/data"</span>]
+  <span class="kw">redis</span>:
+    <span class="kw">image</span>: <span class="str">redis:7-alpine</span>
+<span class="kw">volumes</span>:
+  <span class="kw">pgdata</span>:</code></pre></div>
+</div>
+
+<!-- ===== PATTERNS ===== -->
+<div class="section" id="patterns">
+  <div class="section-header"><span class="icon">🎯</span><h2>Common Patterns</h2></div>
+
+  <h3>Repository + Service Pattern</h3>
+  <div class="code-wrapper"><pre><code><span class="cmt"># repository</span>
+<span class="kw">class</span> <span class="tp">UserRepository</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, db: Session):
+        self.db = db
+
+    <span class="kw">def</span> <span class="fn">get_by_id</span>(self, user_id: <span class="tp">int</span>) -> User | <span class="kw">None</span>:
+        <span class="kw">return</span> self.db.<span class="fn">get</span>(User, user_id)
+
+    <span class="kw">def</span> <span class="fn">create</span>(self, user: User) -> User:
+        self.db.<span class="fn">add</span>(user)
+        self.db.<span class="fn">commit</span>()
+        self.db.<span class="fn">refresh</span>(user)
+        <span class="kw">return</span> user
+
+<span class="cmt"># service</span>
+<span class="kw">class</span> <span class="tp">UserService</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, repo: <span class="tp">UserRepository</span>):
+        self.repo = repo
+
+    <span class="kw">def</span> <span class="fn">get_user</span>(self, user_id: <span class="tp">int</span>) -> <span class="tp">UserResponse</span>:
+        user = self.repo.<span class="fn">get_by_id</span>(user_id)
+        <span class="kw">if not</span> user:
+            <span class="kw">raise</span> HTTPException(<span class="num">404</span>, <span class="str">"Not found"</span>)
+        <span class="kw">return</span> <span class="tp">UserResponse</span>.<span class="fn">model_validate</span>(user)</code></pre></div>
+
+  <h3>Singleton</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">class</span> <span class="tp">Singleton</span>:
+    _instance = <span class="kw">None</span>
+    <span class="kw">def</span> <span class="fn">__new__</span>(cls):
+        <span class="kw">if</span> cls._instance <span class="kw">is None</span>:
+            cls._instance = <span class="fn">super</span>().<span class="fn">__new__</span>(cls)
+        <span class="kw">return</span> cls._instance</code></pre></div>
+
+  <div class="note tip">
+    <strong>💡 Best Practices</strong>
+    <ul>
+      <li>Always use type hints — use <code>mypy --strict</code></li>
+      <li>Use Pydantic for all data validation</li>
+      <li>Prefer <code>async def</code> for I/O-bound operations</li>
+      <li>Use dependency injection (FastAPI <code>Depends()</code>)</li>
+      <li>Keep business logic in services, not routes</li>
+      <li>Use <code>ruff</code> for linting &amp; formatting</li>
+      <li>Write tests with <code>pytest</code> — use fixtures &amp; parametrize</li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>Python Development Cheatsheet · 2026</footer>
+
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'Copy';
+  btn.onclick = () => {
+    const code = w.querySelector('code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  };
+  w.appendChild(btn);
+});
+const backBtn = document.querySelector('.back-top');
+window.addEventListener('scroll', () => backBtn.classList.toggle('visible', window.scrollY > 400));
+</script>
+</body>
+</html>

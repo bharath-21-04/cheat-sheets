@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Cheatsheet</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<nav class="top-nav">
+  <a class="logo" href="index.html">⚡ Cheatsheets <span>/ CSS</span></a>
+  <a class="home-link" href="index.html">← All Sheets</a>
+</nav>
+
+<div class="container">
+
+<div class="hero">
+  <h1>CSS Cheatsheet</h1>
+  <p class="subtitle">Selectors, Box Model, Flexbox, Grid, Animations &amp; everyday patterns</p>
+  <span class="badge">Development</span>
+</div>
+
+<div class="toc">
+  <h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#selectors">Selectors</a>
+    <a href="#box">Box Model</a>
+    <a href="#display">Display &amp; Positioning</a>
+    <a href="#flexbox">Flexbox</a>
+    <a href="#grid">Grid</a>
+    <a href="#typography">Typography</a>
+    <a href="#colors">Colors &amp; Backgrounds</a>
+    <a href="#spacing">Spacing &amp; Sizing</a>
+    <a href="#transitions">Transitions &amp; Animations</a>
+    <a href="#responsive">Responsive Design</a>
+    <a href="#pseudo">Pseudo-classes &amp; Elements</a>
+    <a href="#variables">CSS Variables</a>
+    <a href="#patterns">Common Patterns</a>
+  </div>
+</div>
+
+<!-- ===== SELECTORS ===== -->
+<div class="section" id="selectors">
+  <div class="section-header"><span class="icon">🎯</span><h2>Selectors</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">/* Element */</span>
+<span class="kw">p</span> { color: blue; }
+
+<span class="cmt">/* Class */</span>
+<span class="kw">.card</span> { padding: 1rem; }
+
+<span class="cmt">/* ID */</span>
+<span class="kw">#header</span> { height: 60px; }
+
+<span class="cmt">/* Attribute */</span>
+<span class="kw">input[type="text"]</span>     { border: 1px solid gray; }
+<span class="kw">a[href^="https"]</span>       { color: green; }     <span class="cmt">/* starts with */</span>
+<span class="kw">a[href$=".pdf"]</span>        { color: red; }       <span class="cmt">/* ends with */</span>
+<span class="kw">a[href*="example"]</span>     { font-weight: bold; }<span class="cmt">/* contains */</span>
+
+<span class="cmt">/* Combinators */</span>
+<span class="kw">div p</span>        { }  <span class="cmt">/* descendant (any depth) */</span>
+<span class="kw">div > p</span>      { }  <span class="cmt">/* direct child */</span>
+<span class="kw">h2 + p</span>       { }  <span class="cmt">/* adjacent sibling */</span>
+<span class="kw">h2 ~ p</span>       { }  <span class="cmt">/* general sibling */</span>
+
+<span class="cmt">/* Grouping */</span>
+<span class="kw">h1, h2, h3</span>   { font-family: sans-serif; }
+
+<span class="cmt">/* Universal */</span>
+<span class="kw">*</span>            { box-sizing: border-box; }</code></pre></div>
+
+  <div class="note tip">
+    <strong>Specificity (low → high)</strong>: element &lt; class/attribute &lt; ID &lt; inline style &lt; !important
+  </div>
+</div>
+
+<!-- ===== BOX MODEL ===== -->
+<div class="section" id="box">
+  <div class="section-header"><span class="icon">📦</span><h2>Box Model</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">/* The box model: margin → border → padding → content */</span>
+
+<span class="kw">.box</span> {
+  <span class="kw">width</span>: <span class="num">300px</span>;
+  <span class="kw">padding</span>: <span class="num">20px</span>;
+  <span class="kw">border</span>: <span class="num">2px</span> solid <span class="str">#333</span>;
+  <span class="kw">margin</span>: <span class="num">10px</span>;
+}
+
+<span class="cmt">/* border-box = width includes padding + border */</span>
+<span class="kw">*</span>, <span class="kw">*::before</span>, <span class="kw">*::after</span> {
+  <span class="kw">box-sizing</span>: border-box;  <span class="cmt">/* ← always use this! */</span>
+}
+
+<span class="cmt">/* Margin shorthand: top right bottom left (clockwise) */</span>
+<span class="kw">margin</span>: <span class="num">10px</span>;                <span class="cmt">/* all sides */</span>
+<span class="kw">margin</span>: <span class="num">10px</span> <span class="num">20px</span>;           <span class="cmt">/* vertical | horizontal */</span>
+<span class="kw">margin</span>: <span class="num">10px</span> <span class="num">20px</span> <span class="num">30px</span>;      <span class="cmt">/* top | horizontal | bottom */</span>
+<span class="kw">margin</span>: <span class="num">10px</span> <span class="num">20px</span> <span class="num">30px</span> <span class="num">40px</span>;<span class="cmt">/* top | right | bottom | left */</span>
+
+<span class="cmt">/* Auto centering */</span>
+<span class="kw">.centered</span> {
+  <span class="kw">width</span>: <span class="num">600px</span>;
+  <span class="kw">margin</span>: <span class="num">0</span> auto;
+}</code></pre></div>
+</div>
+
+<!-- ===== DISPLAY & POSITIONING ===== -->
+<div class="section" id="display">
+  <div class="section-header"><span class="icon">📐</span><h2>Display &amp; Positioning</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">/* Display */</span>
+<span class="kw">display</span>: block;        <span class="cmt">/* full width, new line */</span>
+<span class="kw">display</span>: inline;       <span class="cmt">/* no width/height, flows inline */</span>
+<span class="kw">display</span>: inline-block; <span class="cmt">/* inline but respects width/height */</span>
+<span class="kw">display</span>: none;         <span class="cmt">/* removed from flow */</span>
+<span class="kw">display</span>: flex;         <span class="cmt">/* flexbox container */</span>
+<span class="kw">display</span>: grid;         <span class="cmt">/* grid container */</span>
+
+<span class="cmt">/* Position */</span>
+<span class="kw">position</span>: static;      <span class="cmt">/* default */</span>
+<span class="kw">position</span>: relative;    <span class="cmt">/* offset from normal position */</span>
+<span class="kw">position</span>: absolute;    <span class="cmt">/* relative to nearest positioned ancestor */</span>
+<span class="kw">position</span>: fixed;       <span class="cmt">/* relative to viewport */</span>
+<span class="kw">position</span>: sticky;      <span class="cmt">/* toggles between relative and fixed */</span>
+
+<span class="cmt">/* Sticky header example */</span>
+<span class="kw">.header</span> {
+  <span class="kw">position</span>: sticky;
+  <span class="kw">top</span>: <span class="num">0</span>;
+  <span class="kw">z-index</span>: <span class="num">100</span>;
+  <span class="kw">background</span>: white;
+}
+
+<span class="cmt">/* Center with absolute positioning */</span>
+<span class="kw">.center-abs</span> {
+  <span class="kw">position</span>: absolute;
+  <span class="kw">top</span>: <span class="num">50%</span>;
+  <span class="kw">left</span>: <span class="num">50%</span>;
+  <span class="kw">transform</span>: translate(<span class="num">-50%</span>, <span class="num">-50%</span>);
+}
+
+<span class="cmt">/* Overflow */</span>
+<span class="kw">overflow</span>: hidden;      <span class="cmt">/* clip content */</span>
+<span class="kw">overflow</span>: auto;        <span class="cmt">/* scroll if needed */</span>
+<span class="kw">overflow</span>: scroll;      <span class="cmt">/* always show scrollbar */</span></code></pre></div>
+</div>
+
+<!-- ===== FLEXBOX ===== -->
+<div class="section" id="flexbox">
+  <div class="section-header"><span class="icon">📐</span><h2>Flexbox</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">/* Container */</span>
+<span class="kw">.flex-container</span> {
+  <span class="kw">display</span>: flex;
+  <span class="kw">flex-direction</span>: row;           <span class="cmt">/* row | row-reverse | column | column-reverse */</span>
+  <span class="kw">justify-content</span>: center;       <span class="cmt">/* main axis alignment */</span>
+  <span class="cmt">/*  flex-start | flex-end | center | space-between | space-around | space-evenly */</span>
+  <span class="kw">align-items</span>: center;           <span class="cmt">/* cross axis alignment */</span>
+  <span class="cmt">/*  stretch | flex-start | flex-end | center | baseline */</span>
+  <span class="kw">flex-wrap</span>: wrap;               <span class="cmt">/* nowrap | wrap | wrap-reverse */</span>
+  <span class="kw">gap</span>: <span class="num">1rem</span>;                     <span class="cmt">/* spacing between items */</span>
+}
+
+<span class="cmt">/* Items */</span>
+<span class="kw">.flex-item</span> {
+  <span class="kw">flex</span>: <span class="num">1</span>;                       <span class="cmt">/* shorthand: flex-grow flex-shrink flex-basis */</span>
+  <span class="kw">flex-grow</span>: <span class="num">1</span>;                  <span class="cmt">/* how much to grow */</span>
+  <span class="kw">flex-shrink</span>: <span class="num">0</span>;                <span class="cmt">/* how much to shrink */</span>
+  <span class="kw">flex-basis</span>: <span class="num">200px</span>;             <span class="cmt">/* initial size */</span>
+  <span class="kw">align-self</span>: flex-end;          <span class="cmt">/* override align-items for this item */</span>
+  <span class="kw">order</span>: <span class="num">2</span>;                      <span class="cmt">/* visual order */</span>
+}
+
+<span class="cmt">/* Common patterns */</span>
+<span class="cmt">/* Center everything */</span>
+<span class="kw">.center-all</span> {
+  <span class="kw">display</span>: flex;
+  <span class="kw">justify-content</span>: center;
+  <span class="kw">align-items</span>: center;
+  <span class="kw">min-height</span>: <span class="num">100vh</span>;
+}
+
+<span class="cmt">/* Space between nav items */</span>
+<span class="kw">.navbar</span> {
+  <span class="kw">display</span>: flex;
+  <span class="kw">justify-content</span>: space-between;
+  <span class="kw">align-items</span>: center;
+  <span class="kw">padding</span>: <span class="num">0</span> <span class="num">2rem</span>;
+}
+
+<span class="cmt">/* Push last item to the right */</span>
+<span class="kw">.nav-item:last-child</span> {
+  <span class="kw">margin-left</span>: auto;
+}</code></pre></div>
+</div>
+
+<!-- ===== GRID ===== -->
+<div class="section" id="grid">
+  <div class="section-header"><span class="icon">🔲</span><h2>Grid</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">/* Container */</span>
+<span class="kw">.grid</span> {
+  <span class="kw">display</span>: grid;
+  <span class="kw">grid-template-columns</span>: <span class="num">1fr</span> <span class="num">1fr</span> <span class="num">1fr</span>;              <span class="cmt">/* 3 equal columns */</span>
+  <span class="kw">grid-template-columns</span>: repeat(<span class="num">3</span>, <span class="num">1fr</span>);             <span class="cmt">/* same as above */</span>
+  <span class="kw">grid-template-columns</span>: <span class="num">200px</span> <span class="num">1fr</span> <span class="num">200px</span>;            <span class="cmt">/* sidebar layout */</span>
+  <span class="kw">grid-template-rows</span>: auto <span class="num">1fr</span> auto;                  <span class="cmt">/* header, main, footer */</span>
+  <span class="kw">gap</span>: <span class="num">1rem</span>;
+}
+
+<span class="cmt">/* Auto-fill responsive grid (no media queries!) */</span>
+<span class="kw">.auto-grid</span> {
+  <span class="kw">display</span>: grid;
+  <span class="kw">grid-template-columns</span>: repeat(auto-fill, minmax(<span class="num">250px</span>, <span class="num">1fr</span>));
+  <span class="kw">gap</span>: <span class="num">1rem</span>;
+}
+
+<span class="cmt">/* Item placement */</span>
+<span class="kw">.item</span> {
+  <span class="kw">grid-column</span>: <span class="num">1</span> / <span class="num">3</span>;       <span class="cmt">/* span columns 1-2 */</span>
+  <span class="kw">grid-column</span>: span <span class="num">2</span>;       <span class="cmt">/* span 2 columns */</span>
+  <span class="kw">grid-row</span>: <span class="num">1</span> / <span class="num">3</span>;          <span class="cmt">/* span rows 1-2 */</span>
+}
+
+<span class="cmt">/* Named areas */</span>
+<span class="kw">.layout</span> {
+  <span class="kw">display</span>: grid;
+  <span class="kw">grid-template-areas</span>:
+    <span class="str">"header header header"</span>
+    <span class="str">"sidebar main   aside"</span>
+    <span class="str">"footer footer footer"</span>;
+  <span class="kw">grid-template-columns</span>: <span class="num">200px</span> <span class="num">1fr</span> <span class="num">200px</span>;
+}
+<span class="kw">.header</span>  { <span class="kw">grid-area</span>: header; }
+<span class="kw">.sidebar</span> { <span class="kw">grid-area</span>: sidebar; }
+<span class="kw">.main</span>    { <span class="kw">grid-area</span>: main; }
+<span class="kw">.footer</span>  { <span class="kw">grid-area</span>: footer; }
+
+<span class="cmt">/* Alignment */</span>
+<span class="kw">place-items</span>: center;           <span class="cmt">/* align-items + justify-items */</span>
+<span class="kw">place-content</span>: center;         <span class="cmt">/* align-content + justify-content */</span></code></pre></div>
+</div>
+
+<!-- ===== TYPOGRAPHY ===== -->
+<div class="section" id="typography">
+  <div class="section-header"><span class="icon">✏️</span><h2>Typography</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">.text</span> {
+  <span class="kw">font-family</span>: <span class="str">'Inter'</span>, system-ui, sans-serif;
+  <span class="kw">font-size</span>: <span class="num">1rem</span>;               <span class="cmt">/* 16px by default */</span>
+  <span class="kw">font-weight</span>: <span class="num">400</span>;              <span class="cmt">/* 100-900, normal=400, bold=700 */</span>
+  <span class="kw">line-height</span>: <span class="num">1.6</span>;              <span class="cmt">/* unitless multiplier preferred */</span>
+  <span class="kw">letter-spacing</span>: <span class="num">0.02em</span>;
+  <span class="kw">text-align</span>: center;            <span class="cmt">/* left | right | center | justify */</span>
+  <span class="kw">text-transform</span>: uppercase;     <span class="cmt">/* lowercase | capitalize | none */</span>
+  <span class="kw">text-decoration</span>: underline;    <span class="cmt">/* none | line-through */</span>
+  <span class="kw">text-overflow</span>: ellipsis;       <span class="cmt">/* clip | ellipsis (needs overflow:hidden) */</span>
+  <span class="kw">white-space</span>: nowrap;
+  <span class="kw">word-break</span>: break-word;
+}
+
+<span class="cmt">/* Truncate with ellipsis (single line) */</span>
+<span class="kw">.truncate</span> {
+  <span class="kw">overflow</span>: hidden;
+  <span class="kw">text-overflow</span>: ellipsis;
+  <span class="kw">white-space</span>: nowrap;
+}
+
+<span class="cmt">/* Multi-line clamp */</span>
+<span class="kw">.clamp-3</span> {
+  <span class="kw">display</span>: -webkit-box;
+  <span class="kw">-webkit-line-clamp</span>: <span class="num">3</span>;
+  <span class="kw">-webkit-box-orient</span>: vertical;
+  <span class="kw">overflow</span>: hidden;
+}
+
+<span class="cmt">/* Responsive font (clamp) */</span>
+<span class="kw">h1</span> {
+  <span class="kw">font-size</span>: clamp(<span class="num">1.5rem</span>, <span class="num">4vw</span>, <span class="num">3rem</span>);
+}</code></pre></div>
+</div>
+
+<!-- ===== COLORS & BACKGROUNDS ===== -->
+<div class="section" id="colors">
+  <div class="section-header"><span class="icon">🎨</span><h2>Colors &amp; Backgrounds</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">/* Color formats */</span>
+<span class="kw">color</span>: <span class="str">#ff6347</span>;                 <span class="cmt">/* hex */</span>
+<span class="kw">color</span>: rgb(<span class="num">255</span>, <span class="num">99</span>, <span class="num">71</span>);       <span class="cmt">/* rgb */</span>
+<span class="kw">color</span>: rgba(<span class="num">255</span>, <span class="num">99</span>, <span class="num">71</span>, <span class="num">0.5</span>); <span class="cmt">/* with alpha */</span>
+<span class="kw">color</span>: hsl(<span class="num">9</span>, <span class="num">100%</span>, <span class="num">64%</span>);     <span class="cmt">/* hue, saturation, lightness */</span>
+
+<span class="cmt">/* Backgrounds */</span>
+<span class="kw">background-color</span>: <span class="str">#0d1117</span>;
+<span class="kw">background-image</span>: url(<span class="str">'bg.jpg'</span>);
+<span class="kw">background-size</span>: cover;         <span class="cmt">/* cover | contain | auto */</span>
+<span class="kw">background-position</span>: center;
+<span class="kw">background-repeat</span>: no-repeat;
+
+<span class="cmt">/* Gradients */</span>
+<span class="kw">background</span>: linear-gradient(to right, <span class="str">#667eea</span>, <span class="str">#764ba2</span>);
+<span class="kw">background</span>: linear-gradient(<span class="num">135deg</span>, <span class="str">#f093fb</span>, <span class="str">#f5576c</span>);
+<span class="kw">background</span>: radial-gradient(circle, <span class="str">#fff</span>, <span class="str">#000</span>);
+
+<span class="cmt">/* Opacity */</span>
+<span class="kw">opacity</span>: <span class="num">0.8</span>;
+
+<span class="cmt">/* Backdrop blur (glass effect) */</span>
+<span class="kw">.glass</span> {
+  <span class="kw">background</span>: rgba(<span class="num">255</span>, <span class="num">255</span>, <span class="num">255</span>, <span class="num">0.1</span>);
+  <span class="kw">backdrop-filter</span>: blur(<span class="num">10px</span>);
+  <span class="kw">border</span>: <span class="num">1px</span> solid rgba(<span class="num">255</span>, <span class="num">255</span>, <span class="num">255</span>, <span class="num">0.2</span>);
+}</code></pre></div>
+</div>
+
+<!-- ===== SPACING & SIZING ===== -->
+<div class="section" id="spacing">
+  <div class="section-header"><span class="icon">📏</span><h2>Spacing &amp; Sizing</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">/* Units */</span>
+<span class="kw">px</span>    <span class="cmt">/* absolute pixels */</span>
+<span class="kw">rem</span>   <span class="cmt">/* relative to root font-size (16px default) */</span>
+<span class="kw">em</span>    <span class="cmt">/* relative to parent font-size */</span>
+<span class="kw">%</span>     <span class="cmt">/* relative to parent */</span>
+<span class="kw">vw</span>    <span class="cmt">/* 1% of viewport width */</span>
+<span class="kw">vh</span>    <span class="cmt">/* 1% of viewport height */</span>
+<span class="kw">dvh</span>   <span class="cmt">/* dynamic viewport height (handles mobile toolbars) */</span>
+<span class="kw">ch</span>    <span class="cmt">/* width of the '0' character */</span>
+
+<span class="cmt">/* Sizing */</span>
+<span class="kw">width</span>: <span class="num">100%</span>;
+<span class="kw">max-width</span>: <span class="num">1200px</span>;
+<span class="kw">min-width</span>: <span class="num">320px</span>;
+<span class="kw">height</span>: <span class="num">100vh</span>;
+<span class="kw">min-height</span>: <span class="num">100dvh</span>;       <span class="cmt">/* full height on mobile */</span>
+<span class="kw">aspect-ratio</span>: <span class="num">16</span> / <span class="num">9</span>;     <span class="cmt">/* maintain ratio */</span>
+
+<span class="cmt">/* calc() for math */</span>
+<span class="kw">width</span>: calc(<span class="num">100%</span> - <span class="num">2rem</span>);
+<span class="kw">height</span>: calc(<span class="num">100vh</span> - <span class="num">60px</span>);
+
+<span class="cmt">/* clamp(min, preferred, max) */</span>
+<span class="kw">width</span>: clamp(<span class="num">300px</span>, <span class="num">50%</span>, <span class="num">800px</span>);</code></pre></div>
+</div>
+
+<!-- ===== TRANSITIONS & ANIMATIONS ===== -->
+<div class="section" id="transitions">
+  <div class="section-header"><span class="icon">✨</span><h2>Transitions &amp; Animations</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">/* Transition */</span>
+<span class="kw">.btn</span> {
+  <span class="kw">background</span>: <span class="str">#58a6ff</span>;
+  <span class="kw">transition</span>: all <span class="num">0.3s</span> ease;
+  <span class="cmt">/* transition: property duration timing-function delay */</span>
+}
+<span class="kw">.btn:hover</span> {
+  <span class="kw">background</span>: <span class="str">#79b8ff</span>;
+  <span class="kw">transform</span>: translateY(<span class="num">-2px</span>);
+  <span class="kw">box-shadow</span>: <span class="num">0</span> <span class="num">4px</span> <span class="num">12px</span> rgba(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">0.3</span>);
+}
+
+<span class="cmt">/* Timing functions */</span>
+<span class="kw">transition-timing-function</span>: ease;          <span class="cmt">/* default */</span>
+<span class="kw">transition-timing-function</span>: ease-in;
+<span class="kw">transition-timing-function</span>: ease-out;
+<span class="kw">transition-timing-function</span>: ease-in-out;
+<span class="kw">transition-timing-function</span>: cubic-bezier(<span class="num">0.4</span>, <span class="num">0</span>, <span class="num">0.2</span>, <span class="num">1</span>);
+
+<span class="cmt">/* Transform */</span>
+<span class="kw">transform</span>: translateX(<span class="num">50px</span>);
+<span class="kw">transform</span>: rotate(<span class="num">45deg</span>);
+<span class="kw">transform</span>: scale(<span class="num">1.2</span>);
+<span class="kw">transform</span>: skew(<span class="num">10deg</span>);
+
+<span class="cmt">/* Keyframe Animation */</span>
+<span class="kw">@keyframes</span> fadeIn {
+  <span class="kw">from</span> { <span class="kw">opacity</span>: <span class="num">0</span>; <span class="kw">transform</span>: translateY(<span class="num">20px</span>); }
+  <span class="kw">to</span>   { <span class="kw">opacity</span>: <span class="num">1</span>; <span class="kw">transform</span>: translateY(<span class="num">0</span>); }
+}
+
+<span class="kw">.card</span> {
+  <span class="kw">animation</span>: fadeIn <span class="num">0.5s</span> ease forwards;
+  <span class="cmt">/* animation: name duration timing fill-mode */</span>
+}
+
+<span class="cmt">/* Spin */</span>
+<span class="kw">@keyframes</span> spin {
+  <span class="kw">to</span> { <span class="kw">transform</span>: rotate(<span class="num">360deg</span>); }
+}
+<span class="kw">.spinner</span> { <span class="kw">animation</span>: spin <span class="num">1s</span> linear infinite; }
+
+<span class="cmt">/* Pulse */</span>
+<span class="kw">@keyframes</span> pulse {
+  <span class="num">0%</span>, <span class="num">100%</span> { <span class="kw">opacity</span>: <span class="num">1</span>; }
+  <span class="num">50%</span>       { <span class="kw">opacity</span>: <span class="num">0.5</span>; }
+}
+<span class="kw">.loading</span> { <span class="kw">animation</span>: pulse <span class="num">2s</span> ease-in-out infinite; }</code></pre></div>
+</div>
+
+<!-- ===== RESPONSIVE ===== -->
+<div class="section" id="responsive">
+  <div class="section-header"><span class="icon">📱</span><h2>Responsive Design</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">/* Mobile-first breakpoints */</span>
+<span class="cmt">/* Default styles = mobile */</span>
+
+<span class="kw">@media</span> (min-width: <span class="num">640px</span>)  { <span class="cmt">/* sm - tablet */</span> }
+<span class="kw">@media</span> (min-width: <span class="num">768px</span>)  { <span class="cmt">/* md */</span> }
+<span class="kw">@media</span> (min-width: <span class="num">1024px</span>) { <span class="cmt">/* lg - desktop */</span> }
+<span class="kw">@media</span> (min-width: <span class="num">1280px</span>) { <span class="cmt">/* xl */</span> }
+
+<span class="cmt">/* Example: stack → row */</span>
+<span class="kw">.grid</span> {
+  <span class="kw">display</span>: grid;
+  <span class="kw">grid-template-columns</span>: <span class="num">1fr</span>;           <span class="cmt">/* mobile: 1 column */</span>
+  <span class="kw">gap</span>: <span class="num">1rem</span>;
+}
+<span class="kw">@media</span> (min-width: <span class="num">768px</span>) {
+  <span class="kw">.grid</span> {
+    <span class="kw">grid-template-columns</span>: repeat(<span class="num">2</span>, <span class="num">1fr</span>); <span class="cmt">/* tablet: 2 columns */</span>
+  }
+}
+<span class="kw">@media</span> (min-width: <span class="num">1024px</span>) {
+  <span class="kw">.grid</span> {
+    <span class="kw">grid-template-columns</span>: repeat(<span class="num">3</span>, <span class="num">1fr</span>); <span class="cmt">/* desktop: 3 columns */</span>
+  }
+}
+
+<span class="cmt">/* Container queries (modern!) */</span>
+<span class="kw">.card-container</span> {
+  <span class="kw">container-type</span>: inline-size;
+}
+<span class="kw">@container</span> (min-width: <span class="num">400px</span>) {
+  <span class="kw">.card</span> { <span class="kw">flex-direction</span>: row; }
+}
+
+<span class="cmt">/* Dark mode */</span>
+<span class="kw">@media</span> (prefers-color-scheme: dark) {
+  <span class="kw">:root</span> {
+    <span class="kw">--bg</span>: <span class="str">#0d1117</span>;
+    <span class="kw">--text</span>: <span class="str">#e6edf3</span>;
+  }
+}
+
+<span class="cmt">/* Print */</span>
+<span class="kw">@media</span> print {
+  <span class="kw">.no-print</span> { <span class="kw">display</span>: none; }
+}</code></pre></div>
+</div>
+
+<!-- ===== PSEUDO ===== -->
+<div class="section" id="pseudo">
+  <div class="section-header"><span class="icon">🔮</span><h2>Pseudo-classes &amp; Elements</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">/* Pseudo-classes (state) */</span>
+<span class="kw">:hover</span>         <span class="cmt">/* mouse over */</span>
+<span class="kw">:focus</span>         <span class="cmt">/* focused (tab, click) */</span>
+<span class="kw">:focus-visible</span> <span class="cmt">/* focused via keyboard only */</span>
+<span class="kw">:active</span>        <span class="cmt">/* being clicked */</span>
+<span class="kw">:visited</span>       <span class="cmt">/* visited link */</span>
+<span class="kw">:disabled</span>      <span class="cmt">/* disabled input */</span>
+<span class="kw">:checked</span>       <span class="cmt">/* checked checkbox/radio */</span>
+<span class="kw">:valid</span>         <span class="cmt">/* valid form input */</span>
+<span class="kw">:invalid</span>       <span class="cmt">/* invalid form input */</span>
+<span class="kw">:placeholder-shown</span>  <span class="cmt">/* empty input */</span>
+
+<span class="cmt">/* Structural */</span>
+<span class="kw">:first-child</span>       <span class="kw">:last-child</span>
+<span class="kw">:nth-child(2)</span>      <span class="kw">:nth-child(odd)</span>
+<span class="kw">:nth-child(3n)</span>     <span class="cmt">/* every 3rd */</span>
+<span class="kw">:not(.hidden)</span>      <span class="cmt">/* negation */</span>
+<span class="kw">:has(.icon)</span>        <span class="cmt">/* parent selector (modern!) */</span>
+<span class="kw">:is(h1, h2, h3)</span>    <span class="cmt">/* matches any */</span>
+
+<span class="cmt">/* Pseudo-elements (generated content) */</span>
+<span class="kw">::before</span>     <span class="cmt">/* insert before content */</span>
+<span class="kw">::after</span>      <span class="cmt">/* insert after content */</span>
+<span class="kw">::placeholder</span>
+<span class="kw">::selection</span>  <span class="cmt">/* highlighted text */</span>
+<span class="kw">::first-line</span>
+<span class="kw">::first-letter</span>
+
+<span class="cmt">/* Example: required field asterisk */</span>
+<span class="kw">label.required::after</span> {
+  <span class="kw">content</span>: <span class="str">" *"</span>;
+  <span class="kw">color</span>: <span class="str">#f85149</span>;
+}
+
+<span class="cmt">/* :has() – style parent based on child */</span>
+<span class="kw">.card:has(img)</span> {
+  <span class="kw">padding</span>: <span class="num">0</span>;     <span class="cmt">/* no padding if card has image */</span>
+}</code></pre></div>
+</div>
+
+<!-- ===== CSS VARIABLES ===== -->
+<div class="section" id="variables">
+  <div class="section-header"><span class="icon">🔧</span><h2>CSS Variables</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">/* Define variables */</span>
+<span class="kw">:root</span> {
+  <span class="kw">--primary</span>: <span class="str">#58a6ff</span>;
+  <span class="kw">--bg</span>: <span class="str">#0d1117</span>;
+  <span class="kw">--text</span>: <span class="str">#e6edf3</span>;
+  <span class="kw">--radius</span>: <span class="num">8px</span>;
+  <span class="kw">--shadow</span>: <span class="num">0</span> <span class="num">2px</span> <span class="num">10px</span> rgba(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">0.3</span>);
+  <span class="kw">--font</span>: <span class="str">'Inter'</span>, sans-serif;
+  <span class="kw">--mono</span>: <span class="str">'JetBrains Mono'</span>, monospace;
+}
+
+<span class="cmt">/* Use variables */</span>
+<span class="kw">.card</span> {
+  <span class="kw">background</span>: var(<span class="kw">--bg</span>);
+  <span class="kw">color</span>: var(<span class="kw">--text</span>);
+  <span class="kw">border-radius</span>: var(<span class="kw">--radius</span>);
+  <span class="kw">box-shadow</span>: var(<span class="kw">--shadow</span>);
+}
+
+<span class="cmt">/* Fallback value */</span>
+<span class="kw">color</span>: var(<span class="kw">--accent</span>, <span class="str">#58a6ff</span>);
+
+<span class="cmt">/* Override per component */</span>
+<span class="kw">.dark-card</span> {
+  <span class="kw">--bg</span>: <span class="str">#161b22</span>;
+  <span class="kw">--text</span>: <span class="str">#c9d1d9</span>;
+}
+
+<span class="cmt">/* Use in calc */</span>
+<span class="kw">:root</span> { <span class="kw">--spacing</span>: <span class="num">8px</span>; }
+<span class="kw">.box</span> { <span class="kw">padding</span>: calc(var(<span class="kw">--spacing</span>) * <span class="num">2</span>); }
+
+<span class="cmt">/* Toggle dark/light */</span>
+<span class="kw">[data-theme="dark"]</span> {
+  <span class="kw">--bg</span>: <span class="str">#0d1117</span>;
+  <span class="kw">--text</span>: <span class="str">#e6edf3</span>;
+}
+<span class="kw">[data-theme="light"]</span> {
+  <span class="kw">--bg</span>: <span class="str">#ffffff</span>;
+  <span class="kw">--text</span>: <span class="str">#1f2937</span>;
+}</code></pre></div>
+</div>
+
+<!-- ===== COMMON PATTERNS ===== -->
+<div class="section" id="patterns">
+  <div class="section-header"><span class="icon">🧩</span><h2>Common Patterns</h2></div>
+
+  <h3>Smooth Scroll</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">html</span> {
+  <span class="kw">scroll-behavior</span>: smooth;
+}
+<span class="kw">@media</span> (prefers-reduced-motion: reduce) {
+  <span class="kw">html</span> { <span class="kw">scroll-behavior</span>: auto; }
+}</code></pre></div>
+
+  <h3>Reset / Normalize</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">*</span>, <span class="kw">*::before</span>, <span class="kw">*::after</span> {
+  <span class="kw">box-sizing</span>: border-box;
+  <span class="kw">margin</span>: <span class="num">0</span>;
+  <span class="kw">padding</span>: <span class="num">0</span>;
+}
+<span class="kw">body</span> {
+  <span class="kw">min-height</span>: <span class="num">100dvh</span>;
+  <span class="kw">line-height</span>: <span class="num">1.6</span>;
+  <span class="kw">-webkit-font-smoothing</span>: antialiased;
+}
+<span class="kw">img</span> {
+  <span class="kw">display</span>: block;
+  <span class="kw">max-width</span>: <span class="num">100%</span>;
+}</code></pre></div>
+
+  <h3>Card Component</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">.card</span> {
+  <span class="kw">background</span>: var(<span class="kw">--bg</span>);
+  <span class="kw">border</span>: <span class="num">1px</span> solid <span class="str">#30363d</span>;
+  <span class="kw">border-radius</span>: <span class="num">12px</span>;
+  <span class="kw">padding</span>: <span class="num">1.5rem</span>;
+  <span class="kw">transition</span>: transform <span class="num">0.2s</span>, box-shadow <span class="num">0.2s</span>;
+}
+<span class="kw">.card:hover</span> {
+  <span class="kw">transform</span>: translateY(<span class="num">-4px</span>);
+  <span class="kw">box-shadow</span>: <span class="num">0</span> <span class="num">8px</span> <span class="num">24px</span> rgba(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">0.4</span>);
+}</code></pre></div>
+
+  <h3>Visually Hidden (accessible)</h3>
+  <div class="code-wrapper"><pre><code><span class="kw">.sr-only</span> {
+  <span class="kw">position</span>: absolute;
+  <span class="kw">width</span>: <span class="num">1px</span>;
+  <span class="kw">height</span>: <span class="num">1px</span>;
+  <span class="kw">padding</span>: <span class="num">0</span>;
+  <span class="kw">margin</span>: <span class="num">-1px</span>;
+  <span class="kw">overflow</span>: hidden;
+  <span class="kw">clip</span>: rect(<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>,<span class="num">0</span>);
+  <span class="kw">border</span>: <span class="num">0</span>;
+}</code></pre></div>
+
+  <div class="note tip">
+    <strong>💡 Quick Tips</strong>
+    <ul>
+      <li>Always add <code>box-sizing: border-box</code> globally</li>
+      <li>Use <code>rem</code> for sizing, <code>em</code> for component-relative spacing</li>
+      <li>Use <code>clamp()</code> for responsive typography</li>
+      <li>Prefer <code>gap</code> over margins for spacing in flex/grid</li>
+      <li>Use CSS variables for theming — easy to maintain</li>
+      <li>Use <code>:has()</code> and <code>:is()</code> for cleaner selectors</li>
+      <li>Use <code>auto-fill</code> / <code>auto-fit</code> with <code>minmax()</code> for responsive grids without media queries</li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<button class="back-top" onclick="window.scrollTo({top:0})">↑</button>
+<footer>CSS Cheatsheet · 2026</footer>
+
+<script>
+document.querySelectorAll('.code-wrapper').forEach(w => {
+  const btn = document.createElement('button');
+  btn.className = 'copy-btn';
+  btn.textContent = 'Copy';
+  btn.onclick = () => {
+    const code = w.querySelector('code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+    });
+  };
+  w.appendChild(btn);
+});
+const backBtn = document.querySelector('.back-top');
+window.addEventListener('scroll', () => backBtn.classList.toggle('visible', window.scrollY > 400));
+</script>
+</body>
+</html>
