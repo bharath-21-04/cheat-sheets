@@ -15,7 +15,7 @@
 <div class="container">
 <div class="hero">
   <h1>JavaScript Cheatsheet</h1>
-  <p class="subtitle">ES6+, closures, promises, async/await, DOM manipulation, modules &amp; event loop</p>
+  <p class="subtitle">ES6+, closures, promises, async/await, DOM, modules &amp; event loop</p>
   <span class="tag tag-lang">Language</span>
   <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
   <div class="search-count" id="searchCount"></div>
@@ -23,26 +23,237 @@
 
 <div class="toc"><div class="toc-title">Contents</div>
   <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
+    <a href="#basics">⚡</a>
+    <a href="#functions">🔧</a>
+    <a href="#arrays">📦</a>
+    <a href="#promises">⚡</a>
+    <a href="#objects">🔑</a>
+    <a href="#dom">🌐</a>
+    <a href="#modules">📦</a>
   </div>
 </div>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive JavaScript content.</div>
-</div>
-
 <div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// JavaScript basics coming soon...</span></code></pre></div>
+  <div class="section-header"><span class="icon">⚡</span><h2>Basics &amp; Types</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Variables</span>
+<span class="kw">let</span> x = <span class="num">10</span>;              <span class="cmt">// block-scoped, reassignable</span>
+<span class="kw">const</span> y = <span class="num">20</span>;             <span class="cmt">// block-scoped, constant</span>
+<span class="kw">var</span> z = <span class="num">30</span>;               <span class="cmt">// function-scoped (avoid)</span>
+
+<span class="cmt">// Types: string, number, boolean, null, undefined, symbol, bigint, object</span>
+<span class="kw">typeof</span> <span class="str">"hello"</span>            <span class="cmt">// "string"</span>
+<span class="kw">typeof</span> <span class="num">42</span>                 <span class="cmt">// "number"</span>
+<span class="kw">typeof</span> <span class="kw">null</span>               <span class="cmt">// "object" (JS quirk!)</span>
+
+<span class="cmt">// Template literals</span>
+<span class="kw">const</span> name = <span class="str">"Alice"</span>;
+<span class="kw">const</span> msg = <span class="str">`Hello ${name}, ${<span class="num">2</span> + <span class="num">3</span>} items`</span>;
+
+<span class="cmt">// Destructuring</span>
+<span class="kw">const</span> [a, b, ...rest] = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>];     <span class="cmt">// a=1, b=2, rest=[3,4]</span>
+<span class="kw">const</span> { name: n, age = <span class="num">25</span> } = person;   <span class="cmt">// rename + default</span>
+
+<span class="cmt">// Spread</span>
+<span class="kw">const</span> arr2 = [...arr1, <span class="num">4</span>, <span class="num">5</span>];
+<span class="kw">const</span> obj2 = { ...obj1, key: <span class="str">"val"</span> };
+
+<span class="cmt">// Optional chaining &amp; nullish coalescing</span>
+user?.address?.city          <span class="cmt">// undefined if any null</span>
+value ?? <span class="str">"default"</span>           <span class="cmt">// only for null/undefined</span></code></pre></div>
 </div>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// JavaScript patterns coming soon...</span></code></pre></div>
+<div class="section" id="functions">
+  <div class="section-header"><span class="icon">🔧</span><h2>Functions &amp; Closures</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Arrow functions</span>
+<span class="kw">const</span> <span class="fn">add</span> = (a, b) =&gt; a + b;
+<span class="kw">const</span> <span class="fn">square</span> = x =&gt; x * x;
+<span class="kw">const</span> <span class="fn">greet</span> = () =&gt; <span class="str">"Hello"</span>;
+
+<span class="cmt">// Default params, rest params</span>
+<span class="kw">function</span> <span class="fn">log</span>(msg, level = <span class="str">"info"</span>) { }
+<span class="kw">function</span> <span class="fn">sum</span>(...nums) { <span class="kw">return</span> nums.reduce((a,b) =&gt; a+b, <span class="num">0</span>); }
+
+<span class="cmt">// Closure</span>
+<span class="kw">function</span> <span class="fn">counter</span>() {
+  <span class="kw">let</span> count = <span class="num">0</span>;
+  <span class="kw">return</span> {
+    inc: () =&gt; ++count,
+    get: () =&gt; count
+  };
+}
+<span class="kw">const</span> c = counter();
+c.inc(); c.inc(); c.get(); <span class="cmt">// 2</span>
+
+<span class="cmt">// Higher-order</span>
+<span class="kw">const</span> <span class="fn">pipe</span> = (...fns) =&gt; x =&gt; fns.reduce((v, f) =&gt; f(v), x);
+
+<span class="cmt">// this binding</span>
+<span class="cmt">// Arrow functions inherit 'this' from enclosing scope</span>
+<span class="cmt">// Regular functions: 'this' depends on how called</span></code></pre></div>
 </div>
+
+<div class="section" id="arrays">
+  <div class="section-header"><span class="icon">📦</span><h2>Array Methods</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">const</span> arr = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>];
+
+<span class="cmt">// Transform (immutable)</span>
+arr.map(x =&gt; x * <span class="num">2</span>)           <span class="cmt">// [2,4,6,8,10]</span>
+arr.filter(x =&gt; x &gt; <span class="num">3</span>)         <span class="cmt">// [4,5]</span>
+arr.reduce((sum, x) =&gt; sum + x, <span class="num">0</span>)  <span class="cmt">// 15</span>
+arr.flatMap(x =&gt; [x, x*<span class="num">2</span>])     <span class="cmt">// [1,2,2,4,3,6...]</span>
+
+<span class="cmt">// Search</span>
+arr.find(x =&gt; x &gt; <span class="num">3</span>)           <span class="cmt">// 4</span>
+arr.findIndex(x =&gt; x &gt; <span class="num">3</span>)      <span class="cmt">// 3</span>
+arr.includes(<span class="num">3</span>)                 <span class="cmt">// true</span>
+arr.some(x =&gt; x &gt; <span class="num">4</span>)           <span class="cmt">// true</span>
+arr.every(x =&gt; x &gt; <span class="num">0</span>)          <span class="cmt">// true</span>
+arr.indexOf(<span class="num">3</span>)                  <span class="cmt">// 2</span>
+
+<span class="cmt">// Mutating</span>
+arr.push(<span class="num">6</span>);  arr.pop();        <span class="cmt">// end</span>
+arr.unshift(<span class="num">0</span>); arr.shift();    <span class="cmt">// start</span>
+arr.splice(<span class="num">1</span>, <span class="num">2</span>);              <span class="cmt">// remove 2 items at index 1</span>
+arr.sort((a,b) =&gt; a - b);      <span class="cmt">// numeric sort</span>
+arr.reverse();
+
+<span class="cmt">// Other</span>
+arr.slice(<span class="num">1</span>, <span class="num">3</span>)                <span class="cmt">// [2,3] (no mutation)</span>
+arr.concat([<span class="num">6</span>,<span class="num">7</span>])              <span class="cmt">// merge arrays</span>
+arr.join(<span class="str">", "</span>)                 <span class="cmt">// "1, 2, 3, 4, 5"</span>
+Array.from({length:<span class="num">5</span>}, (_,i) =&gt; i)  <span class="cmt">// [0,1,2,3,4]</span>
+[...new Set(arr)]               <span class="cmt">// unique values</span></code></pre></div>
+</div>
+
+<div class="section" id="promises">
+  <div class="section-header"><span class="icon">⚡</span><h2>Promises &amp; Async</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Promise</span>
+<span class="kw">const</span> p = <span class="kw">new</span> Promise((resolve, reject) =&gt; {
+  setTimeout(() =&gt; resolve(<span class="str">"done"</span>), <span class="num">1000</span>);
+});
+p.then(val =&gt; console.log(val))
+ .catch(err =&gt; console.error(err))
+ .finally(() =&gt; console.log(<span class="str">"cleanup"</span>));
+
+<span class="cmt">// Async/Await</span>
+<span class="kw">async function</span> <span class="fn">fetchData</span>(url) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> res = <span class="kw">await</span> fetch(url);
+    <span class="kw">const</span> data = <span class="kw">await</span> res.json();
+    <span class="kw">return</span> data;
+  } <span class="kw">catch</span> (err) {
+    console.error(err);
+  }
+}
+
+<span class="cmt">// Parallel execution</span>
+<span class="kw">const</span> [users, posts] = <span class="kw">await</span> Promise.all([
+  fetch(<span class="str">"/users"</span>).then(r =&gt; r.json()),
+  fetch(<span class="str">"/posts"</span>).then(r =&gt; r.json()),
+]);
+
+Promise.race([p1, p2])       <span class="cmt">// first to settle</span>
+Promise.allSettled([p1, p2])  <span class="cmt">// wait for all, no short-circuit</span>
+Promise.any([p1, p2])         <span class="cmt">// first to fulfill</span></code></pre></div>
+</div>
+
+<div class="section" id="objects">
+  <div class="section-header"><span class="icon">🔑</span><h2>Objects &amp; Classes</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Object shorthand</span>
+<span class="kw">const</span> name = <span class="str">"Alice"</span>;
+<span class="kw">const</span> obj = { name, greet() { <span class="kw">return</span> <span class="str">`Hi ${<span class="kw">this</span>.name}`</span>; } };
+
+<span class="cmt">// Computed property</span>
+<span class="kw">const</span> key = <span class="str">"color"</span>;
+<span class="kw">const</span> obj2 = { [key]: <span class="str">"red"</span> };
+
+<span class="cmt">// Object methods</span>
+Object.keys(obj)     Object.values(obj)     Object.entries(obj)
+Object.assign({}, obj, { age: <span class="num">30</span> })   <span class="cmt">// shallow merge</span>
+Object.freeze(obj)   Object.seal(obj)
+
+<span class="cmt">// Classes</span>
+<span class="kw">class</span> <span class="tp">Animal</span> {
+  #name;  <span class="cmt">// private field</span>
+  <span class="kw">constructor</span>(name) { <span class="kw">this</span>.#name = name; }
+  <span class="kw">get</span> name() { <span class="kw">return this</span>.#name; }
+  speak() { <span class="kw">return</span> <span class="str">`${<span class="kw">this</span>.#name} makes a sound`</span>; }
+  <span class="kw">static</span> create(name) { <span class="kw">return new</span> <span class="tp">Animal</span>(name); }
+}
+
+<span class="kw">class</span> <span class="tp">Dog</span> <span class="kw">extends</span> <span class="tp">Animal</span> {
+  <span class="kw">constructor</span>(name, breed) {
+    <span class="kw">super</span>(name);
+    <span class="kw">this</span>.breed = breed;
+  }
+  speak() { <span class="kw">return</span> <span class="str">`${<span class="kw">this</span>.name} barks`</span>; }
+}</code></pre></div>
+</div>
+
+<div class="section" id="dom">
+  <div class="section-header"><span class="icon">🌐</span><h2>DOM &amp; Events</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Selectors</span>
+document.getElementById(<span class="str">"id"</span>)
+document.querySelector(<span class="str">".class"</span>)
+document.querySelectorAll(<span class="str">"div.item"</span>)
+
+<span class="cmt">// Manipulation</span>
+el.textContent = <span class="str">"Hello"</span>;
+el.innerHTML = <span class="str">"&lt;b&gt;Bold&lt;/b&gt;"</span>;
+el.setAttribute(<span class="str">"class"</span>, <span class="str">"active"</span>);
+el.classList.add(<span class="str">"show"</span>);  el.classList.toggle(<span class="str">"open"</span>);
+el.style.color = <span class="str">"red"</span>;
+el.dataset.id              <span class="cmt">// data-id attribute</span>
+
+<span class="cmt">// Create &amp; insert</span>
+<span class="kw">const</span> div = document.createElement(<span class="str">"div"</span>);
+div.textContent = <span class="str">"New"</span>;
+parent.appendChild(div);
+parent.insertBefore(div, ref);
+el.remove();
+
+<span class="cmt">// Events</span>
+el.addEventListener(<span class="str">"click"</span>, (e) =&gt; {
+  e.preventDefault();
+  e.stopPropagation();
+  e.target              <span class="cmt">// clicked element</span>
+  e.currentTarget       <span class="cmt">// element with listener</span>
+});
+
+<span class="cmt">// Event delegation</span>
+document.querySelector(<span class="str">"ul"</span>).addEventListener(<span class="str">"click"</span>, (e) =&gt; {
+  <span class="kw">if</span> (e.target.matches(<span class="str">"li"</span>)) handleClick(e.target);
+});</code></pre></div>
+</div>
+
+<div class="section" id="modules">
+  <div class="section-header"><span class="icon">📦</span><h2>Modules &amp; Patterns</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// ES Modules</span>
+<span class="kw">export const</span> PI = <span class="num">3.14</span>;
+<span class="kw">export default function</span> <span class="fn">add</span>(a, b) { <span class="kw">return</span> a + b; }
+<span class="kw">export</span> { add, PI };
+
+<span class="kw">import</span> add <span class="kw">from</span> <span class="str">'./math.js'</span>;
+<span class="kw">import</span> { PI, add } <span class="kw">from</span> <span class="str">'./math.js'</span>;
+<span class="kw">import</span> * <span class="kw">as</span> math <span class="kw">from</span> <span class="str">'./math.js'</span>;
+
+<span class="cmt">// Dynamic import</span>
+<span class="kw">const</span> module = <span class="kw">await</span> import(<span class="str">'./heavy.js'</span>);
+
+<span class="cmt">// Map, Set, WeakMap, WeakRef</span>
+<span class="kw">const</span> map = <span class="kw">new</span> Map([[<span class="str">"a"</span>, <span class="num">1</span>], [<span class="str">"b"</span>, <span class="num">2</span>]]);
+map.set(<span class="str">"c"</span>, <span class="num">3</span>);  map.get(<span class="str">"a"</span>);  map.has(<span class="str">"b"</span>);  map.size;
+
+<span class="kw">const</span> set = <span class="kw">new</span> Set([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">1</span>]);   <span class="cmt">// {1,2,3}</span>
+set.add(<span class="num">4</span>);  set.has(<span class="num">1</span>);  set.delete(<span class="num">2</span>);
+
+<span class="cmt">// Proxy</span>
+<span class="kw">const</span> handler = {
+  get(target, key) { <span class="kw">return</span> key <span class="kw">in</span> target ? target[key] : <span class="num">0</span>; }
+};
+<span class="kw">const</span> proxy = <span class="kw">new</span> Proxy({}, handler);</code></pre></div>
+</div>
+
 
 </div>
 <button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>

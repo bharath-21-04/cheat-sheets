@@ -15,7 +15,7 @@
 <div class="container">
 <div class="hero">
   <h1>Dart Cheatsheet</h1>
-  <p class="subtitle">Classes, null safety, async/await, collections, mixins, Flutter basics &amp; packages</p>
+  <p class="subtitle">Classes, null safety, async, collections, mixins &amp; Flutter essentials</p>
   <span class="tag tag-lang">Language</span>
   <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
   <div class="search-count" id="searchCount"></div>
@@ -23,26 +23,141 @@
 
 <div class="toc"><div class="toc-title">Contents</div>
   <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
+    <a href="#basics">⚡</a>
+    <a href="#collections">📦</a>
+    <a href="#classes">🏛️</a>
+    <a href="#async">⚡</a>
   </div>
 </div>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Dart content.</div>
-</div>
-
 <div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Dart basics coming soon...</span></code></pre></div>
+  <div class="section-header"><span class="icon">⚡</span><h2>Basics &amp; Types</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">void</span> <span class="fn">main</span>() {
+  print(<span class="str">'Hello, Dart!'</span>);
+}
+
+<span class="cmt">// Variables</span>
+<span class="kw">var</span> name = <span class="str">'Alice'</span>;       <span class="cmt">// type inferred</span>
+<span class="tp">String</span> city = <span class="str">'NYC'</span>;      <span class="cmt">// explicit type</span>
+<span class="kw">final</span> age = <span class="num">30</span>;           <span class="cmt">// runtime constant</span>
+<span class="kw">const</span> pi = <span class="num">3.14</span>;          <span class="cmt">// compile-time constant</span>
+<span class="kw">late</span> <span class="tp">String</span> description;   <span class="cmt">// lazy initialization</span>
+
+<span class="cmt">// Types: int, double, String, bool, List, Map, Set, dynamic</span>
+<span class="kw">int</span> x = <span class="num">42</span>;
+<span class="kw">double</span> y = <span class="num">3.14</span>;
+<span class="kw">num</span> z = <span class="num">42</span>;               <span class="cmt">// int or double</span>
+
+<span class="cmt">// Null safety (sound by default)</span>
+<span class="tp">String</span>? nullable;         <span class="cmt">// can be null</span>
+<span class="tp">String</span> nonNull = <span class="str">'hi'</span>;   <span class="cmt">// cannot be null</span>
+<span class="kw">var</span> len = nullable?.length ?? <span class="num">0</span>;
+<span class="kw">var</span> val = nullable!;       <span class="cmt">// assert non-null</span>
+
+<span class="cmt">// String interpolation</span>
+<span class="kw">var</span> msg = <span class="str">'Hello $name, age ${age + 1}'</span>;
+<span class="kw">var</span> multi = <span class="str">'''
+  Multi-line string
+'''</span>;</code></pre></div>
 </div>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Dart patterns coming soon...</span></code></pre></div>
+<div class="section" id="collections">
+  <div class="section-header"><span class="icon">📦</span><h2>Collections</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// List</span>
+<span class="kw">var</span> list = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+list.add(<span class="num">4</span>);  list.remove(<span class="num">2</span>);  list.length;
+list.where((n) =&gt; n &gt; <span class="num">2</span>).toList();
+list.map((n) =&gt; n * <span class="num">2</span>).toList();
+list.any((n) =&gt; n &gt; <span class="num">3</span>);
+list.sort();  list.reversed;
+list.fold(<span class="num">0</span>, (sum, n) =&gt; sum + n);
+[...<span class="kw">list</span>, <span class="num">5</span>, <span class="num">6</span>]            <span class="cmt">// spread operator</span>
+[<span class="kw">for</span> (<span class="kw">var</span> i <span class="kw">in</span> list) i * <span class="num">2</span>] <span class="cmt">// collection for</span>
+[<span class="kw">if</span> (flag) <span class="num">99</span>]              <span class="cmt">// collection if</span>
+
+<span class="cmt">// Map</span>
+<span class="kw">var</span> map = {<span class="str">'a'</span>: <span class="num">1</span>, <span class="str">'b'</span>: <span class="num">2</span>};
+map[<span class="str">'c'</span>] = <span class="num">3</span>;
+map.containsKey(<span class="str">'a'</span>);
+map.forEach((k, v) =&gt; print(<span class="str">'$k: $v'</span>));
+map.entries;  map.keys;  map.values;
+
+<span class="cmt">// Set</span>
+<span class="kw">var</span> set = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>};
+set.add(<span class="num">4</span>);  set.contains(<span class="num">1</span>);
+set.union({<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>});  set.intersection({<span class="num">2</span>,<span class="num">3</span>});</code></pre></div>
 </div>
+
+<div class="section" id="classes">
+  <div class="section-header"><span class="icon">🏛️</span><h2>Classes &amp; OOP</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">class</span> <span class="tp">Person</span> {
+  <span class="kw">final</span> <span class="tp">String</span> name;
+  <span class="kw">int</span> _age;              <span class="cmt">// private (underscore)</span>
+
+  <span class="fn">Person</span>(<span class="kw">this</span>.name, <span class="kw">this</span>._age);  <span class="cmt">// shorthand constructor</span>
+  <span class="fn">Person</span>.guest() : name = <span class="str">'Guest'</span>, _age = <span class="num">0</span>;  <span class="cmt">// named constructor</span>
+
+  <span class="kw">int get</span> age =&gt; _age;
+  <span class="kw">set</span> age(<span class="kw">int</span> val) =&gt; _age = val;
+
+  @<span class="kw">override</span>
+  <span class="tp">String</span> <span class="fn">toString</span>() =&gt; <span class="str">'$name ($_age)'</span>;
+}
+
+<span class="cmt">// Inheritance</span>
+<span class="kw">class</span> <span class="tp">Student</span> <span class="kw">extends</span> <span class="tp">Person</span> {
+  <span class="tp">String</span> school;
+  <span class="fn">Student</span>(<span class="kw">super</span>.name, <span class="kw">super</span>.age, <span class="kw">this</span>.school);
+}
+
+<span class="cmt">// Abstract + Interface</span>
+<span class="kw">abstract class</span> <span class="tp">Shape</span> {
+  <span class="kw">double</span> <span class="fn">area</span>();
+}
+
+<span class="cmt">// Mixin</span>
+<span class="kw">mixin</span> <span class="tp">Flyable</span> {
+  <span class="kw">void</span> <span class="fn">fly</span>() =&gt; print(<span class="str">'Flying!'</span>);
+}
+<span class="kw">class</span> <span class="tp">Bird</span> <span class="kw">extends</span> <span class="tp">Animal</span> <span class="kw">with</span> <span class="tp">Flyable</span> {}
+
+<span class="cmt">// Enum</span>
+<span class="kw">enum</span> <span class="tp">Status</span> { active, inactive, pending }</code></pre></div>
+</div>
+
+<div class="section" id="async">
+  <div class="section-header"><span class="icon">⚡</span><h2>Async &amp; Futures</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Future (async/await)</span>
+Future&lt;<span class="tp">String</span>&gt; <span class="fn">fetchData</span>() <span class="kw">async</span> {
+  <span class="kw">var</span> response = <span class="kw">await</span> http.get(Uri.parse(url));
+  <span class="kw">return</span> response.body;
+}
+
+<span class="cmt">// Error handling</span>
+<span class="kw">try</span> {
+  <span class="kw">var</span> data = <span class="kw">await</span> fetchData();
+} <span class="kw">on</span> SocketException {
+  print(<span class="str">'No internet'</span>);
+} <span class="kw">catch</span> (e) {
+  print(<span class="str">'Error: $e'</span>);
+}
+
+<span class="cmt">// Multiple futures</span>
+<span class="kw">var</span> results = <span class="kw">await</span> Future.wait([fetch1(), fetch2()]);
+
+<span class="cmt">// Streams</span>
+Stream&lt;<span class="kw">int</span>&gt; <span class="fn">countStream</span>(<span class="kw">int</span> max) <span class="kw">async*</span> {
+  <span class="kw">for</span> (<span class="kw">var</span> i = <span class="num">0</span>; i &lt; max; i++) {
+    <span class="kw">await</span> Future.delayed(Duration(seconds: <span class="num">1</span>));
+    <span class="kw">yield</span> i;
+  }
+}
+
+<span class="kw">await for</span> (<span class="kw">var</span> val <span class="kw">in</span> countStream(<span class="num">5</span>)) {
+  print(val);
+}</code></pre></div>
+</div>
+
 
 </div>
 <button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>

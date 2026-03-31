@@ -15,7 +15,7 @@
 <div class="container">
 <div class="hero">
   <h1>C# Cheatsheet</h1>
-  <p class="subtitle">LINQ, async/await, generics, delegates, events, .NET runtime &amp; Entity Framework</p>
+  <p class="subtitle">LINQ, async/await, generics, delegates, OOP &amp; .NET essentials</p>
   <span class="tag tag-lang">Language</span>
   <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
   <div class="search-count" id="searchCount"></div>
@@ -23,26 +23,289 @@
 
 <div class="toc"><div class="toc-title">Contents</div>
   <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
+    <a href="#basics">Basics &amp; Types</a>
+    <a href="#oop">OOP &amp; Classes</a>
+    <a href="#collections">Collections</a>
+    <a href="#linq">LINQ</a>
+    <a href="#async">Async/Await</a>
+    <a href="#delegates">Delegates &amp; Events</a>
+    <a href="#generics">Generics</a>
+    <a href="#patterns">Pattern Matching</a>
+    <a href="#nullable">Nullable &amp; Records</a>
     <a href="#common">Common Patterns</a>
   </div>
 </div>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive C# content.</div>
+<div class="section" id="basics">
+  <div class="section-header"><span class="icon">⚡</span><h2>Basics &amp; Types</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Data types</span>
+<span class="kw">int</span> i = <span class="num">42</span>;        <span class="kw">long</span> l = <span class="num">100L</span>;     <span class="kw">byte</span> b = <span class="num">255</span>;
+<span class="kw">float</span> f = <span class="num">3.14f</span>;   <span class="kw">double</span> d = <span class="num">3.14</span>;   <span class="kw">decimal</span> m = <span class="num">3.14m</span>;
+<span class="kw">bool</span> flag = <span class="kw">true</span>;  <span class="kw">char</span> c = <span class="str">'A'</span>;       <span class="kw">string</span> s = <span class="str">"hello"</span>;
+<span class="kw">var</span> x = <span class="num">10</span>;         <span class="cmt">// type inference</span>
+
+<span class="cmt">// String interpolation</span>
+<span class="kw">string</span> name = <span class="str">"Alice"</span>;
+Console.WriteLine(<span class="str">$"Hello {name}, age {<span class="num">30</span>}"</span>);
+<span class="kw">string</span> raw = <span class="str">@"C:\path\file"</span>;  <span class="cmt">// verbatim string</span>
+
+<span class="cmt">// Arrays</span>
+<span class="kw">int</span>[] arr = { <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span> };
+<span class="kw">int</span>[,] matrix = <span class="kw">new int</span>[<span class="num">3</span>,<span class="num">4</span>];   <span class="cmt">// 2D array</span>
+<span class="kw">int</span>[][] jagged = <span class="kw">new int</span>[<span class="num">3</span>][];  <span class="cmt">// jagged array</span>
+
+<span class="cmt">// Casting</span>
+<span class="kw">double</span> d2 = (<span class="kw">double</span>)i;          <span class="cmt">// explicit cast</span>
+<span class="kw">int</span> i2 = Convert.ToInt32(<span class="str">"42"</span>);
+<span class="kw">int</span>.TryParse(<span class="str">"42"</span>, <span class="kw">out int</span> result);</code></pre></div>
 </div>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// C# basics coming soon...</span></code></pre></div>
+<div class="section" id="oop">
+  <div class="section-header"><span class="icon">🏛️</span><h2>OOP &amp; Classes</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">public class</span> <span class="tp">Person</span> {
+    <span class="kw">public string</span> Name { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public int</span> Age { <span class="kw">get</span>; <span class="kw">init</span>; }  <span class="cmt">// init-only (C# 9)</span>
+    <span class="kw">public string</span> Email { <span class="kw">get</span>; <span class="kw">private set</span>; }
+
+    <span class="kw">public</span> <span class="fn">Person</span>(<span class="kw">string</span> name, <span class="kw">int</span> age) {
+        Name = name; Age = age;
+    }
+
+    <span class="kw">public override string</span> <span class="fn">ToString</span>()
+        =&gt; <span class="str">$"{Name} ({Age})"</span>;
+}
+
+<span class="cmt">// Inheritance</span>
+<span class="kw">public class</span> <span class="tp">Student</span> : <span class="tp">Person</span> {
+    <span class="kw">public string</span> School { <span class="kw">get</span>; <span class="kw">set</span>; }
+    <span class="kw">public</span> <span class="fn">Student</span>(<span class="kw">string</span> n, <span class="kw">int</span> a, <span class="kw">string</span> s)
+        : <span class="kw">base</span>(n, a) { School = s; }
+}
+
+<span class="cmt">// Interface</span>
+<span class="kw">public interface</span> <span class="tp">IRepository</span>&lt;<span class="tp">T</span>&gt; {
+    <span class="tp">T</span> <span class="fn">GetById</span>(<span class="kw">int</span> id);
+    <span class="kw">void</span> <span class="fn">Add</span>(<span class="tp">T</span> item);
+    IEnumerable&lt;<span class="tp">T</span>&gt; <span class="fn">GetAll</span>();
+}
+
+<span class="cmt">// Abstract class</span>
+<span class="kw">public abstract class</span> <span class="tp">Shape</span> {
+    <span class="kw">public abstract double</span> <span class="fn">Area</span>();
+}</code></pre></div>
+</div>
+
+<div class="section" id="collections">
+  <div class="section-header"><span class="icon">📦</span><h2>Collections</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">using</span> System.Collections.Generic;
+
+<span class="cmt">// List</span>
+<span class="kw">var</span> list = <span class="kw">new</span> List&lt;<span class="kw">int</span>&gt; { <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span> };
+list.Add(<span class="num">4</span>);  list.Remove(<span class="num">2</span>);  list.Contains(<span class="num">3</span>);
+list.Sort();  list.Reverse();  list.Count;
+
+<span class="cmt">// Dictionary</span>
+<span class="kw">var</span> dict = <span class="kw">new</span> Dictionary&lt;<span class="kw">string</span>, <span class="kw">int</span>&gt; {
+    [<span class="str">"a"</span>] = <span class="num">1</span>, [<span class="str">"b"</span>] = <span class="num">2</span>
+};
+dict.TryGetValue(<span class="str">"a"</span>, <span class="kw">out var</span> val);
+dict.ContainsKey(<span class="str">"a"</span>);
+
+<span class="cmt">// HashSet</span>
+<span class="kw">var</span> set = <span class="kw">new</span> HashSet&lt;<span class="kw">int</span>&gt; { <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span> };
+set.Add(<span class="num">4</span>);  set.Contains(<span class="num">1</span>);
+set.UnionWith(otherSet);
+set.IntersectWith(otherSet);
+
+<span class="cmt">// Queue &amp; Stack</span>
+<span class="kw">var</span> q = <span class="kw">new</span> Queue&lt;<span class="kw">int</span>&gt;();  q.Enqueue(<span class="num">1</span>); q.Dequeue();
+<span class="kw">var</span> s = <span class="kw">new</span> Stack&lt;<span class="kw">int</span>&gt;();  s.Push(<span class="num">1</span>);     s.Pop();</code></pre></div>
+</div>
+
+<div class="section" id="linq">
+  <div class="section-header"><span class="icon">🔗</span><h2>LINQ</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">using</span> System.Linq;
+
+<span class="kw">var</span> nums = <span class="kw">new</span> List&lt;<span class="kw">int</span>&gt; { <span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span>,<span class="num">8</span>,<span class="num">9</span>,<span class="num">10</span> };
+
+<span class="cmt">// Method syntax (preferred)</span>
+<span class="kw">var</span> evens = nums.Where(n =&gt; n % <span class="num">2</span> == <span class="num">0</span>);
+<span class="kw">var</span> doubled = nums.Select(n =&gt; n * <span class="num">2</span>);
+<span class="kw">var</span> first = nums.First(n =&gt; n &gt; <span class="num">5</span>);       <span class="cmt">// 6</span>
+<span class="kw">var</span> any = nums.Any(n =&gt; n &gt; <span class="num">5</span>);           <span class="cmt">// true</span>
+<span class="kw">var</span> all = nums.All(n =&gt; n &gt; <span class="num">0</span>);           <span class="cmt">// true</span>
+<span class="kw">var</span> sum = nums.Sum();
+<span class="kw">var</span> avg = nums.Average();
+<span class="kw">var</span> max = nums.Max();
+<span class="kw">var</span> ordered = nums.OrderByDescending(n =&gt; n);
+<span class="kw">var</span> groups = nums.GroupBy(n =&gt; n % <span class="num">2</span> == <span class="num">0</span>);
+<span class="kw">var</span> distinct = nums.Distinct();
+<span class="kw">var</span> taken = nums.Take(<span class="num">3</span>).Skip(<span class="num">1</span>);
+<span class="kw">var</span> flat = nested.SelectMany(x =&gt; x);
+
+<span class="cmt">// Query syntax</span>
+<span class="kw">var</span> query = <span class="kw">from</span> n <span class="kw">in</span> nums
+            <span class="kw">where</span> n % <span class="num">2</span> == <span class="num">0</span>
+            <span class="kw">orderby</span> n <span class="kw">descending</span>
+            <span class="kw">select</span> n * <span class="num">2</span>;</code></pre></div>
+</div>
+
+<div class="section" id="async">
+  <div class="section-header"><span class="icon">⚡</span><h2>Async/Await</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">public async</span> Task&lt;<span class="kw">string</span>&gt; <span class="fn">FetchDataAsync</span>(<span class="kw">string</span> url) {
+    <span class="kw">using var</span> client = <span class="kw">new</span> HttpClient();
+    <span class="kw">var</span> response = <span class="kw">await</span> client.GetAsync(url);
+    <span class="kw">return await</span> response.Content.ReadAsStringAsync();
+}
+
+<span class="cmt">// Parallel tasks</span>
+<span class="kw">var</span> task1 = FetchDataAsync(<span class="str">"url1"</span>);
+<span class="kw">var</span> task2 = FetchDataAsync(<span class="str">"url2"</span>);
+<span class="kw">await</span> Task.WhenAll(task1, task2);
+
+<span class="cmt">// Task.Run for CPU-bound work</span>
+<span class="kw">var</span> result = <span class="kw">await</span> Task.Run(() =&gt; HeavyComputation());
+
+<span class="cmt">// Cancellation</span>
+<span class="kw">var</span> cts = <span class="kw">new</span> CancellationTokenSource();
+cts.CancelAfter(TimeSpan.FromSeconds(<span class="num">5</span>));
+<span class="kw">await</span> DoWorkAsync(cts.Token);
+
+<span class="cmt">// IAsyncEnumerable (C# 8)</span>
+<span class="kw">async</span> IAsyncEnumerable&lt;<span class="kw">int</span>&gt; <span class="fn">GetNumbersAsync</span>() {
+    <span class="kw">for</span> (<span class="kw">int</span> i = <span class="num">0</span>; i &lt; <span class="num">10</span>; i++) {
+        <span class="kw">await</span> Task.Delay(<span class="num">100</span>);
+        <span class="kw">yield return</span> i;
+    }
+}</code></pre></div>
+</div>
+
+<div class="section" id="delegates">
+  <div class="section-header"><span class="icon">📡</span><h2>Delegates &amp; Events</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Delegate</span>
+<span class="kw">delegate int</span> <span class="tp">MathOp</span>(<span class="kw">int</span> a, <span class="kw">int</span> b);
+<span class="tp">MathOp</span> add = (a, b) =&gt; a + b;
+add(<span class="num">3</span>, <span class="num">4</span>);  <span class="cmt">// 7</span>
+
+<span class="cmt">// Built-in delegates</span>
+Func&lt;<span class="kw">int</span>, <span class="kw">int</span>, <span class="kw">int</span>&gt; multiply = (a, b) =&gt; a * b;
+Action&lt;<span class="kw">string</span>&gt; log = msg =&gt; Console.WriteLine(msg);
+Predicate&lt;<span class="kw">int</span>&gt; isEven = n =&gt; n % <span class="num">2</span> == <span class="num">0</span>;
+
+<span class="cmt">// Events</span>
+<span class="kw">public class</span> <span class="tp">Button</span> {
+    <span class="kw">public event</span> EventHandler Clicked;
+    <span class="kw">public void</span> <span class="fn">Click</span>()
+        =&gt; Clicked?.Invoke(<span class="kw">this</span>, EventArgs.Empty);
+}
+
+<span class="kw">var</span> btn = <span class="kw">new</span> <span class="tp">Button</span>();
+btn.Clicked += (sender, e) =&gt; Console.WriteLine(<span class="str">"Clicked!"</span>);</code></pre></div>
+</div>
+
+<div class="section" id="generics">
+  <div class="section-header"><span class="icon">📐</span><h2>Generics</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Generic class</span>
+<span class="kw">public class</span> <span class="tp">Result</span>&lt;<span class="tp">T</span>&gt; {
+    <span class="kw">public bool</span> IsSuccess { <span class="kw">get</span>; }
+    <span class="kw">public</span> <span class="tp">T</span> Value { <span class="kw">get</span>; }
+    <span class="kw">public string</span> Error { <span class="kw">get</span>; }
+
+    <span class="kw">public static</span> <span class="tp">Result</span>&lt;<span class="tp">T</span>&gt; <span class="fn">Ok</span>(<span class="tp">T</span> value)
+        =&gt; <span class="kw">new</span>() { IsSuccess = <span class="kw">true</span>, Value = value };
+    <span class="kw">public static</span> <span class="tp">Result</span>&lt;<span class="tp">T</span>&gt; <span class="fn">Fail</span>(<span class="kw">string</span> err)
+        =&gt; <span class="kw">new</span>() { Error = err };
+}
+
+<span class="cmt">// Constraints</span>
+<span class="kw">public</span> <span class="tp">T</span> <span class="fn">Max</span>&lt;<span class="tp">T</span>&gt;(<span class="tp">T</span> a, <span class="tp">T</span> b) <span class="kw">where</span> <span class="tp">T</span> : IComparable&lt;<span class="tp">T</span>&gt;
+    =&gt; a.CompareTo(b) &gt; <span class="num">0</span> ? a : b;
+
+<span class="cmt">// where T : class        — reference type</span>
+<span class="cmt">// where T : struct       — value type</span>
+<span class="cmt">// where T : new()        — parameterless ctor</span>
+<span class="cmt">// where T : BaseClass</span>
+<span class="cmt">// where T : IInterface</span></code></pre></div>
+</div>
+
+<div class="section" id="patterns">
+  <div class="section-header"><span class="icon">🔀</span><h2>Pattern Matching</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Switch expression (C# 8+)</span>
+<span class="kw">string</span> <span class="fn">Classify</span>(<span class="kw">int</span> n) =&gt; n <span class="kw">switch</span> {
+    &lt; <span class="num">0</span> =&gt; <span class="str">"negative"</span>,
+    <span class="num">0</span>   =&gt; <span class="str">"zero"</span>,
+    &gt; <span class="num">0</span> =&gt; <span class="str">"positive"</span>
+};
+
+<span class="cmt">// Type pattern</span>
+<span class="kw">if</span> (obj <span class="kw">is string</span> s) { Console.WriteLine(s.Length); }
+
+<span class="cmt">// Property pattern</span>
+<span class="kw">if</span> (person <span class="kw">is</span> { Age: &gt;= <span class="num">18</span>, Name: <span class="str">"Alice"</span> }) { }
+
+<span class="cmt">// Tuple pattern</span>
+<span class="kw">string</span> <span class="fn">RockPaperScissors</span>(<span class="kw">string</span> p1, <span class="kw">string</span> p2)
+    =&gt; (p1, p2) <span class="kw">switch</span> {
+        (<span class="str">"rock"</span>, <span class="str">"scissors"</span>) =&gt; <span class="str">"P1 wins"</span>,
+        (<span class="str">"scissors"</span>, <span class="str">"paper"</span>) =&gt; <span class="str">"P1 wins"</span>,
+        (<span class="str">"paper"</span>, <span class="str">"rock"</span>) =&gt; <span class="str">"P1 wins"</span>,
+        _ <span class="kw">when</span> p1 == p2 =&gt; <span class="str">"Tie"</span>,
+        _ =&gt; <span class="str">"P2 wins"</span>
+    };</code></pre></div>
+</div>
+
+<div class="section" id="nullable">
+  <div class="section-header"><span class="icon">📦</span><h2>Nullable &amp; Records</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Nullable value types</span>
+<span class="kw">int</span>? nullable = <span class="kw">null</span>;
+<span class="kw">int</span> val = nullable ?? <span class="num">0</span>;          <span class="cmt">// null coalescing</span>
+<span class="kw">int</span> val2 = nullable ??= <span class="num">10</span>;      <span class="cmt">// assign if null</span>
+nullable?.ToString();               <span class="cmt">// null-conditional</span>
+
+<span class="cmt">// Record (C# 9) — immutable reference type</span>
+<span class="kw">public record</span> <span class="tp">Person</span>(<span class="kw">string</span> Name, <span class="kw">int</span> Age);
+<span class="kw">var</span> p = <span class="kw">new</span> <span class="tp">Person</span>(<span class="str">"Alice"</span>, <span class="num">30</span>);
+<span class="kw">var</span> p2 = p <span class="kw">with</span> { Age = <span class="num">31</span> };    <span class="cmt">// non-destructive mutation</span>
+
+<span class="cmt">// Record struct (C# 10)</span>
+<span class="kw">public record struct</span> <span class="tp">Point</span>(<span class="kw">int</span> X, <span class="kw">int</span> Y);
+
+<span class="cmt">// Global using (C# 10)</span>
+<span class="kw">global using</span> System.Linq;
+
+<span class="cmt">// File-scoped namespace (C# 10)</span>
+<span class="kw">namespace</span> MyApp;   <span class="cmt">// instead of { ... }</span></code></pre></div>
 </div>
 
 <div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// C# patterns coming soon...</span></code></pre></div>
+  <div class="section-header"><span class="icon">🔧</span><h2>Common Patterns</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// using statement (dispose pattern)</span>
+<span class="kw">using var</span> stream = File.OpenRead(<span class="str">"file.txt"</span>);
+<span class="kw">using var</span> reader = <span class="kw">new</span> StreamReader(stream);
+
+<span class="cmt">// Exception handling</span>
+<span class="kw">try</span> {
+    <span class="kw">var</span> data = <span class="kw">await</span> FetchDataAsync(url);
+} <span class="kw">catch</span> (HttpRequestException ex) <span class="kw">when</span> (ex.StatusCode == <span class="num">404</span>) {
+    Console.WriteLine(<span class="str">"Not found"</span>);
+} <span class="kw">catch</span> (Exception ex) {
+    Console.WriteLine(ex.Message);
+} <span class="kw">finally</span> {
+    <span class="cmt">// cleanup</span>
+}
+
+<span class="cmt">// Dependency Injection (ASP.NET)</span>
+builder.Services.AddScoped&lt;<span class="tp">IUserService</span>, <span class="tp">UserService</span>&gt;();
+builder.Services.AddSingleton&lt;<span class="tp">ICacheService</span>, <span class="tp">RedisCacheService</span>&gt;();
+
+<span class="cmt">// dotnet CLI</span>
+<span class="cmt">// dotnet new console -n MyApp</span>
+<span class="cmt">// dotnet run</span>
+<span class="cmt">// dotnet build</span>
+<span class="cmt">// dotnet test</span>
+<span class="cmt">// dotnet add package Newtonsoft.Json</span></code></pre></div>
 </div>
+
 
 </div>
 <button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>

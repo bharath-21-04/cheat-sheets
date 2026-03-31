@@ -15,7 +15,7 @@
 <div class="container">
 <div class="hero">
   <h1>C Cheatsheet</h1>
-  <p class="subtitle">Pointers, memory management, structs, preprocessor directives, I/O &amp; standard library</p>
+  <p class="subtitle">Pointers, memory, structs, preprocessor, I/O &amp; standard library</p>
   <span class="tag tag-lang">Language</span>
   <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
   <div class="search-count" id="searchCount"></div>
@@ -23,26 +23,307 @@
 
 <div class="toc"><div class="toc-title">Contents</div>
   <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
+    <a href="#basics">Basics &amp; Types</a>
+    <a href="#pointers">Pointers &amp; Memory</a>
+    <a href="#strings">Strings</a>
+    <a href="#structs">Structs &amp; Unions</a>
+    <a href="#preprocessor">Preprocessor</a>
+    <a href="#io">File I/O</a>
+    <a href="#stdlib">Standard Library</a>
+    <a href="#memory">Dynamic Memory</a>
+    <a href="#bitwise">Bitwise Ops</a>
     <a href="#common">Common Patterns</a>
   </div>
 </div>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive C content.</div>
+<div class="section" id="basics">
+  <div class="section-header"><span class="icon">⚡</span><h2>Basics &amp; Types</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Hello World</span>
+<span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="kw">int</span> <span class="fn">main</span>(<span class="kw">void</span>) {
+    printf(<span class="str">"Hello, World!\n"</span>);
+    <span class="kw">return</span> <span class="num">0</span>;
+}
+
+<span class="cmt">// Data types</span>
+<span class="kw">char</span>   c = <span class="str">'A'</span>;          <span class="cmt">// 1 byte</span>
+<span class="kw">short</span>  s = <span class="num">32767</span>;        <span class="cmt">// 2 bytes</span>
+<span class="kw">int</span>    i = <span class="num">42</span>;           <span class="cmt">// 4 bytes (typically)</span>
+<span class="kw">long</span>   l = <span class="num">100000L</span>;      <span class="cmt">// 4-8 bytes</span>
+<span class="kw">float</span>  f = <span class="num">3.14f</span>;        <span class="cmt">// 4 bytes</span>
+<span class="kw">double</span> d = <span class="num">3.14159265</span>;   <span class="cmt">// 8 bytes</span>
+<span class="kw">unsigned int</span> u = <span class="num">42U</span>;    <span class="cmt">// no negative values</span>
+
+<span class="cmt">// Type qualifiers</span>
+<span class="kw">const int</span> MAX = <span class="num">100</span>;     <span class="cmt">// read-only</span>
+<span class="kw">volatile int</span> reg;         <span class="cmt">// may change unexpectedly</span>
+<span class="kw">static int</span> count = <span class="num">0</span>;    <span class="cmt">// persists across calls</span>
+
+<span class="cmt">// Arrays</span>
+<span class="kw">int</span> arr[<span class="num">5</span>] = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>};
+<span class="kw">int</span> matrix[<span class="num">3</span>][<span class="num">4</span>];          <span class="cmt">// 2D array</span>
+<span class="kw">int</span> len = <span class="kw">sizeof</span>(arr) / <span class="kw">sizeof</span>(arr[<span class="num">0</span>]);</code></pre></div>
 </div>
 
-<div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// C basics coming soon...</span></code></pre></div>
+<div class="section" id="pointers">
+  <div class="section-header"><span class="icon">🔗</span><h2>Pointers &amp; Memory</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Pointer basics</span>
+<span class="kw">int</span> x = <span class="num">42</span>;
+<span class="kw">int</span> *p = &amp;x;              <span class="cmt">// p holds address of x</span>
+printf(<span class="str">"%d"</span>, *p);         <span class="cmt">// dereference → 42</span>
+*p = <span class="num">100</span>;                 <span class="cmt">// x is now 100</span>
+
+<span class="cmt">// Pointer arithmetic</span>
+<span class="kw">int</span> arr[] = {<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>};
+<span class="kw">int</span> *ptr = arr;            <span class="cmt">// points to arr[0]</span>
+ptr++;                     <span class="cmt">// now points to arr[1]</span>
+*(ptr + <span class="num">1</span>)                 <span class="cmt">// arr[2] → 30</span>
+
+<span class="cmt">// Pointer to pointer</span>
+<span class="kw">int</span> **pp = &amp;p;
+**pp = <span class="num">200</span>;               <span class="cmt">// x is now 200</span>
+
+<span class="cmt">// Function pointers</span>
+<span class="kw">int</span> <span class="fn">add</span>(<span class="kw">int</span> a, <span class="kw">int</span> b) { <span class="kw">return</span> a + b; }
+<span class="kw">int</span> (*fp)(<span class="kw">int</span>, <span class="kw">int</span>) = add;
+fp(<span class="num">3</span>, <span class="num">4</span>);                  <span class="cmt">// 7</span>
+
+<span class="cmt">// NULL pointer</span>
+<span class="kw">int</span> *null_ptr = <span class="kw">NULL</span>;
+<span class="kw">if</span> (null_ptr != <span class="kw">NULL</span>) { <span class="cmt">/* safe to dereference */</span> }</code></pre></div>
+</div>
+
+<div class="section" id="strings">
+  <div class="section-header"><span class="icon">📝</span><h2>Strings</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">#include</span> <span class="str">&lt;string.h&gt;</span>
+
+<span class="kw">char</span> s1[] = <span class="str">"Hello"</span>;           <span class="cmt">// mutable, stack</span>
+<span class="kw">char</span> *s2   = <span class="str">"Hello"</span>;           <span class="cmt">// pointer to literal (read-only!)</span>
+<span class="kw">char</span> s3[<span class="num">20</span>];
+strcpy(s3, <span class="str">"Hello"</span>);           <span class="cmt">// copy string</span>
+
+strlen(s1)                      <span class="cmt">// 5 (no null byte)</span>
+strcmp(s1, s2)                   <span class="cmt">// 0 if equal</span>
+strncmp(s1, s2, <span class="num">3</span>)              <span class="cmt">// compare first 3</span>
+strcat(s3, <span class="str">" World"</span>)            <span class="cmt">// concatenate</span>
+strncat(s3, <span class="str">"!!"</span>, <span class="num">1</span>)           <span class="cmt">// append n chars</span>
+strchr(s1, <span class="str">'l'</span>)                <span class="cmt">// first occurrence</span>
+strstr(s1, <span class="str">"llo"</span>)              <span class="cmt">// substring search</span>
+sprintf(s3, <span class="str">"%s %d"</span>, <span class="str">"num"</span>, <span class="num">5</span>) <span class="cmt">// formatted print to string</span>
+snprintf(s3, <span class="num">20</span>, <span class="str">"%s"</span>, <span class="str">"safe"</span>)<span class="cmt">// bounds-safe version</span>
+
+<span class="cmt">// Character functions (&lt;ctype.h&gt;)</span>
+isalpha(c)  isdigit(c)  isspace(c)
+toupper(c)  tolower(c)</code></pre></div>
+</div>
+
+<div class="section" id="structs">
+  <div class="section-header"><span class="icon">🏗️</span><h2>Structs &amp; Unions</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Struct</span>
+<span class="kw">struct</span> <span class="tp">Point</span> {
+    <span class="kw">int</span> x;
+    <span class="kw">int</span> y;
+};
+<span class="kw">struct</span> <span class="tp">Point</span> p1 = {<span class="num">10</span>, <span class="num">20</span>};
+p1.x = <span class="num">30</span>;
+
+<span class="cmt">// Typedef</span>
+<span class="kw">typedef struct</span> {
+    <span class="kw">char</span> name[<span class="num">50</span>];
+    <span class="kw">int</span>  age;
+} <span class="tp">Person</span>;
+<span class="tp">Person</span> p = {<span class="str">"Alice"</span>, <span class="num">30</span>};
+
+<span class="cmt">// Pointer to struct</span>
+<span class="tp">Person</span> *pp = &amp;p;
+pp-&gt;age = <span class="num">31</span>;                <span class="cmt">// arrow operator</span>
+
+<span class="cmt">// Union (shared memory)</span>
+<span class="kw">union</span> <span class="tp">Data</span> {
+    <span class="kw">int</span>    i;
+    <span class="kw">float</span>  f;
+    <span class="kw">char</span>   str[<span class="num">20</span>];
+};  <span class="cmt">// size = largest member</span>
+
+<span class="cmt">// Enum</span>
+<span class="kw">enum</span> <span class="tp">Color</span> { RED, GREEN, BLUE };
+<span class="kw">enum</span> <span class="tp">Color</span> c = GREEN;          <span class="cmt">// GREEN = 1</span></code></pre></div>
+</div>
+
+<div class="section" id="preprocessor">
+  <div class="section-header"><span class="icon">⚙️</span><h2>Preprocessor</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">#define</span> PI <span class="num">3.14159</span>
+<span class="kw">#define</span> <span class="fn">MAX</span>(a,b) ((a) &gt; (b) ? (a) : (b))
+<span class="kw">#define</span> <span class="fn">SQUARE</span>(x) ((x) * (x))
+
+<span class="kw">#ifdef</span> DEBUG
+    printf(<span class="str">"Debug mode\n"</span>);
+<span class="kw">#endif</span>
+
+<span class="kw">#ifndef</span> HEADER_H
+<span class="kw">#define</span> HEADER_H
+<span class="cmt">// header content (include guard)</span>
+<span class="kw">#endif</span>
+
+<span class="kw">#if</span> defined(__linux__)
+    <span class="cmt">// Linux-specific code</span>
+<span class="kw">#elif</span> defined(__APPLE__)
+    <span class="cmt">// macOS-specific code</span>
+<span class="kw">#else</span>
+    <span class="cmt">// fallback</span>
+<span class="kw">#endif</span>
+
+<span class="kw">#pragma once</span>              <span class="cmt">// modern include guard</span>
+__FILE__  __LINE__  __DATE__  __TIME__  <span class="cmt">// built-in macros</span></code></pre></div>
+</div>
+
+<div class="section" id="io">
+  <div class="section-header"><span class="icon">📂</span><h2>File I/O</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">#include</span> <span class="str">&lt;stdio.h&gt;</span>
+
+<span class="cmt">// Open / Close</span>
+FILE *fp = fopen(<span class="str">"data.txt"</span>, <span class="str">"r"</span>);   <span class="cmt">// r, w, a, rb, wb, r+</span>
+<span class="kw">if</span> (!fp) { perror(<span class="str">"Error"</span>); <span class="kw">return</span> <span class="num">1</span>; }
+fclose(fp);
+
+<span class="cmt">// Read</span>
+<span class="kw">char</span> buf[<span class="num">256</span>];
+fgets(buf, <span class="num">256</span>, fp);             <span class="cmt">// read line</span>
+fscanf(fp, <span class="str">"%d %s"</span>, &amp;num, str);  <span class="cmt">// formatted read</span>
+fread(buf, <span class="num">1</span>, <span class="num">256</span>, fp);          <span class="cmt">// binary read</span>
+<span class="kw">int</span> ch = fgetc(fp);               <span class="cmt">// read char</span>
+
+<span class="cmt">// Write</span>
+fprintf(fp, <span class="str">"Name: %s\n"</span>, name);
+fputs(<span class="str">"Hello\n"</span>, fp);
+fwrite(data, <span class="num">1</span>, size, fp);       <span class="cmt">// binary write</span>
+fputc(<span class="str">'A'</span>, fp);
+
+<span class="cmt">// Position</span>
+fseek(fp, <span class="num">0</span>, SEEK_SET);          <span class="cmt">// beginning</span>
+fseek(fp, <span class="num">0</span>, SEEK_END);          <span class="cmt">// end</span>
+<span class="kw">long</span> pos = ftell(fp);
+rewind(fp);
+
+<span class="cmt">// Check</span>
+feof(fp)     <span class="cmt">// end of file?</span>
+ferror(fp)   <span class="cmt">// error occurred?</span></code></pre></div>
+</div>
+
+<div class="section" id="stdlib">
+  <div class="section-header"><span class="icon">📚</span><h2>Standard Library</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">#include</span> <span class="str">&lt;stdlib.h&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;math.h&gt;</span>
+
+<span class="cmt">// stdlib.h</span>
+atoi(<span class="str">"42"</span>)       <span class="cmt">// string → int</span>
+atof(<span class="str">"3.14"</span>)     <span class="cmt">// string → double</span>
+strtol(s, <span class="kw">NULL</span>, <span class="num">10</span>)  <span class="cmt">// safer string → long</span>
+abs(-<span class="num">5</span>)           <span class="cmt">// 5</span>
+rand() % <span class="num">100</span>      <span class="cmt">// random 0-99</span>
+srand(time(<span class="kw">NULL</span>))  <span class="cmt">// seed random</span>
+exit(<span class="num">0</span>)            <span class="cmt">// terminate program</span>
+system(<span class="str">"ls"</span>)       <span class="cmt">// run shell command</span>
+
+qsort(arr, n, <span class="kw">sizeof</span>(<span class="kw">int</span>), compare_fn);
+bsearch(&amp;key, arr, n, <span class="kw">sizeof</span>(<span class="kw">int</span>), compare_fn);
+
+<span class="cmt">// math.h (link with -lm)</span>
+sqrt(<span class="num">16.0</span>)    <span class="cmt">// 4.0</span>
+pow(<span class="num">2</span>, <span class="num">10</span>)    <span class="cmt">// 1024.0</span>
+ceil(<span class="num">3.2</span>)     <span class="cmt">// 4.0</span>
+floor(<span class="num">3.8</span>)    <span class="cmt">// 3.0</span>
+fabs(-<span class="num">3.5</span>)    <span class="cmt">// 3.5</span>
+log(<span class="num">2.718</span>)    <span class="cmt">// ~1.0 (natural)</span>
+log10(<span class="num">100</span>)    <span class="cmt">// 2.0</span>
+sin(x) cos(x) tan(x) atan2(y, x)</code></pre></div>
+</div>
+
+<div class="section" id="memory">
+  <div class="section-header"><span class="icon">🧠</span><h2>Dynamic Memory</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">#include</span> <span class="str">&lt;stdlib.h&gt;</span>
+
+<span class="cmt">// malloc — allocate uninitialized memory</span>
+<span class="kw">int</span> *arr = (<span class="kw">int</span> *)malloc(<span class="num">10</span> * <span class="kw">sizeof</span>(<span class="kw">int</span>));
+<span class="kw">if</span> (!arr) { <span class="cmt">/* allocation failed */</span> }
+
+<span class="cmt">// calloc — allocate zero-initialized</span>
+<span class="kw">int</span> *arr2 = (<span class="kw">int</span> *)calloc(<span class="num">10</span>, <span class="kw">sizeof</span>(<span class="kw">int</span>));
+
+<span class="cmt">// realloc — resize</span>
+arr = (<span class="kw">int</span> *)realloc(arr, <span class="num">20</span> * <span class="kw">sizeof</span>(<span class="kw">int</span>));
+
+<span class="cmt">// free — release memory</span>
+free(arr);
+arr = <span class="kw">NULL</span>;   <span class="cmt">// avoid dangling pointer</span>
+
+<span class="cmt">// Common mistakes</span>
+<span class="cmt">// ✗ Use after free (dangling pointer)</span>
+<span class="cmt">// ✗ Double free</span>
+<span class="cmt">// ✗ Memory leak (forgot free)</span>
+<span class="cmt">// ✗ Buffer overflow (write past allocation)</span>
+<span class="cmt">// ✓ Always check malloc return value</span>
+<span class="cmt">// ✓ Always free what you malloc</span>
+<span class="cmt">// ✓ Set pointer to NULL after free</span></code></pre></div>
+</div>
+
+<div class="section" id="bitwise">
+  <div class="section-header"><span class="icon">🔢</span><h2>Bitwise Ops</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Operators</span>
+a &amp; b      <span class="cmt">// AND    0b1100 &amp; 0b1010 = 0b1000</span>
+a | b      <span class="cmt">// OR     0b1100 | 0b1010 = 0b1110</span>
+a ^ b      <span class="cmt">// XOR    0b1100 ^ 0b1010 = 0b0110</span>
+~a         <span class="cmt">// NOT    ~0b1100 = 0b0011 (inverted)</span>
+a &lt;&lt; n     <span class="cmt">// left shift  (× 2^n)</span>
+a &gt;&gt; n     <span class="cmt">// right shift (÷ 2^n)</span>
+
+<span class="cmt">// Common tricks</span>
+x &amp; <span class="num">1</span>              <span class="cmt">// check if odd</span>
+x &amp; (x - <span class="num">1</span>)        <span class="cmt">// clear lowest set bit</span>
+x | (x - <span class="num">1</span>)        <span class="cmt">// set all bits after lowest</span>
+<span class="num">1</span> &lt;&lt; n              <span class="cmt">// nth bit mask</span>
+x | (<span class="num">1</span> &lt;&lt; n)       <span class="cmt">// set nth bit</span>
+x &amp; ~(<span class="num">1</span> &lt;&lt; n)      <span class="cmt">// clear nth bit</span>
+x ^ (<span class="num">1</span> &lt;&lt; n)       <span class="cmt">// toggle nth bit</span>
+(x &gt;&gt; n) &amp; <span class="num">1</span>       <span class="cmt">// check nth bit</span></code></pre></div>
 </div>
 
 <div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// C patterns coming soon...</span></code></pre></div>
+  <div class="section-header"><span class="icon">🔧</span><h2>Common Patterns</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Swap without temp</span>
+a ^= b; b ^= a; a ^= b;
+
+<span class="cmt">// Linked list node</span>
+<span class="kw">typedef struct</span> <span class="tp">Node</span> {
+    <span class="kw">int</span> data;
+    <span class="kw">struct</span> <span class="tp">Node</span> *next;
+} <span class="tp">Node</span>;
+
+<span class="cmt">// qsort comparator</span>
+<span class="kw">int</span> <span class="fn">cmp</span>(<span class="kw">const void</span> *a, <span class="kw">const void</span> *b) {
+    <span class="kw">return</span> (*(<span class="kw">int</span>*)a - *(<span class="kw">int</span>*)b);
+}
+qsort(arr, n, <span class="kw">sizeof</span>(<span class="kw">int</span>), cmp);
+
+<span class="cmt">// Error handling pattern</span>
+<span class="kw">int</span> <span class="fn">process</span>() {
+    FILE *fp = fopen(<span class="str">"f.txt"</span>, <span class="str">"r"</span>);
+    <span class="kw">if</span> (!fp) <span class="kw">goto</span> err_file;
+    <span class="kw">char</span> *buf = malloc(<span class="num">1024</span>);
+    <span class="kw">if</span> (!buf) <span class="kw">goto</span> err_buf;
+    <span class="cmt">// ... work ...</span>
+    free(buf);
+err_buf:
+    fclose(fp);
+err_file:
+    <span class="kw">return</span> -<span class="num">1</span>;
+}
+
+<span class="cmt">// Compile: gcc -Wall -Wextra -O2 -o prog main.c</span>
+<span class="cmt">// Debug:   gcc -g -fsanitize=address -o prog main.c</span></code></pre></div>
 </div>
+
 
 </div>
 <button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>

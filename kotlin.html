@@ -15,7 +15,7 @@
 <div class="container">
 <div class="hero">
   <h1>Kotlin Cheatsheet</h1>
-  <p class="subtitle">Null safety, coroutines, data classes, sealed classes, extensions &amp; Android basics</p>
+  <p class="subtitle">Null safety, coroutines, data classes, sealed classes &amp; Android basics</p>
   <span class="tag tag-lang">Language</span>
   <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
   <div class="search-count" id="searchCount"></div>
@@ -23,26 +23,138 @@
 
 <div class="toc"><div class="toc-title">Contents</div>
   <div class="toc-grid">
-    <a href="#overview">Overview</a>
-    <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
+    <a href="#basics">⚡</a>
+    <a href="#functions">🔧</a>
+    <a href="#classes">🏛️</a>
+    <a href="#coroutines">⚡</a>
   </div>
 </div>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive Kotlin content.</div>
-</div>
-
 <div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Kotlin basics coming soon...</span></code></pre></div>
+  <div class="section-header"><span class="icon">⚡</span><h2>Basics &amp; Types</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">fun</span> <span class="fn">main</span>() {
+    println(<span class="str">"Hello Kotlin!"</span>)
+}
+
+<span class="cmt">// Variables</span>
+<span class="kw">val</span> name = <span class="str">"Alice"</span>       <span class="cmt">// immutable (prefer val)</span>
+<span class="kw">var</span> age = <span class="num">30</span>             <span class="cmt">// mutable</span>
+<span class="kw">val</span> pi: <span class="tp">Double</span> = <span class="num">3.14</span>
+
+<span class="cmt">// Types: Int, Long, Double, Float, Boolean, Char, String</span>
+<span class="kw">val</span> x: <span class="tp">Int</span> = <span class="num">42</span>
+<span class="kw">val</span> s: <span class="tp">String</span> = <span class="str">"Hello ${name}, age $age"</span>
+<span class="kw">val</span> multiline = <span class="str">"""
+    |Multi-line
+    |string
+""".trimMargin()</span>
+
+<span class="cmt">// Null safety</span>
+<span class="kw">var</span> nullable: <span class="tp">String</span>? = <span class="kw">null</span>
+nullable?.length              <span class="cmt">// safe call → null</span>
+nullable?.length ?: <span class="num">0</span>         <span class="cmt">// Elvis operator → 0</span>
+nullable!!.length             <span class="cmt">// assert non-null (throws if null)</span>
+
+<span class="cmt">// Type checks &amp; casts</span>
+<span class="kw">if</span> (obj <span class="kw">is</span> <span class="tp">String</span>) obj.length  <span class="cmt">// smart cast</span>
+<span class="kw">val</span> str = obj <span class="kw">as</span>? <span class="tp">String</span>       <span class="cmt">// safe cast (null if fails)</span></code></pre></div>
 </div>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// Kotlin patterns coming soon...</span></code></pre></div>
+<div class="section" id="functions">
+  <div class="section-header"><span class="icon">🔧</span><h2>Functions</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Functions</span>
+<span class="kw">fun</span> <span class="fn">add</span>(a: <span class="tp">Int</span>, b: <span class="tp">Int</span>): <span class="tp">Int</span> = a + b  <span class="cmt">// expression body</span>
+<span class="kw">fun</span> <span class="fn">greet</span>(name: <span class="tp">String</span> = <span class="str">"World"</span>) = println(<span class="str">"Hello $name"</span>)
+greet()           <span class="cmt">// "Hello World"</span>
+greet(name = <span class="str">"Alice"</span>)  <span class="cmt">// named argument</span>
+
+<span class="cmt">// Lambdas</span>
+<span class="kw">val</span> double = { x: <span class="tp">Int</span> -&gt; x * <span class="num">2</span> }
+<span class="kw">val</span> nums = listOf(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>)
+nums.filter { it % <span class="num">2</span> == <span class="num">0</span> }    <span class="cmt">// implicit 'it'</span>
+nums.map { it * <span class="num">2</span> }
+nums.reduce { acc, n -&gt; acc + n }
+
+<span class="cmt">// Extension functions</span>
+<span class="kw">fun</span> <span class="tp">String</span>.<span class="fn">addExclaim</span>() = <span class="str">"$this!"</span>
+<span class="str">"Hello"</span>.addExclaim()  <span class="cmt">// "Hello!"</span>
+
+<span class="cmt">// Scope functions</span>
+person.let { println(it.name) }
+person.apply { name = <span class="str">"Bob"</span>; age = <span class="num">25</span> }
+person.also { log(it) }
+person.run { <span class="str">"$name is $age"</span> }
+<span class="kw">with</span>(person) { println(<span class="str">"$name $age"</span>) }</code></pre></div>
 </div>
+
+<div class="section" id="classes">
+  <div class="section-header"><span class="icon">🏛️</span><h2>Classes &amp; OOP</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Data class (auto equals, hashCode, toString, copy)</span>
+<span class="kw">data class</span> <span class="tp">User</span>(<span class="kw">val</span> name: <span class="tp">String</span>, <span class="kw">val</span> age: <span class="tp">Int</span>)
+<span class="kw">val</span> user = <span class="tp">User</span>(<span class="str">"Alice"</span>, <span class="num">30</span>)
+<span class="kw">val</span> copy = user.copy(age = <span class="num">31</span>)
+<span class="kw">val</span> (name, age) = user     <span class="cmt">// destructuring</span>
+
+<span class="cmt">// Sealed class</span>
+<span class="kw">sealed class</span> <span class="tp">Result</span> {
+    <span class="kw">data class</span> <span class="tp">Success</span>(<span class="kw">val</span> data: <span class="tp">String</span>) : <span class="tp">Result</span>()
+    <span class="kw">data class</span> <span class="tp">Error</span>(<span class="kw">val</span> msg: <span class="tp">String</span>) : <span class="tp">Result</span>()
+    <span class="kw">object</span> <span class="tp">Loading</span> : <span class="tp">Result</span>()
+}
+<span class="kw">when</span> (result) {
+    <span class="kw">is</span> <span class="tp">Result.Success</span> -&gt; println(result.data)
+    <span class="kw">is</span> <span class="tp">Result.Error</span>   -&gt; println(result.msg)
+    <span class="tp">Result.Loading</span>    -&gt; println(<span class="str">"Loading..."</span>)
+}
+
+<span class="cmt">// Object (singleton) &amp; companion</span>
+<span class="kw">object</span> <span class="tp">Database</span> { <span class="kw">fun</span> <span class="fn">connect</span>() {} }
+<span class="kw">class</span> <span class="tp">MyClass</span> {
+    <span class="kw">companion object</span> {
+        <span class="kw">fun</span> <span class="fn">create</span>() = <span class="tp">MyClass</span>()  <span class="cmt">// like static</span>
+    }
+}</code></pre></div>
+</div>
+
+<div class="section" id="coroutines">
+  <div class="section-header"><span class="icon">⚡</span><h2>Coroutines</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">import</span> kotlinx.coroutines.*
+
+<span class="cmt">// Launch (fire and forget)</span>
+<span class="kw">fun</span> <span class="fn">main</span>() = runBlocking {
+    launch {
+        delay(<span class="num">1000</span>)
+        println(<span class="str">"World!"</span>)
+    }
+    println(<span class="str">"Hello"</span>)
+}
+
+<span class="cmt">// Async (returns result)</span>
+<span class="kw">val</span> deferred = async { fetchData() }
+<span class="kw">val</span> result = deferred.await()
+
+<span class="cmt">// Parallel execution</span>
+coroutineScope {
+    <span class="kw">val</span> a = async { fetchUser() }
+    <span class="kw">val</span> b = async { fetchPosts() }
+    println(<span class="str">"${a.await()} ${b.await()}"</span>)
+}
+
+<span class="cmt">// Dispatchers</span>
+launch(Dispatchers.IO) { }       <span class="cmt">// I/O operations</span>
+launch(Dispatchers.Default) { }  <span class="cmt">// CPU-intensive</span>
+launch(Dispatchers.Main) { }     <span class="cmt">// UI thread (Android)</span>
+
+<span class="cmt">// Flow (reactive streams)</span>
+<span class="kw">fun</span> <span class="fn">numbers</span>(): Flow&lt;<span class="tp">Int</span>&gt; = flow {
+    <span class="kw">for</span> (i <span class="kw">in</span> <span class="num">1</span>..<span class="num">5</span>) {
+        delay(<span class="num">100</span>)
+        emit(i)
+    }
+}
+numbers().filter { it % <span class="num">2</span> == <span class="num">0</span> }.collect { println(it) }</code></pre></div>
+</div>
+
 
 </div>
 <button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>

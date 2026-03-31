@@ -15,7 +15,7 @@
 <div class="container">
 <div class="hero">
   <h1>C++ Cheatsheet</h1>
-  <p class="subtitle">Classes, templates, STL, smart pointers, RAII, move semantics &amp; modern C++ features</p>
+  <p class="subtitle">Classes, templates, STL, smart pointers, RAII &amp; modern C++ features</p>
   <span class="tag tag-lang">Language</span>
   <div class="search-box"><span class="search-icon">&#x1F50D;</span><input type="text" id="searchInput" placeholder="Filter sections&hellip;" autocomplete="off" /><button class="search-clear" id="searchClear">&times;</button></div>
   <div class="search-count" id="searchCount"></div>
@@ -23,26 +23,325 @@
 
 <div class="toc"><div class="toc-title">Contents</div>
   <div class="toc-grid">
-    <a href="#overview">Overview</a>
     <a href="#basics">Basics</a>
-    <a href="#common">Common Patterns</a>
+    <a href="#classes">Classes &amp; OOP</a>
+    <a href="#stl">STL Containers</a>
+    <a href="#algorithms">STL Algorithms</a>
+    <a href="#smart-ptr">Smart Pointers</a>
+    <a href="#templates">Templates</a>
+    <a href="#modern">Modern C++ (17/20)</a>
+    <a href="#strings">Strings &amp; I/O</a>
+    <a href="#lambda">Lambdas</a>
+    <a href="#memory">Memory &amp; RAII</a>
   </div>
 </div>
 
-<div class="section" id="overview">
-  <div class="section-header"><span class="icon">&#x1F4CB;</span><h2>Overview</h2></div>
-  <div class="note tip"><strong>Coming soon!</strong> This cheatsheet is under construction. Check back later for comprehensive C++ content.</div>
-</div>
-
 <div class="section" id="basics">
-  <div class="section-header"><span class="icon">&#x26A1;</span><h2>Basics</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// C++ basics coming soon...</span></code></pre></div>
+  <div class="section-header"><span class="icon">⚡</span><h2>Basics</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">#include</span> <span class="str">&lt;iostream&gt;</span>
+<span class="kw">using namespace</span> std;
+
+<span class="kw">int</span> <span class="fn">main</span>() {
+    cout &lt;&lt; <span class="str">"Hello World"</span> &lt;&lt; endl;
+    <span class="kw">return</span> <span class="num">0</span>;
+}
+
+<span class="cmt">// Variables</span>
+<span class="kw">auto</span> x = <span class="num">42</span>;              <span class="cmt">// type deduction (C++11)</span>
+<span class="kw">int</span> a{<span class="num">10</span>};                <span class="cmt">// uniform initialization</span>
+<span class="kw">const auto</span> PI = <span class="num">3.14</span>;
+<span class="kw">constexpr int</span> N = <span class="num">100</span>;   <span class="cmt">// compile-time constant</span>
+
+<span class="cmt">// References</span>
+<span class="kw">int</span> val = <span class="num">5</span>;
+<span class="kw">int</span>&amp; ref = val;            <span class="cmt">// lvalue reference</span>
+<span class="kw">int</span>&amp;&amp; rref = <span class="num">42</span>;           <span class="cmt">// rvalue reference (C++11)</span>
+
+<span class="cmt">// Range-based for</span>
+vector&lt;<span class="kw">int</span>&gt; v = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>};
+<span class="kw">for</span> (<span class="kw">auto</span>&amp; x : v) cout &lt;&lt; x;
+
+<span class="cmt">// Structured bindings (C++17)</span>
+<span class="kw">auto</span> [key, value] = make_pair(<span class="num">1</span>, <span class="str">"hello"</span>);</code></pre></div>
 </div>
 
-<div class="section" id="common">
-  <div class="section-header"><span class="icon">&#x1F527;</span><h2>Common Patterns</h2></div>
-  <div class="code-wrapper"><pre><code><span class="cmt">// C++ patterns coming soon...</span></code></pre></div>
+<div class="section" id="classes">
+  <div class="section-header"><span class="icon">🏛️</span><h2>Classes &amp; OOP</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">class</span> <span class="tp">Animal</span> {
+<span class="kw">private</span>:
+    string name;
+    <span class="kw">int</span> age;
+<span class="kw">public</span>:
+    <span class="cmt">// Constructor</span>
+    <span class="fn">Animal</span>(string n, <span class="kw">int</span> a) : name(move(n)), age(a) {}
+
+    <span class="cmt">// Copy constructor</span>
+    <span class="fn">Animal</span>(<span class="kw">const</span> <span class="tp">Animal</span>&amp; other) = <span class="kw">default</span>;
+
+    <span class="cmt">// Move constructor (C++11)</span>
+    <span class="fn">Animal</span>(<span class="tp">Animal</span>&amp;&amp; other) <span class="kw">noexcept</span> = <span class="kw">default</span>;
+
+    <span class="cmt">// Virtual destructor for polymorphism</span>
+    <span class="kw">virtual</span> ~<span class="fn">Animal</span>() = <span class="kw">default</span>;
+
+    <span class="cmt">// Virtual method</span>
+    <span class="kw">virtual</span> string <span class="fn">speak</span>() <span class="kw">const</span> { <span class="kw">return</span> <span class="str">"..."</span>; }
+
+    <span class="cmt">// Getter</span>
+    string <span class="fn">getName</span>() <span class="kw">const</span> { <span class="kw">return</span> name; }
+};
+
+<span class="kw">class</span> <span class="tp">Dog</span> : <span class="kw">public</span> <span class="tp">Animal</span> {
+<span class="kw">public</span>:
+    <span class="kw">using</span> <span class="tp">Animal</span>::<span class="tp">Animal</span>;
+    string <span class="fn">speak</span>() <span class="kw">const override</span> { <span class="kw">return</span> <span class="str">"Woof!"</span>; }
+};</code></pre></div>
 </div>
+
+<div class="section" id="stl">
+  <div class="section-header"><span class="icon">📦</span><h2>STL Containers</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">#include</span> <span class="str">&lt;vector&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;map&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;set&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;unordered_map&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;queue&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;stack&gt;</span>
+
+<span class="cmt">// vector — dynamic array</span>
+vector&lt;<span class="kw">int</span>&gt; v = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>};
+v.push_back(<span class="num">4</span>);     v.pop_back();
+v.size();            v.empty();
+v[<span class="num">0</span>];                v.at(<span class="num">0</span>);        <span class="cmt">// bounds-checked</span>
+v.begin();           v.end();
+v.insert(v.begin()+<span class="num">1</span>, <span class="num">99</span>);
+v.erase(v.begin());
+
+<span class="cmt">// map — sorted key-value (O(log n))</span>
+map&lt;string, <span class="kw">int</span>&gt; m;
+m[<span class="str">"a"</span>] = <span class="num">1</span>;
+m.count(<span class="str">"a"</span>);        <span class="cmt">// 1 if exists</span>
+m.find(<span class="str">"a"</span>);          <span class="cmt">// iterator</span>
+<span class="kw">for</span> (<span class="kw">auto</span>&amp; [k,v] : m) cout &lt;&lt; k &lt;&lt; v;
+
+<span class="cmt">// unordered_map — hash map (O(1) avg)</span>
+unordered_map&lt;string, <span class="kw">int</span>&gt; um;
+
+<span class="cmt">// set — sorted unique values</span>
+set&lt;<span class="kw">int</span>&gt; s = {<span class="num">3</span>,<span class="num">1</span>,<span class="num">2</span>};   <span class="cmt">// stored as {1,2,3}</span>
+s.insert(<span class="num">4</span>);   s.erase(<span class="num">2</span>);   s.count(<span class="num">1</span>);
+
+<span class="cmt">// stack &amp; queue</span>
+stack&lt;<span class="kw">int</span>&gt; st;  st.push(<span class="num">1</span>);  st.top();  st.pop();
+queue&lt;<span class="kw">int</span>&gt; q;   q.push(<span class="num">1</span>);   q.front(); q.pop();
+priority_queue&lt;<span class="kw">int</span>&gt; pq;  <span class="cmt">// max-heap</span></code></pre></div>
+</div>
+
+<div class="section" id="algorithms">
+  <div class="section-header"><span class="icon">🔍</span><h2>STL Algorithms</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">#include</span> <span class="str">&lt;algorithm&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;numeric&gt;</span>
+
+vector&lt;<span class="kw">int</span>&gt; v = {<span class="num">4</span>,<span class="num">2</span>,<span class="num">7</span>,<span class="num">1</span>,<span class="num">9</span>};
+sort(v.begin(), v.end());                  <span class="cmt">// ascending</span>
+sort(v.begin(), v.end(), greater&lt;<span class="kw">int</span>&gt;());  <span class="cmt">// descending</span>
+reverse(v.begin(), v.end());
+
+<span class="kw">auto</span> it = find(v.begin(), v.end(), <span class="num">7</span>);
+binary_search(v.begin(), v.end(), <span class="num">7</span>);      <span class="cmt">// true/false</span>
+
+<span class="kw">int</span> mx = *max_element(v.begin(), v.end());
+<span class="kw">int</span> mn = *min_element(v.begin(), v.end());
+<span class="kw">int</span> sum = accumulate(v.begin(), v.end(), <span class="num">0</span>);
+<span class="kw">int</span> cnt = count(v.begin(), v.end(), <span class="num">7</span>);
+
+<span class="cmt">// Transform</span>
+transform(v.begin(), v.end(), v.begin(),
+    [](<span class="kw">int</span> x){ <span class="kw">return</span> x * <span class="num">2</span>; });
+
+<span class="cmt">// Remove-erase idiom</span>
+v.erase(remove_if(v.begin(), v.end(),
+    [](<span class="kw">int</span> x){ <span class="kw">return</span> x &lt; <span class="num">5</span>; }), v.end());
+
+<span class="cmt">// Unique (sorted first!)</span>
+v.erase(unique(v.begin(), v.end()), v.end());</code></pre></div>
+</div>
+
+<div class="section" id="smart-ptr">
+  <div class="section-header"><span class="icon">🎯</span><h2>Smart Pointers</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">#include</span> <span class="str">&lt;memory&gt;</span>
+
+<span class="cmt">// unique_ptr — exclusive ownership</span>
+<span class="kw">auto</span> p1 = make_unique&lt;<span class="kw">int</span>&gt;(<span class="num">42</span>);
+<span class="kw">auto</span> p2 = make_unique&lt;<span class="kw">int</span>[]&gt;(<span class="num">10</span>);  <span class="cmt">// array</span>
+*p1 = <span class="num">100</span>;
+<span class="kw">auto</span> p3 = move(p1);  <span class="cmt">// transfer ownership (p1 is null)</span>
+
+<span class="cmt">// shared_ptr — reference-counted</span>
+<span class="kw">auto</span> sp1 = make_shared&lt;string&gt;(<span class="str">"hello"</span>);
+<span class="kw">auto</span> sp2 = sp1;       <span class="cmt">// ref count = 2</span>
+sp1.use_count();       <span class="cmt">// 2</span>
+sp1.reset();           <span class="cmt">// release, count = 1</span>
+
+<span class="cmt">// weak_ptr — non-owning observer</span>
+weak_ptr&lt;string&gt; wp = sp2;
+<span class="kw">if</span> (<span class="kw">auto</span> locked = wp.lock()) {
+    cout &lt;&lt; *locked;   <span class="cmt">// safe access</span>
+}
+
+<span class="cmt">// Rule of 5: If you define any of these, define all:</span>
+<span class="cmt">// destructor, copy ctor, copy=, move ctor, move=</span></code></pre></div>
+</div>
+
+<div class="section" id="templates">
+  <div class="section-header"><span class="icon">📐</span><h2>Templates</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Function template</span>
+<span class="kw">template</span>&lt;<span class="kw">typename</span> <span class="tp">T</span>&gt;
+<span class="tp">T</span> <span class="fn">maximum</span>(<span class="tp">T</span> a, <span class="tp">T</span> b) { <span class="kw">return</span> (a &gt; b) ? a : b; }
+maximum(<span class="num">3</span>, <span class="num">7</span>);      <span class="cmt">// int</span>
+maximum(<span class="num">3.5</span>, <span class="num">7.2</span>);  <span class="cmt">// double</span>
+
+<span class="cmt">// Class template</span>
+<span class="kw">template</span>&lt;<span class="kw">typename</span> <span class="tp">T</span>, <span class="kw">int</span> N&gt;
+<span class="kw">class</span> <span class="tp">Array</span> {
+    <span class="tp">T</span> data[N];
+<span class="kw">public</span>:
+    <span class="tp">T</span>&amp; <span class="kw">operator</span>[](<span class="kw">int</span> i) { <span class="kw">return</span> data[i]; }
+    <span class="kw">constexpr int</span> <span class="fn">size</span>() <span class="kw">const</span> { <span class="kw">return</span> N; }
+};
+<span class="tp">Array</span>&lt;<span class="kw">int</span>, <span class="num">5</span>&gt; arr;
+
+<span class="cmt">// Variadic templates (C++11)</span>
+<span class="kw">template</span>&lt;<span class="kw">typename</span>... <span class="tp">Args</span>&gt;
+<span class="kw">void</span> <span class="fn">print</span>(<span class="tp">Args</span>... args) {
+    (cout &lt;&lt; ... &lt;&lt; args) &lt;&lt; endl;  <span class="cmt">// fold expression C++17</span>
+}
+
+<span class="cmt">// Concepts (C++20)</span>
+<span class="kw">template</span>&lt;<span class="kw">typename</span> <span class="tp">T</span>&gt;
+<span class="kw">concept</span> <span class="tp">Numeric</span> = is_arithmetic_v&lt;<span class="tp">T</span>&gt;;
+
+<span class="kw">template</span>&lt;<span class="tp">Numeric</span> <span class="tp">T</span>&gt;
+<span class="tp">T</span> <span class="fn">add</span>(<span class="tp">T</span> a, <span class="tp">T</span> b) { <span class="kw">return</span> a + b; }</code></pre></div>
+</div>
+
+<div class="section" id="modern">
+  <div class="section-header"><span class="icon">🆕</span><h2>Modern C++ (17/20)</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// std::optional (C++17)</span>
+optional&lt;<span class="kw">int</span>&gt; <span class="fn">find</span>(<span class="kw">int</span> id) {
+    <span class="kw">if</span> (id &gt; <span class="num">0</span>) <span class="kw">return</span> id * <span class="num">10</span>;
+    <span class="kw">return</span> nullopt;
+}
+<span class="kw">auto</span> val = find(<span class="num">5</span>);
+<span class="kw">if</span> (val) cout &lt;&lt; *val;
+val.value_or(<span class="num">0</span>);
+
+<span class="cmt">// std::variant (C++17)</span>
+variant&lt;<span class="kw">int</span>, string&gt; v = <span class="str">"hello"</span>;
+get&lt;string&gt;(v);          <span class="cmt">// "hello"</span>
+holds_alternative&lt;<span class="kw">int</span>&gt;(v); <span class="cmt">// false</span>
+
+<span class="cmt">// std::any (C++17)</span>
+any a = <span class="num">42</span>;
+any_cast&lt;<span class="kw">int</span>&gt;(a);
+
+<span class="cmt">// if-init (C++17)</span>
+<span class="kw">if</span> (<span class="kw">auto</span> it = m.find(<span class="str">"key"</span>); it != m.end()) {
+    cout &lt;&lt; it-&gt;second;
+}
+
+<span class="cmt">// Coroutines (C++20)</span>
+<span class="cmt">// Ranges (C++20)</span>
+<span class="kw">auto</span> result = v | views::filter([](<span class="kw">int</span> n){ <span class="kw">return</span> n%<span class="num">2</span>==<span class="num">0</span>; })
+                | views::transform([](<span class="kw">int</span> n){ <span class="kw">return</span> n*n; });
+
+<span class="cmt">// std::format (C++20)</span>
+string s = format(<span class="str">"Hello {} you are {}"</span>, <span class="str">"Alice"</span>, <span class="num">30</span>);</code></pre></div>
+</div>
+
+<div class="section" id="strings">
+  <div class="section-header"><span class="icon">📝</span><h2>Strings &amp; I/O</h2></div>
+  <div class="code-wrapper"><pre><code><span class="kw">#include</span> <span class="str">&lt;string&gt;</span>
+<span class="kw">#include</span> <span class="str">&lt;sstream&gt;</span>
+
+string s = <span class="str">"Hello World"</span>;
+s.length();  s.size();  s.empty();
+s.substr(<span class="num">6</span>, <span class="num">5</span>);        <span class="cmt">// "World"</span>
+s.find(<span class="str">"World"</span>);         <span class="cmt">// 6 (npos if not found)</span>
+s.replace(<span class="num">0</span>, <span class="num">5</span>, <span class="str">"Hi"</span>); <span class="cmt">// "Hi World"</span>
+s.append(<span class="str">"!"</span>);
+s += <span class="str">" again"</span>;
+s.erase(<span class="num">0</span>, <span class="num">3</span>);
+stoi(<span class="str">"42"</span>);  stod(<span class="str">"3.14"</span>);  to_string(<span class="num">42</span>);
+
+<span class="cmt">// String stream</span>
+stringstream ss;
+ss &lt;&lt; <span class="str">"Age: "</span> &lt;&lt; <span class="num">25</span>;
+string result = ss.str();
+
+<span class="cmt">// File I/O</span>
+<span class="kw">#include</span> <span class="str">&lt;fstream&gt;</span>
+ofstream out(<span class="str">"file.txt"</span>);
+out &lt;&lt; <span class="str">"Hello"</span> &lt;&lt; endl;
+out.close();
+ifstream in(<span class="str">"file.txt"</span>);
+string line;
+<span class="kw">while</span> (getline(in, line)) cout &lt;&lt; line;</code></pre></div>
+</div>
+
+<div class="section" id="lambda">
+  <div class="section-header"><span class="icon">λ</span><h2>Lambdas</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// Basic lambda</span>
+<span class="kw">auto</span> add = [](<span class="kw">int</span> a, <span class="kw">int</span> b) { <span class="kw">return</span> a + b; };
+add(<span class="num">3</span>, <span class="num">4</span>);  <span class="cmt">// 7</span>
+
+<span class="cmt">// Capture modes</span>
+<span class="kw">int</span> x = <span class="num">10</span>, y = <span class="num">20</span>;
+[=]() { <span class="kw">return</span> x + y; }    <span class="cmt">// capture all by value</span>
+[&amp;]() { x++; y++; }         <span class="cmt">// capture all by reference</span>
+[x, &amp;y]() { y = x; }       <span class="cmt">// x by value, y by ref</span>
+[&amp;, x]() { }                <span class="cmt">// all by ref except x by value</span>
+
+<span class="cmt">// Generic lambda (C++14)</span>
+<span class="kw">auto</span> print = [](<span class="kw">auto</span> x) { cout &lt;&lt; x; };
+
+<span class="cmt">// Mutable lambda</span>
+<span class="kw">auto</span> counter = [n=<span class="num">0</span>]() <span class="kw">mutable</span> { <span class="kw">return</span> n++; };
+
+<span class="cmt">// Lambda with STL</span>
+sort(v.begin(), v.end(), [](<span class="kw">int</span> a, <span class="kw">int</span> b) {
+    <span class="kw">return</span> a &gt; b;  <span class="cmt">// descending</span>
+});
+
+<span class="cmt">// Immediately invoked</span>
+<span class="kw">auto</span> val = []() { <span class="kw">return</span> <span class="num">42</span>; }();</code></pre></div>
+</div>
+
+<div class="section" id="memory">
+  <div class="section-header"><span class="icon">🧠</span><h2>Memory &amp; RAII</h2></div>
+  <div class="code-wrapper"><pre><code><span class="cmt">// RAII — Resource Acquisition Is Initialization</span>
+<span class="cmt">// Resources tied to object lifetime</span>
+<span class="kw">class</span> <span class="tp">FileGuard</span> {
+    FILE* fp;
+<span class="kw">public</span>:
+    <span class="fn">FileGuard</span>(<span class="kw">const char</span>* path) : fp(fopen(path, <span class="str">"r"</span>)) {}
+    ~<span class="fn">FileGuard</span>() { <span class="kw">if</span>(fp) fclose(fp); }
+    FILE* <span class="fn">get</span>() { <span class="kw">return</span> fp; }
+};
+
+<span class="cmt">// Move semantics</span>
+vector&lt;<span class="kw">int</span>&gt; <span class="fn">create</span>() {
+    vector&lt;<span class="kw">int</span>&gt; v = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>};
+    <span class="kw">return</span> v;  <span class="cmt">// moved, not copied (RVO)</span>
+}
+
+<span class="cmt">// emplace vs push (in-place construction)</span>
+vector&lt;string&gt; v;
+v.push_back(string(<span class="str">"hello"</span>));   <span class="cmt">// construct + move</span>
+v.emplace_back(<span class="str">"hello"</span>);        <span class="cmt">// construct in-place (faster)</span>
+
+<span class="cmt">// Compile: g++ -std=c++20 -Wall -O2 -o prog main.cpp</span></code></pre></div>
+</div>
+
 
 </div>
 <button class="back-top" onclick="window.scrollTo({top:0})">&#x2191;</button>
