@@ -156,7 +156,7 @@
     <div class="spotlight-modal">
       <div class="spotlight-input-wrap">
         <svg class="spotlight-search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" class="spotlight-input" placeholder="Search all cheatsheets..." autocomplete="off" spellcheck="false" />
+        <input type="text" class="spotlight-input" placeholder="Search cheatsheets… or type python: sort" autocomplete="off" spellcheck="false" />
         <kbd class="spotlight-esc">esc</kbd>
       </div>
       <div class="spotlight-results"></div>
@@ -164,6 +164,7 @@
         <span><kbd>&uarr;</kbd><kbd>&darr;</kbd> navigate</span>
         <span><kbd>↵</kbd> open</span>
         <span><kbd>esc</kbd> close</span>
+        <span class="spotlight-footer-tip">💡 <kbd>python: sort</kbd> jumps to a section</span>
       </div>
     </div>
   `;
@@ -194,9 +195,102 @@
     'Communication': '💬',
   };
 
+  /* ── Section deep-link cache ── */
+  const sectionCache = {};
+
+  /* Score a page against a name query (higher = better match) */
+  function scorePageMatch(p, q) {
+    const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const nq = norm(q);
+    const ntitle = norm(p.title);
+    const ntags = norm(p.tags);
+    const nfile = norm(p.file);
+    if (ntitle === nq || nfile.startsWith(nq)) return 100;
+    if (ntitle.startsWith(nq) || ntags.split(' ').some(t => t === nq)) return 80;
+    if (ntitle.includes(nq) || ntags.includes(nq)) return 50;
+    return 0;
+  }
+
+  /* Find the best-matching page for a name fragment */
+  function findPageByName(q) {
+    let best = null, bestScore = 0;
+    pages.forEach(p => {
+      const s = scorePageMatch(p, q);
+      if (s > bestScore) { bestScore = s; best = p; }
+    });
+    return bestScore > 0 ? best : null;
+  }
+
+  /* Fetch page HTML and extract sections [{id, title, icon}] */
+  async function fetchSections(page) {
+    if (sectionCache[page.file]) return sectionCache[page.file];
+    try {
+      const resp = await fetch(page.file);
+      const text = await resp.text();
+      const doc = new DOMParser().parseFromString(text, 'text/html');
+      const sections = [];
+      doc.querySelectorAll('.section[id]').forEach(sec => {
+        const h2 = sec.querySelector('h2');
+        const iconEl = sec.querySelector('.section-header .icon, .section-header [class*="icon"]');
+        if (h2) sections.push({
+          id: sec.id,
+          title: h2.textContent.trim(),
+          icon: iconEl ? iconEl.textContent.trim() : '§'
+        });
+      });
+      sectionCache[page.file] = sections;
+      return sections;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  /* Render section-deep-link results */
+  async function renderSectionResults(page, sectionQ) {
+    results.innerHTML = `<div class="spotlight-cat">🔍 Sections in <strong>${page.title}</strong></div><div class="spotlight-empty">Loading…</div>`;
+    const sections = await fetchSections(page);
+    const sq = sectionQ.toLowerCase().trim();
+    const filtered = sq ? sections.filter(s => s.title.toLowerCase().includes(sq) || s.id.toLowerCase().includes(sq)) : sections;
+
+    if (filtered.length === 0) {
+      results.innerHTML = `<div class="spotlight-cat">🔍 Sections in <strong>${page.title}</strong></div><div class="spotlight-empty">No matching sections</div>`;
+      totalCount = 0;
+      return;
+    }
+
+    let html = `<div class="spotlight-cat">🔍 Sections in <strong>${page.title}</strong></div>`;
+    filtered.forEach((s, idx) => {
+      const active = idx === activeIdx ? ' spotlight-active' : '';
+      const titleHL = sq ? s.title.replace(new RegExp('(' + sq.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<mark>$1</mark>') : s.title;
+      html += `<a href="${page.file}#${s.id}" class="spotlight-item${active}" data-idx="${idx}">
+        <div class="spotlight-item-title">${s.icon} ${titleHL}</div>
+        <div class="spotlight-item-desc">${page.file}#${s.id}</div>
+      </a>`;
+    });
+    results.innerHTML = html;
+    totalCount = filtered.length;
+
+    const activeEl = results.querySelector('.spotlight-active');
+    if (activeEl) activeEl.scrollIntoView({ block: 'nearest' });
+  }
+
   /* ── Render results ── */
   function render(query) {
     const q = query.toLowerCase().trim();
+
+    /* ── Section deep-link: detect "pagename: section" pattern ── */
+    const colonIdx = q.indexOf(':');
+    if (colonIdx > 0) {
+      const pageQuery = q.slice(0, colonIdx).trim();
+      const sectionQuery = q.slice(colonIdx + 1).trim();
+      const matched = findPageByName(pageQuery);
+      if (matched) {
+        renderSectionResults(matched, sectionQuery);
+        return;
+      }
+    }
+
+    /* Normal page search */
     let filtered = pages;
     if (q) {
       const words = q.split(/\s+/);

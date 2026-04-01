@@ -1187,10 +1187,22 @@ footer {
 .spotlight-footer {
     display: flex;
     gap: 16px;
+    flex-wrap: wrap;
     padding: 10px 16px;
     border-top: 1px solid var(--border);
     font-size: 0.72rem;
     color: var(--text-dim);
+}
+
+.spotlight-footer-tip {
+    margin-left: auto;
+    opacity: .7;
+}
+
+.spotlight-footer-tip kbd {
+    background: color-mix(in srgb, var(--accent) 15%, transparent);
+    border-color: var(--accent);
+    color: var(--accent);
 }
 
 .spotlight-footer kbd {
