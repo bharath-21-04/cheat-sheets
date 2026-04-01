@@ -156,7 +156,7 @@
     <div class="spotlight-modal">
       <div class="spotlight-input-wrap">
         <svg class="spotlight-search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" class="spotlight-input" placeholder="Search cheatsheets… or type python: sort" autocomplete="off" spellcheck="false" />
+        <input type="text" class="spotlight-input" placeholder="Search… or : for shortcuts, py: sort to jump" autocomplete="off" spellcheck="false" />
         <kbd class="spotlight-esc">esc</kbd>
       </div>
       <div class="spotlight-results"></div>
@@ -164,7 +164,7 @@
         <span><kbd>&uarr;</kbd><kbd>&darr;</kbd> navigate</span>
         <span><kbd>↵</kbd> open</span>
         <span><kbd>esc</kbd> close</span>
-        <span class="spotlight-footer-tip">💡 <kbd>python: sort</kbd> jumps to a section</span>
+        <span class="spotlight-footer-tip">💡 type <kbd>:</kbd> to see all shortcuts</span>
       </div>
     </div>
   `;
@@ -198,27 +198,253 @@
   /* ── Section deep-link cache ── */
   const sectionCache = {};
 
-  /* Score a page against a name query (higher = better match) */
-  function scorePageMatch(p, q) {
-    const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g, '');
-    const nq = norm(q);
-    const ntitle = norm(p.title);
-    const ntags = norm(p.tags);
-    const nfile = norm(p.file);
-    if (ntitle === nq || nfile.startsWith(nq)) return 100;
-    if (ntitle.startsWith(nq) || ntags.split(' ').some(t => t === nq)) return 80;
-    if (ntitle.includes(nq) || ntags.includes(nq)) return 50;
-    return 0;
-  }
+  /* ── Page alias map: shorthand → file ─────────────────────────────────────
+     Type  py:  ts:  go:  etc. in spotlight to jump straight to a page's sections
+     Type just  :  to open the alias home screen
+  ── */
+  const fileMap = {};
+  pages.forEach(p => { fileMap[p.file] = p; });
 
-  /* Find the best-matching page for a name fragment */
-  function findPageByName(q) {
+  const pageAliases = {
+    // ── Languages ──────────────────────────────────────────────────
+    'py':         'python-interview.html',
+    'python':     'python-interview.html',
+    'pyd':        'python-dev.html',
+    'pydev':      'python-dev.html',
+    'ts':         'typescript-dev.html',
+    'typescript': 'typescript-dev.html',
+    'go':         'go-dev.html',
+    'golang':     'go-dev.html',
+    'js':         'es6.html',
+    'javascript': 'es6.html',
+    'es6':        'es6.html',
+    'rb':         'ruby.html',
+    'ruby':       'ruby.html',
+    'rs':         'rust.html',
+    'rust':       'rust.html',
+    'swift':      'swift.html',
+    'kt':         'kotlin.html',
+    'kotlin':     'kotlin.html',
+    'dart':       'dart.html',
+    'flutter':    'dart.html',
+    'fl':         'dart.html',
+    'c':          'c.html',
+    'cpp':        'cpp.html',
+    'cs':         'csharp.html',
+    'csharp':     'csharp.html',
+    'dotnet':     'csharp.html',
+    'php':        'php.html',
+    // ── Java ────────────────────────────────────────────────────────
+    'java':       'java-springboot-dev.html',
+    'spring':     'java-springboot-dev.html',
+    'jc':         'java-collections.html',
+    'javacol':    'java-collections.html',
+    // ── Backend Frameworks ──────────────────────────────────────────
+    'fastapi':    'fastapi-uv.html',
+    'uv':         'fastapi-uv.html',
+    'gin':        'go-gin.html',
+    'gorm':       'go-gin.html',
+    'django':     'python-frameworks.html',
+    'flask':      'python-frameworks.html',
+    'pfw':        'python-frameworks.html',
+    'express':    'express.html',
+    'laravel':    'laravel.html',
+    'gql':        'graphql.html',
+    'graphql':    'graphql.html',
+    'ejs':        'ejs.html',
+    'tsbe':       'ts-backend.html',
+    'hono':       'ts-backend.html',
+    'nestjs':     'ts-backend.html',
+    'trpc':       'ts-backend.html',
+    // ── Frontend ────────────────────────────────────────────────────
+    'react':      'frontend-frameworks.html',
+    'vue':        'frontend-frameworks.html',
+    'nuxt':       'frontend-frameworks.html',
+    'svelte':     'frontend-frameworks.html',
+    'css':        'css-cheatsheet.html',
+    'html':       'html-dev.html',
+    'sass':       'sass.html',
+    'scss':       'sass.html',
+    'jquery':     'jquery.html',
+    'emmet':      'emmet.html',
+    // ── Databases ───────────────────────────────────────────────────
+    'pg':         'postgresql.html',
+    'psql':       'postgresql.html',
+    'postgres':   'postgresql.html',
+    'sql':        'postgresql.html',
+    'nosql':      'nosql.html',
+    'mongo':      'mongodb.html',
+    'mongodb':    'mongodb.html',
+    'redis':      'redis.html',
+    'mysql':      'mysql.html',
+    'neo4j':      'neo4j.html',
+    'orm':        'drizzle-prisma.html',
+    'drizzle':    'drizzle-prisma.html',
+    'prisma':     'drizzle-prisma.html',
+    // ── Auth ────────────────────────────────────────────────────────
+    'oauth':      'oauth-concepts.html',
+    'jwt':        'oauth-concepts.html',
+    'auth':       'better-auth.html',
+    // ── Computer Science ────────────────────────────────────────────
+    'algo':       'algorithms.html',
+    'dsa':        'algorithms.html',
+    'algorithms': 'algorithms.html',
+    'sd':         'system-design.html',
+    'sysdesign':  'system-design.html',
+    'os':         'os-concepts.html',
+    // ── AI & ML ─────────────────────────────────────────────────────
+    'ai':         'ai-llm.html',
+    'llm':        'ai-llm.html',
+    'gpt':        'chatgpt.html',
+    'chatgpt':    'chatgpt.html',
+    'torch':      'pytorch.html',
+    'pytorch':    'pytorch.html',
+    'np':         'numpy.html',
+    'numpy':      'numpy.html',
+    'de':         'data-engineering.html',
+    'etl':        'data-engineering.html',
+    'ds':         'data-science.html',
+    'ml':         'ai-ml-dev.html',
+    // ── DevOps ──────────────────────────────────────────────────────
+    'git':        'git.html',
+    'docker':     'docker.html',
+    'k8s':        'kubernetes.html',
+    'kube':       'kubernetes.html',
+    'kubernetes': 'kubernetes.html',
+    'ssh':        'ssh.html',
+    'curl':       'curl.html',
+    'brew':       'homebrew.html',
+    'homebrew':   'homebrew.html',
+    'pm2':        'pm2.html',
+    'postman':    'postman.html',
+    'vscode':     'vscode.html',
+    'code':       'vscode.html',
+    'pandoc':     'pandoc.html',
+    // ── Linux ───────────────────────────────────────────────────────
+    'bash':       'bash.html',
+    'sh':         'bash.html',
+    'tmux':       'tmux.html',
+    'vim':        'vim.html',
+    'emacs':      'emacs.html',
+    'grep':       'grep-cmd.html',
+    'sed':        'sed.html',
+    'awk':        'awk.html',
+    'regex':      'regex.html',
+    'regexp':     'regex.html',
+    're':         'regex.html',
+    'find':       'find-cmd.html',
+    'chmod':      'chmod.html',
+    'cron':       'cron.html',
+    'screen':     'screen.html',
+    'lsof':       'lsof.html',
+    'netstat':    'netstat.html',
+    'nc':         'netcat.html',
+    'netcat':     'netcat.html',
+    'taskset':    'taskset.html',
+    'xpath':      'xpath.html',
+    // ── Formats ─────────────────────────────────────────────────────
+    'md':         'markdown.html',
+    'markdown':   'markdown.html',
+    'json':       'json.html',
+    'yaml':       'yaml.html',
+    'toml':       'toml.html',
+    'ini':        'ini.html',
+    'latex':      'latex.html',
+    'http':       'http-status.html',
+    'mime':       'mime-types.html',
+    'ascii':      'ascii-code.html',
+    'emoji':      'emoji.html',
+    // ── Reference ───────────────────────────────────────────────────
+    'google':     'google-search.html',
+    'search':     'google-search.html',
+    'html5':      'html-entities.html',
+    'entities':   'html-entities.html',
+    'iso':        'iso-639.html',
+    'ratio':      'aspect-ratio.html',
+    'res':        'resolutions.html',
+    // ── Shortcuts ───────────────────────────────────────────────────
+    'figma':      'figma.html',
+    'ps':         'adobe-photoshop.html',
+    'photoshop':  'adobe-photoshop.html',
+    'xd':         'adobe-xd.html',
+    'gh':         'github-shortcuts.html',
+    'github':     'github-shortcuts.html',
+    'firefox':    'firefox.html',
+    'android':    'android-studio.html',
+    'phpstorm':   'phpstorm.html',
+    // ── Communication ───────────────────────────────────────────────
+    'slack':      'slack.html',
+    'teams':      'microsoft-teams.html',
+    'zoom':       'zoom.html',
+    'bear':       'bear.html',
+    'feedly':     'feedly.html',
+    'twitter':    'twitter.html',
+    'reddit':     'reddit-shortcuts.html',
+  };
+
+  /* Alias home: groups for the home screen */
+  const aliasGroups = [
+    { label: '🗂 Languages',        aliases: [['py','Python Interview'],['pyd','Python Dev'],['ts','TypeScript'],['go','Go'],['js','JavaScript'],['rb','Ruby'],['rs','Rust'],['swift','Swift'],['kt','Kotlin'],['dart','Dart'],['c','C'],['cpp','C++'],['cs','C#'],['php','PHP']] },
+    { label: '☕ Java',             aliases: [['java','Java + Spring'],['jc','Java Collections']] },
+    { label: '⚙️ Backend',          aliases: [['fastapi','FastAPI'],['gin','Go Gin'],['django','Django/Flask'],['express','Express'],['laravel','Laravel'],['gql','GraphQL'],['hono','TS Backend']] },
+    { label: '🎨 Frontend',         aliases: [['react','React/Vue/Svelte'],['css','CSS'],['html','HTML'],['sass','Sass'],['jquery','jQuery'],['emmet','Emmet']] },
+    { label: '🗃 Databases',        aliases: [['pg','PostgreSQL'],['mongo','MongoDB'],['redis','Redis'],['mysql','MySQL'],['neo4j','Neo4j'],['orm','Drizzle/Prisma']] },
+    { label: '🔐 Auth',             aliases: [['oauth','OAuth/JWT'],['auth','Better Auth']] },
+    { label: '🧠 CS',               aliases: [['algo','Algorithms'],['sd','System Design'],['os','OS Concepts']] },
+    { label: '🤖 AI & ML',          aliases: [['llm','AI & LLM'],['gpt','ChatGPT'],['torch','PyTorch'],['np','NumPy'],['de','Data Eng'],['ds','Data Science'],['ml','ML Dev']] },
+    { label: '🚀 DevOps',           aliases: [['git','Git'],['docker','Docker'],['k8s','Kubernetes'],['ssh','SSH'],['curl','cURL'],['brew','Homebrew'],['pm2','PM2'],['pandoc','Pandoc']] },
+    { label: '🐧 Linux',            aliases: [['bash','Bash'],['vim','Vim'],['tmux','tmux'],['grep','grep'],['sed','sed'],['awk','awk'],['regex','Regex'],['find','find'],['chmod','chmod'],['cron','cron'],['lsof','lsof'],['nc','netcat']] },
+    { label: '📋 Formats',          aliases: [['md','Markdown'],['json','JSON'],['yaml','YAML'],['toml','TOML'],['http','HTTP Status'],['mime','MIME'],['ascii','ASCII'],['emoji','Emoji'],['latex','LaTeX']] },
+    { label: '⌨️ Shortcuts',        aliases: [['figma','Figma'],['ps','Photoshop'],['xd','Adobe XD'],['gh','GitHub'],['vscode','VS Code'],['android','Android Studio']] },
+    { label: '💬 Communication',    aliases: [['slack','Slack'],['teams','Teams'],['zoom','Zoom'],['bear','Bear'],['twitter','Twitter'],['reddit','Reddit']] },
+  ];
+
+  /* Resolve alias or fuzzy-match a page name */
+  function resolvePageQuery(q) {
+    const norm = s => s.toLowerCase().trim();
+    const nq = norm(q);
+    // 1. exact alias
+    if (pageAliases[nq]) return fileMap[pageAliases[nq]] || null;
+    // 2. score-based
     let best = null, bestScore = 0;
     pages.forEach(p => {
-      const s = scorePageMatch(p, q);
+      const ntitle = norm(p.title).replace(/[^a-z0-9]/g, '');
+      const ntags  = norm(p.tags);
+      const nfile  = norm(p.file);
+      let s = 0;
+      if (ntitle === nq || nfile.startsWith(nq)) s = 100;
+      else if (ntitle.startsWith(nq) || ntags.split(' ').some(t => t === nq)) s = 80;
+      else if (ntitle.includes(nq) || ntags.includes(nq)) s = 50;
       if (s > bestScore) { bestScore = s; best = p; }
     });
     return bestScore > 0 ? best : null;
+  }
+
+  /* Render the alias home screen */
+  function renderAliasHome(filterQ) {
+    const fq = (filterQ || '').toLowerCase().trim();
+    let html = `<div class="spotlight-cat spotlight-home-title">⌨️ Type <code>alias:</code> to jump to sections &nbsp;·&nbsp; <code>alias: query</code> to filter</div>`;
+    let count = 0;
+    aliasGroups.forEach(g => {
+      const items = fq ? g.aliases.filter(([a, label]) => a.includes(fq) || label.toLowerCase().includes(fq)) : g.aliases;
+      if (!items.length) return;
+      html += `<div class="spotlight-cat">${g.label}</div>`;
+      items.forEach(([alias, label]) => {
+        const active = count === activeIdx ? ' spotlight-active' : '';
+        const file = pageAliases[alias];
+        const page = fileMap[file];
+        html += `<a href="${file || '#'}" class="spotlight-item spotlight-alias-item${active}" data-idx="${count}">
+          <div class="spotlight-item-title"><span class="spotlight-alias-badge">${alias}:</span> ${label}</div>
+          <div class="spotlight-item-desc">${page ? page.desc.slice(0, 80) + '…' : ''}</div>
+        </a>`;
+        count++;
+      });
+    });
+    if (!count) html += `<div class="spotlight-empty">No aliases match "${filterQ}"</div>`;
+    results.innerHTML = html;
+    totalCount = count;
+    const activeEl = results.querySelector('.spotlight-active');
+    if (activeEl) activeEl.scrollIntoView({ block: 'nearest' });
   }
 
   /* Fetch page HTML and extract sections [{id, title, icon}] */
@@ -278,12 +504,19 @@
   function render(query) {
     const q = query.toLowerCase().trim();
 
-    /* ── Section deep-link: detect "pagename: section" pattern ── */
+    /* ── Section deep-link: detect "alias: section" or bare ":" ── */
     const colonIdx = q.indexOf(':');
+
+    if (colonIdx === 0 || q === ':') {
+      /* Just ":" typed → show alias home directory */
+      renderAliasHome(q.slice(1).trim());
+      return;
+    }
+
     if (colonIdx > 0) {
-      const pageQuery = q.slice(0, colonIdx).trim();
+      const pageQuery   = q.slice(0, colonIdx).trim();
       const sectionQuery = q.slice(colonIdx + 1).trim();
-      const matched = findPageByName(pageQuery);
+      const matched = resolvePageQuery(pageQuery);
       if (matched) {
         renderSectionResults(matched, sectionQuery);
         return;

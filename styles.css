@@ -1205,6 +1205,41 @@ footer {
     color: var(--accent);
 }
 
+/* Alias home screen */
+.spotlight-home-title {
+    font-size: .75rem;
+    color: var(--text-dim);
+    letter-spacing: .04em;
+}
+
+.spotlight-home-title code {
+    font-family: monospace;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    border-radius: 3px;
+    padding: 1px 5px;
+    font-size: .8rem;
+}
+
+.spotlight-alias-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.spotlight-alias-badge {
+    display: inline-block;
+    font-family: monospace;
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    border-radius: 4px;
+    padding: 0px 6px;
+    margin-right: 6px;
+    line-height: 1.6;
+}
+
 .spotlight-footer kbd {
     display: inline-block;
     font-size: 0.68rem;
